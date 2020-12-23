@@ -8,7 +8,9 @@ import DefaultLayout from "~/layouts/DefaultLayout.vue";
 export default function(Vue, { router, head, isClient }) {
   // Set default layout as a global component
   Vue.component("DefaultLayout", DefaultLayout);
-
+  
   Vue.use(Flare);
-  Vue.use(Keplr);
+  Vue.use(Keplr, { 
+    chainId: process.env.GRIDSOME_SECRET_CHAIN_ID
+  });
 }

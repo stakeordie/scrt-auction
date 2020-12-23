@@ -2,9 +2,12 @@
   <simple-layout>
     <template #header>
       <simple-header>
-        <img class="header__logo" src="@/assets/flare--white.png">
+        <g-link to="/" class="header__logo">
+          <img src="@/assets/secret-logo--white.svg">
+        </g-link>
         <nav>
-          <g-link to="/">Index</g-link>
+          <g-link to="/">Auctions</g-link>
+          <g-link to="/faqs">FAQs</g-link>
         </nav>
         <div class="actions">
           <div class="user-info">
@@ -47,8 +50,10 @@ query {
 <style lang="scss">
 .header {
   &__logo {
-    height: 60px;
-    padding: var(--f-gutter-s) var(--f-gutter);
+    img {
+      height: 50px;
+    }
+    //padding: var(--f-gutter-s) 0; // var(--f-gutter);
   }
 }
 </style>

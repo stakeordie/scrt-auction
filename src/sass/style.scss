@@ -1,39 +1,22 @@
 @import "~@lkmx/flare/src/flare";
 
-$mid-gray-color: #939EAD;
-$layout-color: $mid-gray-color;
+$dark-gray-color: #1B1B1B;
 
 :root {
     --f-header-text-color: white;
-    --f-header-background-color: black;  
+    --f-header-background-color: black;
+
+    --f-default-text-color: white;
+
+    --f-h1-text-size: 32px;
+    --f-h2-text-size: 26px;
+}
+
+html {
+    background-color: $dark-gray-color;
 }
 
 
 .--flare {
-
-    .red-box, .blue-box, .green-box {
-        .box {
-            border-radius: var(--f-radius);
-            margin: var(--f-gutter);
-        }
-    }
-
-    .red-box {
-        .box {
-            border: 1px solid red;
-        }
-    }
-
-    .green-box {
-        .box {
-            border: 1px solid green;
-        }
-    }
-
-    .blue-box {
-        .box {
-            border: 1px solid blue;
-        }
-    }
 
 }
