@@ -9,6 +9,7 @@
   "dependencies": {
     "@gridsome/vue-remark": "^0.2.6",
     "@lkmx/flare": "^0.3.5",
-    "gridsome": "^0.7.0"
+    "gridsome": "^0.7.0",
+    "secretjs": "^0.10.3"
   }
 }

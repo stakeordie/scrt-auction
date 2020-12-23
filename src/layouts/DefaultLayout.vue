@@ -5,8 +5,12 @@
         <img class="header__logo" src="@/assets/flare--white.png">
         <nav>
           <g-link to="/">Index</g-link>
-          <g-link to="/about">About</g-link>
         </nav>
+        <div class="actions">
+          <div class="user-info">
+            <keplr-user></keplr-user>
+          </div>
+        </div>
       </simple-header>
     </template>
 
@@ -24,6 +28,13 @@
 
   </simple-layout>
 </template>
+
+<script>
+import KeplrUser from '../components/KeplrUser.vue'
+export default {
+  components: { KeplrUser },  
+}
+</script>
 
 <static-query>
 query {

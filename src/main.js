@@ -1,6 +1,7 @@
 import "./sass/style.scss";
 
 import Flare from "@lkmx/flare";
+import Keplr from "./plugins/keplr"
 
 import DefaultLayout from "~/layouts/DefaultLayout.vue";
 
@@ -9,4 +10,5 @@ export default function(Vue, { router, head, isClient }) {
   Vue.component("DefaultLayout", DefaultLayout);
 
   Vue.use(Flare);
+  Vue.use(Keplr);
 }
