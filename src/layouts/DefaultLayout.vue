@@ -34,6 +34,7 @@
 
 <script>
 import KeplrUser from '../components/KeplrUser.vue'
+
 export default {
   components: { KeplrUser },  
 }
