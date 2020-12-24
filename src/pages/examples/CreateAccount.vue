@@ -2,11 +2,10 @@
   <default-layout>
       <page>
           <columns number="2" number-s="1" weight="right">
-            <h1>Connect to node</h1>
+            <h1>Create account</h1>
           
             <block>
-                <p>Chain ID: {{chainId}}</p>
-                <p>Height: {{height}}</p>
+              <p>Random mnemonic: {{randomMnemonic}}</p>
             </block>
           </columns>
       </page>
@@ -19,13 +18,14 @@ export default {
   components: { DefaultLayout },
   data () {
     return {
-        chainId: "",
-        height: "",
+        randomMnemonic: "",
+        account: null,
     }
   },
   async mounted () {
-      this.chainId = await this.$scrtjs.getChainId();
-      this.height = await this.$scrtjs.getHeight();
+      this.randomMnemonic = this.$scrtjs.getRandomMnemonic();
+      this.account = await this.$scrtjs.createAccount(this.randomMnemonic);
+      console.log(this.account);
   },
 
 }

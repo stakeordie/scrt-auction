@@ -10,9 +10,17 @@ We put together the examples in [SecretJS-Templates](https://github.com/enigmamp
 
 ## Connect to a Node
 
-This demonstrates the basic functionality of connecting to a node and getting the chain ID and the height.
+Demonstrates the basic functionality of connecting to a node and getting the chain ID and the height.
 
 [Example](/examples/connect-to-node)
+
+
+## Create an Account
+
+Creates a secret account
+
+[Example](/examples/create-account)
+
 
 </block>
 
