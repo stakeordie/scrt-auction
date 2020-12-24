@@ -1,24 +1,26 @@
 <template>
   <default-layout>
-    <!--
-      ------
-        -Title
-        -Create Auction Button
-      ------
-        -Filter
-          - "filter by"
-          - Sale Token
-          - dropdown
-          - "Bid Token"
-          - dropdown
-        - list type
-          - grid icon
-          - list icon
-      ------
-        -hr
-      ------
-    -->
-    <auctions-grid></auctions-grid>      
+      <page>
+      <!--
+        ------
+          -Title
+          -Create Auction Button
+        ------
+          -Filter
+            - "filter by"
+            - Sale Token
+            - dropdown
+            - "Bid Token"
+            - dropdown
+          - list type
+            - grid icon
+            - list icon
+        ------
+          -hr
+        ------
+      -->
+      <auctions-grid></auctions-grid>
+    </page>
   </default-layout>
 </template>
 

@@ -17,6 +17,13 @@ export default {
         return await window.keplr.getKey(this.chainId);
     });
   },
+  async openOfflineSigner() {
+    return inKeplr(this.chainId, async () => {
+      return window.getOfflineSigner(this.chainId);
+    });
+  },
 
-  addExperimental(experimental) {},
+  addExperimental(experimental) {
+    
+  },
 };

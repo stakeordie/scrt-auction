@@ -17,11 +17,7 @@
       </simple-header>
     </template>
 
-    <page>
-
-      <slot></slot>
-
-    </page>
+    <slot></slot>
 
     <template #footer>
       <simple-footer>
