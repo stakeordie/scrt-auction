@@ -1,9 +1,15 @@
 <template>
   <default-layout>
       <page>
-          <h1>Connect to node</h1>
-          <p>Chain ID: {{chainId}}</p>
-          <p>Height: {{height}}</p>
+          
+          <columns number="2" weight="right">
+            <h1>Connect to node</h1>
+          
+            <block>
+                <p>Chain ID: {{chainId}}</p>
+                <p>Height: {{height}}</p>
+            </block>
+          </columns>
       </page>
   </default-layout>
 </template>
