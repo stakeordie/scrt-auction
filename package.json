@@ -8,9 +8,10 @@
   },
   "dependencies": {
     "@gridsome/vue-remark": "^0.2.6",
-    "@lkmx/flare": "^0.3.7",
+    "@lkmx/flare": "^0.3.9",
     "dotenv": "^8.2.0",
     "gridsome": "^0.7.0",
-    "secretjs": "^0.10.3"
+    "secretjs": "^0.10.3",
+    "vee-validate": "^3.4.5"
   }
 }

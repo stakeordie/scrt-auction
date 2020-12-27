@@ -28,7 +28,7 @@ export class SecretJsClient {
   }
 
   async getNodeInfo() {
-    return await this.client.nodeInfo();
+    return await this.client.restClient.nodeInfo();
   }
 
   async getLatestBlocks() {
@@ -36,7 +36,7 @@ export class SecretJsClient {
   }
 
   async getBlocks(number) {
-    return await this.client.blocks(number);
+    return await this.client.restClient.blocks(number);
   }
 
   async queryAccount(address) {

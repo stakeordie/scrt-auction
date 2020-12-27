@@ -12,21 +12,25 @@ $dark-gray-color: #1B1B1B;
     --f-h2-text-size: 26px;
 
 
+    --f-primary-action-color: #f4d22a;
+    --f-primary-action-anticolor: black;
+
+
     --f-links-text-color: #4195c4;
     --f-links-text-hover-color: #f4d22a;
     --f-links-text-visited-color: #4195c4;
     --f-links-text-active-color: #d53a2c;
+
+    --f-forms-radius: 4px;
 }
 
 html {
     background-color: $dark-gray-color;
 }
 
-
-.--flare {
-
+hr {
+    margin: var(--f-gutter-xl) 0;
 }
-
 
 .--flare-columns {
     --f-columns-weight-ratio: 3;

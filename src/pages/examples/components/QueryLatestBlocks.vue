@@ -1,7 +1,8 @@
 <template>
-    <div class="latest-blocks">
+    <section class="latest-blocks">
+        <h2>Query latest blocks</h2>
         <button @click="queryLatestBlocks()">Query latest blocks</button>
-    </div>
+    </section>
 </template>
 
 <script>

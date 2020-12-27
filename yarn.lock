@@ -1031,10 +1031,10 @@
   dependencies:
     "@cosmjs/utils" "^0.20.0"
 
-"@lkmx/flare@^0.3.7":
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/@lkmx/flare/-/flare-0.3.7.tgz#d64b103044aead2e9c2be4ffcc66b3b98f8dedf4"
-  integrity sha512-IBwCDeCkuG3FUuSsGTZ/nnusuiFqHUrLJR2H4NvMexetExxOfWmXnOnzre0hSYR6spFrLw6v9h7Siqr2JpNVsQ==
+"@lkmx/flare@^0.3.9":
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/@lkmx/flare/-/flare-0.3.9.tgz#a98fefd229f7b1f8b62956266eeec5d2523f67b2"
+  integrity sha512-ThtUNj5aZQFr2xy9GmfoeQ6nOzttcMIu4cflOcmYJMiNxQP7KUMe1IjuQtC7u4CwzzugEXbVoFxpYVnH7vsO7w==
   dependencies:
     core-js "^3.6.5"
     node-sass "^5.0.0"
@@ -9726,6 +9726,11 @@ vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
+
+vee-validate@^3.4.5:
+  version "3.4.5"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.4.5.tgz#96a456c309f7bdb2cce62c3b554f96d893e9f6ae"
+  integrity sha512-ZEcLqOAZzSkMhDvPcTx0xcwVOijFnMW9J+BA20j+rDmo24T8RCCqVQyRwwrDrcWJZV2dRYl/yYNa2GB6UCoBvg==
 
 vendors@^1.0.0:
   version "1.0.4"
