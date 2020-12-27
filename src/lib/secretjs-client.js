@@ -27,7 +27,24 @@ export class SecretJsClient {
     return await this.client.getHeight();
   }
 
-  async createAccount(mnemonic) {
+  async getNodeInfo() {
+    return await this.client.nodeInfo();
+  }
+
+  async getLatestBlocks() {
+    return await this.client.restClient.blocksLatest();
+  }
+
+  async getBlocks(number) {
+    return await this.client.blocks(number);
+  }
+
+  async queryAccount(address) {
+    return await this.client.getAccount(address);
+  }
+
+
+  async queryAccountFromMnemonic(mnemonic) {
     const signingPen = await Secp256k1Pen.fromMnemonic(mnemonic);
     const pubkey = encodeSecp256k1Pubkey(signingPen.pubkey);
     const accAddress = pubkeyToAddress(pubkey, "secret");

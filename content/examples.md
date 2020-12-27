@@ -8,18 +8,25 @@ We put together the examples in [SecretJS-Templates](https://github.com/enigmamp
 
 <block>
 
-## Connect to a Node
+## Connect to a node
 
 Demonstrates the basic functionality of connecting to a node and getting the chain ID and the height.
 
 [Example](/examples/connect-to-node)
 
 
-## Create an Account
+## Mnemonic creation
 
-Creates a secret account
+Creates a random mnemonic and queries the chain using it.
 
-[Example](/examples/create-account)
+[Example](/examples/mnemonic-creation)
+
+
+## Query node
+
+Queries the node for blocks and account info.
+
+[Example](/examples/query-node)
 
 
 </block>
