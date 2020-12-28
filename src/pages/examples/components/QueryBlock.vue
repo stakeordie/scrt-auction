@@ -1,6 +1,6 @@
 <template>
   <section class="query-blocks">
-    <h2>Query blocks</h2>
+    <h2>Query block</h2>
     <validation-observer v-slot="{ handleSubmit, invalid }">
       <form class="height-form" @submit.prevent="handleSubmit(queryBlock)">
         <ul>
