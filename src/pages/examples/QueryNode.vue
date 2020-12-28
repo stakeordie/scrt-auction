@@ -6,7 +6,7 @@
             <block>
               <query-latest-blocks></query-latest-blocks>
               <hr>
-              <query-blocks></query-blocks>
+              <query-block></query-block>
               <hr>
               <account-query-form></account-query-form>
             </block>
@@ -18,10 +18,10 @@
 <script>
 import DefaultLayout from '../../layouts/DefaultLayout'
 import AccountQueryForm from './components/AccountQueryForm'
-import QueryBlocks from './components/QueryBlocks.vue'
+import QueryBlock from './components/QueryBlock.vue'
 import QueryLatestBlocks from './components/QueryLatestBlocks.vue'
 
 export default {
-  components: { DefaultLayout, AccountQueryForm, QueryLatestBlocks, QueryBlocks }
+  components: { DefaultLayout, AccountQueryForm, QueryLatestBlocks, QueryBlock }
 }
 </script>

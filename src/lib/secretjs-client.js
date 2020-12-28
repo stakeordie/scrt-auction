@@ -35,8 +35,13 @@ export class SecretJsClient {
     return await this.client.restClient.blocksLatest();
   }
 
-  async getBlocks(number) {
-    return await this.client.restClient.blocks(number);
+  async getBlock(number) {
+    try {
+      return await this.client.restClient.blocks(number);
+    } catch(err) {
+      // In case errors need to be processed this would happen here
+      throw err;
+    }
   }
 
   async queryAccount(address) {
