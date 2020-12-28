@@ -48,6 +48,13 @@ export class SecretJsClient {
     return await this.client.getAccount(address);
   }
 
+  async queryContract(address, query) {
+    return await this.client.queryContractSmart(address, query);
+  }
+
+  async listContracts(codeId) {
+    return await this.client.getContracts(codeId);
+  }
 
   async queryAccountFromMnemonic(mnemonic) {
     const signingPen = await Secp256k1Pen.fromMnemonic(mnemonic);

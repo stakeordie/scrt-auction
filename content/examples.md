@@ -28,6 +28,20 @@ Queries the node for blocks and account info.
 
 [Example](/examples/query-node)
 
+## Transactions
+
+Performs transaction ops.
+
+[Example](/examples/transactions)
+
+
+## Contracts
+
+Performs contract ops.
+
+[Example](/examples/contracts)
+
+
 
 </block>
 

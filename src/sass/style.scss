@@ -32,6 +32,10 @@ hr {
     margin: var(--f-gutter-xl) 0;
 }
 
+dd {
+    font-weight: bold;
+}
+
 .--flare-columns {
     --f-columns-weight-ratio: 3;
 }

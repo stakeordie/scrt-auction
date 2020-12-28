@@ -17,6 +17,7 @@ export default function(Vue, { router, head, isClient }) {
   Vue.use(Scrt, {
     restUrl: process.env.GRIDSOME_SECRET_REST_URL,
   });
+  
   Vue.use(Keplr, { 
     chainId: process.env.GRIDSOME_SECRET_CHAIN_ID,
   });

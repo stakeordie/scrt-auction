@@ -2,12 +2,12 @@
   <section class="query-blocks">
     <h2>Query block</h2>
     <validation-observer v-slot="{ handleSubmit, invalid }">
-      <form class="height-form" @submit.prevent="handleSubmit(queryBlock)">
+      <form class="form" @submit.prevent="handleSubmit(queryBlock)">
         <ul>
           <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
         </ul>
 
-        <div class="height-form__frame">
+        <div class="form__frame">
           <validation-provider rules="required|integer" v-slot="{ errors }">
             <label for="blocks-number">Block height</label>
             <span class="error">{{ errors[0] }}</span>
@@ -69,7 +69,7 @@ export default {
 <style lang="scss" scoped>
     @import "@lkmx/flare/src/functions/respond-to";
 
-    .height-form__frame {
+    .form__frame {
         display: grid;
         align-items: end;
         column-gap: var(--f-gutter);
