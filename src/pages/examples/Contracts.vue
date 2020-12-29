@@ -41,7 +41,7 @@ export default {
           this.contracts = await this.$scrtjs.listContracts(this.codeIdForm);
       },
       async listActiveAuctions() {
-        console.log(await this.$auctions.listActiveAuctions());
+        console.log(await this.$auctions.listActive());
       }
   },
 };

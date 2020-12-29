@@ -7,7 +7,7 @@ export class AuctionsApi {
         this.factoryAddress = factoryAddress;
     }
 
-    async listActiveAuctions() {
+    async listActive() {
         return (await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})).list_active_auctions.active;
     }
 }

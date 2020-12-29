@@ -1,17 +1,9 @@
 <template>
-  <div class="card">
-    <p>
-        {{ auction.pair }}
-    </p>
-    <p>
-        {{ auction.sell_amount }}
-    </p>
-    <p>
-        {{ auction.minimum_bid }}
-    </p>
-    <p>
-        {{ auction.label }}
-    </p>
+  <div class="auction">
+    <span>{{ auction.pair }}</span>
+    <span>{{ auction.sell_amount }}</span>
+    <span>{{ auction.minimum_bid }}</span>
+    <span>{{ auction.label }}</span>
     <button @click="bidHide = true">BID</button>
     <input type="text" v-show="bidHide" v-model="bidAmount" />
     <!--
@@ -31,25 +23,20 @@
 <script>
 export default {
   props: ["auction"],
-  data () {
+  data() {
     return {
       bidAmount: 0,
-      bidHide: false
-    }
+      bidHide: false,
+    };
   },
-  methods: {
-  
-  }
-}
+  methods: {},
+};
 </script>
 
 <style lang="scss" scoped>
-    .card {
-        display: grid;
-        border: 1px solid white;
-        border-radius: 22px;
-        p {
-            text-align: center;
-        }
-    }
+.auction {
+  display: grid;
+  border: 1px solid white;
+  border-radius: 22px;
+}
 </style>
