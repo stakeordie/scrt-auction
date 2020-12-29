@@ -19,7 +19,9 @@
           -hr
         ------
       -->
-      <auctions-grid></auctions-grid>
+      <section class="auction-grid-section">
+        <auctions-grid></auctions-grid>
+      </section>
     </page>
   </default-layout>
 </template>

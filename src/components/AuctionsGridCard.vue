@@ -3,6 +3,17 @@
     <p>
         {{ auction.pair }}
     </p>
+    <p>
+        {{ auction.sell_amount }}
+    </p>
+    <p>
+        {{ auction.minimum_bid }}
+    </p>
+    <p>
+        {{ auction.label }}
+    </p>
+    <button @click="bidHide = true">BID</button>
+    <input type="text" v-show="bidHide" v-model="bidAmount" />
     <!--
       ------
         - Auction Header
@@ -19,7 +30,16 @@
 
 <script>
 export default {
-  props: ["auction"]
+  props: ["auction"],
+  data () {
+    return {
+      bidAmount: 0,
+      bidHide: false
+    }
+  },
+  methods: {
+  
+  }
 }
 </script>
 
