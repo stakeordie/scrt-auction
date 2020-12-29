@@ -19,9 +19,8 @@
           -hr
         ------
       -->
-      <section class="auction-grid-section">
+        <h1>Secret Auctions</h1>
         <auctions-grid></auctions-grid>
-      </section>
     </page>
   </default-layout>
 </template>

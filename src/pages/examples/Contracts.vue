@@ -1,24 +1,24 @@
 <template>
   <default-layout>
     <page>
-      <columns number="2" number-s="1" weight="right">
+      <columns number-l="2" weight="right">
         <h1>Query node</h1>
         <block>
-          <h1>Contracts</h1>
+          <h2>Contracts</h2>
           <form @submit.prevent="getContract()">
-              <input v-model="codeIdForm" type="text" />
-              <button>Get contract</button>
+            <input v-model="codeIdForm" type="text" />
+            <button>Get contract</button>
           </form>
-          <dl v-for="(contract, index) in contracts" :key="index">
-            <dt>Label</dt>
-            <dd>{{ contract.label }}</dd>
-            <dt>Address</dt>
-            <dd>{{ contract.address }}</dd>
-            <dt>Code Id</dt>
-            <dd>{{ contract.codeId }}</dd>
-          </dl>
+          <div v-for="(contract, index) in contracts" :key="index">
+            <h3>{{ contract.label }}</h3>
+            <dl>
+              <dt>Label</dt>
+              <dd>{{ contract.address }}</dd>
+              <dt>Code Id</dt>
+              <dd>{{ contract.codeId }}</dd>
+            </dl>
+          </div>
           <hr>
-          <button @click="queryActiveAuctions()">Query active auctions</button>
         </block>
       </columns>
     </page>
@@ -40,8 +40,8 @@ export default {
       async getContract() {
           this.contracts = await this.$scrtjs.listContracts(this.codeIdForm);
       },
-      async queryActiveAuctions() {
-        console.log(await this.$scrtjs.queryContract("secret1q5dadwv9dtvqde7l8tvkm0zlgn0hqr9vkla5pn", {"list_active_auctions":{}}));
+      async listActiveAuctions() {
+        console.log(await this.$auctions.listActiveAuctions());
       }
   },
 };

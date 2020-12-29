@@ -1,14 +1,10 @@
 <template>
   <default-layout>
     <page>
-        <columns number="2" number-s="1" weight="right">
-            <h1>Query node</h1>
-            <block>
-                <transaction-send></transaction-send>
-                <hr>
-                <h2>Transfer</h2>
-            </block>
-          </columns>
+      <h1>Query node</h1>
+      <transaction-send></transaction-send>
+      <hr>
+      <button>Hola</button>      
     </page>
   </default-layout>
 </template>

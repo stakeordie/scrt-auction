@@ -6,7 +6,7 @@
           <img src="@/assets/secret-logo--white.svg">
         </g-link>
         <nav>
-          <g-link to="/">Auctions</g-link>
+          <g-link to="/auctions">Auctions</g-link>
           <g-link to="/faqs">FAQs</g-link>
           <g-link to="/examples">Examples</g-link>
         </nav>

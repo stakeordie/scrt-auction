@@ -1,6 +1,9 @@
 @import "~@lkmx/flare/src/flare";
 
 $dark-gray-color: #1B1B1B;
+$blue-color: #4195c4;
+$yellow-color: #f4d22a;
+$red-color: #d53a2c;
 
 :root {
     --f-header-text-color: white;
@@ -10,22 +13,27 @@ $dark-gray-color: #1B1B1B;
 
     --f-h1-text-size: 32px;
     --f-h2-text-size: 26px;
+    --f-h3-text-size: 22px;
 
 
-    --f-primary-action-color: #f4d22a;
+    --f-primary-action-color: #{$yellow-color};
     --f-primary-action-anticolor: black;
 
 
-    --f-links-text-color: #4195c4;
-    --f-links-text-hover-color: #f4d22a;
-    --f-links-text-visited-color: #4195c4;
-    --f-links-text-active-color: #d53a2c;
+    --f-links-text-color: #{$blue-color};
+    --f-links-text-hover-color: #{$yellow-color};
+    --f-links-text-visited-color: #{$blue-color};
+    --f-links-text-active-color: #{$red-color};
 
     --f-forms-button-radius: 4px;
 }
 
 html {
     background-color: $dark-gray-color;
+}
+
+h3 {
+    margin-top: var(--f-gutter-xl);
 }
 
 hr {
