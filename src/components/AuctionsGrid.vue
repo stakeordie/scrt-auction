@@ -14,7 +14,7 @@ export default {
       auctions: null
     }
   },
-  mounted() {
+  async mounted() {
     this.auctions = await this.$scrtjs.queryContract("secret1q5dadwv9dtvqde7l8tvkm0zlgn0hqr9vkla5pn", {"list_active_auctions":{}})
   }
 }
