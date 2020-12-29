@@ -1,5 +1,8 @@
 <template>
   <div class="card">
+    <p>
+        {{ auction.pair }}
+    </p>
     <!--
       ------
         - Auction Header
@@ -16,7 +19,7 @@
 
 <script>
 export default {
-
+  props: ["auction"]
 }
 </script>
 
