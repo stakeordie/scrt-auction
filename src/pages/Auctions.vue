@@ -19,10 +19,12 @@
           -hr
         ------
       -->
+        <column>
         <h1>Secret Auctions</h1>
         <section class="auctions-grid">
-          <auction-item v-for="(auction, index) in auctions" :key="index" :auction="auction"></auction-item>
+          <auction-item v-for="auction in auctions" :key="auction.address" :auction="auction"></auction-item>
         </section>
+        </column>
     </page>
   </default-layout>
 </template>
