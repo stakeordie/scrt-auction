@@ -45,6 +45,7 @@ export default {
   },
   async mounted() {
     this.auctions = (await this.$auctions.listActive());
+    console.log(this.auctions);
   }
 }
 </script>
