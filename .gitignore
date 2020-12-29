@@ -4,5 +4,8 @@
 src/.temp
 node_modules
 dist
-.env
-.env.*
+
+# Suspending .env temporarily DO NOT STORE secret info here please
+
+#.env
+#.env.*
