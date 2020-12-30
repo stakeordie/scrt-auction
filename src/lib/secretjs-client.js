@@ -52,6 +52,15 @@ export class SecretJsClient {
     return await this.client.queryContractSmart(address, query);
   }
 
+  // TODO review this
+  async executeContract(address, handleMsg) {
+    return await this.client.execute(address, handleMsg);
+  }
+
+  async getContractHash(address) {
+    return await this.client.restClient.getCodeHashByContractAddr(address);
+  }
+
   async listContracts(codeId) {
     return await this.client.getContracts(codeId);
   }
