@@ -15,8 +15,8 @@ export class AuctionsApi {
     // TODO Review this
     async createAuction(
         label,
-        sellToken,
-        bidToken,
+        sellTokenAddress,
+        bidTokenAddress,
         amount,
         minBid,
         description
@@ -24,8 +24,14 @@ export class AuctionsApi {
         const handleMsg = {
             "create_auction": {
                 "label": label,
-                "sell_contract": sellToken,
-                "bid_contract": bidToken,
+                "sell_contract": {
+                    "code_hash": await this.scrtClient.getContractHash(sellTokenAddress),
+                    "address": sellTokenAddress
+                },
+                "bid_contract": {
+                    "code_hash": await this.scrtClient.getContractHash(bidTokenAddress),
+                    "address": bidTokenAddress
+                },
                 "sell_amount": amount,
                 "minimum_bid": minBid,
                 "description": description
