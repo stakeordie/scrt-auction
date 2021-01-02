@@ -1,0 +1,98 @@
+[
+   {
+      "token":"sodta",
+      "address":"",
+      "symbol":"SODTA",
+      "decimals":8,
+      "account holders": [
+         {
+            "address":"secret10uc40qc5rjkh6zhu8dyqheetejyevukzkkecvs", 
+            "viewing_key": "api_key_TKMndbHLGpffztn23TvQ9vbKidGE1uQYDrj5BPz+f94="
+         },
+         {
+            "address":"secret1xjk34tmzwsugjwhr3jnxsqeju2e5d3dz2p4qea",
+            "viewing_key": "api_key_JkdQAIPay7EwBt5KGwXoi7YDLibAYgYTou0KU/gENBI="
+         },
+         {
+            "address":"secret19tescjxfwnnkpq8g0j9y4sgjhtapettwx7gxan",
+            "viewing_key": ""
+         },
+         {
+            "address":"secret1m926yhnlhs50gjqykw95nllf6zfk8exdhgey5g",
+            "viewing_key": ""
+         }
+      ]
+   },
+   {
+      "token":"sodtb",
+      "address":"",
+      "symbol":"SODTB",
+      "decimals":6,
+      "account holders": [
+         {
+            "address":"secret10uc40qc5rjkh6zhu8dyqheetejyevukzkkecvs", 
+            "viewing_key": "api_key_TKMndbHLGpffztn23TvQ9vbKidGE1uQYDrj5BPz+f94="
+         },
+         {
+            "address":"secret1xjk34tmzwsugjwhr3jnxsqeju2e5d3dz2p4qea",
+            "viewing_key": "api_key_JkdQAIPay7EwBt5KGwXoi7YDLibAYgYTou0KU/gENBI="
+         },
+         {
+            "address":"secret19tescjxfwnnkpq8g0j9y4sgjhtapettwx7gxan",
+            "viewing_key": ""
+         },
+         {
+            "address":"secret1m926yhnlhs50gjqykw95nllf6zfk8exdhgey5g",
+            "viewing_key": ""
+         }
+      ]
+   },
+   {
+      "token":"sodta",
+      "address":"",
+      "symbol":"SODTA",
+      "decimals":8,
+      "account holders": [
+         {
+            "address":"secret10uc40qc5rjkh6zhu8dyqheetejyevukzkkecvs", 
+            "viewing_key": "api_key_TKMndbHLGpffztn23TvQ9vbKidGE1uQYDrj5BPz+f94="
+         },
+         {
+            "address":"secret1xjk34tmzwsugjwhr3jnxsqeju2e5d3dz2p4qea",
+            "viewing_key": "api_key_JkdQAIPay7EwBt5KGwXoi7YDLibAYgYTou0KU/gENBI="
+         },
+         {
+            "address":"secret19tescjxfwnnkpq8g0j9y4sgjhtapettwx7gxan",
+            "viewing_key": ""
+         },
+         {
+            "address":"secret1m926yhnlhs50gjqykw95nllf6zfk8exdhgey5g",
+            "viewing_key": ""
+         }
+      ]
+   },
+   {
+      "token":"sodta",
+      "address":"",
+      "symbol":"SODTA",
+      "decimals":8,
+      "account holders": [
+         {
+            "address":"secret10uc40qc5rjkh6zhu8dyqheetejyevukzkkecvs", 
+            "viewing_key": "api_key_TKMndbHLGpffztn23TvQ9vbKidGE1uQYDrj5BPz+f94="
+         },
+         {
+            "address":"secret1xjk34tmzwsugjwhr3jnxsqeju2e5d3dz2p4qea",
+            "viewing_key": "api_key_JkdQAIPay7EwBt5KGwXoi7YDLibAYgYTou0KU/gENBI="
+         },
+         {
+            "address":"secret19tescjxfwnnkpq8g0j9y4sgjhtapettwx7gxan",
+            "viewing_key": ""
+         },
+         {
+            "address":"secret1m926yhnlhs50gjqykw95nllf6zfk8exdhgey5g",
+            "viewing_key": ""
+         }
+      ]
+   }
+]
