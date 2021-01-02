@@ -1,9 +1,8 @@
-import keplr from '../lib/keplr';
+import Keplr from '../lib/keplr';
 
 export default {
     install(Vue, options) {
-        keplr.init(options.chainId);
-        Vue.prototype.$keplr = keplr;
+        Vue.prototype.$keplr = new Keplr(options.chainId);
 
         Vue.filter('bech32', (address) => {
             const value = address.bech32Address;

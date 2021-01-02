@@ -1,9 +1,6 @@
 <template>
   <div class="keplr-user">
-      <a v-if="!kplrKey" href="" class="keplr-user__login" @click="getKey()">Log in</a>
-      <div v-if="kplrKey">
-          {{ kplrKey | bech32 }}
-      </div>
+      <a href="" class="keplr-user__login" @click="connect()">Connect to "{{ chainId }}"</a>
   </div>
 </template>
 
@@ -11,13 +8,22 @@
 export default {
   data () {
     return {
-        kplrKey: null,
+        account: null,
+    }
+  },
+  computed: {
+    chainId() {
+      return this.$keplr.chainId; 
     }
   },
   methods: {
-      async getKey() {
-          this.kplrKey = await this.$keplr.getKey();
-      },
+    async connect() {
+      this.$keplr.enable();
+    },
+  },
+  async created () {
+    // Hey
+    console.log(await this.$keplr.getKey());
   },
 
 }

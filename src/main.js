@@ -15,9 +15,10 @@ export default function(Vue, { router, head, isClient }) {
 
   Vue.use(Flare);
 
+  Vue.use(Keplr, { chainId: process.env.GRIDSOME_SECRET_CHAIN_ID });
+
   Vue.use(ScrtJs, { restUrl: process.env.GRIDSOME_SECRET_REST_URL });
   Vue.use(AuctionsApi, { factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY});
   
-  Vue.use(Keplr, { chainId: process.env.GRIDSOME_SECRET_CHAIN_ID });
 
 }

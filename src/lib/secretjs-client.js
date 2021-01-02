@@ -13,6 +13,7 @@ import { Bip39, Random } from "@iov/crypto";
 export class SecretJsClient {
   secretRestUrl;
   client;
+  signingClient;
 
   constructor(secretRestUrl) {
     this.secretRestUrl = secretRestUrl;
@@ -54,6 +55,7 @@ export class SecretJsClient {
 
   // TODO review this
   async executeContract(address, handleMsg) {
+    // Everything happens here
     return await this.client.execute(address, handleMsg);
   }
 
