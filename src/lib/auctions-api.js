@@ -21,15 +21,17 @@ export class AuctionsApi {
         minBid,
         description
     ) {
+        const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
+        const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
         const handleMsg = {
             "create_auction": {
                 "label": label,
                 "sell_contract": {
-                    "code_hash": await this.scrtClient.getContractHash(sellTokenAddress),
+                    "code_hash": sellTokenHash,
                     "address": sellTokenAddress
                 },
                 "bid_contract": {
-                    "code_hash": await this.scrtClient.getContractHash(bidTokenAddress),
+                    "code_hash": bidTokenHash,
                     "address": bidTokenAddress
                 },
                 "sell_amount": amount,
