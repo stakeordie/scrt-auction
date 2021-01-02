@@ -22,7 +22,6 @@ export default {
     },
   },
   async created () {
-    // Hey
     console.log(await this.$keplr.getKey());
   },
 

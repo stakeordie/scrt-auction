@@ -57,7 +57,7 @@ export default class Keplr {
   }
 
   async command(command) {
-    const decorator = async () => {
+    const execute = async () => {
       if (!window.getOfflineSigner || !window.keplr) {
         throw "Keplr extension is not installed"
       }
@@ -65,12 +65,13 @@ export default class Keplr {
     }
 
     if(document.readyState === "complete") {
-      return await decorator();
+      return await execute();
     } else {
-
-      // All this into a promise .
-      // and this is were my kids get in the way
-      window.onload = decorator;
+      return new Promise((resolve, reject) =>  {
+        window.onload = async () => {
+          resolve(await execute());
+        }
+      });
     }
   }
 
