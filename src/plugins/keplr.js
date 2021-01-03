@@ -4,9 +4,8 @@ export default {
     install(Vue, options) {
         Vue.prototype.$keplr = new Keplr(options.chainId);
 
-        Vue.filter('bech32', (address) => {
-            const value = address.bech32Address;
-            return value.substring(0, 10) + '...' + value.substring(value.length - 4, value.length);
+        Vue.filter('shortAddress', (address) => {
+            return address.substring(0, 13) + '...' + address.substring(address.length - 6, address.length);
       })
     }
  }

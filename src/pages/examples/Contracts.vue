@@ -1,5 +1,4 @@
 <template>
-  <default-layout>
     <page>
       <columns number-l="2" weight="right">
         <h1>Query node</h1>
@@ -22,14 +21,10 @@
         </block>
       </columns>
     </page>
-  </default-layout>
 </template>
 
 <script>
-import DefaultLayout from "../../layouts/DefaultLayout.vue";
-
 export default {
-  components: { DefaultLayout },
   data() {
       return {
           codeIdForm: "",

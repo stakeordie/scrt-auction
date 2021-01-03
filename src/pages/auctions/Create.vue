@@ -1,5 +1,4 @@
 <template>
-  <default-layout>
     <page>
         <columns>
         <h1>Secret Auction</h1>
@@ -8,13 +7,10 @@
         </block>
         </columns>
     </page>
-  </default-layout>
 </template>
 
 <script>
-import DefaultLayout from "../../layouts/DefaultLayout.vue";
 export default {
-    components: { DefaultLayout },
     data() {
         return {
 

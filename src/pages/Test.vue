@@ -1,11 +1,9 @@
 <template>
-  <default-layout>
-    <page>
-      <section>
-        <h1>Test</h1>
-      </section>
-    </page>
-  </default-layout>
+  <page>
+    <section>
+      <h1>Test</h1>
+    </section>
+  </page>
 </template>
 
 <script>

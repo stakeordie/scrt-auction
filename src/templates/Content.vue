@@ -1,9 +1,7 @@
 <template>
-  <default-layout>
-    <page>
-      <VueRemarkContent />
-    </page>
-  </default-layout>
+  <page>
+    <VueRemarkContent />
+  </page>
 </template>
 
 <script>

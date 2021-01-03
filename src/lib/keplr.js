@@ -28,10 +28,9 @@
 //   },
 
 //   addExperimental(experimental) {
-    
+
 //   },
 // };
-
 
 export default class Keplr {
   chainId;
@@ -46,33 +45,45 @@ export default class Keplr {
 
   async enable() {
     return await this.command(async () => {
-      return await window.keplr.enable(this.chainId);
+      try {
+        return await window.keplr.enable(this.chainId);
+      } catch {
+        throw "Keplr rejected the connection";
+      }
     });
   }
 
-  async getKey() {
+  async getSelectedAddress() {
     return await this.command(async () => {
-      return await window.keplr.getKey(this.chainId);
+      try {
+        const key = await window.keplr.getKey(this.chainId);
+        return key.bech32Address;
+      } catch {
+        return null;
+      }
     });
   }
 
   async command(command) {
     const execute = async () => {
       if (!window.getOfflineSigner || !window.keplr) {
-        throw "Keplr extension is not installed"
+        throw "Keplr extension is not installed";
       }
       return await command();
-    }
+    };
 
-    if(document.readyState === "complete") {
+    if (document.readyState === "complete") {
       return await execute();
     } else {
-      return new Promise((resolve, reject) =>  {
+      return new Promise((resolve, reject) => {
         window.onload = async () => {
-          resolve(await execute());
-        }
+          try {
+            resolve(await execute());
+          } catch(err) {
+            reject(err);
+          }
+        };
       });
     }
   }
-
 }

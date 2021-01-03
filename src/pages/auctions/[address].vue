@@ -1,24 +1,20 @@
 <template>
-  <default-layout>
-    <page>
-        <columns>
-        <h1>Secret Auction</h1>
-        <block>
-          {{ address }}
-        </block>
-        <block v-if="auctionInfo">
-          <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }} ({{auctionInfo.auction_info.sell_amount}})</div>
-          <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.symbol }}</div>
-        </block>
-        </columns>
-    </page>
-  </default-layout>
+  <page>
+      <columns>
+      <h1>Secret Auction</h1>
+      <block>
+        {{ address }}
+      </block>
+      <block v-if="auctionInfo">
+        <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }} ({{auctionInfo.auction_info.sell_amount}})</div>
+        <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.symbol }}</div>
+      </block>
+      </columns>
+  </page>
 </template>
 
 <script>
-import DefaultLayout from "../../layouts/DefaultLayout.vue";
 export default {
-  components: { DefaultLayout },
   data() {
     return {
       address: "",
