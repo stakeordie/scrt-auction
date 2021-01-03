@@ -3,7 +3,7 @@
       <h1>Query node</h1>
       <transaction-send></transaction-send>
       <hr>
-      <button>Hola</button>      
+      
     </page>
 </template>
 
@@ -12,8 +12,9 @@ import TransactionSend from './components/TransactionSend.vue';
 export default {
   components: {
     TransactionSend,
-  },
+  }
 };
 </script>
 
-<style></style>
+<style>
+</style>

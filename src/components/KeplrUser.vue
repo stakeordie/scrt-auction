@@ -4,7 +4,9 @@
       <a href="" @click="clicked()">
         <img class="keplr__icon" src="@/assets/keplr-icon.svg">
       </a>
-      <transition name="fade">
+        <transition 
+          enter-active-class="animate__animated animate__flipInX"
+          leave-active-class="animate__animated animate__flipOutX">
         <div v-if="userAddress" v-show="showDetails" class="keplr__account">
           <span class="account account__chain">{{ chainId }}</span>
           <span class="account account__address">{{userAddress }}</span>
@@ -70,6 +72,8 @@ export default {
     background-color: var(--default-background-color);
     padding: var(--gutter);
     z-index: 11000;
+
+    box-shadow: 0px 0px 16px -6px rgba(0,0,0,1);
   }
 
   &__status {

@@ -1031,10 +1031,10 @@
   dependencies:
     "@cosmjs/utils" "^0.20.0"
 
-"@lkmx/flare@^0.3.10":
-  version "0.3.10"
-  resolved "https://registry.yarnpkg.com/@lkmx/flare/-/flare-0.3.10.tgz#38112a330ac4cf61243658d0e8220bdcee6e282e"
-  integrity sha512-N64DqQJSGj5ZZuFRZzYa/BQtQgpRM0qi1jV1pGrJFl+zyO4IQFwJ8HLyWcTxN/NpaIOKCQVeMlffnm/pVEC1Hg==
+"@lkmx/flare@^0.3.11":
+  version "0.3.11"
+  resolved "https://registry.yarnpkg.com/@lkmx/flare/-/flare-0.3.11.tgz#1e21f1d75c8be503b927502bc8593c4b77172adb"
+  integrity sha512-q3L8pzMV4abHKHBrWKdxOPdhqMnVhD52KCFm9IE7Q4CNwwdm/1+UrUDMSg62+TbNi8wTWebC+KrNuBJKqHdUCA==
   dependencies:
     core-js "^3.6.5"
     node-sass "^5.0.0"
@@ -1539,6 +1539,11 @@ amdefine@>=0.0.4:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/amdefine/-/amdefine-1.0.1.tgz#4a5282ac164729e93619bcfd3ad151f817ce91f5"
   integrity sha1-SlKCrBZHKek2Gbz9OtFR+BfOkfU=
+
+animate.css@^4.1.1:
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/animate.css/-/animate.css-4.1.1.tgz#614ec5a81131d7e4dc362a58143f7406abd68075"
+  integrity sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==
 
 ansi-align@^3.0.0:
   version "3.0.0"

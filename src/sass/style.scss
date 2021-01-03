@@ -35,6 +35,10 @@ $red-color: #d53a2c;
     // dependency, i.e. KeplrUser badge, etc.
     --default-background-color: #{$dark-gray-color};
     --gutter: var(--f-gutter);
+
+
+    // Animation variables
+    --animate-duration: 0.4s;
 }
 
 html {

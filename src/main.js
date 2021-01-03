@@ -1,3 +1,5 @@
+import "animate.css"
+
 import "./sass/style.scss"
 
 import Flare from "@lkmx/flare"
