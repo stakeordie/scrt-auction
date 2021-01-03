@@ -6,7 +6,7 @@
       </a>
         <transition 
           enter-active-class="animate__animated animate__flipInX"
-          leave-active-class="animate__animated animate__flipOutX">
+          leave-active-class="animate__animated animate__fadeOutUp">
         <div v-if="userAddress" v-show="showDetails" class="keplr__account">
           <span class="account account__chain">{{ chainId }}</span>
           <span class="account account__address">{{userAddress }}</span>
@@ -17,6 +17,8 @@
 
 <script>
 const REFRESH_RATE = 1000;
+const TIME_TO_CLOSE = 2000;
+
 
 export default {
 
@@ -33,13 +35,26 @@ export default {
     }
   },
   methods: {
+    toggleDetails(value) {
+      if(value === undefined) {
+        this.showDetails = !this.showDetails;
+      } else {
+        this.showDetails = value;
+      }
+       
+      if(this.showDetails) {
+        setTimeout(() => {
+          this.showDetails = false;
+        }, TIME_TO_CLOSE);
+      }
+    },
     async clicked() {
       if(this.userAddress) {
-        this.showDetails = !this.showDetails;
+        this.toggleDetails();
       } else {
         await this.$keplr.enable();
         this.updateAddress();
-        this.showDetails = true;
+        this.toggleDetails(true);
       }
     },
     async updateAddress() {

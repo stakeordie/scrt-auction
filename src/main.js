@@ -9,6 +9,7 @@ import ScrtJs from "./plugins/scrt"
 import AuctionsApi from "./plugins/auctions"
 
 import DefaultLayout from "~/layouts/DefaultLayout.vue";
+import VueTheMask from 'vue-the-mask'
 
 
 export default function(Vue, { router, head, isClient }) {
@@ -16,6 +17,8 @@ export default function(Vue, { router, head, isClient }) {
   Vue.component("DefaultLayout", DefaultLayout);
 
   Vue.use(Flare);
+  Vue.use(VueTheMask)
+
 
   Vue.use(Keplr, { chainId: process.env.GRIDSOME_SECRET_CHAIN_ID });
 

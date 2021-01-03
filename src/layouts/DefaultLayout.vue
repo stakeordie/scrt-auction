@@ -22,7 +22,7 @@
 
     <template #footer>
       <simple-footer>
-        <p>Flare Project</p>
+        <p>Secret Project</p>
       </simple-footer>
     </template>
 

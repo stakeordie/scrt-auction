@@ -1,20 +1,22 @@
 <template>
-    <page>
+  <page>
+    <columns number="2" number-s="1" weight="right">
       <h1>Query node</h1>
-      <transaction-send></transaction-send>
-      <hr>
-      
-    </page>
+      <p>Send SCRT to an account</p>
+      <block>
+        <transaction-send></transaction-send>
+      </block>
+    </columns>
+  </page>
 </template>
 
 <script>
-import TransactionSend from './components/TransactionSend.vue';
+import TransactionSend from "./components/TransactionSend.vue";
 export default {
   components: {
     TransactionSend,
-  }
+  },
 };
 </script>
 
-<style>
-</style>
+<style></style>

@@ -13,6 +13,7 @@
     "dotenv": "^8.2.0",
     "gridsome": "^0.7.0",
     "secretjs": "^0.10.3",
-    "vee-validate": "^3.4.5"
+    "vee-validate": "^3.4.5",
+    "vue-the-mask": "^0.11.1"
   }
 }
