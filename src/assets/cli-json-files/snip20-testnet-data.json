@@ -44,10 +44,10 @@
       ]
    },
    {
-      "token":"sodta",
+      "token":"sodtc",
       "address":"",
-      "symbol":"SODTA",
-      "decimals":8,
+      "symbol":"SODTC",
+      "decimals":6,
       "account holders": [
          {
             "address":"secret10uc40qc5rjkh6zhu8dyqheetejyevukzkkecvs", 
@@ -68,10 +68,10 @@
       ]
    },
    {
-      "token":"sodta",
+      "token":"sodtd",
       "address":"",
-      "symbol":"SODTA",
-      "decimals":8,
+      "symbol":"SODTD",
+      "decimals":6,
       "account holders": [
          {
             "address":"secret10uc40qc5rjkh6zhu8dyqheetejyevukzkkecvs", 

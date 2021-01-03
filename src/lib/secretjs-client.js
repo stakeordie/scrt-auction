@@ -60,8 +60,34 @@ export class SecretJsClient {
 
   // TODO review this
   async executeContract(address, handleMsg) {
-    // Everything happens here
-    return await this.client.execute(address, handleMsg);
+      const chainId = await this.getChainId();
+      await window.keplr.enable(chainId);
+      const keplrOfflineSigner = await window.getOfflineSigner(chainId)
+      console.log(keplrOfflineSigner);
+      const signerAddress = (await keplrOfflineSigner.getAccounts())[0];
+      console.log(signerAddress.address);
+
+      this.signingClient = new SigningCosmWasmClient(
+        this.secretRestUrl,
+        signerAddress.address,
+        keplrOfflineSigner,
+        window.getEnigmaUtils(chainId),
+        {
+            init: {
+                amount: [{ amount: '50000', denom: 'uscrt' }],
+                gas: '100000',
+            },
+            exec: {
+                amount: [{ amount: '50000', denom: 'uscrt' }],
+                gas: '100000',
+            },
+        }
+     );
+     console.log(this.signingClient);
+     console.log(address);
+     console.log(handleMsg);
+
+    return await this.signingClient.execute(address, handleMsg);
   }
 
   async getContractHash(address) {
