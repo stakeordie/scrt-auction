@@ -45,6 +45,11 @@ export class SecretJsClient {
     }
   }
 
+
+  async sendTokens(deposit) {
+
+  }
+
   async queryAccount(address) {
     return await this.client.getAccount(address);
   }
