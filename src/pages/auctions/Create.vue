@@ -18,7 +18,7 @@ export default {
     },
     methods: {
         async createAuction() {
-            // console.log((await window.getOfflineSigner("holodeck-2").getAccounts())[0]);
+            console.log((await window.getOfflineSigner("holodeck-2").getAccounts())[0]);
             let auction = await this.$auctions.createAuction("testAuction",
                 "secret1qvq5h3ta2qpng3vdlln7pu8mnhn98getzsw9ga",
                 "secret1wma0dyp30mncz8rdzga0426s9fzx6jmqmp79uy",
