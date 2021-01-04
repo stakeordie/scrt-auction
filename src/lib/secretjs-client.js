@@ -59,6 +59,13 @@ export class SecretJsClient {
   }
 
   // TODO review this
+
+  async decryptTxHash(txHash) {
+    const query = {id: txHash}
+    return await this.client.searchTx(query);
+    //secretcli q compute tx ${txHash}
+  }
+
   async executeContract(address, handleMsg) {
     console.log(handleMsg);
     const chainId = await this.getChainId();
@@ -122,7 +129,7 @@ export class SecretJsClient {
               gas: '300000',
             },
             exec: {
-                amount: [{ amount: '3000', denom: 'uscrt' }],
+                amount: [{ amount: '1000000', denom: 'uscrt' }],
                 gas: '1000000',
             },
           }

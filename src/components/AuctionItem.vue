@@ -1,10 +1,10 @@
 <template>
   <div class="auction">
     <span>{{ auction.pair }}</span>
-    <span>{{ auction.sell_amount }}</span>
+    <span>{{ auction.sell_amount / Math.pow(10, auction.sell_decimals) }}</span>
     <dl>
       <dt>Minimum bid</dt>
-      <dd>{{ auction.minimum_bid }}</dd>
+      <dd>{{ auction.minimum_bid / Math.pow(10, auction.bid_decimals) }}</dd>
     </dl>
     <span>{{ auction.label }}</span>
     <router-link :to="'/auctions/' + auction.address" class="button auction__bid">Bid</router-link>
@@ -24,7 +24,7 @@
 
 <script>
 export default {
-  props: ["auction"],
+  props: ["auction"]
 };
 </script>
 
