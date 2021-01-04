@@ -60,34 +60,75 @@ export class SecretJsClient {
 
   // TODO review this
   async executeContract(address, handleMsg) {
-      const chainId = await this.getChainId();
-      await window.keplr.enable(chainId);
-      const keplrOfflineSigner = await window.getOfflineSigner(chainId)
-      console.log(keplrOfflineSigner);
-      const signerAddress = (await keplrOfflineSigner.getAccounts())[0];
-      console.log(signerAddress.address);
-
-      this.signingClient = new SigningCosmWasmClient(
-        this.secretRestUrl,
-        signerAddress.address,
-        keplrOfflineSigner,
-        window.getEnigmaUtils(chainId),
-        {
-            init: {
-                amount: [{ amount: '50000', denom: 'uscrt' }],
-                gas: '100000',
+    const chainId = await this.getChainId();
+    if (window.keplr.experimentalSuggestChain) {
+      try {
+        await window.keplr.experimentalSuggestChain({
+          chainId: chainId,
+          chainName: 'Holodeck-2',
+          rpc: this.secretRestUrl + ':26657',
+          rest: this.secretRestUrl,
+          bip44: {
+              coinType: 529,
+          },
+          coinType: 529,
+          stakeCurrency: {
+            coinDenom: 'SCRT',
+            coinMinimalDenom: 'uscrt',
+            coinDecimals: 6,
+          },
+          bech32Config: {
+            bech32PrefixAccAddr: 'secret',
+            bech32PrefixAccPub: 'secretpub',
+            bech32PrefixValAddr: 'secretvaloper',
+            bech32PrefixValPub: 'secretvaloperpub',
+            bech32PrefixConsAddr: 'secretvalcons',
+            bech32PrefixConsPub: 'secretvalconspub',
+          },
+          currencies: [
+            {
+              coinDenom: 'SCRT',
+              coinMinimalDenom: 'uscrt',
+              coinDecimals: 6,
             },
-            exec: {
-                amount: [{ amount: '50000', denom: 'uscrt' }],
-                gas: '100000',
+          ],
+          feeCurrencies: [
+            {
+              coinDenom: 'SCRT',
+              coinMinimalDenom: 'uscrt',
+              coinDecimals: 6,
             },
-        }
-     );
-     console.log(this.signingClient);
-     console.log(address);
-     console.log(handleMsg);
-
-    return await this.signingClient.execute(address, handleMsg);
+          ],
+          gasPriceStep: {
+            low: 1,
+            average: 2.5,
+            high: 4,
+          },
+          features: ['secretwasm'],
+        });
+        await window.keplr.enable(chainId);
+        const offlineSigner = window.getOfflineSigner(chainId);
+        const enigmaUtils = window.getEnigmaUtils(chainId);
+        const accounts = await offlineSigner.getAccounts();
+        this.signingClient = new SigningCosmWasmClient(
+          this.secretRestUrl,
+          accounts[0].address,
+          offlineSigner,
+          enigmaUtils,
+          {
+              exec: {
+                  amount: [{amount: '50000',denom: 'uscrt'}],
+                  gas: '100000'
+              }
+          }
+        );
+        return await this.signingClient.execute(address, handleMsg);
+      } catch (error) {
+        console.error(error)
+      }
+    } else {
+        alert("Please use the recent version of keplr extension");
+    }
   }
 
   async getContractHash(address) {
