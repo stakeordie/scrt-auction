@@ -61,32 +61,34 @@ export class SecretJsClient {
   // TODO review this
   async executeContract(address, handleMsg) {
       const chainId = await this.getChainId();
-      await window.keplr.enable(chainId);
-      const keplrOfflineSigner = await window.getOfflineSigner(chainId)
-      console.log(keplrOfflineSigner);
-      const signerAddress = (await keplrOfflineSigner.getAccounts())[0];
-      console.log(signerAddress.address);
-
+      const keplr = window.keplr;
+      const offlineSigner = window.getOfflineSigner(chainId);
+      const enigmaUtils = window.getEnigmaUtils(chainId);
+      await keplr.experimentalSuggestChain({
+        // Chain-id of the Cosmos SDK chain.
+        chainId,
+        gasPriceStep: {
+          low: 0.1,
+          average: 0.25,
+          high: 0.4,
+        }
+      });
+      console.log(window.keplr)
+      await keplr.enable(chainId);
+      const accounts = await offlineSigner.getAccounts();
+      console.log(window.keplr)
       this.signingClient = new SigningCosmWasmClient(
         this.secretRestUrl,
-        signerAddress.address,
-        keplrOfflineSigner,
-        window.getEnigmaUtils(chainId),
+        accounts[0].address,
+        offlineSigner,
+        enigmaUtils,
         {
-            init: {
-                amount: [{ amount: '50000', denom: 'uscrt' }],
-                gas: '100000',
-            },
             exec: {
-                amount: [{ amount: '50000', denom: 'uscrt' }],
-                gas: '100000',
-            },
+                amount: [{amount: '94',denom: 'uscrt'}],
+                gas: '377000'
+            }
         }
      );
-     console.log(this.signingClient);
-     console.log(address);
-     console.log(handleMsg);
-
     return await this.signingClient.execute(address, handleMsg);
   }
 
