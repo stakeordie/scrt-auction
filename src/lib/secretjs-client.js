@@ -65,7 +65,7 @@ export class SecretJsClient {
       try {
         await window.keplr.experimentalSuggestChain({
           chainId: chainId,
-          chainName: 'Holodeck-2',
+          chainName: 'holodeck-2',
           rpc: this.secretRestUrl + ':26657',
           rest: this.secretRestUrl,
           bip44: {
@@ -116,10 +116,14 @@ export class SecretJsClient {
           offlineSigner,
           enigmaUtils,
           {
-              exec: {
-                  amount: [{amount: '50000',denom: 'uscrt'}],
-                  gas: '100000'
-              }
+            init: {
+              amount: [{ amount: '300000', denom: 'uscrt' }],
+              gas: '300000',
+            },
+            exec: {
+                amount: [{ amount: '3000', denom: 'uscrt' }],
+                gas: '1000000',
+            },
           }
         );
         return await this.signingClient.execute(address, handleMsg);
