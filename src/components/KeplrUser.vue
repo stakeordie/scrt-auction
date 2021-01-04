@@ -17,7 +17,7 @@
 
 <script>
 const REFRESH_RATE = 1000;
-const TIME_TO_CLOSE = 2000;
+const TIME_TO_CLOSE = 3000;
 
 
 export default {
@@ -54,11 +54,14 @@ export default {
       } else {
         await this.$keplr.enable();
         this.updateAddress();
-        this.toggleDetails(true);
       }
     },
     async updateAddress() {
+      const oldAddress = this.userAddress;
       this.userAddress = await this.$keplr.getSelectedAddress();
+      if(this.userAddress !== oldAddress) {
+        this.toggleDetails(true);
+      }
     }
   },
   async mounted () {
