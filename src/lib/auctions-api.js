@@ -11,6 +11,19 @@ export class AuctionsApi {
         return (await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})).list_active_auctions.active;
     }
 
+    /*
+    Factory Methods:
+    `create_auction`,
+    `register_auction`, 
+    `close_auction`, 
+    `register_bidder`, 
+    `remove_bidder`, 
+    `new_auction_contract`, 
+    `create_viewing_key`, 
+    `set_viewing_key`,
+    `set_status`
+    */
+
     // EVERYTHING IS IN THIS METHOD
     // TODO Review this
     async createAuction(
@@ -38,7 +51,8 @@ export class AuctionsApi {
                 "minimum_bid": minBid,
                 "description": description
             }
-        }
+        };
+
         return await this.scrtClient.executeContract(this.factoryAddress, handleMsg);
     }
 }

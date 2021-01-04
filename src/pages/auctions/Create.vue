@@ -18,15 +18,14 @@ export default {
     },
     methods: {
         async createAuction() {
-            console.log((await window.getOfflineSigner("holodeck-2").getAccounts())[0]);
-            let auction = await this.$auctions.createAuction("testAuction",
-                "secret1qvq5h3ta2qpng3vdlln7pu8mnhn98getzsw9ga",
+            let auction = await this.$auctions.createAuction("newAuction",
                 "secret1wma0dyp30mncz8rdzga0426s9fzx6jmqmp79uy",
-                1000000000,
-                1000000000,
+                "secret1qvq5h3ta2qpng3vdlln7pu8mnhn98getzsw9ga",
+                "1000",
+                "1000",
                 "This is a test description"
             );
-            //console.log(auction);
+            console.log(auction);
         }
     }
 }

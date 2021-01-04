@@ -60,12 +60,13 @@ export class SecretJsClient {
 
   // TODO review this
   async executeContract(address, handleMsg) {
+    console.log(handleMsg);
     const chainId = await this.getChainId();
     if (window.keplr.experimentalSuggestChain) {
       try {
         await window.keplr.experimentalSuggestChain({
           chainId: chainId,
-          chainName: 'holodeck-2',
+          chainName: 'Scrt Testnet',
           rpc: this.secretRestUrl + ':26657',
           rest: this.secretRestUrl,
           bip44: {
