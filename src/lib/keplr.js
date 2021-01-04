@@ -64,6 +64,10 @@ export default class Keplr {
     });
   }
 
+  async getSigner() {
+    return window.getOfflineSigner(this.chainId);
+  }
+
   async command(command) {
     const execute = async () => {
       if (!window.getOfflineSigner || !window.keplr) {
