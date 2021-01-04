@@ -20,7 +20,12 @@ export default function(Vue, { router, head, isClient }) {
   Vue.use(VueTheMask)
 
 
-  Vue.use(Keplr, { chainId: process.env.GRIDSOME_SECRET_CHAIN_ID });
+  Vue.use(Keplr, { 
+    chainId: process.env.GRIDSOME_SECRET_CHAIN_ID,
+    chainName: process.env.GRIDSOME_SECRET_CHAIN_NAME,
+    restUrl: process.env.GRIDSOME_SECRET_REST_URL,
+    rpcUrl: process.env.GRIDSOME_SECRET_RPC_URL,
+  });
 
   Vue.use(ScrtJs, { restUrl: process.env.GRIDSOME_SECRET_REST_URL });
   Vue.use(AuctionsApi, { factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY});
