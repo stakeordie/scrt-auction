@@ -100,9 +100,9 @@ export class SecretJsClient {
             },
           ],
           gasPriceStep: {
-            low: 1,
-            average: 2.5,
-            high: 4,
+            low: "0.1",
+            average: "0.25",
+            high: "0.4",
           },
           features: ['secretwasm'],
         });
