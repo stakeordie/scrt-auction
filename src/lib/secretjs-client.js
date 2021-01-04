@@ -46,8 +46,8 @@ export class SecretJsClient {
   }
 
 
-  async sendTokens(payment) {
-    console.log(payment);
+  async sendTokens(deposit) {
+
   }
 
   async queryAccount(address) {
