@@ -63,7 +63,8 @@ export class AuctionsApi {
             }
         };
         const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
-        return JSON.parse(new TextDecoder("utf-8").decode(response.data))
+        console.log(response);
+        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
         //secretcli tx compute execute *sale_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*amount_being_sold_in_smallest_denomination_of_sell_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
     }
 

@@ -63,7 +63,12 @@ export class SecretJsClient {
   async decryptTxHash(txHash) {
     const query = {id: txHash}
     return await this.client.searchTx(query);
-    //secretcli q compute tx ${txHash}
+    //secretcli q tx ${txHash}
+  }
+
+  async decryptTxResponse(response) {
+    console.log(response);
+    return await this.client.restClient.decryptTxsResponse(response);
   }
 
   async executeContract(address, handleMsg) {
