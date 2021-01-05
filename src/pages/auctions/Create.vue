@@ -97,13 +97,12 @@ export default {
                     tokenName: "Stake or Die Token E (SODTE)",
                     tokenAddress: "secret18u0m2um6vv08ftzxls897gytd4tzcc2w6vlem6",
                 }
-
             ]
         }
     },
     async mounted() {
         this.viewingKey = await this.$auctions.getViewingKey();
-        console.log(this.viewingKey);
+        const snip20Tokens = await this.$auctions.listAllTokens(); // Do we need this?
     },
     methods: {
         async createAuction() {

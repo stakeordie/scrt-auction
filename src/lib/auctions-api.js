@@ -37,6 +37,18 @@ export class AuctionsApi {
     }
 
     //secretcli tx compute execute --label *factory_contract_label* '{"create_viewing_key":{"entropy":"*Some arbitrary string used as entropy in generating the random viewing key*"}}' --from *your_key_alias_or_addr* --gas 200000 -y
+    async listAllTokens() {
+        const snip20Tokens =  await this.scrtClient.listContracts(1);
+        console.log(snip20Tokens);
+
+        // How do I do this?
+        // let snip20TokensVerbose = [];
+        // snip20Tokens.forEach(function(token,index) {
+        //     let tokenVerbose = this.scrtClient.queryContract(token.address, {"tokenInfo": {}});
+        //     snip20TokensVerbose.push(tokenVerbose);
+        // });
+    }
+
     async createViewingKey() {
         const msg = {
             "create_viewing_key":{
