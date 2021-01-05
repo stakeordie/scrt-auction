@@ -67,6 +67,19 @@ export class AuctionsApi {
         return localStorage.getItem('viewingKey');
     }
 
+    async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
+        console.log(bidTokenAddress + " _ " + auctionAddress + " _ " + bidAmount);
+        const msg = {
+            "send": {
+                "recipient": auctionAddress, 
+                "amount": bidAmount
+            }
+        };
+        const response = await this.scrtClient.executeContract(bidTokenAddress, msg);
+        console.log(response);
+        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+    }
+
     async consignToAuction(sellTokenAddress, auctionAddress, sellAmount) {
         const msg = {
             "send": {

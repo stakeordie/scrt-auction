@@ -2,10 +2,8 @@
   <page>
       <columns>
       <h1>Secret Auction</h1>
-      <block>
-        {{ address }}
-      </block>
       <block v-if="auctionInfo">
+        <h2>Auction Info</h2>
         <div>Amount: {{auctionInfo.auction_info.sell_amount / Math.pow(10, auctionInfo.auction_info.sell_token.token_info.decimals)}}</div>
         <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }}</div>
         <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.symbol }}</div>
@@ -13,26 +11,75 @@
         <div>Description: {{ auctionInfo.auction_info.description }}</div>
         <div>Status: {{ auctionInfo.auction_info.status }}</div>
       </block>
+      <block>
+        <h2>Place a Bid</h2>
+        <validation-observer v-slot="{ handleSubmit, invalid }">
+          <form class="form" @submit.prevent="handleSubmit(placeBid)">
+            <ul>
+              <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
+            </ul>
+
+            <div class="form__frame">
+              <validation-provider :rules="minValueRules" v-slot="{ errors }">
+                  <label for="bid-amount">Bid Amount</label>
+                  <span class="error">{{ errors[0] }}</span>
+                  <input name="bid-amount" type="text" v-model="formBidAmount"/>
+              </validation-provider>
+              <button :disabled="invalid">Place Bid</button>
+            </div>
+          </form>
+        </validation-observer>
+      </block>
       </columns>
   </page>
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
+import { required, integer, min_value } from "vee-validate/dist/rules";
+
+extend("required", {
+  ...required,
+  message: "This field is required",
+});
+
+extend("integer", {
+  ...integer,
+  message: "This field must be an integer",
+});
+
+extend("min_value", {
+  ...min_value,
+  message: "The bid must be greater than the minimum value allowed by the auction.",
+});
+
 export default {
+  components: { ValidationObserver, ValidationProvider},
   data() {
     return {
-      address: "",
+      errors: [],
+      auctionAddress: "",
       auctionInfo: null,
-      codeHash: ""
+      codeHash: "",
+      formBidAmount: null,
+      minValueRules: ""
     };
   },
   async created() {
-    this.address = this.$route.params.address;
-    this.auctionInfo = await this.$scrtjs.queryContract(this.address, {"auction_info":{}})
-    this.codeHash = await this.$scrtjs.getContractHash(this.address);
+    this.auctionAddress = this.$route.params.address;
+    this.auctionInfo = await this.$scrtjs.queryContract(this.auctionAddress, {"auction_info":{}})
+    this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
+    this.formBidAmount = this.auctionInfo.auction_info.minimum_bid;
+    this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
     console.log(this.codeHash);
     console.log(this.auctionInfo);
   },
+  methods: {
+    async placeBid() {
+      let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmount);
+      console.log(placedBid);
+    }
+  }
 };
 </script>
 
