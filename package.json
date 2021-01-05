@@ -14,6 +14,7 @@
     "gridsome": "^0.7.0",
     "secretjs": "^0.10.3",
     "vee-validate": "^3.4.5",
+    "vue-select": "^3.11.2",
     "vue-the-mask": "^0.11.1"
   }
 }
