@@ -31,7 +31,7 @@ export default {
 <style lang="scss" scoped>
 .auction {
   display: grid;
-  padding: var(--f-gutter-s);
+  padding: var(--f-gutter);
   border: 1px solid white;
   border-radius: 22px;
   position: relative;

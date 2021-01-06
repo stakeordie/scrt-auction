@@ -25,6 +25,11 @@ export default function(Vue, { router, head, isClient }) {
     chainName: process.env.GRIDSOME_SECRET_CHAIN_NAME,
     restUrl: process.env.GRIDSOME_SECRET_REST_URL,
     rpcUrl: process.env.GRIDSOME_SECRET_RPC_URL,
+    gasPriceSuggestion: {
+      low: 0,
+      mid: 1,
+      high: 2,
+    }
   });
 
   Vue.use(ScrtJs, { restUrl: process.env.GRIDSOME_SECRET_REST_URL });

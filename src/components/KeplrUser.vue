@@ -54,14 +54,11 @@ export default {
       } else {
         await this.$keplr.enable();
         this.updateAddress();
+        this.toggleDetails(true);
       }
     },
     async updateAddress() {
-      const oldAddress = this.userAddress;
       this.userAddress = await this.$keplr.getSelectedAddress();
-      if(this.userAddress !== oldAddress) {
-        this.toggleDetails(true);
-      }
     }
   },
   async mounted () {

@@ -44,9 +44,8 @@ export default {
       auctions: null
     }
   },
-  async mounted() {
+  async created() {
     this.auctions = await this.$auctions.listActive();
-    console.log(this.auctions);
   },
   methods: {
     async createViewingKey() {
@@ -62,8 +61,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import "@lkmx/flare/src/functions/respond-to";
+
   .auctions-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-gap: var(--f-gutter);
+
+    @include respond-to("<=s") {
+      grid-template-columns: 1fr;
+    }
+    @include respond-to(">m") {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 </style>
