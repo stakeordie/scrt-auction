@@ -105,17 +105,21 @@ export class AuctionsApi {
             "address": address,
             "viewingKey": viewingKey
         }
-        const currentViewingKey = this.getViewingKey(address);
+        const currentViewingKey = await this.getViewingKey(address);
         if(currentViewingKey) {
-            let viewingKeys = await this.getViewingKeys();
-            this.removeViewingKey(viewingKeys, address)
+            console.log(currentViewingKey);
+            this.removeViewingKey(address)
         }
         let viewingKeys = await this.getViewingKeys();
         viewingKeys.push(newViewingKey);
         this.saveViewingKeys(viewingKeys);
     }
 
-    async removeViewingKey(viewingKeys, address) {
+    async removeViewingKey() {
+        const chainId = await this.scrtClient.getChainId()
+        const offlineSigner = await window.getOfflineSigner(chainId);
+        const address = (await offlineSigner.getAccounts())[0].address;
+        let viewingKeys = await this.getViewingKeys();
         viewingKeys.splice(viewingKeys.findIndex(item => item.address === address), 1)
         this.saveViewingKeys(viewingKeys);
     }
