@@ -130,7 +130,7 @@ export class AuctionsApi {
     }
 
     async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
-        console.log(bidTokenAddress + " _ " + auctionAddress + " _ " + bidAmount);
+        //secretcli tx compute execute *bid_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*bid_amount_in_smallest_denomination_of_bidding_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
         const msg = {
             "send": {
                 "recipient": auctionAddress, 
@@ -138,16 +138,24 @@ export class AuctionsApi {
             }
         };
         const bidFees = {
-            init: {
-                amount: [{ amount: '300000', denom: 'uscrt' }],
-                gas: '300000',
-            },
             exec: {
-                amount: [{ amount: '200000', denom: 'uscrt' }],
-                gas: '200000',
+                amount: [{ amount: '400000', denom: 'uscrt' }],
+                gas: '400000',
             },
         }
         const response = await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
+        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+    }
+
+    async retractBid(auctionAddress) {
+        //secretcli tx compute execute *auction_contract_address* '{"retract_bid": {}}' --from *your_key_alias_or_addr* --gas 300000 -y
+        const retractBidFees = {
+            exec: {
+                amount: [{ amount: '300000', denom: 'uscrt' }],
+                gas: '300000',
+            },
+        }
+        const response = await this.scrtClient.executeContract(auctionAddress, {"retract_bid": {}}, retractBidFees);
         return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
 
