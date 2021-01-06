@@ -71,7 +71,7 @@ export class SecretJsClient {
     return await this.client.restClient.decryptTxsResponse(response);
   }
 
-  async executeContract(address, handleMsg) {
+  async executeContract(address, handleMsg, fees) {
     console.log(handleMsg);
     const chainId = await this.getChainId();
     if (window.keplr.experimentalSuggestChain) {
@@ -123,21 +123,24 @@ export class SecretJsClient {
         const offlineSigner = window.getOfflineSigner(chainId);
         const enigmaUtils = window.getEnigmaUtils(chainId);
         const accounts = await offlineSigner.getAccounts();
-        this.signingClient = new SigningCosmWasmClient(
-          this.secretRestUrl,
-          accounts[0].address,
-          offlineSigner,
-          enigmaUtils,
-          {
+        if(!fees) {
+          fees = {
             init: {
               amount: [{ amount: '300000', denom: 'uscrt' }],
               gas: '300000',
             },
             exec: {
-                amount: [{ amount: '1000000', denom: 'uscrt' }],
+                amount: [{ amount: '200000', denom: 'uscrt' }],
                 gas: '1000000',
             },
-          }
+          };
+        }
+        this.signingClient = new SigningCosmWasmClient(
+          this.secretRestUrl,
+          accounts[0].address,
+          offlineSigner,
+          enigmaUtils,
+          fees
         );
         return await this.signingClient.execute(address, handleMsg);
       } catch (error) {

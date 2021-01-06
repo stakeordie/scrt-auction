@@ -133,8 +133,17 @@ export class AuctionsApi {
                 "amount": bidAmount
             }
         };
-        const response = await this.scrtClient.executeContract(bidTokenAddress, msg);
-        console.log(response);
+        const bidFees = {
+            init: {
+                amount: [{ amount: '300000', denom: 'uscrt' }],
+                gas: '300000',
+            },
+            exec: {
+                amount: [{ amount: '200000', denom: 'uscrt' }],
+                gas: '200000',
+            },
+        }
+        const response = await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
         return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
 
