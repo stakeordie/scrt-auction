@@ -107,6 +107,8 @@ export default {
     methods: {
         async createAuction() {
             //secretcli tx compute execute --label *factory_contract_label* '{"create_auction":{"label":"*your_auction_name*","sell_contract":{"code_hash":"*sale_tokens_code_hash*","address":"*sale_tokens_contract_address*"},"bid_contract":{"code_hash":"*bid_tokens_code_hash*","address":"*bid_tokens_contract_address*"},"sell_amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*","minimum_bid":"*minimum_accepted_bid_in_smallest_denomination_of_bid_token*","description":"*optional_text_description*"}}' --from *your_key_alias_or_addr* --gas 400000 -y
+            const consignAllowance = await this.$auctions.consignAllowance(this.formSellToken.tokenAddress, this.formSellAmount);
+            console.log(consignAllowance);
             const auction = await this.$auctions.createAuction(this.formTitle,
                 this.formSellToken.tokenAddress,
                 this.formBidToken.tokenAddress,
@@ -114,13 +116,6 @@ export default {
                 this.formMinBidAmount,
                 this.formDescription
             );
-            if(auction) {
-                const auctionAddress = auction.logs[0].events[1].attributes[5].value;
-                console.log(auctionAddress);
-                let auctionConsignment = await this.$auctions.consignToAuction(this.formSellToken.tokenAddress, auctionAddress, this.formSellAmount);
-                console.log(auctionConsignment);
-                //secretcli tx compute execute *sale_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*amount_being_sold_in_smallest_denomination_of_sell_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
-            }
         }
     }
 }

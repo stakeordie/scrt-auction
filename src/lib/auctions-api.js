@@ -49,6 +49,18 @@ export class AuctionsApi {
         // });
     }
 
+    async getAuctionInfo(auctionAddress) {
+        return await this.scrtClient.queryContract(auctionAddress, {"auction_info":{}});
+    }
+
+    async getAuctionBidInfo(auctionAddress,viewingKey) {
+        //secretcli q compute query *auction_contract_address* '{"view_bid": {"address":"*address_whose_bid_to_list*","viewing_key":"*viewing_key*"}}'
+        const chainId = await this.scrtClient.getChainId()
+        const offlineSigner = await window.getOfflineSigner(chainId);
+        const address = (await offlineSigner.getAccounts())[0].address;
+        return await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }});
+    }
+
     async getViewingKeys() {
         let rawViewingKeys = localStorage.getItem('viewingKeys');
         if(rawViewingKeys !== null) {
@@ -59,7 +71,10 @@ export class AuctionsApi {
         }
     }
 
-    async getViewingKey(address) {
+    async getViewingKey() {
+        const chainId = await this.scrtClient.getChainId()
+        const offlineSigner = await window.getOfflineSigner(chainId);
+        const address = (await offlineSigner.getAccounts())[0].address;
         const viewingKeys = await this.getViewingKeys();
         if (viewingKeys === undefined || viewingKeys.length == 0) {
             return undefined;
@@ -123,17 +138,17 @@ export class AuctionsApi {
         return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
 
-    async consignToAuction(sellTokenAddress, auctionAddress, sellAmount) {
+    async consignAllowance(sellTokenAddress, sellAmount) {
+        //secretcli tx compute execute *sale_tokens_contract_address* '{"increase_allowance":{"spender":"secret1xr4mdrh5pr68846rehk3m2jgldfaek03dx0nsn","amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*"}}' --from *your_key_alias_or_addr* --gas 150000 -y
         const msg = {
-            "send": {
-                "recipient": auctionAddress, 
+            "increase_allowance":
+            {
+                "spender": this.factoryAddress,
                 "amount": sellAmount
             }
-        };
+        }
         const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
-        console.log(response);
-        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
-        //secretcli tx compute execute *sale_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*amount_being_sold_in_smallest_denomination_of_sell_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
+        return response;
     }
 
     async createAuction(

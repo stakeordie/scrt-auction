@@ -10,6 +10,7 @@
         <div>Min Bid: {{ auctionInfo.auction_info.minimum_bid / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}}</div>
         <div>Description: {{ auctionInfo.auction_info.description }}</div>
         <div>Status: {{ auctionInfo.auction_info.status }}</div>
+        <div>Bids: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}} {{auctionInfo.auction_info.bid_token.token_info.symbol}}</div>
       </block>
       <block>
         <h2>Place a Bid</h2>
@@ -60,6 +61,7 @@ export default {
       errors: [],
       auctionAddress: "",
       auctionInfo: null,
+      bidInfo: null,
       codeHash: "",
       formBidAmount: null,
       minValueRules: ""
@@ -67,11 +69,15 @@ export default {
   },
   async created() {
     this.auctionAddress = this.$route.params.address;
-    this.auctionInfo = await this.$scrtjs.queryContract(this.auctionAddress, {"auction_info":{}})
+    const viewingKey = await this.$auctions.getViewingKey();
+    if(viewingKey) {
+      this.bidInfo = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
+      console.log(this.bidInfo);
+    }
+    this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress)
     this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
     this.formBidAmount = this.auctionInfo.auction_info.minimum_bid;
     this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
-    console.log(this.codeHash);
     console.log(this.auctionInfo);
   },
   methods: {
