@@ -11,10 +11,10 @@
         <div>Description: {{ auctionInfo.auction_info.description }}</div>
         <div>Status: {{ auctionInfo.auction_info.status }}</div>
         <div v-if="bidInfo.bid.amount_bid > 0">
-          <div>Bids: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}} {{auctionInfo.auction_info.bid_token.token_info.symbol}}</div>
+          <div>Open Bid: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}} {{auctionInfo.auction_info.bid_token.token_info.symbol}}</div>
           <button @click="retractBid()">Retract Your Bid</button>
         </div>
-        <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bids: You have no active bids on this auction.</div>
+        <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bids on this auction.</div>
       </block>
       <block>
         <h2>Place a Bid</h2>
@@ -88,7 +88,6 @@ export default {
     console.log(this.bidInfo)
     this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress)
     this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-    this.formBidAmount = this.auctionInfo.auction_info.minimum_bid;
     this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
   },
   methods: {
