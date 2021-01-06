@@ -24,9 +24,7 @@ export class AuctionsApi {
     async listActive() {
         return (await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})).list_active_auctions.active;
     }
-
     // BELOW HERE ADDED BY SANDY
-
     // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
     async listUserAuctions() {
         const chainId = await this.scrtClient.getChainId()
@@ -35,7 +33,6 @@ export class AuctionsApi {
         const viewingKey = await this.getViewingKey(address);
         return await this.scrtClient.queryContract(this.factoryAddress, {"list_my_auctions":{"address":address,"viewing_key":viewingKey,"filter":"all"}});
     }
-
     //secretcli tx compute execute --label *factory_contract_label* '{"create_viewing_key":{"entropy":"*Some arbitrary string used as entropy in generating the random viewing key*"}}' --from *your_key_alias_or_addr* --gas 200000 -y
     async listAllTokens() {
         const snip20Tokens =  await this.scrtClient.listContracts(1);
