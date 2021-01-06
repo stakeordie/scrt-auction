@@ -32,7 +32,7 @@ export class AuctionsApi {
         const chainId = await this.scrtClient.getChainId()
         const offlineSigner = await window.getOfflineSigner(chainId);
         const address = (await offlineSigner.getAccounts())[0].address;
-        const viewingKey = localStorage.getItem('viewingKey');
+        const viewingKey = await this.getViewingKey(address);
         return await this.scrtClient.queryContract(this.factoryAddress, {"list_my_auctions":{"address":address,"viewing_key":viewingKey,"filter":"all"}});
     }
 
@@ -49,6 +49,29 @@ export class AuctionsApi {
         // });
     }
 
+    async getViewingKeys() {
+        let rawViewingKeys = localStorage.getItem('viewingKeys');
+        if(rawViewingKeys !== null) {
+            return JSON.parse(rawViewingKeys);
+        } else {
+            rawViewingKeys = [];
+            return rawViewingKeys
+        }
+    }
+
+    async getViewingKey(address) {
+        const viewingKeys = await this.getViewingKeys();
+        if (viewingKeys === undefined || viewingKeys.length == 0) {
+            return undefined;
+        }
+        let result = viewingKeys.find( viewingKey => viewingKey.address === address );
+        if(result) {
+            return result.viewingKey
+        } else {
+            return undefined;
+        }
+    }
+
     async createViewingKey() {
         const msg = {
             "create_viewing_key":{
@@ -59,12 +82,32 @@ export class AuctionsApi {
         return JSON.parse(new TextDecoder("utf-8").decode(response.data)).viewing_key.key;
     }
 
-    async saveViewingKey(viewingKey) {
-        localStorage.setItem('viewingKey', viewingKey);
+    async addViewingKey(viewingKey) {
+        const chainId = await this.scrtClient.getChainId()
+        const offlineSigner = await window.getOfflineSigner(chainId);
+        const address = (await offlineSigner.getAccounts())[0].address;
+        const newViewingKey = {
+            "address": address,
+            "viewingKey": viewingKey
+        }
+        const currentViewingKey = this.getViewingKey(address);
+        if(currentViewingKey) {
+            let viewingKeys = await this.getViewingKeys();
+            this.removeViewingKey(viewingKeys, address)
+        }
+        let viewingKeys = await this.getViewingKeys();
+        viewingKeys.push(newViewingKey);
+        this.saveViewingKeys(viewingKeys);
     }
 
-    async getViewingKey() {
-        return localStorage.getItem('viewingKey');
+    async removeViewingKey(viewingKeys, address) {
+        viewingKeys.splice(viewingKeys.findIndex(item => item.address === address), 1)
+        this.saveViewingKeys(viewingKeys);
+    }
+
+    async saveViewingKeys(viewingKeys) {
+        const parsed = JSON.stringify(viewingKeys);
+        localStorage.setItem('viewingKeys', parsed);
     }
 
     async placeBid(bidTokenAddress, auctionAddress, bidAmount) {

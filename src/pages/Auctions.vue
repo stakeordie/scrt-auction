@@ -50,7 +50,7 @@ export default {
   methods: {
     async createViewingKey() {
       const viewingKey = await this.$auctions.createViewingKey();
-      await this.$auctions.saveViewingKey(viewingKey);
+      await this.$auctions.addViewingKey(viewingKey);
     },
     async listUserAuctions() {
       const userAuctions = await this.$auctions.listUserAuctions();
