@@ -20,6 +20,7 @@
   -->
     <column>
     <h1>Secret Auctions</h1>
+    <router-link :to="'/auctions/create'" class="button">Create New Auction</router-link>
     <button @click="createViewingKey()">Create Viewing Key</button>
     <button @click="listUserAuctions()">ListUserAuctions</button>
     <section class="auctions-grid">
