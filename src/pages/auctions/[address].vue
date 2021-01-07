@@ -87,9 +87,11 @@ export default {
         this.bidInfo = bidInfoResponse;
       }
       const userAuctions = await this.$auctions.listUserAuctions();
-      const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
-      if(is_owner.length > 0) {
-        this.isOwner = true;
+      if(userAuctions.list_my_auctions.active.as_seller) {
+        const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
+        if(is_owner.length > 0) {
+          this.isOwner = true;
+        }
       }
     }
     this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress)
