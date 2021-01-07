@@ -1,40 +1,41 @@
 <template>
   <page>
-      <columns>
-      <h1>Secret Auction</h1>
+    <columns>
       <block v-if="auctionInfo">
-        <h2>Auction Info</h2>
-        <div>Amount: {{auctionInfo.auction_info.sell_amount / Math.pow(10, auctionInfo.auction_info.sell_token.token_info.decimals)}}</div>
-        <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }}</div>
-        <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.symbol }}</div>
-        <div>Min Bid: {{ auctionInfo.auction_info.minimum_bid / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}}</div>
-        <div>Description: {{ auctionInfo.auction_info.description }}</div>
-        <div>Status: {{ auctionInfo.auction_info.status }}</div>
-        <div v-if="bidInfo.bid.amount_bid > 0">
-          <div>Open Bid: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}} {{auctionInfo.auction_info.bid_token.token_info.symbol}}</div>
-          <button @click="retractBid()">Retract Your Bid</button>
-        </div>
-        <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bids on this auction.</div>
-      </block>
-      <block>
-        <h2>Place a Bid</h2>
-        <validation-observer v-slot="{ handleSubmit, invalid }">
-          <form class="form" @submit.prevent="handleSubmit(placeBid)">
-            <ul>
-              <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
-            </ul>
+          <h2>Auction Info</h2>
+          <div>Amount: {{auctionInfo.auction_info.sell_amount / Math.pow(10, auctionInfo.auction_info.sell_token.token_info.decimals)}}</div>
+          <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }}</div>
+          <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.symbol }}</div>
+          <div>Min Bid: {{ auctionInfo.auction_info.minimum_bid / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}}</div>
+          <div>Description: {{ auctionInfo.auction_info.description }}</div>
+          <div>Status: {{ auctionInfo.auction_info.status }}</div>
+          <div v-if="bidInfo.bid.amount_bid > 0">
+            <div>Open Bid: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}} {{auctionInfo.auction_info.bid_token.token_info.symbol}}</div>
+            <button @click="retractBid()">Retract Your Bid</button>
+          </div>
+          <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bids on this auction.</div>
+        </block>
+        <h1>Secret Auction</h1>
+        <button v-if="isOwner" @click="closeAuction()">Close Auction</button>
+        <block>
+          <h2>Place a Bid</h2>
+          <validation-observer v-slot="{ handleSubmit, invalid }">
+            <form class="form" @submit.prevent="handleSubmit(placeBid)">
+              <ul>
+                <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
+              </ul>
 
-            <div class="form__frame">
-              <validation-provider :rules="minValueRules" v-slot="{ errors }">
-                  <label for="bid-amount">Bid Amount</label>
-                  <span class="error">{{ errors[0] }}</span>
-                  <input name="bid-amount" type="text" v-model="formBidAmount"/>
-              </validation-provider>
-              <button :disabled="invalid">Place Bid</button>
-            </div>
-          </form>
-        </validation-observer>
-      </block>
+              <div class="form__frame">
+                <validation-provider :rules="minValueRules" v-slot="{ errors }">
+                    <label for="bid-amount">Bid Amount</label>
+                    <span class="error">{{ errors[0] }}</span>
+                    <input name="bid-amount" type="text" v-model="formBidAmount"/>
+                </validation-provider>
+                <button :disabled="invalid">Place Bid</button>
+              </div>
+            </form>
+          </validation-observer>
+        </block>
       </columns>
   </page>
 </template>
@@ -73,7 +74,8 @@ export default {
       },
       codeHash: "",
       formBidAmount: null,
-      minValueRules: ""
+      minValueRules: "",
+      isOwner: false
     };
   },
   async created() {
@@ -84,8 +86,12 @@ export default {
       if(!bidInfoResponse.viewing_key_error) {
         this.bidInfo = bidInfoResponse;
       }
+      const userAuctions = await this.$auctions.listUserAuctions();
+      const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
+      if(is_owner.length > 0) {
+        this.isOwner = true;
+      }
     }
-    console.log(this.bidInfo)
     this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress)
     this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
     this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
@@ -98,6 +104,9 @@ export default {
     async retractBid() {
       let bidRetracted = await this.$auctions.retractBid(this.auctionAddress);
       console.log(bidRetracted);
+    },
+    async closeAuction() {
+      let closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
     }
   }
 };

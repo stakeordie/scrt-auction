@@ -11,6 +11,7 @@
     "@lkmx/flare": "^0.3.12",
     "animate.css": "^4.1.1",
     "dotenv": "^8.2.0",
+    "eslint": "^7.17.0",
     "gridsome": "^0.7.0",
     "secretjs": "^0.10.3",
     "vee-validate": "^3.4.5",

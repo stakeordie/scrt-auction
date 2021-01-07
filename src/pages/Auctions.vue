@@ -19,13 +19,25 @@
     ------
   -->
     <column>
-    <h1>Secret Auctions</h1>
-    <router-link :to="'/auctions/create'" class="button">Create New Auction</router-link>
-    <button @click="createViewingKey()">Create Viewing Key</button>
-    <button @click="listUserAuctions()">ListUserAuctions</button>
-    <section class="auctions-grid">
-      <auction-item v-for="auction in auctions" :key="auction.address" :auction="auction"></auction-item>
-    </section>
+      <h1>Buttons</h1>
+      <router-link :to="'/auctions/create'" class="button">Create New Auction</router-link>
+      <button @click="createViewingKey()">Create Viewing Key</button>
+      <button @click="listUserAuctions()">ListUserAuctions</button>
+    </column>
+    <column>
+      <h1>Auctions</h1>
+      <section>
+        <h2>Active Auctions</h2>
+      </section>
+      <section class="auctions-grid">
+        <auction-item v-for="activeAuction in activeAuctions" :key="activeAuction.address" :auction="activeAuction" :closed="false"></auction-item>
+      </section>
+      <section>
+        <h2>Closed Auctions</h2>
+      </section>
+      <section class="auctions-grid">
+        <auction-item v-for="closedAuction in closedAuctions" :key="closedAuction.address" :auction="closedAuction" :closed="true"></auction-item>
+      </section>
     </column>
   </page>
 </template>
@@ -41,11 +53,13 @@ export default {
   },
   data() {
     return {
-      auctions: null
+      activeAuctions: null,
+      closedAuctions: null
     }
   },
   async created() {
-    this.auctions = await this.$auctions.listActive();
+    this.activeAuctions = await this.$auctions.listAuctions("active");
+    this.closedAuctions = await this.$auctions.listAuctions("closed");
   },
   methods: {
     async createViewingKey() {

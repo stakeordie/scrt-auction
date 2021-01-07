@@ -21,8 +21,13 @@ export class AuctionsApi {
     */
 
     // secretcli q compute query *factory_contract_address* '{"list_active_auctions":{}}'
-    async listActive() {
-        return (await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})).list_active_auctions.active;
+    async listAuctions(auctionState) {
+        if(auctionState == "active") {
+            return (await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})).list_active_auctions.active;
+        } else if(auctionState == "closed") {
+            console.log(await this.scrtClient.queryContract(this.factoryAddress, {"list_closed_auctions":{}}));
+            return (await this.scrtClient.queryContract(this.factoryAddress, {"list_closed_auctions":{}})).list_closed_auctions.closed;
+        }
     }
     // BELOW HERE ADDED BY SANDY
     // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
@@ -30,7 +35,7 @@ export class AuctionsApi {
         const chainId = await this.scrtClient.getChainId()
         const offlineSigner = await window.getOfflineSigner(chainId);
         const address = (await offlineSigner.getAccounts())[0].address;
-        const viewingKey = await this.getViewingKey(address);
+        const viewingKey = await this.getViewingKey();
         return await this.scrtClient.queryContract(this.factoryAddress, {"list_my_auctions":{"address":address,"viewing_key":viewingKey,"filter":"all"}});
     }
     //secretcli tx compute execute --label *factory_contract_label* '{"create_viewing_key":{"entropy":"*Some arbitrary string used as entropy in generating the random viewing key*"}}' --from *your_key_alias_or_addr* --gas 200000 -y
@@ -126,6 +131,19 @@ export class AuctionsApi {
         localStorage.setItem('viewingKeys', parsed);
     }
 
+    async closeAuction(auctionAddress) {
+        //secretcli tx compute execute *auction_contract_address* '{"finalize": {"only_if_bids": *true_or_false*}}' --from *your_key_alias_or_addr* --gas 2000000 -y
+        const msg = {"finalize": {"only_if_bids": false}};
+        const bidFees = {
+            exec: {
+                amount: [{ amount: '1000000', denom: 'uscrt' }],
+                gas: '1000000',
+            },
+        }
+        const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
+        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+    }
+
     async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
         //secretcli tx compute execute *bid_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*bid_amount_in_smallest_denomination_of_bidding_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
         const msg = {
@@ -141,6 +159,7 @@ export class AuctionsApi {
             },
         }
         const response = await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
+        console.log(response)
         return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
 
