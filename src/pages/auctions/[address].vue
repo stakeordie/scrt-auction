@@ -1,7 +1,7 @@
 <template>
   <page>
     <columns>
-      <block v-if="auctionInfo">
+        <block>
           <h2>Auction Info</h2>
           <div>Amount: {{auctionInfo.auction_info.sell_amount / Math.pow(10, auctionInfo.auction_info.sell_token.token_info.decimals)}}</div>
           <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }}</div>
@@ -73,15 +73,41 @@ export default {
     return {
       errors: [],
       auctionAddress: "",
-      auctionInfo: {},
       bidInfo: {
         "bid": {
           "message": "",
           "amount_bid": ""
         }
       },
+      formBidAmount: 0,
       codeHash: "",
-      formBidAmount: null,
+        auctionInfo: {
+          auction_info: {
+            sell_token: {
+              contract_address: "",
+              token_info: {
+                name: "",
+                symbol: "",
+                decimals: 8,
+                total_supply: ""
+              }
+            },
+            bid_token: {
+              contract_address: "",
+              token_info: {
+                name: "",
+                symbol: "",
+                decimals: 0,
+                total_supply: ""
+              }
+            },
+            sell_amount: "",
+            minimum_bid: "",
+            description: "",
+            auction_address: "",
+            status: "",
+          }
+        },
       minValueRules: "",
       isOwner: false
     };
@@ -103,7 +129,7 @@ export default {
       }
     }
     this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
-    console.log(this.auctionInfo)
+    console.log(JSON.stringify(this.auctionInfo));
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
