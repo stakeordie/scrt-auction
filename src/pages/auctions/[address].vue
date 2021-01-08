@@ -27,9 +27,16 @@
 
               <div class="form__frame">
                 <validation-provider :rules="minValueRules" v-slot="{ errors }">
-                    <label for="bid-amount">Bid Amount</label>
-                    <span class="error">{{ errors[0] }}</span>
-                    <input name="bid-amount" type="text" v-model="formBidAmount"/>
+                  <label for="tokenAmountInputField">Bid Amount</label>
+                  <span class="error">{{ errors[0] }}</span>
+                  <!-- <input type="text" v-model="formBidAmount"/> -->
+                  <token-amount-input
+                    name="tokenAmountInputField"
+                    v-model="formBidAmount" 
+                    :decimals="auctionInfo.auction_info.bid_token.token_info.decimals"
+                    :tokenBaseSymbol="'u' + auctionInfo.auction_info.sell_token.token_info.symbol"
+                    :tokenSymbol="auctionInfo.auction_info.sell_token.token_info.symbol"
+                  ></token-amount-input>
                 </validation-provider>
                 <button :disabled="invalid">Place Bid</button>
               </div>
@@ -43,6 +50,7 @@
 <script>
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, integer, min_value } from "vee-validate/dist/rules";
+import TokenAmountInput from '../../components/TokenAmountInput.vue';
 
 extend("required", {
   ...required,
@@ -60,12 +68,12 @@ extend("min_value", {
 });
 
 export default {
-  components: { ValidationObserver, ValidationProvider},
+  components: { TokenAmountInput, ValidationObserver, ValidationProvider},
   data() {
     return {
       errors: [],
       auctionAddress: "",
-      auctionInfo: null,
+      auctionInfo: {},
       bidInfo: {
         "bid": {
           "message": "",
@@ -87,16 +95,19 @@ export default {
         this.bidInfo = bidInfoResponse;
       }
       const userAuctions = await this.$auctions.listUserAuctions();
-      if(userAuctions.list_my_auctions.active.as_seller) {
+      if(userAuctions?.list_my_auctions?.active?.as_seller) {
         const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
         if(is_owner.length > 0) {
           this.isOwner = true;
         }
       }
     }
-    this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress)
-    this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-    this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
+    this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
+    console.log(this.auctionInfo)
+    if(this.auctionInfo) {
+      this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
+      this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
+    }
   },
   methods: {
     async placeBid() {
