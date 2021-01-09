@@ -9,15 +9,33 @@ import {
 
 import { Bip39, Random } from "@iov/crypto";
 
+// Default fees to be used when no fees are specified for the transaction
+const defaultFees = {
+  init: {
+    amount: [{ amount: '300000', denom: 'uscrt' }],
+    gas: '300000',
+  },
+  exec: {
+      amount: [{ amount: '200000', denom: 'uscrt' }],
+      gas: '1000000',
+  },
+};
+
+
+
 
 export class SecretJsClient {
   secretRestUrl;
   client;
   signingClient;
 
-  constructor(secretRestUrl) {
+  wallet;
+
+  constructor(secretRestUrl, wallet) {
     this.secretRestUrl = secretRestUrl;
     this.client = new CosmWasmClient(this.secretRestUrl);
+
+    this.wallet = wallet;
   }
 
   async getChainId() {
@@ -74,81 +92,21 @@ export class SecretJsClient {
   async executeContract(address, handleMsg, fees) {
     console.log(handleMsg);
     const chainId = await this.getChainId();
-    if (window.keplr.experimentalSuggestChain) {
       try {
-        await window.keplr.experimentalSuggestChain({
-          chainId: chainId,
-          chainName: 'Scrt Testnet',
-          rpc: this.secretRestUrl + ':26657',
-          rest: this.secretRestUrl,
-          bip44: {
-              coinType: 529,
-          },
-          coinType: 529,
-          stakeCurrency: {
-            coinDenom: 'SCRT',
-            coinMinimalDenom: 'uscrt',
-            coinDecimals: 6,
-          },
-          bech32Config: {
-            bech32PrefixAccAddr: 'secret',
-            bech32PrefixAccPub: 'secretpub',
-            bech32PrefixValAddr: 'secretvaloper',
-            bech32PrefixValPub: 'secretvaloperpub',
-            bech32PrefixConsAddr: 'secretvalcons',
-            bech32PrefixConsPub: 'secretvalconspub',
-          },
-          currencies: [
-            {
-              coinDenom: 'SCRT',
-              coinMinimalDenom: 'uscrt',
-              coinDecimals: 6,
-            },
-          ],
-          feeCurrencies: [
-            {
-              coinDenom: 'SCRT',
-              coinMinimalDenom: 'uscrt',
-              coinDecimals: 6,
-            },
-          ],
-          gasPriceStep: {
-            low: "0.1",
-            average: "0.25",
-            high: "0.4",
-          },
-          features: ['secretwasm'],
-        });
         await window.keplr.enable(chainId);
-        const offlineSigner = window.getOfflineSigner(chainId);
-        const enigmaUtils = window.getEnigmaUtils(chainId);
-        const accounts = await offlineSigner.getAccounts();
-        if(!fees) {
-          fees = {
-            init: {
-              amount: [{ amount: '300000', denom: 'uscrt' }],
-              gas: '300000',
-            },
-            exec: {
-                amount: [{ amount: '200000', denom: 'uscrt' }],
-                gas: '1000000',
-            },
-          };
-        }
+
         this.signingClient = new SigningCosmWasmClient(
           this.secretRestUrl,
-          accounts[0].address,
-          offlineSigner,
-          enigmaUtils,
-          fees
+          this.wallet.getSelectedAddress(),
+          this.wallet.getSigner(),
+          this.wallet.getSeed(),
+          fees || defaultFees
         );
         return await this.signingClient.execute(address, handleMsg);
       } catch (error) {
         console.error(error)
       }
-    } else {
-        alert("Please use the recent version of keplr extension");
-    }
+
   }
 
   async getContractHash(address) {
