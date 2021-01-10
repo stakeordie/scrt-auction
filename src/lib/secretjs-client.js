@@ -33,10 +33,74 @@ export class SecretJsClient {
 
   constructor(secretRestUrl, wallet) {
     this.secretRestUrl = secretRestUrl;
-    this.client = new CosmWasmClient(this.secretRestUrl);
-
     this.wallet = wallet;
+
+    this.client = new CosmWasmClient(this.secretRestUrl);
   }
+
+
+
+  async getAccount(address) {
+    // If address is undefined it retrieves the balance of
+    // the selected account in the wallet
+    if(address === undefined) {
+      address = this.wallet.getSelectedAddress();
+    } 
+
+    return await this.client.getAccount(address);
+  }
+
+  async queryContract(address, query) {
+    return await this.client.queryContractSmart(address, query);
+  }
+
+  async decryptTxHash(txHash) {
+    const query = {id: txHash};
+    return await this.client.searchTx(query);
+    //secretcli q tx ${txHash}
+  }
+
+  async decryptTxResponse(response) {
+    console.log(response);
+    return await this.client.restClient.decryptTxsResponse(response);
+  }
+
+
+  async sendTokens(payment) {
+    console.log(payment);
+  }
+
+
+  async executeContract(address, handleMsg, fees) {
+    console.log(handleMsg);
+    const chainId = await this.getChainId();
+    try {
+      await window.keplr.enable(chainId);
+
+      this.signingClient = new SigningCosmWasmClient(
+        this.secretRestUrl,
+        this.wallet.getSelectedAddress(),
+        this.wallet.getSigner(),
+        this.wallet.getSeed(),
+        fees || defaultFees
+      );
+      return await this.signingClient.execute(address, handleMsg);
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async getContractHash(address) {
+    return await this.client.restClient.getCodeHashByContractAddr(address);
+  }
+
+  async listContracts(codeId) {
+    return await this.client.getContracts(codeId);
+  }
+
+
+
+  // General chain section
 
   async getChainId() {
     return await this.client.getChainId();
@@ -55,75 +119,12 @@ export class SecretJsClient {
   }
 
   async getBlock(number) {
-    try {
-      return await this.client.restClient.blocks(number);
-    } catch(err) {
-      // In case errors need to be processed this would happen here
-      throw err;
-    }
+    return await this.client.restClient.blocks(number);
   }
 
 
-  async sendTokens(deposit) {
 
-  }
-
-  async queryAccount(address) {
-    return await this.client.getAccount(address);
-  }
-
-  async queryContract(address, query) {
-    return await this.client.queryContractSmart(address, query);
-  }
-
-  // TODO review this
-
-  async decryptTxHash(txHash) {
-    const query = {id: txHash}
-    return await this.client.searchTx(query);
-    //secretcli q tx ${txHash}
-  }
-
-  async decryptTxResponse(response) {
-    console.log(response);
-    return await this.client.restClient.decryptTxsResponse(response);
-  }
-
-  async executeContract(address, handleMsg, fees) {
-    console.log(handleMsg);
-    const chainId = await this.getChainId();
-      try {
-        await window.keplr.enable(chainId);
-
-        this.signingClient = new SigningCosmWasmClient(
-          this.secretRestUrl,
-          this.wallet.getSelectedAddress(),
-          this.wallet.getSigner(),
-          this.wallet.getSeed(),
-          fees || defaultFees
-        );
-        return await this.signingClient.execute(address, handleMsg);
-      } catch (error) {
-        console.error(error)
-      }
-
-  }
-
-  async getContractHash(address) {
-    return await this.client.restClient.getCodeHashByContractAddr(address);
-  }
-
-  async listContracts(codeId) {
-    return await this.client.getContracts(codeId);
-  }
-
-  async queryAccountFromMnemonic(mnemonic) {
-    const signingPen = await Secp256k1Pen.fromMnemonic(mnemonic);
-    const pubkey = encodeSecp256k1Pubkey(signingPen.pubkey);
-    const accAddress = pubkeyToAddress(pubkey, "secret");
-
-    return await this.client.getAccount(accAddress);
-  }
+  // Utilities section
 
   getRandomMnemonic() {
     return Bip39.encode(Random.getBytes(16)).toString();

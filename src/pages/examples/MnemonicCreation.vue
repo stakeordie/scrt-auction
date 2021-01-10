@@ -14,20 +14,10 @@
 
 <script>
 export default {
-  data() {
-    return {
-      randomMnemonic: "",
-      account: null,
-    };
-  },
-  async mounted() {
-    this.randomMnemonic = this.$scrtjs.getRandomMnemonic();
-    this.account = await this.$scrtjs.queryAccountFromMnemonic(
-      this.randomMnemonic
-    );
-
-    // The account will be undefined unless is previously funded
-    console.log(this.account);
+  computed: {
+    randomMnemonic() {
+      return this.$scrtjs.getRandomMnemonic(); 
+    }
   },
 };
 </script>

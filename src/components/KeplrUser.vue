@@ -1,17 +1,18 @@
 <template>
   <div class="keplr">
-      <div class="keplr__status" :class="{ 'keplr__status--online': userAddress != null }"></div>
+      <div class="keplr__status" :class="{ 'keplr__status--online': $keplr.address != null }"></div>
       <a href="" @click="clicked()">
         <img class="keplr__icon" src="@/assets/keplr-icon.svg" :class="{ 'keplr--off': keplrIsOff }">
       </a>
-        <transition 
-          enter-active-class="animate__animated animate__flipInX"
-          leave-active-class="animate__animated animate__fadeOutUp">
-        <div v-if="userAddress" v-show="showDetails" class="keplr__account">
-          <span class="account account__chain">{{ chainId }}</span>
-          <span class="account account__address">{{userAddress }}</span>
+      <transition 
+        enter-active-class="animate__animated animate__flipInX"
+        leave-active-class="animate__animated animate__fadeOutUp">
+
+        <div v-if="$keplr.address" v-show="showDetails" class="keplr__account">
+          <span class="account account__chain">{{ $keplr.chainId }}</span>
+          <span class="account account__address">{{ $keplr.address }}</span>
         </div>
-      </transition>
+    </transition>
   </div>
 </template>
 
@@ -21,26 +22,19 @@ const AUTOCLOSE_DETAILS = 3000;
 
 
 export default {
-
+//
   data () {
     return {
-        userAddress: null,
-        checkInterval: null,
         showDetails: false,
-
         keplrIsOff: false,
     }
-  },
-  computed: {
-    chainId() {
-      return this.$keplr.chainId; 
-    },
   },
   methods: {
     async clicked() {
       await this.$keplr.enable();
       this.toggleDetails(true);
     },
+
     toggleDetails(value) {
       // If no value is passed then it just toggles
       if(value === undefined) {
@@ -49,29 +43,13 @@ export default {
         this.showDetails = value;
       }
        
-      // Sets the autoclosing of the wallet details
+      // TBI: Sets the autoclosing of the wallet details
       if(this.showDetails) {
         setTimeout(() => {
           this.showDetails = false;
         }, AUTOCLOSE_DETAILS);
       }
     },
-    async updateAddress() {
-      try {
-        this.userAddress = await this.$keplr.getSelectedAddress();
-      } catch(err) {
-        this.keplrIsOff = true;
-      }
-    }
-  },
-  async mounted () {
-    this.checkInterval = setInterval(() => {
-        this.updateAddress();
-      }, REFRESH_RATE);
-    this.updateAddress();
-  },
-  beforeDestroy () {
-    clearInterval(this.checkInterval);
   },
 }
 </script>

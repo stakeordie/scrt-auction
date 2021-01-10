@@ -1,7 +1,7 @@
 <template>
   <page>
     <columns number="2" number-s="1" weight="right">
-      <h1>Query node</h1>
+      <h1>Transactions</h1>
       <p>Send SCRT to an account</p>
       <block>
         <transaction-send></transaction-send>

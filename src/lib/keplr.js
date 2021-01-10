@@ -1,21 +1,33 @@
+const KEPLR_ADDRESS_REFRESH_RATE = 1000;
+
 export default class Keplr {
   chainId;
   chainName;
   restUrl;
   rpcUrl;
 
-  enabled;
+  address;
+  addressChanged;
 
-  constructor(chainId, chainName, restUrl, rpcUrl) {
+  checkInterval;
+
+  constructor(chainId, chainName, restUrl, rpcUrl, loadListener, addressChangeListener) {
     this.chainId = chainId;
     this.chainName = chainName;
     this.restUrl = restUrl;
     this.rpcUrl = rpcUrl;
+
+    this.address = null;
+    this.addressChanged = addressChangeListener;
     
-    
-    this.command(async () => {      
-      console.log("Document ready state: " + document.readyState);
-      console.log("Keplr client ready, waiting to connet to " + this.chainId);
+    window.onload = (async () => {
+      if(typeof loadListener === 'function') {
+        loadListener();
+      }
+      this.checkInterval = setInterval(() => {
+        this.checkAddressUpdates();
+      }, KEPLR_ADDRESS_REFRESH_RATE);
+      this.checkAddressUpdates();
     });
   }
 
@@ -31,27 +43,38 @@ export default class Keplr {
     });
   }
 
-  // Returns the selected address in the wallet if any
-  // Otherwise it returns null
-  async getSelectedAddress() {
+  async checkAddressUpdates() {
     return await this.command(async () => {
       try {
-        const key = await window.keplr.getKey(this.chainId);
-        return key.bech32Address;
-      } catch {
-        return null;
+        const newAddress = (await this.getSigner().getAccounts())[0].address;
+        if(this.address != newAddress && typeof this.addressChanged === 'function') {
+          this.address = newAddress;
+          this.addressChanged(newAddress);
+        }
+      } catch(err) {
+      }
+    });
+  }
+
+  // Returns the selected key using Keplr's getKey() method
+  // Otherwise it returns null
+  async getSelectedKey() {
+    return await this.command(async () => {
+      try {
+        return await window.keplr.getKey(this.chainId);
+      } catch(err) {
+        throw err;
       }
     });
   }
   
-  async getSigner() {
+  getSigner() {
     return window.getOfflineSigner(this.chainId);
   }
 
-  async getSeed() {
+  getSeed() {
     return window.getEnigmaUtils(this.chainId);
   }
-
 
   async suggestExperimental(experimentalChain) {
     return await this.command(async () => {
@@ -68,25 +91,13 @@ export default class Keplr {
   // the window to load and checking that the Keplr extension
   // is installed
   async command(command) {
-    const execute = async () => {
+    try {
       if (!window.getOfflineSigner || !window.keplr) {
         throw "Keplr extension is not installed";
       }
       return await command();
-    };
-
-    if (document.readyState === "complete") {
-      return await execute();
-    } else {
-      return new Promise((resolve, reject) => {
-        window.onload = async () => {
-          try {
-            resolve(await execute());
-          } catch(err) {
-            reject(err);
-          }
-        };
-      });
+    } catch(err) {
+      throw err;
     }
   }
 

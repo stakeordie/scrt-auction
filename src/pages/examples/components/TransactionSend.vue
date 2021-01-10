@@ -9,13 +9,18 @@
 
         <div class="form__frame">
 
+          <div>
+            <label for="payment-sender">Sender</label>
+            <p class="form__sender">{{ $keplr.address }}</p>
+          </div>
+
           <validation-provider rules="required" v-slot="{ errors }">
             <label for="payment-recipient">Recipient</label>
             <span class="error">{{ errors[0] }}</span>
             <input name="payment-recipient" type="text" v-model.trim="payment.recipient" />
           </validation-provider>
 
-          <validation-provider rules="required|integer" v-slot="{ errors }">
+          <validation-provider rules="required|min_value:1" v-slot="{ errors }">
             <label for="payment-amount">Amount</label>
             <span class="error">{{ errors[0] }}</span>
             <input name="payment-amount" type="text" v-model.trim="payment.amount" />
@@ -38,36 +43,26 @@
 
 <script>
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required, integer } from "vee-validate/dist/rules";
+import { required, min_value } from "vee-validate/dist/rules";
 
 extend("required", {
   ...required,
   message: "This field is required",
 });
 
-extend("integer", {
-  ...integer,
-  message: "This field must be an integer",
+extend("min_value", {
+  ...min_value,
+  message: "Please enter a value greater than 1",
 });
 
 export default {
   components: { ValidationObserver, ValidationProvider },
   data() {
     return {
-      // Payment object inspired in Keplr's "send" UI 
       payment: {
         recipient: "",
-        amount: 0,
+        amount: 1,
         memo: "",
-        fee: {
-          amount: [
-            {
-              amount: "50000",
-              denom: "uscrt",
-            },
-          ],
-          gas: "100000",
-        }
       },
       block: null,
       errors: [],
@@ -75,12 +70,17 @@ export default {
   },
   methods: {
     send() {
-      console.log(this.payment);
+      console.log(this.$keplr.address);
+      this.$scrtjs.sendTokens(payment);
     }
   },
 }
 </script>
 
 <style>
+
+.form__frame {
+  max-width: 500px;
+}
 
 </style>
