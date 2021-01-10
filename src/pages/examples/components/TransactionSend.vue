@@ -11,7 +11,7 @@
 
           <div>
             <label for="payment-sender">Sender</label>
-            <p class="form__sender">{{ $keplr.address }}</p>
+            <p class="form__sender">{{ address }}</p>
           </div>
 
           <validation-provider rules="required" v-slot="{ errors }">
@@ -68,11 +68,19 @@ export default {
       errors: [],
     };
   },
+  computed: {
+    address() {
+      return this.$store.state.wallet.address 
+    }
+  },
   methods: {
     send() {
-      console.log(this.$keplr.address);
       this.$scrtjs.sendTokens(payment);
+    },
+    increment() {
+      this.$store.commit('increment')
     }
+
   },
 }
 </script>
