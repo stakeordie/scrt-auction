@@ -4,7 +4,7 @@ import "./sass/style.scss"
 
 import Flare from "@lkmx/flare"
 
-import Keplr from "./plugins/keplr"
+import Keplr from "./plugins/wallet"
 import ScrtJs from "./plugins/scrt"
 import AuctionsApi from "./plugins/auctions"
 
