@@ -13,26 +13,29 @@
                 </div>
             </div>
             <div class="denomination-buttons">
-                <div @click="convertToSymbol" class="button symbol" :class="{ off: baseDenomSelected }" :disabled="baseDenomSelected">{{ tokenSymbol }}</div>
-                <div @click="convertToUSymbol" class="button u-symbol" :class="{ off: !baseDenomSelected }" :disabled="!baseDenomSelected">{{ tokenBaseSymbol }}</div>
+                <div @click="convertToSymbol" class="button symbol" :class="{ off: fmuSelected }" :disabled="fmuSelected">{{ muSymbol }}</div>
+                <div @click="convertToUSymbol" class="button u-symbol" :class="{ off: !fmuSelected }" :disabled="!fmuSelected">{{ fmuSymbol }}</div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+// Units for currency are FMU and MU
+// FMU stands for Fractional Monetary Unit and is the smallest unit (1FMU = (1 / 10^tokenDecimals)MUs)
+// MU stands for Monetary Unit and is the standard base unit (1MU = (1 * 10^tokenDecimals)FMUs)
 export default {
     props: [
         "name",
         "value",
         "decimals",
-        "tokenSymbol",
-        "tokenBaseSymbol"
+        "muSymbol",
+        "fmuSymbol"
     ],
     data() {
         return {
             selectedSymbol: "SODTE",
-            baseDenomSelected: true,
+            fmuSelected: true,
         }
     },
     computed: {
@@ -41,7 +44,7 @@ export default {
         },
         convertedAmount: function() {
             if(this.value.amount) {
-                if(this.baseDenomSelected) {
+                if(this.fmuSelected) {
                     return this.value.amount / Math.pow(10, this.decimals);
                 } else {
                     return this.value.amount * Math.pow(10, this.decimals);
@@ -53,24 +56,24 @@ export default {
     },
     methods: {
         update(key, value) {
-            let denomValue = value
-            console.log(this.baseDenomSelected)
-            if(!this.baseDenomSelected) {
-                denomValue = value * Math.pow(10, this.decimals);
+            let fmuAmount = value
+            console.log(this.fmuSelected)
+            if(!this.fmuSelected) {
+                fmuAmount = value * Math.pow(10, this.decimals);
             }
-            this.$emit('input', { ...this.local, [key]: value, denomValue});
+            this.$emit('input', { ...this.local, [key]: value, fmuAmount});
         },
         convertToSymbol() {
-            if(this.baseDenomSelected) {
-                this.baseDenomSelected = !this.baseDenomSelected;
-                this.selectedSymbol = this.tokenBaseSymbol;
+            if(this.fmuSelected) {
+                this.fmuSelected = !this.fmuSelected;
+                this.selectedSymbol = this.fmuSymbol;
                 this.value.amount = this.value.amount / Math.pow(10, this.decimals);
             }
         },
         convertToUSymbol() {
-            if(!this.baseDenomSelected) {
-                this.baseDenomSelected = !this.baseDenomSelected;
-                this.selectedSymbol = this.tokenSymbol;
+            if(!this.fmuSelected) {
+                this.fmuSelected = !this.fmuSelected;
+                this.selectedSymbol = this.muSymbol;
                 this.value.amount = this.value.amount * Math.pow(10, this.decimals);
             }
         }

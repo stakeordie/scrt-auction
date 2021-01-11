@@ -34,8 +34,8 @@
                     name="tokenAmountInputField"
                     v-model="formBidAmount"
                     :decimals="auctionInfo.auction_info.bid_token.token_info.decimals"
-                    :tokenBaseSymbol="'u' + auctionInfo.auction_info.bid_token.token_info.symbol"
-                    :tokenSymbol="auctionInfo.auction_info.bid_token.token_info.symbol"
+                    :fmuSymbol="'u' + auctionInfo.auction_info.bid_token.token_info.symbol"
+                    :muSymbol="auctionInfo.auction_info.bid_token.token_info.symbol"
                   ></token-amount-input>
                 </validation-provider>
                 <button :disabled="invalid">Place Bid</button>
@@ -59,13 +59,24 @@ extend("required", {
   message: "This field is required",
 });
 
-extend("integer", {
-  ...integer,
-  message: "This field must be an integer",
+extend("muValidDecimals", {
+  validate: value => {
+    var match = (""+value.fmuAmount).split(".");
+    if (match.length > 1) { 
+      // No Error
+      return false;
+    } else {
+      // Error
+      return true;
+    }
+  },
+  message: "Decimals are not allowed in the Fractional Montery Unit.",
 });
 
 extend("min_value", {
-  ...min_value,
+  validate: (value,min) => {
+    return parseInt(value.fmuAmount) >= parseInt(min[0]);
+  },
   message: "The bid must be greater than the minimum value allowed by the auction.",
 });
 
@@ -134,7 +145,7 @@ export default {
     console.log(JSON.stringify(this.auctionInfo));
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-      this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
+      this.minValueRules = "required|muValidDecimals|min_value:" + this.auctionInfo.auction_info.minimum_bid;
       this.formBidAmount = { "amount": this.auctionInfo.auction_info.minimum_bid };
     }
   },
