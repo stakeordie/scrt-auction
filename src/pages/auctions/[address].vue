@@ -140,7 +140,7 @@ export default {
   },
   methods: {
     async placeBid() {
-      let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmount);
+      let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmount.denomValue);
       console.log(placedBid);
     },
     async retractBid() {
