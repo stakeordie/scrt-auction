@@ -59,6 +59,7 @@ $color-blue-secondary: #92BCEF;
     // a different name to prevent an unnecessary 
     // dependency, i.e. KeplrUser badge, etc.
     --default-background-color: #{$dark-gray-color};
+    
     --gutter: var(--f-gutter);
 
 
@@ -80,6 +81,10 @@ hr {
 
 dd {
     font-weight: bold;
+}
+
+button:hover {
+    background-color: #{$color-cream-primary};
 }
 
 .--flare-columns {

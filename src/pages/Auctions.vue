@@ -1,23 +1,5 @@
 <template>
   <page>
-  <!--
-    ------
-      -Title
-      -Create Auction Button
-    ------
-      -Filter
-        - "filter by"
-        - Sale Token
-        - dropdown
-        - "Bid Token"
-        - dropdown
-      - list type
-        - grid icon
-        - list icon
-    ------
-      -hr
-    ------
-  -->
     <column>
       <div class="auctions-header">
         <h1>Available Auctions</h1>
@@ -27,11 +9,20 @@
           <button @click="listUserAuctions()">ListUserAuctions</button>
         </div>
       </div>
+      <section class="auctions-tools">
+        <div class="auctions-tools__filter">
+          <span>Filter by</span>
+          <v-select></v-select>
+          <v-select></v-select>
+        </div>
+        <div class="auctions-tools__view">
+          <button class="no-button">Grid</button>
+          <button class="no-button">List</button>
+        </div>
+      </section>
       <section class="auctions-grid">
         <auction-item v-for="activeAuction in activeAuctions" :key="activeAuction.address" :auction="activeAuction" :closed="false"></auction-item>
       </section>
-    </column>
-    <column>
       <h1>Closed Auctions</h1>
       <section class="auctions-grid">
         <auction-item v-for="closedAuction in closedAuctions" :key="closedAuction.address" :auction="closedAuction" :closed="true"></auction-item>
@@ -86,9 +77,24 @@ export default {
     }
   }
 
+  .auctions-tools {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+
+    border-bottom: 1px solid var(--f-default-text-color);
+    margin-bottom: var(--f-gutter);
+
+    span {
+      display: inline-block;
+      padding: var(--f-forms-button-padding) 0;
+    }
+  }
+
   .auctions-grid {
     display: grid;
     grid-gap: var(--f-gutter);
+    margin-bottom: var(--f-gutter);
 
     @include respond-to("<=s") {
       grid-template-columns: 1fr;
