@@ -56,8 +56,7 @@ export default {
     },
     methods: {
         update(key, value) {
-            let fmuAmount = value
-            console.log(this.fmuSelected)
+            let fmuAmount = value;
             if(!this.fmuSelected) {
                 fmuAmount = value * Math.pow(10, this.decimals);
             }

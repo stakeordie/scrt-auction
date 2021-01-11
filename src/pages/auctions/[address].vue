@@ -147,7 +147,7 @@ export default {
       }
     }
     this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
-    console.log(JSON.stringify(this.auctionInfo));
+    //console.log(JSON.stringify(this.auctionInfo));
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.validationRules = "required|muValidDecimals|min_value:" + this.auctionInfo.auction_info.minimum_bid;
@@ -157,11 +157,11 @@ export default {
   methods: {
     async placeBid() {
       let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmount.denomValue);
-      console.log(placedBid);
+      //console.log(placedBid);
     },
     async retractBid() {
       let bidRetracted = await this.$auctions.retractBid(this.auctionAddress);
-      console.log(bidRetracted);
+      //console.log(bidRetracted);
     },
     async closeAuction() {
       let closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
