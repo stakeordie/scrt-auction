@@ -78,8 +78,15 @@ export default {
 
     &__actions {
       display: grid;
-      grid-auto-flow: column;
-      grid-gap: var(--f-gutter);
+
+      
+      @include respond-to("<=s") {
+        grid-auto-flow: row;
+      }
+      @include respond-to(">m") {
+        grid-auto-flow: column;
+        grid-gap: var(--f-gutter);
+      }
     }
   }
 
