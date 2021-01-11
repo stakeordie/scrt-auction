@@ -13,14 +13,16 @@
         <div class="auctions-tools__filter">
           <span class="auctions-tools__filter-title">Filter by</span>
           <form class="auctions-tools__filter-filters" @submit.prevent="filter()">
-            <label for="bid-token">Bid token</label>
-            <select name="bid-token" v-model="selected">
+            <label for="bid-token">Sale token</label>
+            <select name="bid-token" v-model="filterOptions.saleToken">
+              <option value=""></option>
               <option v-for="token in sellTokens" :key="token" v-bind:value="token">
                 {{ token }}
               </option>
             </select>
             <label for="bid-token">Bid token</label>
-            <select name="bid-token" v-model="selected">
+            <select name="bid-token" v-model="filterOptions.bidToken">
+              <option value=""></option>
               <option v-for="token in sellTokens" :key="token" v-bind:value="token">
                 {{ token }}
               </option>
@@ -59,11 +61,17 @@ export default {
       activeAuctions: null,
       closedAuctions: null,
       sellTokens: [ 'EXAM', 'PLE' ],
+
+      filterOptions: {
+        saleToken: "",
+        bidToken: ""
+      }
     }
   },
   async created() {
     this.activeAuctions = await this.$auctions.listAuctions("active");
     this.closedAuctions = await this.$auctions.listAuctions("closed");
+    console.log(this.activeAuctions, this.closedAuctions);
   },
   methods: {
     async createViewingKey() {
@@ -98,7 +106,7 @@ export default {
       @include respond-to("<=s") {
         grid-auto-flow: row;
       }
-      @include respond-to(">m") {
+      @include respond-to(">=m") {
         grid-auto-flow: column;
         grid-gap: var(--f-gutter);
       }
@@ -139,7 +147,7 @@ export default {
     @include respond-to("<=s") {
       grid-template-columns: 1fr;
     }
-    @include respond-to(">m") {
+    @include respond-to(">=m") {
       grid-template-columns: repeat(3, 1fr);
     }
   }
