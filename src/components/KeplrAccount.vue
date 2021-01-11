@@ -14,8 +14,8 @@ export default {
   },
   computed: {
     address() {
-      this.$emit("input", this.$store.getters["$keplr/selectedAccount"]?.address);
-      return this.$store.getters["$keplr/selectedAccount"]?.address;
+      this.$emit("input", this.$store.state.$keplr.selectedAccount?.address);
+      return this.$store.state.$keplr.selectedAccount?.address;
     },
   },
 };

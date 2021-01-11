@@ -15,14 +15,14 @@ export default {
           state: {
             chainId: "",
             chainName: "",
+            selectedAccount: null,
             accounts: []
           },
-          getters: {
-            selectedAccount: state => {
-              return state.accounts.find(e => e.selected);
-            }
-          },
           mutations: {
+            setChainInfo(state, { chainId, chainName }) {
+              state.chainId = chainId;
+              state.chainName = chainName;
+            },
             selectAccount(state, address) {
               state.accounts.forEach(e => {e.selected = false});
 
@@ -38,13 +38,18 @@ export default {
   
                   state.accounts.push(account);
                 } else {
-                  state.accounts.find(e => e.address == account.address).selected = true;
+                  account.selected = true;
                 }
+
+                state.selectedAccount = account;
               }
             }
           },
           actions: {
-            selectAccount({commit}, address) {
+            setChainInfo: ({ commit }, chainInfo) => {
+              commit("setChainInfo", chainInfo);
+            },
+            selectAccount: ({ commit }, address) => {
               commit("selectAccount", address);
             }
           }
@@ -68,6 +73,13 @@ export default {
       }
     );
 
+    // After initializing the wallet it hooks it up with the store in just two events
+    // 1. Sets up the reactive chain info
+    Vue.prototype.$store.dispatch('$keplr/setChainInfo', {
+      chainId: keplrWallet.chainId, 
+      chainName: keplrWallet.chainName
+    });
+    // 2. Updates the address everything the default address is changed in the wallet
     keplrWallet.onAddressChanged = (newAddress) => {
       Vue.prototype.$store.dispatch('$keplr/selectAccount', newAddress);
     },

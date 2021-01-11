@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     address() {
-      return this.$store.getters["$keplr/selectedAccount"]?.address;
+      return this.$store.state.$keplr.selectedAccount?.address;
     },
   },
   methods: {
