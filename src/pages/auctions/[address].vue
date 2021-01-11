@@ -34,8 +34,8 @@
                     name="tokenAmountInputField"
                     v-model="formBidAmount" 
                     :decimals="auctionInfo.auction_info.bid_token.token_info.decimals"
-                    :tokenBaseSymbol="'u' + auctionInfo.auction_info.sell_token.token_info.symbol"
-                    :tokenSymbol="auctionInfo.auction_info.sell_token.token_info.symbol"
+                    :tokenBaseSymbol="'u' + auctionInfo.auction_info.bid_token.token_info.symbol"
+                    :tokenSymbol="auctionInfo.auction_info.bid_token.token_info.symbol"
                   ></token-amount-input>
                 </validation-provider>
                 <button :disabled="invalid">Place Bid</button>

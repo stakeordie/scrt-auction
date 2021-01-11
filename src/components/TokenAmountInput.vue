@@ -53,13 +53,13 @@ export default {
         switchDenomA() {
             if(this.baseDenomSelected) {
                 this.baseDenomSelected = !this.baseDenomSelected;
-                this.selectedSymbol = "uSODTE";
+                this.selectedSymbol = this.tokenSymbol;
             }
         },
         switchDenomB() {
             if(!this.baseDenomSelected) {
                 this.baseDenomSelected = !this.baseDenomSelected;
-                this.selectedSymbol = "SODTE";
+                this.selectedSymbol = this.tokenBaseSymbol;
             }
         }
     }
