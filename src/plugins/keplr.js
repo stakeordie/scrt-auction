@@ -7,8 +7,6 @@ export default {
   install(Vue, options) {
 
     Vue.use(Vuex);
-    console.log(Vue.prototype.$store.registerModule);
-    
     Vue.prototype.$store.registerModule('$keplr', {
           namespaced: true,
           state: {
@@ -20,11 +18,11 @@ export default {
             accounts: []
           },
           mutations: {
-            setChainInfo(state, { chainId, chainName }) {
+            setChainInfo: (state, { chainId, chainName }) => {
               state.chainInfo.chainId = chainId;
               state.chainInfo.chainName = chainName;
             },
-            selectAccount(state, address) {
+            selectAccount: (state, address) => {
               state.accounts.forEach(e => {e.selected = false});
 
               if(address) {

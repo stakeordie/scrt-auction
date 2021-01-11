@@ -24,7 +24,6 @@ export default function(Vue, { router, head, isClient }) {
 
 
   Vue.use(Vuex)
-
   Vue.prototype.$store = new Vuex.Store({});
 
 
