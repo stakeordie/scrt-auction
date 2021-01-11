@@ -7,10 +7,9 @@ export default {
   install(Vue, options) {
 
     Vue.use(Vuex);
+    console.log(Vue.prototype.$store.registerModule);
     
-    Vue.prototype.$store = new Vuex.Store({
-      modules: {
-        $keplr: {
+    Vue.prototype.$store.registerModule('$keplr', {
           namespaced: true,
           state: {
             chainInfo: {
@@ -55,9 +54,7 @@ export default {
               commit("selectAccount", address);
             }
           }
-        }
-      },
-    });
+        });
 
 
     const keplrWallet = new Keplr(

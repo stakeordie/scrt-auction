@@ -16,11 +16,16 @@ import Vuex from 'vuex';
 
 
 
-export default function(Vue, { appOptions, router, head, isClient }) {
+export default function(Vue, { router, head, isClient }) {
   // Set default layout as a global component
   Vue.component("DefaultLayout", DefaultLayout);
 
   Vue.use(Flare);
+
+
+  Vue.use(Vuex)
+
+  Vue.prototype.$store = new Vuex.Store({});
 
 
   Vue.use(Keplr, { 

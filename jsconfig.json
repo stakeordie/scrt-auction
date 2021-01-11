@@ -1,0 +1,8 @@
+// Copied minimum settings from https://vuejs.github.io/vetur/guide/setup.html#vs-code-config
+// so Vetur VSCode plugin works
+
+{
+    "include": [
+        "./src/**/*"
+    ]
+}
