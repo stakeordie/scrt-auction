@@ -20,6 +20,14 @@ export class AuctionsApi {
         `set_status`
     */
 
+    async getUserAddress() {
+        // get user address
+        const chainId = await this.scrtClient.getChainId()
+        const offlineSigner = await window.getOfflineSigner(chainId);
+        const address = (await offlineSigner.getAccounts())[0].address;
+        return address;
+    }
+
     // secretcli q compute query *factory_contract_address* '{"list_active_auctions":{}}'
     async listAuctions(auctionState) {
         if(auctionState == "active") {
@@ -32,11 +40,13 @@ export class AuctionsApi {
     // BELOW HERE ADDED BY SANDY
     // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
     async listUserAuctions() {
-        const chainId = await this.scrtClient.getChainId()
-        const offlineSigner = await window.getOfflineSigner(chainId);
-        const address = (await offlineSigner.getAccounts())[0].address;
-        const viewingKey = await this.getViewingKey();
-        return await this.scrtClient.queryContract(this.factoryAddress, {"list_my_auctions":{"address":address,"viewing_key":viewingKey,"filter":"all"}});
+        const address =  await this.getUserAddress();
+        const viewingKey = await this.getViewingKey(address, this.factoryAddress);
+        if(viewingKey) {
+            return await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
+        } else {
+            console.log("No viewingKey Record found")
+        }
     }
     //secretcli tx compute execute --label *factory_contract_label* '{"create_viewing_key":{"entropy":"*Some arbitrary string used as entropy in generating the random viewing key*"}}' --from *your_key_alias_or_addr* --gas 200000 -y
     async listAllTokens() {
@@ -63,7 +73,28 @@ export class AuctionsApi {
         return await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }});
     }
 
-    async getViewingKeys() {
+    async getWallet() {
+        let wallet = localStorage.getItem('sodWallet');
+        if(wallet == null) {
+            return [];
+        } else {
+            return JSON.parse(wallet);
+        }
+    }
+
+    async getViewingKeyWallet(address) {
+        let viewingKeyStore = this.getViewingKeyStore();
+        let result = viewingKeyStore.find( viewingKeyWallet => viewingKeyWallet.address === address );
+        if(result) {
+            return result;
+        } else {
+            viewingKeyStore.push({ address, viewingKeys: {}});
+            this.saveViewingKeyStore(viewingKeyStore);
+            return { address, viewingKeys: {}};
+        }
+    }
+
+    async getViewingKeys(address) {
         let rawViewingKeys = localStorage.getItem('viewingKeys');
         if(rawViewingKeys !== null) {
             return JSON.parse(rawViewingKeys);
@@ -73,30 +104,133 @@ export class AuctionsApi {
         }
     }
 
-    async getViewingKey() {
-        const chainId = await this.scrtClient.getChainId()
-        const offlineSigner = await window.getOfflineSigner(chainId);
-        const address = (await offlineSigner.getAccounts())[0].address;
-        const viewingKeys = await this.getViewingKeys();
-        if (viewingKeys === undefined || viewingKeys.length == 0) {
+    async getViewingKey(address, contractAddress ) {
+        const wallet = await this.getWallet();
+        if (wallet === undefined || wallet.length == 0) {
             return undefined;
         }
-        let result = viewingKeys.find( viewingKey => viewingKey.address === address );
-        if(result) {
-            return result.viewingKey
+        console.log(wallet[0].address);
+        console.log(address);
+        console.log(typeof(wallet[0].address));
+        console.log(typeof(address));
+        console.log(wallet[0].address === address);
+        let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
+        console.log(walletEntryIndex);
+        if(walletEntryIndex > -1) {
+            let WalletEntryKey = await wallet[walletEntryIndex].keys.find(key => key.contractAddress === contractAddress);
+            return WalletEntryKey.viewingKey;
         } else {
             return undefined;
         }
     }
 
-    async createViewingKey() {
+    async createViewingKey(contractAddress) {
         const msg = {
             "create_viewing_key":{
                 "entropy": "A Random String for Entropy"
             }
         }
-        const response = await this.scrtClient.executeContract(this.factoryAddress, msg);
+        const response = await this.scrtClient.executeContract(contractAddress, msg);
         return JSON.parse(new TextDecoder("utf-8").decode(response.data)).viewing_key.key;
+    }
+
+    async addUpdateWalletKey(contractAddress, viewingKey, contractCodeId) {
+        // If contract code isn't specified, find the contract code
+        if(!contractCodeId) {
+            contractCodeId = (await this.scrtClient.getContract(contractAddress)).code_id
+        }
+        console.log("Factory Address: " + contractAddress);
+        console.log("Viewing Key: " +  viewingKey);
+        // get user address
+        const address = await this.getUserAddress();
+        console.log("User Address: " +  address);
+
+        // get viewing key store
+        let wallet = await this.getWallet();
+        console.log(wallet);
+
+        // get the index of the address object
+        let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
+        console.log(walletEntryIndex);
+
+        // if the user address has a record in the store
+        if(walletEntryIndex > -1) {
+            // check if this contract has a viewing key
+            let walletKeyIndex = wallet[walletEntryIndex].keys.findIndex(key => key.contractAddress === contractAddress);
+
+            // if the walletItem exists, 
+            if(walletKeyIndex > -1) {
+                //update viewingkey Record
+                wallet[walletEntryIndex].keys[walletKeyIndex] = {
+                    contractAddress,
+                    contractCodeId,
+                    viewingKey
+                }
+            } else {
+                //add viewingKey Record
+                wallet[walletEntryIndex].keys.push({
+                    contractAddress,
+                    contractCodeId,
+                    viewingKey
+                });
+            }
+        } else {
+            //add address record, wallet, and viewingKey Record
+            console.log(typeof(wallet))
+            wallet.push({
+                address,
+                keys: [
+                    {
+                        contractAddress,
+                        contractCodeId,
+                        viewingKey
+                    }
+                ]
+            });
+        }
+        // save the store
+        await this.saveWallet(wallet);
+        console.log(JSON.stringify(wallet));
+
+        // Model:
+        /*
+            [
+                {
+                    address: abc
+                    wallet: [
+                        {
+                            contractAddress: abcd
+                            veiwingKey: 123
+                        },
+                        {
+                            contractAddress: efgh
+                            veiwingKey: 456
+                        },
+                        {
+                            contractAddress: ijkl
+                            veiwingKey: 789
+                        }
+                    ]
+                },
+                {
+                    address: efg
+                    wallet: [
+                        {
+                            contractAddress: abcd
+                            veiwingKey: 321
+                        },
+                        {
+                            contractAddress: efgh
+                            veiwingKey: 654
+                        },
+                        {
+                            contractAddress: ijkl
+                            veiwingKey: 987
+                        }
+                    ]
+                }
+            ]
+        */
     }
 
     async addViewingKey(viewingKey) {
@@ -129,6 +263,11 @@ export class AuctionsApi {
     async saveViewingKeys(viewingKeys) {
         const parsed = JSON.stringify(viewingKeys);
         localStorage.setItem('viewingKeys', parsed);
+    }
+
+    async saveWallet(wallet) {
+        const parsed = JSON.stringify(wallet);
+        localStorage.setItem('sodWallet', parsed);
     }
 
     async closeAuction(auctionAddress) {

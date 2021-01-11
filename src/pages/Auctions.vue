@@ -63,8 +63,8 @@ export default {
   },
   methods: {
     async createViewingKey() {
-      const viewingKey = await this.$auctions.createViewingKey();
-      await this.$auctions.addViewingKey(viewingKey);
+      const viewingKey = await this.$auctions.createViewingKey(process.env.GRIDSOME_AUCTIONS_FACTORY);
+      await this.$auctions.addUpdateWalletKey(process.env.GRIDSOME_AUCTIONS_FACTORY,viewingKey, "211");
     },
     async listUserAuctions() {
       const userAuctions = await this.$auctions.listUserAuctions();
