@@ -32,7 +32,7 @@
                   <!-- <input type="text" v-model="formBidAmount"/> -->
                   <token-amount-input
                     name="tokenAmountInputField"
-                    v-model="formBidAmount" 
+                    v-model="formBidAmount"
                     :decimals="auctionInfo.auction_info.bid_token.token_info.decimals"
                     :tokenBaseSymbol="'u' + auctionInfo.auction_info.bid_token.token_info.symbol"
                     :tokenSymbol="auctionInfo.auction_info.bid_token.token_info.symbol"
@@ -133,6 +133,7 @@ export default {
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
+      this.formBidAmount = this.auctionInfo.auction_info.minimum_bid;
     }
   },
   methods: {

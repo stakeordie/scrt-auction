@@ -6,7 +6,6 @@
                 type="text"
                 v-bind:value="value"
                 v-on:input="$emit('input', $event.target.value)"
-                placeholder="0"
             />
             <div class="input-fake">
                 <div class="conversion">
@@ -14,8 +13,8 @@
                 </div>
             </div>
             <div class="denomination-buttons">
-                <div @click="switchDenomA" class="button" :class="{ off: baseDenomSelected }" :disabled="baseDenomSelected">{{ tokenSymbol }}</div>
-                <div @click="switchDenomB" class="button" :class="{ off: !baseDenomSelected }" :disabled="!baseDenomSelected">{{ tokenBaseSymbol }}</div>
+                <div @click="convertToSymbol" class="button symbol" :class="{ off: baseDenomSelected }" :disabled="baseDenomSelected">{{ tokenSymbol }}</div>
+                <div @click="convertToUSymbol" class="button u-symbol" :class="{ off: !baseDenomSelected }" :disabled="!baseDenomSelected">{{ tokenBaseSymbol }}</div>
             </div>
         </div>
     </div>
@@ -50,16 +49,18 @@ export default {
         }
     },
     methods: {
-        switchDenomA() {
+        convertToSymbol() {
             if(this.baseDenomSelected) {
                 this.baseDenomSelected = !this.baseDenomSelected;
-                this.selectedSymbol = this.tokenSymbol;
+                this.selectedSymbol = this.tokenBaseSymbol;
+                this.value = this.value / Math.pow(10, this.decimals);
             }
         },
-        switchDenomB() {
+        convertToUSymbol() {
             if(!this.baseDenomSelected) {
                 this.baseDenomSelected = !this.baseDenomSelected;
-                this.selectedSymbol = this.tokenBaseSymbol;
+                this.selectedSymbol = this.tokenSymbol;
+                this.value = this.value * Math.pow(10, this.decimals);
             }
         }
     }
