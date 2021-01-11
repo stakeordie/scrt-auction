@@ -34,8 +34,6 @@ export class SecretJsClient {
   constructor(secretRestUrl, wallet) {
     this.secretRestUrl = secretRestUrl;
     this.wallet = wallet;
-
-    console.log(this.wallet);
     this.client = new CosmWasmClient(this.secretRestUrl);
   }
 

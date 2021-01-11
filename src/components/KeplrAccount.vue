@@ -1,6 +1,6 @@
 <template>
   <div class="keplr__account">
-    <p>{{ address }} 0 SCRT</p>
+    <input readonly :value="address">
   </div>
 </template>
 
@@ -9,14 +9,12 @@ export default {
   props: {
     value: {
       type: String,
-      default: "",
+      default: null,
     },
-  },
-  mounted() {
-    this.$emit("input", this.value);
   },
   computed: {
     address() {
+      this.$emit("input", this.$store.getters["$keplr/selectedAccount"]?.address);
       return this.$store.getters["$keplr/selectedAccount"]?.address;
     },
   },
