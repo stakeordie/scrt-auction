@@ -67,8 +67,14 @@ export default {
 
   .auctions-header {
     display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
+
+    @include respond-to("<=s") {
+      flex-flow: column;
+    }
+    @include respond-to(">m") {
+      flex-flow: row nowrap;
+      justify-content: space-between;
+    }
 
     &__actions {
       display: grid;
