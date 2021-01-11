@@ -13,8 +13,8 @@
                 </div>
             </div>
             <div class="denomination-buttons">
-                <div @click="convertToSymbol" class="button symbol" :class="{ off: fmuSelected }" :disabled="fmuSelected">{{ muSymbol }}</div>
-                <div @click="convertToUSymbol" class="button u-symbol" :class="{ off: !fmuSelected }" :disabled="!fmuSelected">{{ fmuSymbol }}</div>
+                <div @click="convertToMu" class="button symbol" :class="{ on: !fmuSelected }" :disabled="fmuSelected">{{ muSymbol }}</div>
+                <div @click="convertToFmu" class="button u-symbol" :class="{ on: fmuSelected }" :disabled="!fmuSelected">{{ fmuSymbol }}</div>
             </div>
         </div>
     </div>
@@ -63,14 +63,14 @@ export default {
             }
             this.$emit('input', { ...this.local, [key]: value, fmuAmount});
         },
-        convertToSymbol() {
+        convertToMu() {
             if(this.fmuSelected) {
                 this.fmuSelected = !this.fmuSelected;
                 this.selectedSymbol = this.fmuSymbol;
                 this.value.amount = this.value.amount / Math.pow(10, this.decimals);
             }
         },
-        convertToUSymbol() {
+        convertToFmu() {
             if(!this.fmuSelected) {
                 this.fmuSelected = !this.fmuSelected;
                 this.selectedSymbol = this.muSymbol;
@@ -121,10 +121,11 @@ export default {
                 margin: 6px;
                 color: black;
                 cursor: pointer;
+                border: 2px solid var(--default-background-color);
+                border-radius: 5px;
 
-                &.off {
-                    opacity: .4;
-
+                &.on {
+                    border: 2px solid white;
                 }
             }
         }

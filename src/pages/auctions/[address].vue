@@ -1,6 +1,7 @@
 <template>
   <page>
     <columns>
+    
         <block>
           <h2>Auction Info</h2>
           <div>Amount: {{auctionInfo.auction_info.sell_amount / Math.pow(10, auctionInfo.auction_info.sell_token.token_info.decimals)}}</div>
@@ -15,8 +16,11 @@
           </div>
           <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bids on this auction.</div>
         </block>
+
         <h1>Secret Auction</h1>
+        
         <button v-if="isOwner" @click="closeAuction()">Close Auction</button>
+
         <block>
           <h2>Place a Bid</h2>
           <validation-observer v-slot="{ handleSubmit, invalid }">
@@ -26,7 +30,7 @@
               </ul>
 
               <div class="form__frame">
-                <validation-provider :rules="minValueRules" v-slot="{ errors }">
+                <validation-provider :rules="validationRules" v-slot="{ errors }">
                   <label for="tokenAmountInputField">Bid Amount</label>
                   <span class="error">{{ errors[0] }}</span>
                   <!-- <input type="text" v-model="formBidAmount"/> -->
@@ -43,6 +47,7 @@
             </form>
           </validation-observer>
         </block>
+
       </columns>
   </page>
 </template>
@@ -94,34 +99,34 @@ export default {
       },
       formBidAmount: {},
       codeHash: "",
-        auctionInfo: {
-          auction_info: {
-            sell_token: {
-              contract_address: "",
-              token_info: {
-                name: "",
-                symbol: "",
-                decimals: 8,
-                total_supply: ""
-              }
-            },
-            bid_token: {
-              contract_address: "",
-              token_info: {
-                name: "",
-                symbol: "",
-                decimals: 0,
-                total_supply: ""
-              }
-            },
-            sell_amount: "",
-            minimum_bid: "",
-            description: "",
-            auction_address: "",
-            status: "",
-          }
-        },
-      minValueRules: "",
+      auctionInfo: {
+        auction_info: {
+          sell_token: {
+            contract_address: "",
+            token_info: {
+              name: "",
+              symbol: "",
+              decimals: 6,
+              total_supply: ""
+            }
+          },
+          bid_token: {
+            contract_address: "",
+            token_info: {
+              name: "",
+              symbol: "",
+              decimals: 6,
+              total_supply: ""
+            }
+          },
+          sell_amount: "",
+          minimum_bid: "",
+          description: "",
+          auction_address: "",
+          status: "",
+        }
+      },
+      validationRules: "",
       isOwner: false
     };
   },
@@ -145,7 +150,7 @@ export default {
     console.log(JSON.stringify(this.auctionInfo));
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-      this.minValueRules = "required|muValidDecimals|min_value:" + this.auctionInfo.auction_info.minimum_bid;
+      this.validationRules = "required|muValidDecimals|min_value:" + this.auctionInfo.auction_info.minimum_bid;
       this.formBidAmount = { "amount": this.auctionInfo.auction_info.minimum_bid };
     }
   },
