@@ -11,7 +11,7 @@
 
           <div>
             <label for="payment-sender">Sender</label>
-            <p class="form__sender">{{ address }}</p>
+            <keplr-account v-model="payment.sender"></keplr-account>
           </div>
 
           <validation-provider rules="required" v-slot="{ errors }">
@@ -44,6 +44,7 @@
 <script>
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value } from "vee-validate/dist/rules";
+import KeplrAccount from '../../../components/KeplrAccount.vue';
 
 extend("required", {
   ...required,
@@ -56,7 +57,7 @@ extend("min_value", {
 });
 
 export default {
-  components: { ValidationObserver, ValidationProvider },
+  components: { ValidationObserver, ValidationProvider, KeplrAccount },
   data() {
     return {
       payment: {
@@ -68,19 +69,10 @@ export default {
       errors: [],
     };
   },
-  computed: {
-    address() {
-      return this.$store.state.wallet.address 
-    }
-  },
   methods: {
     send() {
-      this.$scrtjs.sendTokens(payment);
+      this.$scrtjs.sendTokens(this.payment);
     },
-    increment() {
-      this.$store.commit('increment')
-    }
-
   },
 }
 </script>

@@ -35,6 +35,7 @@ export class SecretJsClient {
     this.secretRestUrl = secretRestUrl;
     this.wallet = wallet;
 
+    console.log(this.wallet);
     this.client = new CosmWasmClient(this.secretRestUrl);
   }
 
@@ -44,7 +45,7 @@ export class SecretJsClient {
     // If address is undefined it retrieves the balance of
     // the selected account in the wallet
     if(address === undefined) {
-      address = this.wallet.getSelectedAddress();
+      address = this.wallet.address;
     } 
 
     return await this.client.getAccount(address);
@@ -79,7 +80,7 @@ export class SecretJsClient {
 
       this.signingClient = new SigningCosmWasmClient(
         this.secretRestUrl,
-        this.wallet.getSelectedAddress(),
+        this.wallet.address,
         this.wallet.getSigner(),
         this.wallet.getSeed(),
         fees || defaultFees

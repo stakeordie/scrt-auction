@@ -1,6 +1,6 @@
 <template>
   <div class="keplr">
-      <div class="keplr__status" :class="{ 'keplr__status--online': $keplr.address != null }"></div>
+      <div class="keplr__status" :class="{ 'keplr__status--online': address != null }"></div>
       <a href="" @click="clicked()">
         <img class="keplr__icon" src="@/assets/keplr-icon.svg" :class="{ 'keplr--off': keplrIsOff }">
       </a>
@@ -10,7 +10,7 @@
 
         <div v-if="$keplr.address" v-show="showDetails" class="keplr__account">
           <span class="account account__chain">{{ $keplr.chainId }}</span>
-          <span class="account account__address">{{ $keplr.address }}</span>
+          <span class="account account__address">{{ address }}</span>
         </div>
     </transition>
   </div>
@@ -29,10 +29,19 @@ export default {
         keplrIsOff: false,
     }
   },
+  computed: {
+    address() {
+      return this.$store.getters["$keplr/selectedAccount"]?.address;
+    },
+  },
   methods: {
     async clicked() {
-      await this.$keplr.enable();
-      this.toggleDetails(true);
+      if(!this.address) {
+        await this.$keplr.enable();
+        this.toggleDetails(true);
+      } else {
+        this.toggleDetails();
+      }
     },
 
     toggleDetails(value) {
@@ -41,14 +50,7 @@ export default {
         this.showDetails = !this.showDetails;
       } else {
         this.showDetails = value;
-      }
-       
-      // TBI: Sets the autoclosing of the wallet details
-      if(this.showDetails) {
-        setTimeout(() => {
-          this.showDetails = false;
-        }, AUTOCLOSE_DETAILS);
-      }
+      }       
     },
   },
 }

@@ -7,18 +7,21 @@ export default class Keplr {
   rpcUrl;
 
   address;
-  addressChanged;
+  onAddressChanged;
+
+  onError;
 
   checkInterval;
 
-  constructor(chainId, chainName, restUrl, rpcUrl, loadListener, addressChangeListener) {
+  constructor(chainId, chainName, restUrl, rpcUrl, loadListener, errorListener) {
     this.chainId = chainId;
     this.chainName = chainName;
     this.restUrl = restUrl;
     this.rpcUrl = rpcUrl;
 
     this.address = null;
-    this.addressChanged = addressChangeListener;
+
+    this.onError = errorListener;
     
     window.onload = (async () => {
       if(typeof loadListener === 'function') {
@@ -47,9 +50,9 @@ export default class Keplr {
     return await this.command(async () => {
       try {
         const newAddress = (await this.getSigner().getAccounts())[0].address;
-        if(this.address != newAddress && typeof this.addressChanged === 'function') {
+        if(this.address != newAddress && typeof this.onAddressChanged === 'function') {
           this.address = newAddress;
-          this.addressChanged(newAddress);
+          this.onAddressChanged(newAddress);
         }
       } catch(err) {
       }

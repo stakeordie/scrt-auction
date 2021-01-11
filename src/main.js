@@ -4,15 +4,18 @@ import "./sass/style.scss"
 
 import Flare from "@lkmx/flare"
 
-import Keplr from "./plugins/wallet"
+import Keplr from "./plugins/keplr"
 import ScrtJs from "./plugins/scrt"
 import AuctionsApi from "./plugins/auctions"
 
 import DefaultLayout from "~/layouts/DefaultLayout.vue";
 
 
-export default function(Vue, { router, head, isClient }) {
+import Vuex from 'vuex';
 
+
+
+export default function(Vue, { appOptions, router, head, isClient }) {
   // Set default layout as a global component
   Vue.component("DefaultLayout", DefaultLayout);
 
@@ -82,7 +85,7 @@ export default function(Vue, { router, head, isClient }) {
 
   Vue.use(ScrtJs, { 
     restUrl: process.env.GRIDSOME_SECRET_REST_URL, 
-    wallet: Vue.prototype.$kplr 
+    wallet: Vue.prototype.$keplr 
   });
 
   Vue.use(AuctionsApi, { 
