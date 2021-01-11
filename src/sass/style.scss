@@ -42,7 +42,7 @@ $color-blue-secondary: #92BCEF;
     
     
     --f-primary-action-color: #{$color-purple-primary};
-    --f-primary-action-anticolor: black;
+    --f-primary-action-anticolor: white;
     
     
     --f-links-text-color: #{$blue-color};
@@ -59,7 +59,7 @@ $color-blue-secondary: #92BCEF;
     // a different name to prevent an unnecessary 
     // dependency, i.e. KeplrUser badge, etc.
     --default-background-color: #{$dark-gray-color};
-    
+
     --gutter: var(--f-gutter);
 
 
@@ -81,6 +81,10 @@ hr {
 
 dd {
     font-weight: bold;
+}
+
+label {
+    display: inline-block;
 }
 
 button:hover {

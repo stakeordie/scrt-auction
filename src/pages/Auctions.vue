@@ -11,9 +11,23 @@
       </div>
       <section class="auctions-tools">
         <div class="auctions-tools__filter">
-          <span>Filter by</span>
-          <v-select></v-select>
-          <v-select></v-select>
+          <span class="auctions-tools__filter-title">Filter by</span>
+          <form class="auctions-tools__filter-filters" @submit.prevent="filter()">
+            <label for="bid-token">Bid token</label>
+            <select name="bid-token" v-model="selected">
+              <option v-for="token in sellTokens" :key="token" v-bind:value="token">
+                {{ token }}
+              </option>
+            </select>
+            <label for="bid-token">Bid token</label>
+            <select name="bid-token" v-model="selected">
+              <option v-for="token in sellTokens" :key="token" v-bind:value="token">
+                {{ token }}
+              </option>
+            </select>
+
+          </form>
+
         </div>
         <div class="auctions-tools__view">
           <button class="no-button">Grid</button>
@@ -43,7 +57,8 @@ export default {
   data() {
     return {
       activeAuctions: null,
-      closedAuctions: null
+      closedAuctions: null,
+      sellTokens: [ 'EXAM', 'PLE' ],
     }
   },
   async created() {
@@ -98,10 +113,22 @@ export default {
     border-bottom: 1px solid var(--f-default-text-color);
     margin-bottom: var(--f-gutter);
 
-    span {
-      display: inline-block;
-      padding: var(--f-forms-button-padding) 0;
+    &__filter {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: baseline;
     }
+
+    &__filter-title, label {
+      display: inline-block;
+      margin-bottom: var(--f-gutter);
+      margin-right: var(--f-gutter);
+    }
+
+    label {
+      margin-left: var(--f-gutter-xl);
+    }
+
   }
 
   .auctions-grid {

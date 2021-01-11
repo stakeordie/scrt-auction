@@ -52,7 +52,7 @@
 <script>
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, integer } from "vee-validate/dist/rules";
-import vSelect from "vue-select";
+import VSelect from "vue-select";
 
 extend("required", {
   ...required,
@@ -65,7 +65,7 @@ extend("integer", {
 });
 
 export default {
-    components: { ValidationObserver, ValidationProvider, vSelect},
+    components: { ValidationObserver, ValidationProvider, VSelect},
     data() {
         return {
             errors: [],
