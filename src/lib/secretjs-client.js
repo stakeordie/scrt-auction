@@ -89,6 +89,11 @@ export class SecretJsClient {
     }
   }
 
+  async getContractInfo(address) {
+    return await this.client.getContract(address);
+  }
+
+
   async getContractHash(address) {
     return await this.client.restClient.getCodeHashByContractAddr(address);
   }
