@@ -1,6 +1,6 @@
 <template>
   <div class="keplr">
-      <div class="keplr__status" :class="{ 'keplr__status--online': address != null }"></div>
+      <div class="keplr__status" :class="{ 'keplr__status--online': address }"></div>
       <a href="" @click="clicked()">
         <img class="keplr__icon" src="@/assets/keplr-icon.svg" :class="{ 'keplr--off': keplrIsOff }">
       </a>
@@ -9,6 +9,7 @@
         leave-active-class="animate__animated animate__fadeOutUp">
 
         <div v-if="$keplr.address" v-show="showDetails" class="keplr__account">
+          <!-- this.$keplr.chainId is not reactive but there's no need, it's left here as an example -->
           <span class="account account__chain">{{ $keplr.chainId }}</span>
           <span class="account account__address">{{ address }}</span>
         </div>
@@ -17,12 +18,7 @@
 </template>
 
 <script>
-const REFRESH_RATE = 1000;
-const AUTOCLOSE_DETAILS = 3000;
-
-
 export default {
-//
   data () {
     return {
         showDetails: false,
