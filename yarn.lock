@@ -902,6 +902,11 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fontsource/hind@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/hind/-/hind-4.1.0.tgz#3c32cfc706819c4efd4f485ae4daf0892806a5d1"
+  integrity sha512-UvRmAXwEysWdRkOtZ521QiXTbI0Gw+XwG/2vdTItm6si46o2QVA/qZsS7v+ezZw2sHj9FvcyVigud/iVKasw+w==
+
 "@gridsome/cli@^0.3.4":
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/@gridsome/cli/-/cli-0.3.4.tgz"
@@ -1047,10 +1052,10 @@
   dependencies:
     "@cosmjs/utils" "^0.20.0"
 
-"@lkmx/flare@^0.3.12":
-  version "0.3.12"
-  resolved "https://registry.yarnpkg.com/@lkmx/flare/-/flare-0.3.12.tgz"
-  integrity sha512-18jDWKXZYMtWoDV/GPY6pn2hcKvYUDqXJvmTxQw8tX+O7oHyiS4T4f+C4zRNqoCOVCcDx/9u7iazOKz+7qtRdA==
+"@lkmx/flare@^0.3.13":
+  version "0.3.13"
+  resolved "https://registry.yarnpkg.com/@lkmx/flare/-/flare-0.3.13.tgz#42d48b834b0a9b5788480a08d306151b3c3908de"
+  integrity sha512-/VF9z2Ib5XYoOqCFY79Pa7KTcNeIVmJqE9Ljr8UKfTnN6stM7LxayrXr21Ewctvhxlhbk+p7byITRogPfeALMg==
   dependencies:
     core-js "^3.6.5"
     node-sass "^5.0.0"

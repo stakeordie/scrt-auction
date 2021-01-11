@@ -35,9 +35,10 @@ export default {
 <style lang="scss" scoped>
 .auction {
   display: grid;
+  background-color: black;
   padding: var(--f-gutter);
   border: 1px solid white;
-  border-radius: 22px;
+  border-radius: 10px;
   position: relative;
 
   &__bid {

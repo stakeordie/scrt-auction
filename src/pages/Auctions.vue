@@ -19,22 +19,20 @@
     ------
   -->
     <column>
-      <h1>Buttons</h1>
-      <router-link :to="'/auctions/create'" class="button">Create New Auction</router-link>
-      <button @click="createViewingKey()">Create Viewing Key</button>
-      <button @click="listUserAuctions()">ListUserAuctions</button>
-    </column>
-    <column>
-      <h1>Auctions</h1>
-      <section>
-        <h2>Active Auctions</h2>
-      </section>
+      <div class="auctions-header">
+        <h1>Available Auctions</h1>
+        <div class="auctions-header__actions">
+          <router-link :to="'/auctions/create'" class="button">Create New Auction</router-link>
+          <button @click="createViewingKey()">Create Viewing Key</button>
+          <button @click="listUserAuctions()">ListUserAuctions</button>
+        </div>
+      </div>
       <section class="auctions-grid">
         <auction-item v-for="activeAuction in activeAuctions" :key="activeAuction.address" :auction="activeAuction" :closed="false"></auction-item>
       </section>
-      <section>
-        <h2>Closed Auctions</h2>
-      </section>
+    </column>
+    <column>
+      <h1>Closed Auctions</h1>
       <section class="auctions-grid">
         <auction-item v-for="closedAuction in closedAuctions" :key="closedAuction.address" :auction="closedAuction" :closed="true"></auction-item>
       </section>
@@ -64,11 +62,10 @@ export default {
   methods: {
     async createViewingKey() {
       const viewingKey = await this.$auctions.createViewingKey(process.env.GRIDSOME_AUCTIONS_FACTORY);
-      await this.$auctions.addUpdateWalletKey(process.env.GRIDSOME_AUCTIONS_FACTORY,viewingKey, "211");
+      await this.$auctions.addUpdateWalletKey(process.env.GRIDSOME_AUCTIONS_FACTORY, viewingKey, "211");
     },
     async listUserAuctions() {
       const userAuctions = await this.$auctions.listUserAuctions();
-      console.log(userAuctions);
     }
   }
 }
@@ -76,6 +73,18 @@ export default {
 
 <style lang="scss" scoped>
   @import "@lkmx/flare/src/functions/respond-to";
+
+  .auctions-header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+
+    &__actions {
+      display: grid;
+      grid-auto-flow: column;
+      grid-gap: var(--f-gutter);
+    }
+  }
 
   .auctions-grid {
     display: grid;

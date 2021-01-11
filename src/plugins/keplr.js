@@ -13,15 +13,17 @@ export default {
         $keplr: {
           namespaced: true,
           state: {
-            chainId: "",
-            chainName: "",
+            chainInfo: {
+              chainId: "",
+              chainName: "",
+            },
             selectedAccount: null,
             accounts: []
           },
           mutations: {
             setChainInfo(state, { chainId, chainName }) {
-              state.chainId = chainId;
-              state.chainName = chainName;
+              state.chainInfo.chainId = chainId;
+              state.chainInfo.chainName = chainName;
             },
             selectAccount(state, address) {
               state.accounts.forEach(e => {e.selected = false});

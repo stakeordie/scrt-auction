@@ -33,10 +33,10 @@ export class AuctionsApi {
         if(auctionState == "active") {
             return (await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})).list_active_auctions.active;
         } else if(auctionState == "closed") {
-            console.log(await this.scrtClient.queryContract(this.factoryAddress, {"list_closed_auctions":{}}));
             return (await this.scrtClient.queryContract(this.factoryAddress, {"list_closed_auctions":{}})).list_closed_auctions.closed;
         }
     }
+    
     // BELOW HERE ADDED BY SANDY
     // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
     async listUserAuctions() {
