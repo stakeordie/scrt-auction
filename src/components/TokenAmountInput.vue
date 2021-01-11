@@ -4,8 +4,8 @@
             <input
                 name="{name}"
                 type="text"
-                v-bind:value="value"
-                v-on:input="$emit('input', $event.target.value)"
+                :value="value.amount"
+                @input="update('amount', $event.target.value)"
             />
             <div class="input-fake">
                 <div class="conversion">
@@ -32,16 +32,19 @@ export default {
     data() {
         return {
             selectedSymbol: "SODTE",
-            baseDenomSelected: true
+            baseDenomSelected: true,
         }
     },
     computed: {
+        tokenAmount() {
+            return this.value ? this.value : { amount: 1 }
+        },
         convertedAmount: function() {
-            if(this.value) {
+            if(this.value.amount) {
                 if(this.baseDenomSelected) {
-                    return this.value / Math.pow(10, this.decimals);
+                    return this.value.amount / Math.pow(10, this.decimals);
                 } else {
-                    return this.value * Math.pow(10, this.decimals);
+                    return this.value.amount * Math.pow(10, this.decimals);
                 }
             } else {
                 return 0;
@@ -49,18 +52,26 @@ export default {
         }
     },
     methods: {
+        update(key, value) {
+            let denomValue = value
+            console.log(this.baseDenomSelected)
+            if(!this.baseDenomSelected) {
+                denomValue = value * Math.pow(10, this.decimals);
+            }
+            this.$emit('input', { ...this.local, [key]: value, denomValue});
+        },
         convertToSymbol() {
             if(this.baseDenomSelected) {
                 this.baseDenomSelected = !this.baseDenomSelected;
                 this.selectedSymbol = this.tokenBaseSymbol;
-                this.value = this.value / Math.pow(10, this.decimals);
+                this.value.amount = this.value.amount / Math.pow(10, this.decimals);
             }
         },
         convertToUSymbol() {
             if(!this.baseDenomSelected) {
                 this.baseDenomSelected = !this.baseDenomSelected;
                 this.selectedSymbol = this.tokenSymbol;
-                this.value = this.value * Math.pow(10, this.decimals);
+                this.value.amount = this.value.amount * Math.pow(10, this.decimals);
             }
         }
     }

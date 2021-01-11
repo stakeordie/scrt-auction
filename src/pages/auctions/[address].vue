@@ -53,7 +53,9 @@ import { required, integer, min_value } from "vee-validate/dist/rules";
 import TokenAmountInput from '../../components/TokenAmountInput.vue';
 
 extend("required", {
-  ...required,
+  validate: value => {
+    return String(value.amount).trim().length;
+  },
   message: "This field is required",
 });
 
@@ -79,7 +81,7 @@ export default {
           "amount_bid": ""
         }
       },
-      formBidAmount: 0,
+      formBidAmount: {},
       codeHash: "",
         auctionInfo: {
           auction_info: {
@@ -133,7 +135,7 @@ export default {
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.minValueRules = "required|integer|min_value:" + this.auctionInfo.auction_info.minimum_bid;
-      this.formBidAmount = this.auctionInfo.auction_info.minimum_bid;
+      this.formBidAmount = { "amount": this.auctionInfo.auction_info.minimum_bid };
     }
   },
   methods: {
