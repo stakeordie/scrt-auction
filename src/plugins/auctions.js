@@ -24,6 +24,10 @@ export default {
             });
 
             Vue.prototype.$auctions = {
+                async listAuctions(status) {
+                    return await auctionsApi.listAuctions(status);
+                },
+
                 async getUserAddress() {
                     return await auctionsApi.getUserAddress();
                 },
@@ -33,32 +37,32 @@ export default {
                 async listAllTokens() {
                     return await auctionsApi.listAllTokens();
                 },
-                async getAuctionInfo() {
-                    return await auctionsApi.getAuctionInfo();
+                async getAuctionInfo(auctionAddress) {
+                    return await auctionsApi.getAuctionInfo(auctionAddress);
                 },
-                async getAuctionBidInfo() {
-                    return await auctionsApi.getAuctionBidInfo();
+                async getAuctionBidInfo(auctionAddress,viewingKey) {
+                    return await auctionsApi.getAuctionBidInfo(auctionAddress,viewingKey);
                 },
                 async getWallet() {
                     return await auctionsApi.getWallet();
                 },
-                async getViewingKeyWallet() {
-                    return await auctionsApi.getViewingKeyWallet();
+                async getViewingKeyWallet(address) {
+                    return await auctionsApi.getViewingKeyWallet(address);
                 },
-                async getViewingKey() {
-                    return await auctionsApi.getViewingKey();
+                async getViewingKey(address) {
+                    return await auctionsApi.getViewingKey(address);
                 },
-                async getViewingKey() {
-                    return await auctionsApi.getViewingKey();
+                async getViewingKey(address, contractAddress) {
+                    return await auctionsApi.getViewingKey(address, contractAddress);
                 },
-                async getViewingKeys() {
-                    return await auctionsApi.getViewingKeys();
+                async getViewingKeys(contractAddress) {
+                    return await auctionsApi.getViewingKeys(contractAddress);
                 },
-                async createViewingKey() {
-                    return await auctionsApi.createViewingKey();
+                async createViewingKey(contractAddress, viewingKey, contractCodeId) {
+                    return await auctionsApi.createViewingKey(contractAddress, viewingKey, contractCodeId);
                 },
-                async addUpdateWalletKey() {
-                    return await auctionsApi.addUpdateWalletKey();
+                async addUpdateWalletKey(viewingKey) {
+                    return await auctionsApi.addUpdateWalletKey(viewingKey);
                 },
                 async addViewingKey() {
                     return await auctionsApi.addViewingKey();
@@ -66,31 +70,28 @@ export default {
                 async removeViewingKey() {
                     return await auctionsApi.removeViewingKey();
                 },
-                async saveViewingKeys() {
-                    return await auctionsApi.saveViewingKeys();
+                async saveViewingKeys(viewingKeys) {
+                    return await auctionsApi.saveViewingKeys(viewingKeys);
                 },
-                async saveWallet() {
-                    return await auctionsApi.saveWallet();
+                async saveWallet(wallet) {
+                    return await auctionsApi.saveWallet(wallet);
                 },
-                async closeAuction() {
-                    return await auctionsApi.closeAuction();
+                async closeAuction(auctionAddress) {
+                    return await auctionsApi.closeAuction(auctionAddress);
                 },
-                async placeBid() {
-                    return await auctionsApi.placeBid();
+                async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
+                    return await auctionsApi.placeBid(bidTokenAddress, auctionAddress, bidAmount);
                 },
-                async retractBid() {
-                    return await auctionsApi.retractBid();
+                async retractBid(auctionAddress) {
+                    return await auctionsApi.retractBid(auctionAddress);
                 },
-                async consignAllowance() {
-                    return await auctionsApi.consignAllowance();
+                async consignAllowance(sellTokenAddress, sellAmount) {
+                    return await auctionsApi.consignAllowance(sellTokenAddress, sellAmount);
                 },
                 async createAuction() {
                     return await auctionsApi.createAuction();
                 },
                 
-                async listAuctions(status) {
-                    return await auctionsApi.listAuctions(status);
-                }
             };
 
             Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);

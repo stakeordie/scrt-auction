@@ -1,7 +1,7 @@
 <template>
   <div class="auction">
-    <span>{{ auction.pair }}</span>
-    <span>{{ auction.sell_amount / Math.pow(10, auction.sell_decimals) }}</span>
+    <h3>{{ auction.pair }}</h3>
+    <span>{{ (auction.sell_amount / Math.pow(10, auction.sell_decimals)).toFixed(7) }}</span>
     <dl v-if="!closed">
       <dt>Minimum bid</dt>
       <dd>{{ auction.minimum_bid / Math.pow(10, auction.bid_decimals) }}</dd>
@@ -40,6 +40,10 @@ export default {
   border: 1px solid white;
   border-radius: 10px;
   position: relative;
+
+  h3 {
+    margin: 0;
+  }
 
   &__bid {
     top: var(--f-gutter-s);

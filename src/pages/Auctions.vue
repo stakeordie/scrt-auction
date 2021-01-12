@@ -43,6 +43,11 @@
       <section class="auctions-grid">
         <auction-item v-for="closedAuction in closedAuctions" :key="closedAuction.address" :auction="closedAuction" :closed="true"></auction-item>
       </section>
+
+      <details>
+        <summary>Titulo</summary>
+        Esto es el contenido
+      </details>
     </column>
   </page>
 </template>
