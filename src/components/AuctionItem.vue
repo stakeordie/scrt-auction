@@ -1,34 +1,25 @@
 <template>
-  <div class="auction">
+  <div class="auction" :class="{ closed: auction.closed }">
     <h3>{{ auction.pair }}</h3>
-    <span>{{ (auction.sell_amount / Math.pow(10, auction.sell_decimals)).toFixed(7) }}</span>
-    <dl v-if="!closed">
+    <span>{{ auction.sell.humanAmount }}</span>
+
+    <dl v-if="!auction.closed">
       <dt>Minimum bid</dt>
-      <dd>{{ auction.minimum_bid / Math.pow(10, auction.bid_decimals) }}</dd>
+      <dd>{{ auction.bid.humanAmount }}</dd>
     </dl>
-    <dl v-if="closed">
+    
+    <dl v-if="auction.winning">
       <dt>Winning Bid</dt>
-      <dd>{{ auction.winning_bid / Math.pow(10, auction.bid_decimals) }}</dd>
+      <dd>{{ auction.winning.humanAmount }}</dd>
     </dl>
     <span>{{ auction.label }}</span>
-    <router-link :to="'/auctions/' + auction.address" class="button auction__bid">Bid</router-link>
-    <!--
-      ------
-        - Auction Header
-          - Pair (dynamic)
-          - Amount (dynamic)
-        - Bid Button
-      ------
-        - Auction Footer
-          - "Min Bid"
-          - minimum bid (dynamic)
-    -->
+    <router-link v-if="!auction.closed" :to="'/auctions/' + auction.address" class="button auction__bid">Bid</router-link>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["auction", "closed"]
+  props: ["auction"]
 };
 </script>
 

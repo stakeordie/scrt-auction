@@ -19,15 +19,15 @@
             <label for="bid-token">Sale token</label>
             <select name="bid-token" v-model="filterOptions.saleToken">
               <option value=""></option>
-              <option v-for="token in sellTokens" :key="token" v-bind:value="token">
-                {{ token }}
+              <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
+                {{ sellToken }}
               </option>
             </select>
             <label for="bid-token">Bid token</label>
             <select name="bid-token" v-model="filterOptions.bidToken">
               <option value=""></option>
-              <option v-for="token in sellTokens" :key="token" v-bind:value="token">
-                {{ token }}
+              <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
+                {{ bidToken }}
               </option>
             </select>
           </form>
@@ -40,17 +40,15 @@
 
       <!-- Auctions grid -->
       <section class="auctions-grid">
-        <auction-item v-for="activeAuction in activeAuctions" :key="activeAuction.address" :auction="activeAuction" :closed="false"></auction-item>
-      </section>
-      <h1>Closed Auctions</h1>
-      <section class="auctions-grid">
-        <auction-item v-for="closedAuction in closedAuctions" :key="closedAuction.address" :auction="closedAuction" :closed="true"></auction-item>
+        <auction-item v-for="auction in auctions" :key="auction.address" :auction="auction"></auction-item>
       </section>
     </column>
   </page>
 </template>
 
 <script>
+
+import { mapGetters } from 'vuex'
 
 import AuctionItem from '../components/AuctionItem.vue'
 
@@ -70,16 +68,15 @@ export default {
     }
   },
   computed: {
-    activeAuctions() {
-      return this.$store.state.$auctions.activeAuctions; 
+    auctions() {
+      return this.$store.state.$auctions.auctions; 
     },
-    closedAuctions() {
-      return this.$store.state.$auctions.closedAuctions; 
-    }
+    ...mapGetters("$auctions", [
+      "sellDenoms", "bidDenoms"
+    ])
   },
   async created() {
-    this.$auctions.updateAuctions("active");
-    this.$auctions.updateAuctions("closed");
+    this.$auctions.updateAuctions();
   },
   methods: {
     async createViewingKey() {
