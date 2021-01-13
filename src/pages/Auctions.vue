@@ -17,14 +17,14 @@
           <span class="auctions-tools__filter-title">Filters</span>
           <form class="auctions-tools__filter-filters" @submit.prevent="filter()">
             <label for="bid-token">Sale token</label>
-            <select name="bid-token" v-model="filterOptions.saleToken">
+            <select name="bid-token" @change="filterChanged()" v-model="filterOptions.saleToken">
               <option value=""></option>
               <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
                 {{ sellToken }}
               </option>
             </select>
             <label for="bid-token">Bid token</label>
-            <select name="bid-token" v-model="filterOptions.bidToken">
+            <select name="bid-token" @change="filterChanged()" v-model="filterOptions.bidToken">
               <option value=""></option>
               <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
                 {{ bidToken }}
@@ -59,8 +59,6 @@ export default {
   },
   data() {
     return {
-      sellTokens: [ 'EXAM', 'PLE' ],
-
       filterOptions: {
         saleToken: "",
         bidToken: ""
@@ -79,6 +77,9 @@ export default {
     this.$auctions.updateAuctions();
   },
   methods: {
+    async filterChanged() {
+
+    },
     async createViewingKey() {
       const viewingKey = await this.$auctions.createViewingKey(process.env.GRIDSOME_AUCTIONS_FACTORY);
       await this.$auctions.addUpdateWalletKey(process.env.GRIDSOME_AUCTIONS_FACTORY, viewingKey, "211");
