@@ -9,9 +9,6 @@
         leave-active-class="animate__animated animate__fadeOutUp">
 
         <div v-show="showDetails" class="keplr__details">
-          <div v-show="!address" class="keplr__error">
-            Error connecting to Keplr wallet. Please try again...
-          </div>
           <div v-show="address" class="keplr__account">
             <!-- this.$keplr.chainId is not reactive but there's no need, it's left here as an example -->
             <span class="account account__chain">{{ $keplr.chainId }}</span>
