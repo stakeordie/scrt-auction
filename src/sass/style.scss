@@ -59,6 +59,7 @@ $color-blue-secondary: #92BCEF;
     // a different name to prevent an unnecessary 
     // dependency, i.e. KeplrUser badge, etc.
     --default-background-color: #{$dark-gray-color};
+    --default-error-color: #{$color-red-primary};
 
     --gutter: var(--f-gutter);
 

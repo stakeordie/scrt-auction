@@ -37,7 +37,7 @@ export default {
   display: grid;
   background-color: black;
   padding: var(--f-gutter);
-  border: 1px solid white;
+  border: 0.5px solid rgba(255,255,255,0.41);
   border-radius: 10px;
   position: relative;
 

@@ -1,17 +1,20 @@
 <template>
   <page>
     <column>
+      <!-- Auctions header -->
       <div class="auctions-header">
-        <h1>Available Auctions</h1>
+        <h1>Auctions</h1>
         <div class="auctions-header__actions">
           <router-link :to="'/auctions/create'" class="button">Create New Auction</router-link>
           <button @click="createViewingKey()">Create Viewing Key</button>
           <button @click="listUserAuctions()">ListUserAuctions</button>
         </div>
       </div>
+
+      <!-- Auctions toolbar -->
       <section class="auctions-tools">
         <div class="auctions-tools__filter">
-          <span class="auctions-tools__filter-title">Filter by</span>
+          <span class="auctions-tools__filter-title">Filters</span>
           <form class="auctions-tools__filter-filters" @submit.prevent="filter()">
             <label for="bid-token">Sale token</label>
             <select name="bid-token" v-model="filterOptions.saleToken">
@@ -27,15 +30,15 @@
                 {{ token }}
               </option>
             </select>
-
           </form>
-
         </div>
         <div class="auctions-tools__view">
           <button class="no-button">Grid</button>
           <button class="no-button">List</button>
         </div>
       </section>
+
+      <!-- Auctions grid -->
       <section class="auctions-grid">
         <auction-item v-for="activeAuction in activeAuctions" :key="activeAuction.address" :auction="activeAuction" :closed="false"></auction-item>
       </section>
@@ -43,11 +46,6 @@
       <section class="auctions-grid">
         <auction-item v-for="closedAuction in closedAuctions" :key="closedAuction.address" :auction="closedAuction" :closed="true"></auction-item>
       </section>
-
-      <details>
-        <summary>Titulo</summary>
-        Esto es el contenido
-      </details>
     </column>
   </page>
 </template>
@@ -63,8 +61,6 @@ export default {
   },
   data() {
     return {
-      activeAuctions: null,
-      closedAuctions: null,
       sellTokens: [ 'EXAM', 'PLE' ],
 
       filterOptions: {
@@ -73,10 +69,17 @@ export default {
       }
     }
   },
+  computed: {
+    activeAuctions() {
+      return this.$store.state.$auctions.activeAuctions; 
+    },
+    closedAuctions() {
+      return this.$store.state.$auctions.closedAuctions; 
+    }
+  },
   async created() {
-    this.activeAuctions = await this.$auctions.listAuctions("active");
-    this.closedAuctions = await this.$auctions.listAuctions("closed");
-    console.log(this.activeAuctions, this.closedAuctions);
+    this.$auctions.updateAuctions("active");
+    this.$auctions.updateAuctions("closed");
   },
   methods: {
     async createViewingKey() {

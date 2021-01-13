@@ -8,16 +8,23 @@
         enter-active-class="animate__animated animate__flipInX"
         leave-active-class="animate__animated animate__fadeOutUp">
 
-        <div v-if="$keplr.address" v-show="showDetails" class="keplr__account">
-          <!-- this.$keplr.chainId is not reactive but there's no need, it's left here as an example -->
-          <span class="account account__chain">{{ $keplr.chainId }}</span>
-          <span class="account account__address">{{ address }}</span>
+        <div v-show="showDetails" class="keplr__details">
+          <div v-show="!address" class="keplr__error">
+            Error connecting to Keplr wallet. Please try again...
+          </div>
+          <div v-show="address" class="keplr__account">
+            <!-- this.$keplr.chainId is not reactive but there's no need, it's left here as an example -->
+            <span class="account account__chain">{{ $keplr.chainId }}</span>
+            <span class="account account__address">{{ address }}</span>
+          </div>
         </div>
     </transition>
   </div>
 </template>
 
 <script>
+const AUTO_CLOSE_TIME = 3000;
+
 export default {
   data () {
     return {
@@ -33,7 +40,7 @@ export default {
   methods: {
     async clicked() {
       if(!this.address) {
-        await this.$keplr.enable();
+        this.$keplr.enable();
         this.toggleDetails(true);
       } else {
         this.toggleDetails();
@@ -41,12 +48,10 @@ export default {
     },
 
     toggleDetails(value) {
-      // If no value is passed then it just toggles
-      if(value === undefined) {
-        this.showDetails = !this.showDetails;
-      } else {
-        this.showDetails = value;
-      }       
+      this.showDetails = value || !this.showDetails;
+      if(this.showDetails) {
+        setTimeout(() => { this.showDetails = false}, AUTO_CLOSE_TIME);
+      }
     },
   },
 }
@@ -60,7 +65,7 @@ export default {
     width: 32px;
   }
 
-  &__account {
+  &__details {
     position: absolute;
     right: 0;
     background-color: var(--default-background-color);
@@ -70,8 +75,10 @@ export default {
     box-shadow: 0px 0px 16px -6px rgba(0,0,0,1);
   }
 
-  &--off {
-    opacity: 0.5;
+  &__error {
+    display: block;
+    min-width: max-content;
+    color: var(--default-error-color);
   }
 
   &__status {
@@ -81,11 +88,12 @@ export default {
     position: absolute;
     top: -4px;
     right: -4px;
-    background-color: #FF3100;
+    background-color: var(--default-error-color);
 
     &--online {
-      background-color: #0AD32C;
+      background-color: var(--default-success-color, green);
     }
+
   }
 
   .account {

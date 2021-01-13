@@ -27,6 +27,9 @@ export default {
 
               if(address) {
                 let account = state.accounts.find(e => e.address == address);
+
+                // If the account is not in the state already
+                // a new empty one is pushed
                 if(account == undefined) {
                   account = {
                     selected: true,
@@ -37,6 +40,7 @@ export default {
   
                   state.accounts.push(account);
                 } else {
+                  // Otherwise the account is just selected
                   account.selected = true;
                 }
 
@@ -55,32 +59,27 @@ export default {
         });
 
 
-    const keplrWallet = new Keplr(
-      options.chainId,
-      options.chainName,
-      options.restUrl,
-      options.rpcUrl,
-      // On load
-      () => {
-        options.onLoad();
+      const keplrWallet = new Keplr(
+        options.chainId,
+        options.chainName,
+        options.restUrl,
+        options.rpcUrl,
+  
+        options.onLoad
+      );
+
+      
+      // After initializing the wallet it hooks it up with the store in just two events
+      // 1. Sets up the reactive chain info
+      Vue.prototype.$store.dispatch('$keplr/setChainInfo', {
+        chainId: keplrWallet.chainId, 
+        chainName: keplrWallet.chainName
+      });
+      // 2. Updates the address everything the default address is changed in the wallet
+      keplrWallet.onAddressChanged = (newAddress) => {
+        Vue.prototype.$store.dispatch('$keplr/selectAccount', newAddress);
       },
-      // When something goes wrong
-      (err) => {
-        console.error(err);
-      }
-    );
-
-    // After initializing the wallet it hooks it up with the store in just two events
-    // 1. Sets up the reactive chain info
-    Vue.prototype.$store.dispatch('$keplr/setChainInfo', {
-      chainId: keplrWallet.chainId, 
-      chainName: keplrWallet.chainName
-    });
-    // 2. Updates the address everything the default address is changed in the wallet
-    keplrWallet.onAddressChanged = (newAddress) => {
-      Vue.prototype.$store.dispatch('$keplr/selectAccount', newAddress);
-    },
-
-    Object.defineProperty(Vue.prototype, "$keplr", { value: keplrWallet });
+      
+      Object.defineProperty(Vue.prototype, "$keplr", { value: keplrWallet });
   },
 };

@@ -11,20 +11,31 @@ export default {
         Vue.prototype.$store.registerModule('$auctions', {
               namespaced: true,
               state: {
+                  activeAuctions: [],
+                  closedAuctions: [],
               },
               mutations: {
-                example: (state, { params }) => {
+                activeAuctions: (state, auctions) => {
+                    state.activeAuctions = auctions;
+                },
+                closedAuctions: (state, auctions) => {
+                    state.closedAuctions = auctions;
                 },
               },
               actions: {
-                example: ({ commit }, params) => {
-                  commit("example", params);
+                updateAuctions: async ({ commit }, status) => {
+                  if(status == "active" || status == "closed") {
+                    commit(status + "Auctions", await auctionsApi.listAuctions(status))
+                  } else {
+                    console.log("Update y'all pending");
+                  }
                 },
               }
             });
 
             Vue.prototype.$auctions = {
-                async listAuctions(status) {
+                async updateAuctions(status) {
+                    Vue.prototype.$store.dispatch('$auctions/updateAuctions', status);
                     return await auctionsApi.listAuctions(status);
                 },
 
@@ -94,6 +105,6 @@ export default {
                 
             };
 
-            Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
+            //Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
         }
     }

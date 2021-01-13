@@ -9,23 +9,19 @@ export default class Keplr {
   address;
   onAddressChanged;
 
-  onError;
-
   checkInterval;
 
-  constructor(chainId, chainName, restUrl, rpcUrl, loadListener, errorListener) {
+  constructor(chainId, chainName, restUrl, rpcUrl, loadListener) {
     this.chainId = chainId;
     this.chainName = chainName;
     this.restUrl = restUrl;
     this.rpcUrl = rpcUrl;
 
     this.address = null;
-
-    this.onError = errorListener;
     
     window.onload = (async () => {
       if(typeof loadListener === 'function') {
-        loadListener();
+        await loadListener();
       }
       this.checkInterval = setInterval(() => {
         this.checkAddressUpdates();
@@ -52,9 +48,10 @@ export default class Keplr {
         const newAddress = (await this.getSigner().getAccounts())[0].address;
         if(this.address != newAddress && typeof this.onAddressChanged === 'function') {
           this.address = newAddress;
-          this.onAddressChanged(newAddress);
+          this.onAddressChanged(this.address);
         }
       } catch(err) {
+        this.address = null;
       }
     });
   }
@@ -84,7 +81,7 @@ export default class Keplr {
       if (window.keplr.experimentalSuggestChain) {
         return await window.keplr.experimentalSuggestChain(experimentalChain);
       } else {
-        console.log("Unexpected: Experimental chains are not supported");
+        throw "Unexpected: Experimental chains are not supported by your Keplr wallet";
       }
     });
   }
