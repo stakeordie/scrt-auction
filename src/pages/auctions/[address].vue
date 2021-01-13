@@ -79,7 +79,7 @@ extend("muValidDecimals", {
 });
 
 extend("min_value", {
-  validate: (value,min) => {
+  validate: (value, min) => {
     return parseInt(value.fmuAmount) >= parseInt(min[0]);
   },
   message: "The bid must be greater than the minimum value allowed by the auction.",
