@@ -42,6 +42,13 @@ Performs contract ops.
 [Example](/examples/contracts)
 
 
+## View Wallet
+
+View info from local wallet store
+
+[Example](/examples/wallet-view)
+
+
 
 </block>
 

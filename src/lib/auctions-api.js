@@ -130,6 +130,7 @@ export class AuctionsApi {
                 "entropy": "A Random String for Entropy"
             }
         }
+        console.log(contractAddress);
         const response = await this.scrtClient.executeContract(contractAddress, msg);
         return JSON.parse(new TextDecoder("utf-8").decode(response.data)).viewing_key.key;
     }

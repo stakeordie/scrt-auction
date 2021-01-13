@@ -69,8 +69,22 @@ export class SecretJsClient {
     console.log(payment);
   }
 
+  async transferSnip20Tokens(payment) {
+    const msg = {
+        "send": {
+            "recipient": payment.recipient, 
+            "amount": payment.amount
+        }
+    };
+    const response = await this.executeContract(payment.tokenAddress, msg);
+    console.log("TESTB");
+    console.log(response);
+    return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+    //secretcli tx compute execute *sale_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*amount_being_sold_in_smallest_denomination_of_sell_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
+  }
 
-  async executeContract(address, handleMsg, fees) {
+
+  async executeContract(address, handleMsg, fees = defaultFees) {
     console.log(handleMsg);
     const chainId = await this.getChainId();
     try {
@@ -81,15 +95,16 @@ export class SecretJsClient {
         this.wallet.address,
         this.wallet.getSigner(),
         this.wallet.getSeed(),
-        fees || defaultFees
+        fees
       );
+      console.log(this.signingClient);
       return await this.signingClient.execute(address, handleMsg);
     } catch (error) {
       console.error(error)
     }
   }
 
-  async getContractInfo(address) {
+  async getContract(address) {
     return await this.client.getContract(address);
   }
 

@@ -6,15 +6,21 @@
       <block>
         <transaction-send></transaction-send>
       </block>
+      <p>Send SNIP-20 to an account</p>
+      <block>
+        <transaction-snip20-send></transaction-snip20-send>
+      </block>
     </columns>
   </page>
 </template>
 
 <script>
 import TransactionSend from "./components/TransactionSend.vue";
+import TransactionSnip20Send from "./components/TransactionSnip20Send.vue";
 export default {
   components: {
     TransactionSend,
+    TransactionSnip20Send
   },
 };
 </script>

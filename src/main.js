@@ -63,9 +63,9 @@ export default function(Vue, { router, head, isClient }) {
             },
           ],
           gasPriceStep: {
-            low: 1,
-            average: 5,
-            high: 4,
+            low: .1,
+            average: .25,
+            high: .4,
           },
     
           // walletUrlForStaking: "",
