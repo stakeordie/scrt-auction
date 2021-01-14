@@ -18,18 +18,18 @@
             <span class="auctions-tools__filter-title">Filters</span>
 
             <!-- Filtering by sell -->
-            <label class="auctions-tools__filter-label" for="sell-token">Sell token</label>
+            <label class="auctions-tools__filter-label" for="sell-token">Sell</label>
             <select class="auctions-tools__filter-select" name="sell-token" v-model="auctionsFilter.sellToken" @change="filterChanged()">
-              <option value=""></option>
+              <option value="">*</option>
               <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
                 {{ sellToken }}
               </option>
             </select>
 
             <!-- Filtering by bid -->
-            <label class="auctions-tools__filter-label" for="bid-token">Bid token</label>
+            <label class="auctions-tools__filter-label" for="bid-token">Bid</label>
             <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
-              <option value=""></option>
+              <option value="">*</option>
               <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
                 {{ bidToken }}
               </option>
@@ -129,9 +129,6 @@ export default {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-
-    border-bottom: 2px solid var(--f-default-text-color);
-    margin-bottom: var(--f-gutter);
 
     &__filter {
       display: flex;

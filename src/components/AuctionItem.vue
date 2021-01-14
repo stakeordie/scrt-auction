@@ -30,22 +30,15 @@ export default {
 
 <style lang="scss" scoped>
 .auction {
-  background-color: black;
+  background-color: var(--color-black);
   display: grid;
   padding: var(--f-gutter);
   border-radius: 10px;
   position: relative;
-  transition: background-color 1s;
+  transition: background-color 0.7s;
 
   &:not(.closed) {
     border: 0.5px solid rgba(255,255,255,0.41);
-  }
-
-  &:hover {
-    .auction__bid {
-      color: var(--theme-anti-color);
-      background-color: var(--theme-color);
-    }
   }
 
   h3 {
@@ -61,11 +54,29 @@ export default {
   }
 
   &__bid {
+    cursor: pointer;
+
     top: var(--f-gutter-s);
     right: var(--f-gutter-s);
     position: absolute;
+    padding-left: var(--f-gutter-l);
+    padding-right: var(--f-gutter-l);
 
-    cursor: pointer;
+    transition: opacity 3s;
+    opacity: 0;
+
+  }
+
+  &:hover {
+    background-color: black;
+
+    .auction__bid {
+      color: var(--theme-anti-color);
+      background-color: var(--theme-color);
+      transition: opacity 0.5s;
+
+      opacity: 1;
+    }
   }
 }
 </style>
