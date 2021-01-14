@@ -1,16 +1,15 @@
 <template>
   <page>
     <columns number="2" number-s="1" weight="right">
-      <h1>Wallet View</h1>
+      <h1>Wallet Info</h1>
       <block>
-          <validation-observer v-slot="{ handleSubmit, invalid }">
+          <h2>Add to wallet</h2>
+          <validation-observer v-slot="{handleSubmit, invalid}">
             <form class="form" @submit.prevent="handleSubmit(addViewingKey)">
                 <ul>
                 <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
                 </ul>
-
                 <div class="form__frame">
-
                 <div>
                     <label for="payment-sender">My Address</label>
                     <keplr-account v-model="userAddress"></keplr-account>
@@ -36,10 +35,12 @@
             </form>
         </validation-observer>
         <br/>
-        <br />
-        <button @click="refreshWallet">refresh</button>
+        <hr/>
+        <h2>Wallet View</h2>
+        <br>
         <div v-for="(entry, index) in wallet" :key="entry.address" style="width: 100%">
-            <span>Address: {{entry.address}}</span>
+            <div>Address: {{entry.address}}</div>
+            <br>
             <table style="width: 100%">
                 <tr>
                     <th>
@@ -54,7 +55,11 @@
                     <th>{{wallet[index].keys[index2].balance}}</th>
                 </tr>
             </table>
+            <br>
+            <br>
         </div>
+        <button @click="refreshWallet">Refresh</button>
+        <br>
       </block>
       <block>
         

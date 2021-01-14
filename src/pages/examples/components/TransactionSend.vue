@@ -7,7 +7,14 @@
           <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
         </ul>
 
+
         <div class="form__frame">
+          <div>
+            <select class="auctions-tools__filter-select" name="sell-token" v-model="payment.type">
+                    <option value="SCRT">SCRT</option>
+                    <option value="SNIP-20">SNIP-20</option>
+            </select>
+          </div>
 
           <div>
             <label for="payment-sender">Sender</label>
@@ -18,6 +25,12 @@
             <label for="payment-recipient">Recipient</label>
             <span class="error">{{ errors[0] }}</span>
             <input name="payment-recipient" type="text" v-model.trim="payment.recipient" />
+          </validation-provider>
+        
+          <validation-provider rules="required" v-slot="{ errors }" v-if="payment.type !== 'SCRT'">
+            <label for="token-contract-address">Token</label>
+            <span class="error">{{ errors[0] }}</span>
+            <input name="token-contract-address" type="text" v-model="payment.tokenAddress" />
           </validation-provider>
 
           <validation-provider rules="required|min_value:1" v-slot="{ errors }">
@@ -64,6 +77,8 @@ export default {
         recipient: "",
         amount: 1,
         memo: "",
+        type: "SCRT",
+        tokenAddress: ""
       },
       block: null,
       errors: [],
@@ -81,6 +96,11 @@ export default {
 
 .form__frame {
   max-width: 500px;
+}
+
+input:read-only {
+  background: var(--default-background-color);
+  color: var(--color-white-primary);
 }
 
 </style>

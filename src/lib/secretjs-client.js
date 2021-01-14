@@ -66,23 +66,39 @@ export class SecretJsClient {
 
 
   async sendTokens(payment) {
-    console.log(payment);
-  }
+    if(payment.type == "SCRT") {
+      const chainId = await this.getChainId();
+      const fees = defaultFees
+      try {
+        await window.keplr.enable(chainId);
+  
+        this.signingClient = new SigningCosmWasmClient(
+          this.secretRestUrl,
+          this.wallet.address,
+          this.wallet.getSigner(),
+          this.wallet.getSeed(),
+          fees
+        );
 
-  async transferSnip20Tokens(payment) {
-    const msg = {
-        "send": {
-            "recipient": payment.recipient, 
-            "amount": payment.amount
-        }
-    };
-    const response = await this.executeContract(payment.tokenAddress, msg);
-    console.log("TESTB");
-    console.log(response);
-    return JSON.parse(new TextDecoder("utf-8").decode(response.data));
-    //secretcli tx compute execute *sale_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*amount_being_sold_in_smallest_denomination_of_sell_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
+        const response = await this.signingClient.sendTokens(payment.recipient, [{amount: payment.amount, denom: "uscrt"}], payment.memo);
+        const query = {id: response.transactionHash}
+        const tx = await this.client.searchTx(query)
+        console.log('Transaction: ', tx);
+      } catch(error) {
+        console.log(error);
+      }
+    } else {
+      const msg = {
+          "send": {
+              "recipient": payment.recipient, 
+              "amount": payment.amount
+          }
+      };
+      const response = await this.executeContract(payment.tokenAddress, msg);
+      console.log(response);
+      return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+    }
   }
-
 
   async executeContract(address, handleMsg, fees = defaultFees) {
     console.log(handleMsg);

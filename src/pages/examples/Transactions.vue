@@ -6,10 +6,6 @@
       <block>
         <transaction-send></transaction-send>
       </block>
-      <p>Send SNIP-20 to an account</p>
-      <block>
-        <transaction-snip20-send></transaction-snip20-send>
-      </block>
     </columns>
   </page>
 </template>
