@@ -6,30 +6,38 @@
         <h1>Auctions</h1>
         <div class="auctions-header__actions">
           <router-link :to="'/auctions/create'" class="button">Create New Auction</router-link>
-          <button @click="createViewingKey()">Create Viewing Key</button>
-          <button @click="listUserAuctions()">ListUserAuctions</button>
+          <!--button @click="createViewingKey()">Create Viewing Key</button-->
+          <!--button @click="listUserAuctions()">ListUserAuctions</button-->
         </div>
       </div>
 
       <!-- Auctions toolbar -->
       <section class="auctions-tools">
         <div class="auctions-tools__filter">
-          <span class="auctions-tools__filter-title">Filters</span>
           <form class="auctions-tools__filter-filters" @submit.prevent="filter()">
-            <label for="bid-token">Sale token</label>
-            <select name="bid-token" @change="filterChanged()" v-model="filterOptions.saleToken">
+            <span class="auctions-tools__filter-title">Filters</span>
+            <!-- Filtering by sell -->
+            <label class="auctions-tools__filter-label" for="sell-token">Sell token</label>
+            <select class="auctions-tools__filter-select" name="sell-token" @change="filterChanged()" v-model="filterOptions.saleToken">
               <option value=""></option>
               <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
                 {{ sellToken }}
               </option>
             </select>
-            <label for="bid-token">Bid token</label>
-            <select name="bid-token" @change="filterChanged()" v-model="filterOptions.bidToken">
+
+            <!-- Filtering by bid -->
+            <label class="auctions-tools__filter-label" for="bid-token">Bid token</label>
+            <select class="auctions-tools__filter-select" name="bid-token" @change="filterChanged()" v-model="filterOptions.bidToken">
               <option value=""></option>
               <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
                 {{ bidToken }}
               </option>
             </select>
+
+            <!-- Filtering by status -->
+            <span class="auctions-tools__filter-title">Show</span>
+            <button class="auctions-tools__filter-toggle">Active</button>
+            <button class="auctions-tools__filter-toggle">Closed</button>
           </form>
         </div>
         <div class="auctions-tools__view">
@@ -137,16 +145,33 @@ export default {
       align-items: baseline;
     }
 
-    &__filter-title, label {
+    &__filter-title, &__filter-label, &__filter-control {
       display: inline-block;
       margin-bottom: var(--f-gutter);
+    }
+
+    &__filter-title {
+      font-weight: bold;
+      display: inline-block;
+      margin-right: var(--f-gutter-l);
+      margin-bottom: var(--f-gutter);
+
+      &:not(:first-child) {
+        margin-left: var(--f-gutter-xxl);
+      }
+    }
+
+    &__filter-label {
       margin-right: var(--f-gutter);
     }
 
-    label {
-      margin-left: var(--f-gutter-xl);
+    &__filter-select, &__filter-toggle {
+      margin-right: var(--f-gutter);
     }
 
+    &__filter-toggle {
+      padding: var(--f-gutter-xxs) var(--f-gutter-s);
+    }
   }
 
   .auctions-grid {

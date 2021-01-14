@@ -9,7 +9,7 @@
   "dependencies": {
     "@fontsource/hind": "^4.1.0",
     "@gridsome/vue-remark": "^0.2.6",
-    "@lkmx/flare": "^0.3.16",
+    "@lkmx/flare": "^0.3.18",
     "animate.css": "^4.1.1",
     "dotenv": "^8.2.0",
     "eslint": "^7.17.0",

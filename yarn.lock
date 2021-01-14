@@ -1052,10 +1052,10 @@
   dependencies:
     "@cosmjs/utils" "^0.20.0"
 
-"@lkmx/flare@^0.3.16":
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/@lkmx/flare/-/flare-0.3.17.tgz#fa391eb1d18242f7e810543af274c69848787ac8"
-  integrity sha512-7Mzd/+RUuMqWiTmvJYAIhr3JOQEjNUwWS3LTF7LjXDDFbVSgQMeX8WrEgkzLe/+x73AFKzTKaacQ2iR+YBRxFQ==
+"@lkmx/flare@^0.3.18":
+  version "0.3.18"
+  resolved "https://registry.yarnpkg.com/@lkmx/flare/-/flare-0.3.18.tgz#c5694d8832767d347439680c75d7d5ddd974974b"
+  integrity sha512-RG+Q4ZPs1W3mdZ5RtJSfKHYlbVgdXUGxwUq4YBJFS0YtBlUYH1BXTnQiP5faCNBds4oUafzginvmo3wMluPh1g==
   dependencies:
     core-js "^3.6.5"
     node-sass "^5.0.0"

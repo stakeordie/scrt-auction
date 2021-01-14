@@ -1,10 +1,5 @@
 @import "~@lkmx/flare/src/flare";
 
-$dark-gray-color: #1B1B1B;
-$blue-color: #4195c4;
-$yellow-color: #f4d22a;
-$red-color: #d53a2c;
-
 
 $color-black: #1B1B1B;
 
@@ -43,12 +38,15 @@ $color-blue-secondary: #92BCEF;
     
     --f-primary-action-color: #{$color-purple-primary};
     --f-primary-action-anticolor: white;
+    --f-primary-action-color--hover: #{$color-blue-primary};
+    --f-primary-action-anticolor--hover: black;
+
     
     
-    --f-links-text-color: #{$blue-color};
-    --f-links-text-hover-color: #{$yellow-color};
-    --f-links-text-visited-color: #{$blue-color};
-    --f-links-text-active-color: #{$red-color};
+    --f-links-text-color: #{$color-purple-primary};
+    --f-links-text-hover-color: #{$color-yellow-primary};
+    --f-links-text-visited-color: #{$color-blue-primary};
+    --f-links-text-active-color: #{$color-yellow-primary};
     
     --f-forms-button-radius: 4px;
 
@@ -58,7 +56,7 @@ $color-blue-secondary: #92BCEF;
     // some of them are pulled from flare but use
     // a different name to prevent an unnecessary 
     // dependency, i.e. KeplrUser badge, etc.
-    --default-background-color: #{$dark-gray-color};
+    --default-background-color: #{$color-black};
     --default-error-color: #{$color-red-primary};
 
     --gutter: var(--f-gutter);
@@ -86,10 +84,6 @@ dd {
 
 label {
     display: inline-block;
-}
-
-button:hover {
-    background-color: #{$color-cream-primary};
 }
 
 .--flare-columns {
