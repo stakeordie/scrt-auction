@@ -15,7 +15,10 @@ import DefaultLayout from "~/layouts/DefaultLayout.vue";
 
 import Vuex from 'vuex';
 
-
+Number.prototype.countDecimals = function () {
+  if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
+  return this.toString().split(".")[1].length || 0; 
+}
 
 export default function(Vue, { router, head, isClient }) {
   // Set default layout as a global component

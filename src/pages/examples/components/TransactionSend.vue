@@ -33,7 +33,7 @@
             <input name="token-contract-address" type="text" v-model="payment.tokenAddress" />
           </validation-provider>
 
-          <validation-provider rules="required|min_value:1" v-slot="{ errors }">
+          <validation-provider rules="required|min_value:1|max_decimals:6" v-slot="{ errors }">
             <label for="payment-amount">Amount</label>
             <span class="error">{{ errors[0] }}</span>
             <input name="payment-amount" type="text" v-model.trim="payment.amount" />
@@ -56,7 +56,7 @@
 
 <script>
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required, min_value } from "vee-validate/dist/rules";
+import { required, min_value, max_decimals } from "vee-validate/dist/rules";
 import KeplrAccount from '../../../components/KeplrAccount.vue';
 
 extend("required", {
@@ -69,6 +69,15 @@ extend("min_value", {
   message: "Please enter a value greater than 1",
 });
 
+extend("max_decimals", {
+  params: ["maxDecimalsAllowed"],
+  validate: (value, param) => {
+    console.log(parseFloat(value).countDecimals())
+    return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
+  },
+  message: "The maximum # of decimals allowed is {maxDecimalsAllowed}",
+});
+
 export default {
   components: { ValidationObserver, ValidationProvider, KeplrAccount },
   data() {
@@ -78,7 +87,8 @@ export default {
         amount: 1,
         memo: "",
         type: "SCRT",
-        tokenAddress: ""
+        tokenAddress: "",
+        decimals: 0
       },
       block: null,
       errors: [],
@@ -87,8 +97,8 @@ export default {
   methods: {
     send() {
       this.$scrtjs.sendTokens(this.payment);
-    },
-  },
+    }
+  }
 }
 </script>
 
