@@ -14,11 +14,12 @@
       <!-- Auctions toolbar -->
       <section class="auctions-tools">
         <div class="auctions-tools__filter">
-          <form class="auctions-tools__filter-filters" @submit.prevent="filter()">
+          <form class="auctions-tools__filter-filters" @submit.prevent="filterChanged()">
             <span class="auctions-tools__filter-title">Filters</span>
+
             <!-- Filtering by sell -->
             <label class="auctions-tools__filter-label" for="sell-token">Sell token</label>
-            <select class="auctions-tools__filter-select" name="sell-token" @change="filterChanged()" v-model="filterOptions.saleToken">
+            <select class="auctions-tools__filter-select" name="sell-token" v-model="auctionsFilter.sellToken" @change="filterChanged()">
               <option value=""></option>
               <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
                 {{ sellToken }}
@@ -27,7 +28,7 @@
 
             <!-- Filtering by bid -->
             <label class="auctions-tools__filter-label" for="bid-token">Bid token</label>
-            <select class="auctions-tools__filter-select" name="bid-token" @change="filterChanged()" v-model="filterOptions.bidToken">
+            <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
               <option value=""></option>
               <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
                 {{ bidToken }}
@@ -36,8 +37,8 @@
 
             <!-- Filtering by status -->
             <span class="auctions-tools__filter-title">Show</span>
-            <button class="auctions-tools__filter-toggle">Active</button>
-            <button class="auctions-tools__filter-toggle">Closed</button>
+            <button class="auctions-tools__filter-toggle" :class="{ active: auctionsFilter.showActive }" @click="auctionsFilter.showActive = !auctionsFilter.showActive">Active</button>
+            <button class="auctions-tools__filter-toggle" :class="{ active: auctionsFilter.showClosed }" @click="auctionsFilter.showClosed = !auctionsFilter.showClosed">Closed</button>
           </form>
         </div>
         <div class="auctions-tools__view">
@@ -48,7 +49,7 @@
 
       <!-- Auctions grid -->
       <section class="auctions-grid">
-        <auction-item v-for="auction in auctions" :key="auction.address" :auction="auction"></auction-item>
+        <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction"></auction-item>
       </section>
     </column>
   </page>
@@ -67,21 +68,12 @@ export default {
   metaInfo: {
     title: 'Secret Auctions',
   },
-  data() {
-    return {
-      filterOptions: {
-        saleToken: "",
-        bidToken: "",
-        showActive: true,
-        showClosed: true,
-      }
-    }
-  },
   computed: {
-    auctions() {
-      return this.$store.state.$auctions.auctions; 
+    auctionsFilter() {
+      return this.$store.state.$auctions.auctionsFilter;
     },
     ...mapGetters("$auctions", [
+      "filteredAuctions",
       "sellDenoms", "bidDenoms"
     ])
   },
@@ -89,8 +81,8 @@ export default {
     this.$auctions.updateAuctions();
   },
   methods: {
-    async filterChanged() {
-      
+    filterChanged() {
+      this.$store.commit("$auctions/updateAuctionsFilter", this.auctionsFilter);
     },
     async createViewingKey() {
       const viewingKey = await this.$auctions.createViewingKey(process.env.GRIDSOME_AUCTIONS_FACTORY);
@@ -171,6 +163,16 @@ export default {
 
     &__filter-toggle {
       padding: var(--f-gutter-xxs) var(--f-gutter-s);
+
+      &:hover {
+        background-color: var(--f-secondary-action-color);
+        color: var(--f-secondary-action-anticolor);
+      }
+      
+      &.active {
+        background-color: var(--f-secondary-action-color);
+        color: var(--f-secondary-action-anticolor);
+      }
     }
   }
 

@@ -1,7 +1,8 @@
 @import "~@lkmx/flare/src/flare";
 
 
-$color-black: #1B1B1B;
+$color-black: #111111;
+$color-dark-gray: #1B1B1B;
 
 $color-purple-primary: #5f5f6B;
 $color-orange-primary:  #EA7534;
@@ -33,7 +34,7 @@ $color-blue-secondary: #92BCEF;
     --f-default-headers-weight: 600;
     --f-h1-text-size: 32px;
     --f-h2-text-size: 26px;
-    --f-h3-text-size: 22px;
+    --f-h3-text-size: 18px;
     
     
     --f-primary-action-color: #{$color-purple-primary};
@@ -41,7 +42,9 @@ $color-blue-secondary: #92BCEF;
     --f-primary-action-color--hover: #{$color-blue-primary};
     --f-primary-action-anticolor--hover: black;
 
-    
+    --f-secondary-action-color: #{$color-cream-primary};
+    --f-secondary-action-anticolor: black;
+
     
     --f-links-text-color: #{$color-purple-primary};
     --f-links-text-hover-color: #{$color-yellow-primary};

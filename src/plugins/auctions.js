@@ -55,8 +55,34 @@ export default {
               namespaced: true,
               state: {
                   auctions: [],
+                  auctionsFilter: {
+                    sellToken: "",
+                    bidToken: "",
+                    showActive: true,
+                    showClosed: true,
+                  }
               },
               getters: {
+                filteredAuctions: state => {
+                    return state.auctions.filter(auction => {
+                        if(state.auctionsFilter.sellToken != "" && auction.sell.denom != state.auctionsFilter.sellToken) {
+                            return false;
+                        }
+                        if(state.auctionsFilter.bidToken != "" && auction.bid.denom != state.auctionsFilter.bidToken) {
+                            return false;
+                        }
+
+                        // Checks for active status filter
+                        if(state.auctionsFilter.showActive && !auction.closed) {
+                            return true;
+                        }
+                        // Checks for closed status filter
+                        if(state.auctionsFilter.showClosed && auction.closed) {
+                            return true;
+                        }
+                        return false;
+                    });
+                },
                 sellDenoms: state => {
                     return [...new Set(state.auctions.map(auction => {
                         return auction.sell.denom;
@@ -72,6 +98,9 @@ export default {
                 updateAuctions: (state, auctions) => {
                     state.auctions = auctions;
                 },
+                updateAuctionsFilter: (state, auctionsFilter) => {
+                    state.auctionsFilter = auctionsFilter;
+                },
               },
               actions: {
                 updateAuctions: async ({ commit }) => {                    
@@ -86,80 +115,21 @@ export default {
                     // We'll deal with the concurrency later
                     commit("updateAuctions", [...activeAuctions, ...closedAuctions]);
                 },
-              }
-            });
+                updateAuctionsFilter: async({ commit }, auctionsFilter) => {
+                    commit("updateAuctionsFilter", auctionsFilter)
+                },
+            }
+        });
+        
+        Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
 
-            Vue.prototype.$auctions = {
-                async updateAuctions() {
-                    Vue.prototype.$store.dispatch('$auctions/updateAuctions');
-                },
+        Vue.prototype.$auctions.updateAuctions = async () => {
+            Vue.prototype.$store.dispatch('$auctions/updateAuctions');
+        };
 
-                async getUserAddress() {
-                    return await auctionsApi.getUserAddress();
-                },
-                async listUserAuctions() {
-                    return await auctionsApi.listUserAuctions();
-                },
-                async listAllTokens() {
-                    return await auctionsApi.listAllTokens();
-                },
-                async getAuctionInfo(auctionAddress) {
-                    return await auctionsApi.getAuctionInfo(auctionAddress);
-                },
-                async getAuctionBidInfo(auctionAddress,viewingKey) {
-                    return await auctionsApi.getAuctionBidInfo(auctionAddress,viewingKey);
-                },
-                async getWallet() {
-                    return await auctionsApi.getWallet();
-                },
-                async getViewingKeyWallet(address) {
-                    return await auctionsApi.getViewingKeyWallet(address);
-                },
-                async getViewingKey(address) {
-                    return await auctionsApi.getViewingKey(address);
-                },
-                async getViewingKey(address, contractAddress) {
-                    return await auctionsApi.getViewingKey(address, contractAddress);
-                },
-                async getViewingKeys(contractAddress) {
-                    return await auctionsApi.getViewingKeys(contractAddress);
-                },
-                async createViewingKey(contractAddress, viewingKey, contractCodeId) {
-                    return await auctionsApi.createViewingKey(contractAddress, viewingKey, contractCodeId);
-                },
-                async addUpdateWalletKey(contractAddress, viewingKey, contractCodeId) {
-                    return await auctionsApi.addUpdateWalletKey(contractAddress, viewingKey, contractCodeId);
-                },
-                async addViewingKey() {
-                    return await auctionsApi.addViewingKey();
-                },
-                async removeViewingKey() {
-                    return await auctionsApi.removeViewingKey();
-                },
-                async saveViewingKeys(viewingKeys) {
-                    return await auctionsApi.saveViewingKeys(viewingKeys);
-                },
-                async saveWallet(wallet) {
-                    return await auctionsApi.saveWallet(wallet);
-                },
-                async closeAuction(auctionAddress) {
-                    return await auctionsApi.closeAuction(auctionAddress);
-                },
-                async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
-                    return await auctionsApi.placeBid(bidTokenAddress, auctionAddress, bidAmount);
-                },
-                async retractBid(auctionAddress) {
-                    return await auctionsApi.retractBid(auctionAddress);
-                },
-                async consignAllowance(sellTokenAddress, sellAmount) {
-                    return await auctionsApi.consignAllowance(sellTokenAddress, sellAmount);
-                },
-                async createAuction() {
-                    return await auctionsApi.createAuction();
-                },
-                
-            };
+        Vue.prototype.$auctions.updateAuctionsFilter = async (auctionsFilter) => {
+            Vue.prototype.$store.dispatch('$auctions/updateAuctionsFilter', auctionsFilter);
+        };
 
-            //Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
-        }
     }
+}
