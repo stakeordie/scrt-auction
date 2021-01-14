@@ -77,6 +77,7 @@ export default {
                     bidToken: "",
                     showActive: true,
                     showClosed: true,
+                    viewMode: "grid",
                   }
               },
               getters: {

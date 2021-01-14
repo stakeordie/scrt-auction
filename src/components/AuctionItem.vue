@@ -1,10 +1,11 @@
 <template>
   <div class="auction" :class="['theme-' + auction.sell.color, { closed: auction.closed}]">
+    <router-link v-if="!auction.closed" :to="'/auctions/' + auction.address" class="button auction__bid">Bid</router-link>
     <h3>
       <span class="sell-denom">{{ auction.sell.denom }}</span> -> 
       <span class="bid-denom">{{ auction.bid.denom }}</span>
     </h3>
-    <router-link v-if="!auction.closed" :to="'/auctions/' + auction.address" class="button auction__bid">Bid</router-link>
+
     <dl>
       <dt>Sell</dt>
       <dd>{{ auction.sell.humanAmount }} {{ auction.sell.denom }}</dd>
@@ -31,11 +32,26 @@ export default {
 <style lang="scss" scoped>
 .auction {
   background-color: var(--color-black);
-  display: grid;
   padding: var(--f-gutter);
+  padding-bottom: 0;
   border-radius: 10px;
   position: relative;
   transition: background-color 0.7s;
+
+  display: grid;
+  &.grid {
+    .auction__bid {
+      opacity: 0;
+    }
+  }
+  &.list {
+    grid-auto-flow: column;
+    grid-template-columns: 200px 200px 1fr;
+    align-items: center;
+    .auction__bid {
+      opacity: 0.2;
+    }
+  }
 
   &:not(.closed) {
     border: 0.5px solid rgba(255,255,255,0.41);
@@ -61,10 +77,9 @@ export default {
     position: absolute;
     padding-left: var(--f-gutter-l);
     padding-right: var(--f-gutter-l);
+    background-color: var(--theme-color);
 
     transition: opacity 3s;
-    opacity: 0;
-
   }
 
   &:hover {

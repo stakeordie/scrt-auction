@@ -40,18 +40,19 @@
             <!-- Filtering by status -->
             <button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="auctionsFilter.showActive = !auctionsFilter.showActive">Active</button>
             <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="auctionsFilter.showClosed = !auctionsFilter.showClosed">Closed</button>
+            <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="auctionsFilter.showMine = !auctionsFilter.showMine">Mine</button>
 
           </form>
         </div>
         <div class="auctions-tools__view">
-          <button class="no-button">Grid</button>
-          <button class="no-button">List</button>
+          <button class="auctions-tools__filter-view no-button" :class="{ on: auctionsFilter.viewMode == 'grid'}" @click="auctionsFilter.viewMode = 'grid'">Grid</button>
+          <button class="auctions-tools__filter-view no-button" :class="{ on: auctionsFilter.viewMode == 'list'}" @click="auctionsFilter.viewMode = 'list'">List</button>
         </div>
       </section>
 
       <!-- Auctions grid -->
-      <section class="auctions-grid">
-        <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction"></auction-item>
+      <section class="auctions-set" :class="auctionsFilter.viewMode">
+        <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
       </section>
     </column>
   </page>
@@ -64,8 +65,6 @@ import { mapGetters } from 'vuex'
 import AuctionItem from '../components/AuctionItem.vue'
 
 export default {
-  watch: {
-  },
   components: { AuctionItem }, 
   metaInfo: {
     title: 'Secret Auctions',
@@ -163,7 +162,7 @@ export default {
 
     &__filter-toggle {
       padding: var(--f-gutter-xxs) var(--f-gutter-s);
-      font-size: 0.8em;
+      font-size: 11px;
       transition: opacity 0.5s;
       
       &.show-active {
@@ -172,6 +171,10 @@ export default {
       &.show-closed {
         background-color: var(--color-negative);
       }
+      &.show-mine {
+        background-color: var(--color-purple-primary);
+        opacity: 0.3;
+      }
       &.show-active, &.show-closed {
         color: black;
         &:hover, &:not(.on) {
@@ -179,18 +182,24 @@ export default {
         }
       }
     }
+
+    &__filter-view.on {
+      color: var(--color-yellow-primary);
+    }
   }
 
-  .auctions-grid {
+  .auctions-set {
     display: grid;
     grid-gap: var(--f-gutter);
-    margin-bottom: var(--f-gutter);
+    margin-bottom: var(--f-gutter); 
 
-    @include respond-to("<=s") {
-      grid-template-columns: 1fr;
-    }
-    @include respond-to(">=m") {
-      grid-template-columns: repeat(3, 1fr);
+    &.grid {
+      @include respond-to("<=s") {
+        grid-template-columns: 1fr;
+      }
+      @include respond-to(">=m") {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
   }
 </style>

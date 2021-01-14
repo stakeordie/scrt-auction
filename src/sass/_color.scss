@@ -1,0 +1,71 @@
+:root {
+    --color-black: #111111;
+    --color-dark-gray: #1B1B1B;
+
+    --color-positive: #03C076;
+    --color-negative: #DA2F4F;
+    
+    --color-purple-primary: #5f5f6B;
+    --color-orange-primary:  #EA7534;
+    --color-cream-primary: #E5C7A3;
+    --color-blue-primary: #4195C4;
+    --color-yellow-primary: #F4D22A;
+    --color-red-primary: #D53A2C;
+    --color-green-primary: #80c483;
+    --color-white-primary: #FFFFFF;
+    
+    --color-purple-secondary: #A9A7D3;
+    --color-yellow-secondary: #F4DD7D;
+    --color-green-secondary: #A6DDA9;
+    --color-peach-secondary: #FFDEC0;
+    --color-turquoise-secondary: #83D9DD;
+    --color-pink-secondary: #E4CDE8;
+    --color-red-secondary: #EF726C;
+    --color-orange-secondary: #F2A37C;
+    --color-blue-secondary: #92BCEF;
+    --color-white-secondary: #bbbbbb;
+}
+
+
+.theme {
+    &-purple {
+        --theme-color: var(--color-purple-secondary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-purple-primary);
+    }
+    &-orange {
+        --theme-color: var(--color-orange-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-orange-secondary);
+    }
+    &-cream {
+        --theme-color: var(--color-cream-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-peach-secondary);
+    }
+    &-blue {
+        --theme-color: var(--color-blue-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-blue-secondary);
+    }
+    &-yellow {
+        --theme-color: var(--color-yellow-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-yellow-secondary);
+    }
+    &-red {
+        --theme-color: var(--color-red-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-red-secondary);
+    }
+    &-green {
+        --theme-color: var(--color-green-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-green-secondary);
+    }
+    &-white {
+        --theme-color: var(--color-white-secondary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-white-primary);
+    }
+}
