@@ -16,27 +16,48 @@
                     <keplr-account v-model="userAddress"></keplr-account>
                 </div>
 
-                <validation-provider rules="required" v-slot="{ errors }">
+                <label class="auctions-tools__filter-label" for="sell-token">SNIP-20s</label><br/>
+                <select class="auctions-tools__filter-select" name="sell-token" v-model="contractAddress">
+                    <option value="">*</option>
+                    <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
+                        {{ sellToken }}
+                    </option>
+                </select><br/>
+
+                <!-- <validation-provider v-slot="{ errors }">
                     <label for="payment-recipient">Contract Address</label>
                     <span class="error">{{ errors[0] }}</span>
                     <input name="payment-recipient" type="text" v-model="contractAddress" />
-                </validation-provider>
+                </validation-provider> -->
 
                 <button :disabled="invalid">Create Viewing Key</button>
 
                 </div>
             </form>
         </validation-observer>
+        <br/>
+        <br />
+        <button @click="refreshWallet">refresh</button>
+        <div v-for="(entry, index) in wallet" :key="entry.address" style="width: 100%">
+            <span>Address: {{entry.address}}</span>
+            <table style="width: 100%">
+                <tr>
+                    <th>
+                        Contract Address
+                    </th>
+                    <th>
+                        Balance
+                    </th>
+                </tr>
+                <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress">
+                    <th>{{key.contractAddress}}</th>
+                    <th>{{wallet[index].keys[index2].balance}}</th>
+                </tr>
+            </table>
+        </div>
       </block>
       <block>
-        <button @click="refreshWallet">refresh</button>
-        <ul v-for="(entry, index) in wallet" :key="entry.address">
-            <li>For Address {{entry.address}}</li>
-            <li v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress">
-                <span>Contract: {{key.contractAddress}}</span>
-                <span>Balance: {{wallet[index].keys[index2].balance}}</span>
-            </li>
-        </ul>    
+        
       </block>
     </columns>
   </page>
@@ -46,6 +67,7 @@
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
+import { mapGetters } from 'vuex'
 
 extend("required", {
   ...required,
@@ -54,7 +76,9 @@ extend("required", {
 
 export default {
     components: {
-        ValidationObserver, ValidationProvider, KeplrAccount
+        ValidationObserver,
+        ValidationProvider,
+        KeplrAccount
     },
     data() {
         return {
@@ -62,17 +86,35 @@ export default {
             userAddress: "",
             contractAddress: "",
             viewingKey: "",
-            wallet: []
+            wallet: [],
+            tokens: {
+                "SODTA": "secret1qvq5h3ta2qpng3vdlln7pu8mnhn98getzsw9ga",
+                "SODTB": "secret1wma0dyp30mncz8rdzga0426s9fzx6jmqmp79uy",
+                "SODTC": "secret1rdz9e9hln0lv0y33se380fczmmst72ffzlqg9a",
+                "SODTD": "secret1yt94lse0rl89a9kdylhr80jffpuekv0tzpx2k0",
+                "SODTE": "secret18u0m2um6vv08ftzxls897gytd4tzcc2w6vlem6"
+            }
         }
     },
-    mounted() {
+    created() {
         this.refreshWallet();
+        this.$auctions.updateAuctions();
+    },
+    computed: {
+        auctionsFilter() {
+            return this.$store.state.$auctions.auctionsFilter;
+        },
+        ...mapGetters("$auctions", [
+            "filteredAuctions",
+            "sellDenoms", "bidDenoms"
+        ])
     },
     methods: {
         async addViewingKey() {
-            const viewingKey = await this.$auctions.createViewingKey(this.contractAddress);
-            console.log("Viewing Key Outside: " + viewingKey)
-            await this.$auctions.addUpdateWalletKey(this.contractAddress, viewingKey);
+            console.log(this.tokens[this.contractAddress])
+            const viewingKey = await this.$auctions.createViewingKey(this.tokens[this.contractAddress]);
+
+            await this.$auctions.addUpdateWalletKey(this.tokens[this.contractAddress], viewingKey);
         },
         async refreshWallet() {
             let aWallet = await this.$auctions.getWallet();
