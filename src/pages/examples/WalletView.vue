@@ -113,8 +113,8 @@ export default {
         async addViewingKey() {
             console.log(this.tokens[this.contractAddress])
             const viewingKey = await this.$auctions.createViewingKey(this.tokens[this.contractAddress]);
-
             await this.$auctions.addUpdateWalletKey(this.tokens[this.contractAddress], viewingKey);
+            this.refreshWallet();
         },
         async refreshWallet() {
             let aWallet = await this.$auctions.getWallet();
