@@ -40,7 +40,7 @@
             <!-- Filtering by status -->
             <button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="auctionsFilter.showActive = !auctionsFilter.showActive">Active</button>
             <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="auctionsFilter.showClosed = !auctionsFilter.showClosed">Closed</button>
-            <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="auctionsFilter.showMine = !auctionsFilter.showMine">Mine</button>
+            <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="auctionsFilter.showMine = !auctionsFilter.showMine">🔑 Mine</button>
 
           </form>
         </div>
