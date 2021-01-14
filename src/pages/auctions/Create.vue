@@ -97,7 +97,7 @@ export default {
                     tokenName: "Stake or Die Token E (SODTE)",
                     tokenAddress: "secret18u0m2um6vv08ftzxls897gytd4tzcc2w6vlem6",
                 }
-            ]
+            ] 
         }
     },
     async mounted() {

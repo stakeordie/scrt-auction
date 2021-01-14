@@ -29,11 +29,12 @@
         </validation-observer>
       </block>
       <block>
+        <button @click="refreshWallet">refresh</button>
         <ul v-for="(entry, index) in wallet" :key="entry.address">
             <li>For Address {{entry.address}}</li>
-            <li v-for="key in wallet[index].keys" :key="key.contractAddress">
-                <label>Contract: {{key.contractAddress}}</label>
-                <input type="text" :value="key.balance" />
+            <li v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress">
+                <span>Contract: {{key.contractAddress}}</span>
+                <span>Balance: {{wallet[index].keys[index2].balance}}</span>
             </li>
         </ul>    
       </block>
@@ -61,31 +62,35 @@ export default {
             userAddress: "",
             contractAddress: "",
             viewingKey: "",
-            wallet: [],
-            wallet2: []
+            wallet: []
         }
     },
-    async created() {
-        this.wallet = await this.$auctions.getWallet();
-        let entryAddress = "";
-        let info = {};
-        let msg = {};
-        for(let i=0;i<this.wallet.length;i++) {
-            entryAddress = this.wallet[i].address;
-            for(let j=0; j<this.wallet[i].keys.length; j++) {
-                msg = { "balance": { "address": entryAddress, "key": this.wallet[i].keys[j].viewingKey}};
-                //console.log(entryAddress + ": " + this.wallet[i].keys[j].contractAddress + " | " +this.wallet[i].keys[j].viewingKey);
-                info = await this.$scrtjs.queryContract(this.wallet[i].keys[j].contractAddress, msg);
-                this.wallet[i].keys[j].balance = info.balance.amount;
-                console.log(info.balance.amount);
-            }
-        }
+    mounted() {
+        this.refreshWallet();
     },
     methods: {
         async addViewingKey() {
             const viewingKey = await this.$auctions.createViewingKey(this.contractAddress);
             console.log("Viewing Key Outside: " + viewingKey)
             await this.$auctions.addUpdateWalletKey(this.contractAddress, viewingKey);
+        },
+        async refreshWallet() {
+            let aWallet = await this.$auctions.getWallet();
+            let entryAddress = "";
+            let info = {};
+            let msg = {};
+            for(let i=0;i<aWallet.length;i++) {
+                entryAddress = aWallet[i].address;
+                for(let j=0; j<aWallet[i].keys.length; j++) {
+                    msg = { "balance": { "address": entryAddress, "key": aWallet[i].keys[j].viewingKey}};
+                    //console.log(entryAddress + ": " + aWallet[i].keys[j].contractAddress + " | " +aWallet[i].keys[j].viewingKey);
+                    info = await this.$scrtjs.queryContract(aWallet[i].keys[j].contractAddress, msg);
+                    if(info.balance?.amount) {
+                        aWallet[i].keys[j].balance = info.balance.amount;
+                    }
+                }
+            }
+            this.wallet = aWallet
         }
     }
 };
