@@ -127,8 +127,8 @@ export default {
                 async createViewingKey(contractAddress, viewingKey, contractCodeId) {
                     return await auctionsApi.createViewingKey(contractAddress, viewingKey, contractCodeId);
                 },
-                async addUpdateWalletKey(viewingKey) {
-                    return await auctionsApi.addUpdateWalletKey(viewingKey);
+                async addUpdateWalletKey(contractAddress, viewingKey, contractCodeId) {
+                    return await auctionsApi.addUpdateWalletKey(contractAddress, viewingKey, contractCodeId);
                 },
                 async addViewingKey() {
                     return await auctionsApi.addViewingKey();

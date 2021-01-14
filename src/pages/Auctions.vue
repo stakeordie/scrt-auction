@@ -53,6 +53,8 @@ import { mapGetters } from 'vuex'
 import AuctionItem from '../components/AuctionItem.vue'
 
 export default {
+  watch: {
+  },
   components: { AuctionItem }, 
   metaInfo: {
     title: 'Secret Auctions',
@@ -61,7 +63,9 @@ export default {
     return {
       filterOptions: {
         saleToken: "",
-        bidToken: ""
+        bidToken: "",
+        showActive: true,
+        showClosed: true,
       }
     }
   },
@@ -78,7 +82,7 @@ export default {
   },
   methods: {
     async filterChanged() {
-
+      
     },
     async createViewingKey() {
       const viewingKey = await this.$auctions.createViewingKey(process.env.GRIDSOME_AUCTIONS_FACTORY);
