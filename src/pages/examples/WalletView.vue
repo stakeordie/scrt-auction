@@ -39,20 +39,25 @@
         <h2>Wallet View</h2>
         <br>
         <div v-for="(entry, index) in wallet" :key="entry.address" style="width: 100%">
-            <div>Address: {{entry.address}}</div>
-            <br>
-            <table style="width: 100%">
-                <tr>
-                    <th>
+            <table style="width: 100%; border: 1px solid white;">
+                <tr style="border-bottom: 1px solid white;">
+                    <th colspan="3" style="text-align: left; padding-left: 10px;">
+                        {{entry.address}}
+                    </th>
+                </tr>
+                <tr style="">
+                    <th style="width: 5%;">&nbsp;</th>
+                    <th style="text-align: left; border-bottom: 1px solid white;">
                         Contract Address
                     </th>
-                    <th>
+                    <th style="text-align: left; border-bottom: 1px solid white;">
                         Balance
                     </th>
                 </tr>
-                <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress">
-                    <th>{{key.contractAddress}}</th>
-                    <th>{{wallet[index].keys[index2].balance}}</th>
+                <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress" >
+                    <td></td>
+                    <td>{{key.contractAddress}}</td>
+                    <td>{{wallet[index].keys[index2].balance}}</td>
                 </tr>
             </table>
             <br>
