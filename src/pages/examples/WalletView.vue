@@ -28,6 +28,11 @@
             </form>
         </validation-observer>
       </block>
+      <block>
+        <ul v-for="(entry, index) in wallet" :key="entry.address">
+            <li v-for="key in wallet[index].keys" :key="key.contractAddress">{{key.contractAddress}}: {{key.viewingKey}} --> {{key.balance}}</li>
+        </ul>    
+      </block>
     </columns>
   </page>
 </template>
@@ -51,11 +56,25 @@ export default {
             errors: [],
             userAddress: "",
             contractAddress: "",
-            viewingKey: ""
+            viewingKey: "",
+            wallet: [],
+            wallet2: []
         }
     },
     async created() {
-        this.localStorage = await this.$auctions.getWallet();
+        this.wallet = await this.$auctions.getWallet();
+        let entryAddress = "";
+        let info = {};
+        let msg = {};
+        for(let i=0;i<this.wallet.length;i++) {
+            entryAddress = this.wallet[i].address;
+            for(let j=0; j<this.wallet[i].keys.length; j++) {
+                msg = { "balance": { "address": entryAddress, "key": this.wallet[i].keys[j].viewingKey}};
+                //console.log(entryAddress + ": " + this.wallet[i].keys[j].contractAddress + " | " +this.wallet[i].keys[j].viewingKey);
+                info = await this.$scrtjs.queryContract(this.wallet[i].keys[j].contractAddress, msg);
+                this.wallet[i].keys[j].balance = info.balance.amount;
+            }
+        }
     },
     methods: {
         async addViewingKey() {
