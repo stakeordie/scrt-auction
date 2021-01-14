@@ -8,12 +8,12 @@
 
     <dl>
       <dt>Sell</dt>
-      <dd>{{ auction.sell.humanAmount }} {{ auction.sell.denom }}</dd>
+      <dd>{{ auction.sell.humanAmount }} <span class="denom">{{ auction.sell.denom }}</span></dd>
     </dl>
 
     <dl v-if="!auction.closed">
       <dt>Minimum bid</dt>
-      <dd>{{ auction.bid.humanMinimum }} {{ auction.bid.denom }}</dd>
+      <dd>{{ auction.bid.humanMinimum }} <span class="denom">{{ auction.sell.denom }}</span></dd>
     </dl>
     
     <dl v-if="auction.winning">
@@ -30,6 +30,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+@import "@lkmx/flare/src/functions/respond-to";
+
 .auction {
   background-color: var(--color-black);
   padding: var(--f-gutter);
@@ -37,6 +40,10 @@ export default {
   border-radius: 10px;
   position: relative;
   transition: background-color 0.7s;
+  &:not(.closed) {
+    border: 0.5px solid rgba(255,255,255,0.41);
+  }
+
 
   display: grid;
   &.grid {
@@ -45,16 +52,22 @@ export default {
     }
   }
   &.list {
-    grid-auto-flow: column;
-    grid-template-columns: 200px 200px 1fr;
     align-items: center;
-    .auction__bid {
-      opacity: 0.2;
-    }
-  }
 
-  &:not(.closed) {
-    border: 0.5px solid rgba(255,255,255,0.41);
+    @include respond-to("<=s") {
+      grid-auto-flow: row;
+      grid-template-columns: 1fr;
+    }
+    @include respond-to(">=m") {
+      grid-auto-flow: column;
+      grid-template-columns: 200px 200px 1fr;
+    }
+
+    grid-template-columns: 200px 200px 1fr;
+
+    .auction__bid {
+      opacity: 0.1;
+    }
   }
 
   h3 {
@@ -67,6 +80,11 @@ export default {
     .bid-denom {
       color: var(--theme-washed-color);
     }
+  }
+
+  .denom {
+    font-size: 10px;
+    font-weight: bold;
   }
 
   &__bid {
