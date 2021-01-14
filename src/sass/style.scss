@@ -1,31 +1,36 @@
 @import "~@lkmx/flare/src/flare";
 
 
-$color-black: #111111;
-$color-dark-gray: #1B1B1B;
-
-$color-purple-primary: #5f5f6B;
-$color-orange-primary:  #EA7534;
-$color-cream-primary: #E5C7A3;
-$color-blue-primary: #4195C4;
-$color-yellow-primary: #F4D22A;
-$color-red-primary: #D53A2C;
-$color-green-primary: #80c483;
-$color-white-primary: #FFFFFF;
-
-$color-purple-secondary: #A9A7D3;
-$color-yellow-secondary: #F4DD7D;
-$color-green-secondary: #A6DDA9;
-$color-peach-secondary: #FFDEC0;
-$color-turquoise-secondary: #83D9DD;
-$color-pink-secondary: #E4CDE8;
-$color-red-secondary: #EF726C;
-$color-orange-secondary: #F2A37C;
-$color-blue-secondary: #92BCEF;
-
 :root {
+    --color-black: #111111;
+    --color-dark-gray: #1B1B1B;
+
+    --color-positive: #03C076;
+    --color-negative: #DA2F4F;
+    
+    --color-purple-primary: #5f5f6B;
+    --color-orange-primary:  #EA7534;
+    --color-cream-primary: #E5C7A3;
+    --color-blue-primary: #4195C4;
+    --color-yellow-primary: #F4D22A;
+    --color-red-primary: #D53A2C;
+    --color-green-primary: #80c483;
+    --color-white-primary: #FFFFFF;
+    
+    --color-purple-secondary: #A9A7D3;
+    --color-yellow-secondary: #F4DD7D;
+    --color-green-secondary: #A6DDA9;
+    --color-peach-secondary: #FFDEC0;
+    --color-turquoise-secondary: #83D9DD;
+    --color-pink-secondary: #E4CDE8;
+    --color-red-secondary: #EF726C;
+    --color-orange-secondary: #F2A37C;
+    --color-blue-secondary: #92BCEF;
+    --color-white-secondary: #bbbbbb;
+
+
     --f-header-text-color: white;
-    --f-header-background-color: #{$color-black};
+    --f-header-background-color: var(--color-black);
 
     --f-default-text-color: white;
     
@@ -34,22 +39,22 @@ $color-blue-secondary: #92BCEF;
     --f-default-headers-weight: 600;
     --f-h1-text-size: 32px;
     --f-h2-text-size: 26px;
-    --f-h3-text-size: 18px;
+    --f-h3-text-size: 22px;
     
     
-    --f-primary-action-color: #{$color-purple-primary};
+    --f-primary-action-color: var(--color-purple-primary);
     --f-primary-action-anticolor: white;
-    --f-primary-action-color--hover: #{$color-blue-primary};
+    --f-primary-action-color--hover: var(--color-blue-primary);
     --f-primary-action-anticolor--hover: black;
 
-    --f-secondary-action-color: #{$color-cream-primary};
+    --f-secondary-action-color: var(--color-cream-primary);
     --f-secondary-action-anticolor: black;
 
     
-    --f-links-text-color: #{$color-purple-primary};
-    --f-links-text-hover-color: #{$color-yellow-primary};
-    --f-links-text-visited-color: #{$color-blue-primary};
-    --f-links-text-active-color: #{$color-yellow-primary};
+    --f-links-text-color: var(--color-purple-primary);
+    --f-links-text-hover-color: var(--color-yellow-primary);
+    --f-links-text-visited-color: var(--color-blue-primary);
+    --f-links-text-active-color: var(--color-yellow-primary);
     
     --f-forms-button-radius: 4px;
 
@@ -59,8 +64,8 @@ $color-blue-secondary: #92BCEF;
     // some of them are pulled from flare but use
     // a different name to prevent an unnecessary 
     // dependency, i.e. KeplrUser badge, etc.
-    --default-background-color: #{$color-black};
-    --default-error-color: #{$color-red-primary};
+    --default-background-color: var(--color-dark-gray);
+    --default-error-color: var(--color-red-primary);
 
     --gutter: var(--f-gutter);
 
@@ -68,6 +73,50 @@ $color-blue-secondary: #92BCEF;
     // Animation variables
     --animate-duration: 0.4s;
 }
+
+.theme {
+    &-purple {
+        --theme-color: var(--color-purple-secondary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-purple-primary);
+    }
+    &-orange {
+        --theme-color: var(--color-orange-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-orange-secondary);
+    }
+    &-cream {
+        --theme-color: var(--color-cream-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-peach-secondary);
+    }
+    &-blue {
+        --theme-color: var(--color-blue-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-blue-secondary);
+    }
+    &-yellow {
+        --theme-color: var(--color-yellow-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-yellow-secondary);
+    }
+    &-red {
+        --theme-color: var(--color-red-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-red-secondary);
+    }
+    &-green {
+        --theme-color: var(--color-green-primary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-green-secondary);
+    }
+    &-white {
+        --theme-color: var(--color-white-secondary);
+        --theme-anti-color: black;
+        --theme-washed-color: var(--color-white-primary);
+    }
+}
+
 
 html {
     background-color: var(--default-background-color);
@@ -81,7 +130,7 @@ hr {
     margin: var(--f-gutter-xl) 0;
 }
 
-dd {
+dt {
     font-weight: bold;
 }
 

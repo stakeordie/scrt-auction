@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@fontsource/hind": "^4.1.0",
+    "@fontsource/montserrat": "^4.1.0",
     "@gridsome/vue-remark": "^0.2.6",
     "@lkmx/flare": "^0.3.18",
     "animate.css": "^4.1.1",

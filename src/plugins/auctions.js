@@ -3,8 +3,23 @@ import { AuctionsApi } from '../lib/auctions-api.js'
 import Vuex from 'vuex';
 
 
+
+
 const tokens2Human = (amount, decimals) => {
     return (amount / Math.pow(10, decimals)).toFixed(decimals);
+}
+
+
+const colorHash = (str) => {
+    const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green", "white"];
+
+    var hash = 0, i, chr;
+    for (i = 0; i < str.length; i++) {
+      chr   = str.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return colors[Math.abs(hash) % colors.length];
 }
 
 
@@ -23,11 +38,13 @@ export default {
                     amount: rawction.sell_amount,
                     humanAmount: tokens2Human(rawction.sell_amount, rawction.sell_decimals),
                     decimals: rawction.sell_decimals,
-                    denom: rawction.pair.split("-")[0]
+                    denom: rawction.pair.split("-")[0],
+                    color: colorHash(rawction.address) // + rawction.pair.split("-")[0]),
                 },
                 bid: {
                     decimals: rawction.bid_decimals,
-                    denom: rawction.pair.split("-")[1]
+                    denom: rawction.pair.split("-")[1],
+                    color: colorHash(rawction.address) // + rawction.pair.split("-")[1]),
                 },
             };
 

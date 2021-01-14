@@ -35,10 +35,12 @@
               </option>
             </select>
 
+            <span class="auctions-tools__filter-title">|</span>
+
             <!-- Filtering by status -->
-            <span class="auctions-tools__filter-title">Show</span>
-            <button class="auctions-tools__filter-toggle" :class="{ active: auctionsFilter.showActive }" @click="auctionsFilter.showActive = !auctionsFilter.showActive">Active</button>
-            <button class="auctions-tools__filter-toggle" :class="{ active: auctionsFilter.showClosed }" @click="auctionsFilter.showClosed = !auctionsFilter.showClosed">Closed</button>
+            <button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="auctionsFilter.showActive = !auctionsFilter.showActive">Active</button>
+            <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="auctionsFilter.showClosed = !auctionsFilter.showClosed">Closed</button>
+
           </form>
         </div>
         <div class="auctions-tools__view">
@@ -128,7 +130,7 @@ export default {
     flex-flow: row nowrap;
     justify-content: space-between;
 
-    border-bottom: 1px solid var(--f-default-text-color);
+    border-bottom: 2px solid var(--f-default-text-color);
     margin-bottom: var(--f-gutter);
 
     &__filter {
@@ -149,29 +151,35 @@ export default {
       margin-bottom: var(--f-gutter);
 
       &:not(:first-child) {
-        margin-left: var(--f-gutter-xxl);
+        margin-left: var(--f-gutter-l);
       }
     }
 
     &__filter-label {
+      margin-left: var(--f-gutter-xl);
       margin-right: var(--f-gutter);
     }
 
-    &__filter-select, &__filter-toggle {
+    &__filter-toggle {
       margin-right: var(--f-gutter);
     }
 
     &__filter-toggle {
       padding: var(--f-gutter-xxs) var(--f-gutter-s);
-
-      &:hover {
-        background-color: var(--f-secondary-action-color);
-        color: var(--f-secondary-action-anticolor);
-      }
+      font-size: 0.8em;
+      transition: opacity 0.5s;
       
-      &.active {
-        background-color: var(--f-secondary-action-color);
-        color: var(--f-secondary-action-anticolor);
+      &.show-active {
+        background-color: var(--color-positive);
+      }
+      &.show-closed {
+        background-color: var(--color-negative);
+      }
+      &.show-active, &.show-closed {
+        color: black;
+        &:hover, &:not(.on) {
+          opacity: 0.3;
+        }
       }
     }
   }
