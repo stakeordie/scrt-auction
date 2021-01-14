@@ -97,7 +97,6 @@ export class SecretJsClient {
         this.wallet.getSeed(),
         fees
       );
-      console.log(this.signingClient);
       return await this.signingClient.execute(address, handleMsg);
     } catch (error) {
       console.error(error)

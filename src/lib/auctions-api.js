@@ -130,29 +130,34 @@ export class AuctionsApi {
                 "entropy": "A Random String for Entropy"
             }
         }
-        console.log(contractAddress);
         const response = await this.scrtClient.executeContract(contractAddress, msg);
-        return JSON.parse(new TextDecoder("utf-8").decode(response.data)).viewing_key.key;
+        const parsedResponse = JSON.parse(new TextDecoder("utf-8").decode(response.data));
+        if(parsedResponse.create_viewing_key) {
+            return parsedResponse.create_viewing_key.key;
+        } else {
+            return parsedResponse.viewing_key.key;
+        }
     }
 
-    async addUpdateWalletKey(contractAddress, viewingKey, contractCodeId) {
-        // If contract code isn't specified, find the contract code
-        if(!contractCodeId) {
-            contractCodeId = (await this.scrtClient.getContract(contractAddress)).code_id
-        }
-        console.log("Factory Address: " + contractAddress);
+    async addUpdateWalletKey(contractAddress, viewingKey) {
+        
+        //    contractCodeId = (await this.scrtClient.getContract(contractAddress)).code_id
+        const contractCodeId = "1";
+
+        console.log("Contract Address: " + contractAddress);
         console.log("Viewing Key: " +  viewingKey);
+        console.log("Contract Code Id: " +  contractCodeId);
         // get user address
         const address = await this.getUserAddress();
-        console.log("User Address: " +  address);
+        //console.log("User Address: " +  address);
 
         // get viewing key store
         let wallet = await this.getWallet();
-        console.log(wallet);
+        //console.log(wallet);
 
         // get the index of the address object
         let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
-        console.log(walletEntryIndex);
+        //console.log(walletEntryIndex);
 
         // if the user address has a record in the store
         if(walletEntryIndex > -1) {
@@ -177,7 +182,7 @@ export class AuctionsApi {
             }
         } else {
             //add address record, wallet, and viewingKey Record
-            console.log(typeof(wallet))
+            //console.log(typeof(wallet))
             wallet.push({
                 address,
                 keys: [
@@ -191,7 +196,7 @@ export class AuctionsApi {
         }
         // save the store
         await this.saveWallet(wallet);
-        console.log(JSON.stringify(wallet));
+        //console.log(JSON.stringify(wallet));
 
         // Model:
         /*
