@@ -141,8 +141,8 @@ export class AuctionsApi {
 
     async addUpdateWalletKey(contractAddress, viewingKey) {
         
-        //    contractCodeId = (await this.scrtClient.getContract(contractAddress)).code_id
-        const contractCodeId = "1";
+        const contractCodeId = (await this.scrtClient.getContract(contractAddress)).code_id
+        //const contractCodeId = "1";
 
         console.log("Contract Address: " + contractAddress);
         console.log("Viewing Key: " +  viewingKey);
