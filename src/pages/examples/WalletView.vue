@@ -30,7 +30,11 @@
       </block>
       <block>
         <ul v-for="(entry, index) in wallet" :key="entry.address">
-            <li v-for="key in wallet[index].keys" :key="key.contractAddress">{{key.contractAddress}}: {{key.viewingKey}} --> {{key.balance}}</li>
+            <li>For Address {{entry.address}}</li>
+            <li v-for="key in wallet[index].keys" :key="key.contractAddress">
+                <label>Contract: {{key.contractAddress}}</label>
+                <input type="text" :value="key.balance" />
+            </li>
         </ul>    
       </block>
     </columns>
@@ -73,6 +77,7 @@ export default {
                 //console.log(entryAddress + ": " + this.wallet[i].keys[j].contractAddress + " | " +this.wallet[i].keys[j].viewingKey);
                 info = await this.$scrtjs.queryContract(this.wallet[i].keys[j].contractAddress, msg);
                 this.wallet[i].keys[j].balance = info.balance.amount;
+                console.log(info.balance.amount);
             }
         }
     },
