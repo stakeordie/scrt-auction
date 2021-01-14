@@ -23,8 +23,8 @@ const colorHash = (str) => {
 }
 
 
-// This plugin is the abstraction layer in charge of picking up the results from the API client, 
-// convert the 
+// This plugin is the abstraction layer in charge of picking up the domain from the API client, 
+// and convert it into a model usable by the UI
 export default {
     install(Vue, options) {
         const auctionsApi = new AuctionsApi(options.chainClient, options.factoryAddress);
@@ -99,6 +99,8 @@ export default {
                             return true;
                         }
                         return false;
+                    }).sort((a, b) => {
+                        
                     });
                 },
                 sellDenoms: state => {

@@ -25,6 +25,7 @@
                 {{ sellToken }}
               </option>
             </select>
+            <button class="auctions-tools__filter-sort no-button">^</button>
 
             <!-- Filtering by bid -->
             <label class="auctions-tools__filter-label" for="bid-token">Bid</label>
@@ -34,13 +35,14 @@
                 {{ bidToken }}
               </option>
             </select>
+            <button class="auctions-tools__filter-view no-button">^</button>
 
             <span class="auctions-tools__filter-title">|</span>
 
             <!-- Filtering by status -->
-            <button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="auctionsFilter.showActive = !auctionsFilter.showActive">Active</button>
-            <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="auctionsFilter.showClosed = !auctionsFilter.showClosed">Closed</button>
-            <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="auctionsFilter.showMine = !auctionsFilter.showMine">🔑 Mine</button>
+            <button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button>
+            <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">Closed</button>
+            <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="toggleStatus('mine')">🔑 Only mine</button>
 
           </form>
         </div>
@@ -51,9 +53,10 @@
       </section>
 
       <!-- Auctions grid -->
-      <section class="auctions-set" :class="auctionsFilter.viewMode">
+      <div class="auctions-set" :class="auctionsFilter.viewMode">
         <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
-      </section>
+      </div>
+
     </column>
   </page>
 </template>
@@ -74,7 +77,7 @@ export default {
       return this.$store.state.$auctions.auctionsFilter;
     },
     ...mapGetters("$auctions", [
-      "filteredAuctions",
+      "filteredAuctions", 
       "sellDenoms", "bidDenoms"
     ])
   },
@@ -82,7 +85,27 @@ export default {
     this.$auctions.updateAuctions();
   },
   methods: {
+    toggleStatus(status) {
+      switch(status) {
+        case 'active':
+          this.auctionsFilter.showActive = !this.auctionsFilter.showActive;
+          if(!this.auctionsFilter.showActive  == !this.auctionsFilter.showClosed) {
+            this.auctionsFilter.showClosed = true;
+          }
+          break;
+        case 'closed':
+          this.auctionsFilter.showClosed = !this.auctionsFilter.showClosed;
+          if(!this.auctionsFilter.showClosed  == !this.auctionsFilter.showActive) {
+            this.auctionsFilter.showActive = true;
+          }
+          break;
+        case 'mine':
+          this.auctionsFilter.showMine = !this.auctionsFilter.showMine;
+          break;
+      }
+    },
     filterChanged() {
+      this.$
       this.$store.commit("$auctions/updateAuctionsFilter", this.auctionsFilter);
     },
     async createViewingKey() {
@@ -177,8 +200,11 @@ export default {
       }
       &.show-active, &.show-closed {
         color: black;
-        &:hover, &:not(.on) {
+        &:not(.on) {
           opacity: 0.3;
+        }
+        &.on, &:hover {
+          opacity: 1;
         }
       }
     }
@@ -201,5 +227,15 @@ export default {
         grid-template-columns: repeat(3, 1fr);
       }
     }
+
+    .auctions-enter-active, .auctions-leave-active {
+      transition: all 1s;
+    }
+    .auctions-enter, .auctions-leave-to /* .list-leave-active below version 2.1.8 */ {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+
   }
 </style>
