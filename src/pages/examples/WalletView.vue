@@ -129,6 +129,8 @@ export default {
                     info = await this.$scrtjs.queryContract(aWallet[i].keys[j].contractAddress, msg);
                     if(info.balance?.amount) {
                         aWallet[i].keys[j].balance = info.balance.amount;
+                    } else {
+                        aWallet[i].keys[j].balance = "Not a SNIP-20"
                     }
                 }
             }
