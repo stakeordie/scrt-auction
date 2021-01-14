@@ -12,11 +12,9 @@
 
 <script>
 import TransactionSend from "./components/TransactionSend.vue";
-import TransactionSnip20Send from "./components/TransactionSnip20Send.vue";
 export default {
   components: {
-    TransactionSend,
-    TransactionSnip20Send
+    TransactionSend
   },
 };
 </script>
