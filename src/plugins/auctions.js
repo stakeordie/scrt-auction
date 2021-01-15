@@ -5,10 +5,12 @@ import Vuex from 'vuex';
 
 
 
+const tokens2Decimal = (amount, decimals) => {
+    return Number(amount / Math.pow(10, decimals));
+};
 const tokens2Human = (amount, decimals) => {
-    return (amount / Math.pow(10, decimals)).toFixed(decimals);
-}
-
+    return tokens2Decimal(amount, decimals).toFixed(decimals);
+};
 
 const colorHash = (str) => {
     const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green", "white"];
@@ -34,22 +36,23 @@ export default {
                 address: rawction.address,
                 label: rawction.label,
                 pair: rawction.pair,
+                color: colorHash(rawction.address),
                 sell: {
                     amount: rawction.sell_amount,
+                    decimalAmount: tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                     humanAmount: tokens2Human(rawction.sell_amount, rawction.sell_decimals),
                     decimals: rawction.sell_decimals,
                     denom: rawction.pair.split("-")[0],
-                    color: colorHash(rawction.address) // + rawction.pair.split("-")[0]),
                 },
                 bid: {
                     decimals: rawction.bid_decimals,
                     denom: rawction.pair.split("-")[1],
-                    color: colorHash(rawction.address) // + rawction.pair.split("-")[1]),
                 },
             };
 
             if(status == "active") {
                 auction.bid.minimum = rawction.minimum_bid;
+                auction.bid.decimalMinimum = tokens2Decimal(rawction.minimum_bid, rawction.bid_decimals);
                 auction.bid.humanMinimum = tokens2Human(rawction.minimum_bid, rawction.bid_decimals);
                 auction.closed = false;
             }
@@ -66,7 +69,6 @@ export default {
 
             return auction;
         }
-
         Vue.use(Vuex);
         Vue.prototype.$store.registerModule('$auctions', {
               namespaced: true,
@@ -78,9 +80,18 @@ export default {
                     showActive: true,
                     showClosed: true,
                     viewMode: "grid",
-                  }
+                    sort: {
+                        priority: "sell",
+                        fields: {
+                            sell: "asc",
+                            bid:  "asc"
+                        }
+                    }
+                  },
               },
               getters: {
+                // Since filter and sorting is done in the client, this is performed by a getter instead
+                // of a dispatcher storing a plain list of search results filtered and ordered in the server
                 filteredAuctions: state => {
                     return state.auctions.filter(auction => {
                         if(state.auctionsFilter.sellToken != "" && auction.sell.denom != state.auctionsFilter.sellToken) {
@@ -100,7 +111,21 @@ export default {
                         }
                         return false;
                     }).sort((a, b) => {
-                        
+                        const sellOrderFactor = state.auctionsFilter.sort.fields.sell == "asc" ? -1 : 1;
+                        const bidOrderFactor = state.auctionsFilter.sort.fields.bid == "asc" ? -1 : 1;
+
+                        if(a.sell.decimalAmount == b.sell.decimalAmount) {
+                            if(a.bid.decimalMinimum > b.bid.decimalMinimum) {
+                                return bidOrderFactor * -1;
+                            } else {
+                                return bidOrderFactor;
+                            }
+                        }
+                        if(a.sell.decimalAmount > b.sell.decimalAmount) {
+                            return sellOrderFactor * -1;
+                        } else {
+                            return sellOrderFactor;
+                        }
                     });
                 },
                 sellDenoms: state => {
@@ -135,6 +160,8 @@ export default {
                     // We'll deal with the concurrency later
                     commit("updateAuctions", [...activeAuctions, ...closedAuctions]);
                 },
+                // If the server was the one doing the filtering and sorting the API call
+                // would be made here and results stored in the state (through a mutation of course)
                 updateAuctionsFilter: async({ commit }, auctionsFilter) => {
                     commit("updateAuctionsFilter", auctionsFilter)
                 },

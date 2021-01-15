@@ -20,22 +20,24 @@
             <!-- Filtering by sell -->
             <label class="auctions-tools__filter-label" for="sell-token">Sell</label>
             <select class="auctions-tools__filter-select" name="sell-token" v-model="auctionsFilter.sellToken" @change="filterChanged()">
-              <option value="">*</option>
+              <option value="">(any)</option>
               <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
                 {{ sellToken }}
               </option>
             </select>
-            <button class="auctions-tools__filter-sort no-button">^</button>
+            <button class="auctions-tools__filter-sort no-button"
+                :class="[auctionsFilter.sort.fields.sell, { active: auctionsFilter.sort.priority == 'sell'}]" @click="toggleSort('sell')"></button>
 
             <!-- Filtering by bid -->
             <label class="auctions-tools__filter-label" for="bid-token">Bid</label>
             <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
-              <option value="">*</option>
+              <option value="">(any)</option>
               <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
                 {{ bidToken }}
               </option>
             </select>
-            <button class="auctions-tools__filter-view no-button">^</button>
+            <button class="auctions-tools__filter-sort no-button"
+                :class="[auctionsFilter.sort.fields.bid, { active: auctionsFilter.sort.priority == 'bid'}]" @click="toggleSort('bid')"></button>
 
             <span class="auctions-tools__filter-title">|</span>
 
@@ -85,6 +87,15 @@ export default {
     this.$auctions.updateAuctions();
   },
   methods: {
+    toggleSort(field) {
+      if(field == "sell") {
+        this.auctionsFilter.sort.fields.sell = (this.auctionsFilter.sort.fields.sell == "asc") ? "desc" : "asc";
+      }
+      if(field == "bid") {
+        this.auctionsFilter.sort.fields.bid  = (this.auctionsFilter.sort.fields.bid == "asc")  ? "desc" : "asc";
+      }
+      this.auctionsFilter.sort.priority = field;
+    },
     toggleStatus(status) {
       switch(status) {
         case 'active':
@@ -105,8 +116,7 @@ export default {
       }
     },
     filterChanged() {
-      this.$
-      this.$store.commit("$auctions/updateAuctionsFilter", this.auctionsFilter);
+      this.$auctions.updateAuctionsFilter(this.auctionsFilter);
     },
     async createViewingKey() {
       const viewingKey = await this.$auctions.createViewingKey(process.env.GRIDSOME_AUCTIONS_FACTORY);
@@ -174,6 +184,27 @@ export default {
       }
     }
 
+    &__filter-sort {
+      border-radius: 0;
+      width: 30px;
+      height: 30px;
+
+      &:not(.active) {
+        opacity: 0.3;
+      }
+
+      &.desc {
+        background-image: url(~@/assets/desc.svg);
+      }
+      &.asc {
+        background-image: url(~@/assets/asc.svg);
+      }
+
+      background-position: center center;
+      background-size: 15px 15px;
+      background-repeat: no-repeat;
+    }
+
     &__filter-label {
       margin-left: var(--f-gutter-xl);
       margin-right: var(--f-gutter);
@@ -186,7 +217,6 @@ export default {
     &__filter-toggle {
       padding: var(--f-gutter-xxs) var(--f-gutter-s);
       font-size: 11px;
-      transition: opacity 0.5s;
       
       &.show-active {
         background-color: var(--color-positive);
