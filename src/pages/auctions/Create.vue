@@ -40,6 +40,11 @@
                         <span class="error">{{ errors[0] }}</span>
                         <input name="description" type="text" v-model="formDescription"/>
                     </validation-provider>
+                    <validation-provider rules="" v-slot="{ errors }">
+                        <label for="EndDateTime">End Datetime</label>
+                        <span class="error">{{ errors[0] }}</span>
+                        <input name="EndDateTime" type="datetime-local" v-model="formEndDateTime"/>
+                    </validation-provider>
                     <button :disabled="invalid">Click Me</button>
                 </div>
             </form>
@@ -76,6 +81,7 @@ export default {
             formSellAmount: "",
             formMinBidAmount: "",
             formDescription: "",
+            formEndDateTime: "",
             tokenOptions: [
                 {
                     tokenName: "sodta (SODTA)",
@@ -114,7 +120,8 @@ export default {
                 this.formBidToken.tokenAddress,
                 this.formSellAmount,
                 this.formMinBidAmount,
-                this.formDescription
+                this.formDescription,
+                this.formEndDateTime
             );
             console.log(JSON.parse(new TextDecoder("utf-8").decode(auction.data)));
         }
