@@ -116,6 +116,7 @@ export default {
                 this.formMinBidAmount,
                 this.formDescription
             );
+            console.log(JSON.parse(new TextDecoder("utf-8").decode(auction.data)));
         }
     }
 }
