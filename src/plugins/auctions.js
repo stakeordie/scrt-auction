@@ -89,7 +89,7 @@ export default {
                         }
                     }
                   },
-                  tokenInfo: [
+                  tokenData: [
                     {
                         codeId: 1,
                         symbol: "SODTA",
@@ -202,7 +202,7 @@ export default {
                     }))];
                 },
                 tokenData: state => {
-                    return state.tokenInfo;
+                    return state.tokenData;
                 }
               },
               mutations: {

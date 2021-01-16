@@ -98,7 +98,7 @@ export default {
     clearFilters() {
       this.auctionsFilter.sellToken = "";
       this.auctionsFilter.bidToken = "";
-      this.auctionsFilter.showClosed = true;
+      this.auctionsFilter.showActive = true;
       this.auctionsFilter.showClosed = false;
     },
     toggleSort(field) {
