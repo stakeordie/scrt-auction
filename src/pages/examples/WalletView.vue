@@ -1,10 +1,10 @@
 <template>
   <page>
-    <columns number="2" number-s="1" weight="right">
       <h1>Wallet Info</h1>
-      <block>
-          <h2>Add to wallet</h2>
-          <validation-observer v-slot="{handleSubmit, invalid}">
+    <columns number="2" number-s="1" weight="right">
+    <block>
+        <h2>Add to wallet</h2>
+        <validation-observer v-slot="{handleSubmit, invalid}">
             <form class="form" @submit.prevent="handleSubmit(addViewingKey)">
                 <ul>
                 <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
@@ -17,9 +17,8 @@
 
                 <label class="auctions-tools__filter-label" for="sell-token">SNIP-20s</label><br/>
                 <select class="auctions-tools__filter-select" name="sell-token" v-model="contractAddress">
-                    <option value="">*</option>
-                    <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
-                        {{ sellToken }}
+                    <option v-for="token in tokens" :key="token.address" v-bind:value="token.address">
+                        {{ token.symbol }}
                     </option>
                 </select><br/>
 
@@ -34,10 +33,9 @@
                 </div>
             </form>
         </validation-observer>
-        <br/>
-        <hr/>
+      </block>
+      <block>
         <h2>Wallet View</h2>
-        <br>
         <div v-for="(entry, index) in wallet" :key="entry.address" style="width: 100%">
             <table style="width: 100%; border: 1px solid white;">
                 <tr style="border-bottom: 1px solid white;">
@@ -60,14 +58,8 @@
                     <td>{{wallet[index].keys[index2].balance}}</td>
                 </tr>
             </table>
-            <br>
-            <br>
         </div>
         <button @click="refreshWallet">Refresh</button>
-        <br>
-      </block>
-      <block>
-        
       </block>
     </columns>
   </page>
@@ -116,14 +108,13 @@ export default {
         },
         ...mapGetters("$auctions", [
             "filteredAuctions",
-            "sellDenoms", "bidDenoms"
+            "sellDenoms", "bidDenoms", "tokens"
         ])
     },
     methods: {
         async addViewingKey() {
-            console.log(this.tokens[this.contractAddress])
-            const viewingKey = await this.$auctions.createViewingKey(this.tokens[this.contractAddress]);
-            await this.$auctions.addUpdateWalletKey(this.tokens[this.contractAddress], viewingKey);
+            const viewingKey = await this.$auctions.createViewingKey(this.contractAddress);
+            await this.$auctions.addUpdateWalletKey(this.contractAddress, viewingKey);
             this.refreshWallet();
         },
         async refreshWallet() {
