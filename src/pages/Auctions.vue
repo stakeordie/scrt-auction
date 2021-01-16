@@ -10,7 +10,6 @@
           <!--button @click="listUserAuctions()">ListUserAuctions</button-->
         </div>
       </div>
-
       <!-- Auctions toolbar -->
       <section class="auctions-tools">
         <div class="auctions-tools__filter">
@@ -20,7 +19,7 @@
             <!-- Filtering by sell -->
             <label class="auctions-tools__filter-label" for="sell-token">Sell</label>
             <select class="auctions-tools__filter-select" name="sell-token" v-model="auctionsFilter.sellToken" @change="filterChanged()">
-              <option value="">(any)</option>
+              <option value=""></option>
               <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
                 {{ sellToken }}
               </option>
@@ -31,7 +30,7 @@
             <!-- Filtering by bid -->
             <label class="auctions-tools__filter-label" for="bid-token">Bid</label>
             <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
-              <option value="">(any)</option>
+              <option value=""></option>
               <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
                 {{ bidToken }}
               </option>
@@ -57,6 +56,15 @@
       <!-- Auctions grid -->
       <div class="auctions-set" :class="auctionsFilter.viewMode">
         <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
+      </div>
+
+      <!-- Auctions empty -->
+      <!-- Use v-show because currently flare doesn't deal well with conditional (v-if) autorenderred elements in the blocks -->
+      <div class="auctions-empty" v-show="filteredAuctions.length == 0">
+        <h2 v-if="auctionsFilter.sellToken || auctionsFilter.bidToken">
+          No auctions were found <span v-if="auctionsFilter.sellToken"> selling <span class="sell-token">{{auctionsFilter.sellToken}}</span></span><span> looking for <span class="bid-token">{{auctionsFilter.bidToken}}</span> bidders</span>.
+        </h2>
+        <p><router-link :to="'/auctions/create'" class="button">Be the first one</router-link> or <a href="" @click="clearFilters()">clear your filters</a>.</p>
       </div>
 
     </column>
@@ -87,14 +95,22 @@ export default {
     this.$auctions.updateAuctions();
   },
   methods: {
+    clearFilters() {
+      this.auctionsFilter.sellToken = "";
+      this.auctionsFilter.bidToken = "";
+      this.auctionsFilter.showClosed = true;
+      this.auctionsFilter.showClosed = false;
+    },
     toggleSort(field) {
-      if(field == "sell") {
-        this.auctionsFilter.sort.fields.sell = (this.auctionsFilter.sort.fields.sell == "asc") ? "desc" : "asc";
+      if(field == this.auctionsFilter.sort.priority[0]) {
+        if(field == "sell") {
+          this.auctionsFilter.sort.fields.sell = (this.auctionsFilter.sort.fields.sell == "asc") ? "desc" : "asc";
+        }
+        if(field == "bid") {
+          this.auctionsFilter.sort.fields.bid  = (this.auctionsFilter.sort.fields.bid == "asc")  ? "desc" : "asc";
+        }
       }
-      if(field == "bid") {
-        this.auctionsFilter.sort.fields.bid  = (this.auctionsFilter.sort.fields.bid == "asc")  ? "desc" : "asc";
-      }
-      this.auctionsFilter.sort.priority = field;
+      this.auctionsFilter.sort.priority = [field];
     },
     toggleStatus(status) {
       switch(status) {
@@ -229,12 +245,20 @@ export default {
         opacity: 0.3;
       }
       &.show-active, &.show-closed {
+        transition: opacity 0.2s;
         color: black;
+        
         &:not(.on) {
           opacity: 0.3;
+          &:hover {
+            opacity: 0.5;
+          }
         }
-        &.on, &:hover {
+        &.on {
           opacity: 1;
+          &:hover {
+            opacity: 0.7;
+          }
         }
       }
     }
@@ -266,6 +290,14 @@ export default {
       transform: translateY(30px);
     }
 
+  }
 
+  .auctions-empty {
+    .sell-token {
+      color: var(--color-green-secondary);
+    }
+    .bid-token {
+      color: var(--color-orange-secondary);
+    }
   }
 </style>

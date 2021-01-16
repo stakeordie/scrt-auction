@@ -17,17 +17,17 @@
     --f-h3-text-size: 22px;
     
     
-    --f-primary-action-color: var(--color-white-primary);
+    --f-primary-action-color: var(--color-blue-primary);
     --f-primary-action-anticolor: black;
-    --f-primary-action-color--hover: var(--color-yellow-primary);
+    --f-primary-action-color--hover: var(--color-green-primary);
     --f-primary-action-anticolor--hover: black;
 
     --f-secondary-action-color: var(--color-cream-primary);
     --f-secondary-action-anticolor: black;
 
     
-    --f-links-text-color: var(--color-purple-primary);
-    --f-links-text-hover-color: var(--color-yellow-primary);
+    --f-links-text-color: var(--color-blue-primary);
+    --f-links-text-hover-color: var(--color-green-primary);
     --f-links-text-visited-color: var(--color-blue-primary);
     --f-links-text-active-color: var(--color-yellow-primary);
     
@@ -38,6 +38,7 @@
     // a different name to prevent an unnecessary 
     // dependency, i.e. KeplrUser badge, etc.
     --default-background-color: var(--color-dark-gray);
+    --default-success-color: var(--color-positive);
     --default-error-color: var(--color-negative);
 
     --gutter: var(--f-gutter);
