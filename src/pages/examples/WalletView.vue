@@ -10,25 +10,25 @@
                 <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
                 </ul>
                 <div class="form__frame">
-                <div>
-                    <label for="payment-sender">My Address</label>
-                    <keplr-account v-model="userAddress"></keplr-account>
-                </div>
+                    <div>
+                        <label for="payment-sender">My Address</label>
+                        <keplr-account v-model="userAddress"></keplr-account>
+                    </div>
 
-                <label class="auctions-tools__filter-label" for="sell-token">SNIP-20s</label><br/>
-                <select class="auctions-tools__filter-select" name="sell-token" v-model="tokenAddress">
-                    <option v-for="token in tokenData" :key="token.address" v-bind:value="token.address">
-                        {{ token.symbol }}
-                    </option>
-                </select><br/>
+                    <label class="auctions-tools__filter-label" for="sell-token">SNIP-20s</label><br/>
+                    <select class="auctions-tools__filter-select" name="sell-token" v-model="tokenAddress">
+                        <option v-for="token in tokenData" :key="token.address" v-bind:value="token.address">
+                            {{ token.symbol }}
+                        </option>
+                    </select>
 
-                <!-- <validation-provider v-slot="{ errors }">
-                    <label for="payment-recipient">Contract Address</label>
-                    <span class="error">{{ errors[0] }}</span>
-                    <input name="payment-recipient" type="text" v-model="contractAddress" />
-                </validation-provider> -->
+                    <!-- <validation-provider v-slot="{ errors }">
+                        <label for="payment-recipient">Contract Address</label>
+                        <span class="error">{{ errors[0] }}</span>
+                        <input name="payment-recipient" type="text" v-model="contractAddress" />
+                    </validation-provider> -->
 
-                <button :disabled="invalid">Create Viewing Key</button>
+                    <button :disabled="invalid">Create Viewing Key</button>
 
                 </div>
             </form>
@@ -54,7 +54,7 @@
                 </tr>
                 <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress" >
                     <td></td>
-                    <td>{{key.contractAddress}}</td>
+                    <td>{{tokenData.find(token => token.address === key.contractAddress).symbol}}</td>
                     <td>{{wallet[index].keys[index2].balance}}</td>
                 </tr>
             </table>
