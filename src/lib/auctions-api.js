@@ -339,7 +339,8 @@ export class AuctionsApi {
         bidTokenAddress,
         amount,
         minBid,
-        description
+        description,
+        endDateTime
     ) {
         const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
         const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
@@ -356,7 +357,8 @@ export class AuctionsApi {
                 },
                 "sell_amount": amount,
                 "minimum_bid": minBid,
-                "description": description
+                "description": description,
+                "ends_at": endDateTime
             }
         };
 
