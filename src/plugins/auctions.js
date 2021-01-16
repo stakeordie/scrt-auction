@@ -78,7 +78,8 @@ export default {
                     sellToken: "",
                     bidToken: "",
                     showActive: true,
-                    showClosed: true,
+                    showClosed: false,
+                    showMine: false,
                     viewMode: "grid",
                     sort: {
                         priority: "sell",
@@ -114,17 +115,37 @@ export default {
                         const sellOrderFactor = state.auctionsFilter.sort.fields.sell == "asc" ? -1 : 1;
                         const bidOrderFactor = state.auctionsFilter.sort.fields.bid == "asc" ? -1 : 1;
 
-                        if(a.sell.decimalAmount == b.sell.decimalAmount) {
-                            if(a.bid.decimalMinimum > b.bid.decimalMinimum) {
-                                return bidOrderFactor * -1;
+                        let primaryA, primaryB, primaryOrderFactor,
+                            secondaryA, secondaryB, secondaryOrderFactor;
+                        if(state.auctionsFilter.sort.priority[0] == "sell") {
+                            primaryA = a.sell.decimalAmount;
+                            primaryB = b.sell.decimalAmount;
+                            primaryOrderFactor = sellOrderFactor;
+
+                            secondaryA = a.bid.decimalMinimum;
+                            secondaryB = b.bid.decimalMinimum;
+                            secondaryOrderFactor = bidOrderFactor;
+                        } else {
+                            primaryA = a.bid.decimalMinimum;
+                            primaryB = b.bid.decimalMinimum;
+                            primaryOrderFactor = bidOrderFactor;
+
+                            secondaryA = a.sell.decimalAmount;
+                            secondaryB = b.sell.decimalAmount;
+                            secondaryOrderFactor = sellOrderFactor;
+                        }
+
+                        if(primaryA == primaryB) {
+                            if(secondaryA > secondaryB) {
+                                return secondaryOrderFactor * -1;
                             } else {
-                                return bidOrderFactor;
+                                return secondaryOrderFactor;
                             }
                         }
-                        if(a.sell.decimalAmount > b.sell.decimalAmount) {
-                            return sellOrderFactor * -1;
+                        if(primaryA > primaryB) {
+                            return primaryOrderFactor * -1;
                         } else {
-                            return sellOrderFactor;
+                            return primaryOrderFactor;
                         }
                     });
                 },
