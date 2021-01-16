@@ -21,7 +21,7 @@
                             {{ token.symbol }}
                         </option>
                     </select>
-
+                    <br />
                     <!-- <validation-provider v-slot="{ errors }">
                         <label for="payment-recipient">Contract Address</label>
                         <span class="error">{{ errors[0] }}</span>
@@ -86,7 +86,7 @@ export default {
         return {
             errors: [],
             userAddress: "",
-            contractAddress: "",
+            tokenAddress: "",
             viewingKey: "",
             wallet: []
         }
