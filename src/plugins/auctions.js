@@ -37,6 +37,7 @@ export default {
                 label: rawction.label,
                 pair: rawction.pair,
                 color: colorHash(rawction.address),
+                color2: colorHash(rawction.label),
                 sell: {
                     amount: rawction.sell_amount,
                     decimalAmount: tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
@@ -215,13 +216,13 @@ export default {
               },
               actions: {
                 updateAuctions: async ({ commit }) => {                    
-                    const activeAuctions = (await auctionsApi.listAuctions("active")).map(auction => {
+                    const activeAuctions = (await auctionsApi.listAuctions("active"))?.map(auction => {
                         return transformAuction(auction, "active");
-                    });
+                    }) || [];
                     
-                    const closedAuctions = (await auctionsApi.listAuctions("closed")).map(auction => {
+                    const closedAuctions = (await auctionsApi.listAuctions("closed"))?.map(auction => {
                         return transformAuction(auction, "closed");
-                    });
+                    }) || [];
 
                     // We'll deal with the concurrency later
                     commit("updateAuctions", [...activeAuctions, ...closedAuctions]);
