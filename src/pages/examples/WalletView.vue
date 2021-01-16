@@ -54,7 +54,7 @@
                 </tr>
                 <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress" >
                     <td></td>
-                    <td>{{tokenData.find(token => token.address === key.contractAddress).symbol}}</td>
+                    <td>{{tokenData.find(token => token.address === key.contractAddress).name + " (" + tokenData.find(token => token.address === key.contractAddress).symbol + ")"}}</td>
                     <td>{{wallet[index].keys[index2].balance}}</td>
                 </tr>
             </table>
