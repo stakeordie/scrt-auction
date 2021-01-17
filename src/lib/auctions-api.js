@@ -294,7 +294,7 @@ export class AuctionsApi {
         const msg = {
             "send": {
                 "recipient": auctionAddress, 
-                "amount": bidAmount
+                "amount": bidAmount.toString()
             }
         };
         const bidFees = {
