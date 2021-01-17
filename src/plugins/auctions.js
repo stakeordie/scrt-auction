@@ -26,12 +26,13 @@ export default {
         const auctionsApi = new AuctionsApi(options.chainClient, options.factoryAddress);
 
         const transformAuction = (rawction, status) => {
+            // console.log(rawction);
             const auction = {
                 address: rawction.address,
                 label: rawction.label,
                 pair: rawction.pair,
                 color: colorHash(rawction.address),
-                color2: colorHash(rawction.label),
+                color2: colorHash(rawction.pair),
                 sell: {
                     amount: rawction.sell_amount,
                     decimalAmount: tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),

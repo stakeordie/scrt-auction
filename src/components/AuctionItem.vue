@@ -103,23 +103,13 @@ export default {
   }
 
   &.list {
-    display: flex;
+    display: grid;
+    gap: var(--f-gutter);
+    grid-template-columns: 300px 200px 200px 1fr;
 
     .auction__bid-action {
       opacity: 0.3;
     }
-
-    @include respond-to("<=s") {
-      grid-auto-flow: row;
-      grid-template-columns: 1fr;
-    }
-    @include respond-to(">=m") {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: flex-start;
-      align-items: center;
-    }
-    
   }
 }
 </style>

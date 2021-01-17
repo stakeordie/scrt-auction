@@ -7,6 +7,11 @@
         <column number-l="3">
             <block>
                 <h2>Info</h2>
+                <validation-observer v-slot="{ handleSubmit, invalid }">
+                    <form class="form" @submit.prevent="handleSubmit(submitInfo)">
+                        <button :disabled="invalid">Click Me</button>
+                    </form>
+                </validation-observer>
             </block>
             <block>
                 <h2>Allowance</h2>
@@ -19,10 +24,21 @@
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
+
 export default {
+    components: { ValidationObserver, ValidationProvider },
     data() {
         return {
             step: "info", // info, allowance, auction
+            formInfo: {
+
+            },
+        }
+    },
+    methods: {
+        submitInfo() {
+            
         }
     },
 }

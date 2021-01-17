@@ -11,35 +11,35 @@
       <!-- Auctions toolbar -->
       <section class="auctions-tools">
         <div class="auctions-tools__filter">
-          <form class="auctions-tools__filter-filters" @submit.prevent="filterChanged()">
+          <form class="auctions-tools__filter-controls" @submit.prevent="filterChanged()">
 
-            <!-- Filtering by sell -->
-            <div class="auctions-tools__filter-filter">
-              <label class="auctions-tools__filter-label" for="sell-token">Sell</label>
-              <select class="auctions-tools__filter-select" name="sell-token" v-model="auctionsFilter.sellToken" @change="filterChanged()">
-                <option value=""></option>
-                <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
-                  {{ sellToken }}
-                </option>
-              </select>
-              <button class="auctions-tools__filter-sort no-button"
-                  :class="[auctionsFilter.sort.fields.sell, { active: auctionsFilter.sort.priority == 'sell'}]" @click="toggleSort('sell')"></button>
+            <div class="auctions-tools__filter-filters">
+              <!-- Filtering by sell -->
+              <div class="auctions-tools__filter-filter">
+                <label class="auctions-tools__filter-label" for="sell-token">Sell</label>
+                <select class="auctions-tools__filter-select" name="sell-token" v-model="auctionsFilter.sellToken" @change="filterChanged()">
+                  <option value=""></option>
+                  <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
+                    {{ sellToken }}
+                  </option>
+                </select>
+                <button class="auctions-tools__filter-sort no-button"
+                    :class="[auctionsFilter.sort.fields.sell, { active: auctionsFilter.sort.priority == 'sell'}]" @click="toggleSort('sell')"></button>
+              </div>
+
+              <!-- Filtering by bid -->
+              <div class="auctions-tools__filter-filter">
+                <label class="auctions-tools__filter-label" for="bid-token">Bid</label>
+                <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
+                  <option value=""></option>
+                  <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
+                    {{ bidToken }}
+                  </option>
+                </select>
+                <button class="auctions-tools__filter-sort no-button"
+                    :class="[auctionsFilter.sort.fields.bid, { active: auctionsFilter.sort.priority == 'bid'}]" @click="toggleSort('bid')"></button>
+              </div>
             </div>
-
-            <!-- Filtering by bid -->
-            <div class="auctions-tools__filter-filter">
-              <label class="auctions-tools__filter-label" for="bid-token">Bid</label>
-              <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
-                <option value=""></option>
-                <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
-                  {{ bidToken }}
-                </option>
-              </select>
-              <button class="auctions-tools__filter-sort no-button"
-                  :class="[auctionsFilter.sort.fields.bid, { active: auctionsFilter.sort.priority == 'bid'}]" @click="toggleSort('bid')"></button>
-            </div>
-
-            <span class="auctions-tools__filter-sep">|</span>
 
             <!-- Filtering by status -->
             <div class="auctions-tools__filter-toggles">
@@ -155,50 +155,41 @@ export default {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-
-    &__actions {
-      display: grid;
-      
-      @include respond-to("<=s") {
-        grid-auto-flow: row;
-      }
-      @include respond-to(">=m") {
-        grid-auto-flow: column;
-        grid-gap: var(--f-gutter);
-      }
-    }
   }
 
   .auctions-tools {
     // The layout with the filter and the view controls
     display: flex;
     justify-content: space-between;
-    @include respond-to("<=s") {
+    @include respond-to("<=m") {
       flex-flow: column;
     }
-    @include respond-to(">s") {
+    @include respond-to(">m") {
       flex-flow: row nowrap;
     }
 
     &__filter {
       &-filters {
         display: flex;
-        align-items: baseline;
-        column-gap: var(--f-gutter-xl);
-
-        @include respond-to("<=s") {
-          flex-flow: row wrap;
-        }
-        @include respond-to(">s") {
-          flex-flow: row nowrap;
-        }
+        flex-flow: row nowrap;
+        column-gap: var(--f-gutter);
       }
 
-      &-sep {
-        font-weight: bold;
-        @include respond-to("<=s") {
-          display: none;
-        }
+      &-controls {
+        display: flex;
+        column-gap: var(--f-gutter-xl);
+        flex-flow: row wrap;
+        justify-content: space-evenly;
+      }
+
+      &-filter {
+        max-width: 50%;
+      }
+
+      &-filter, &-toggles {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: baseline;
       }
 
       &-sort {
@@ -226,6 +217,7 @@ export default {
         padding: var(--f-gutter-xxs) var(--f-gutter-s);
         font-size: 11px;
         margin-right: var(--f-gutter);
+        white-space: nowrap;
         
         &.show-active {
           background-color: var(--color-positive);
@@ -258,6 +250,8 @@ export default {
     }
 
     &__view {
+      display: flex;
+      flex-flow: row nowrap;
       .on {
         color: var(--color-orange-primary);
       }
