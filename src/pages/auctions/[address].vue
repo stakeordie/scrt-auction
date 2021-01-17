@@ -30,7 +30,7 @@
               </ul>
 
               <div class="form__frame">
-                <validation-provider rules="required|min_value:1|max_decimals:6" v-slot="{ errors }">
+                <validation-provider :rules="validationRules" v-slot="{ errors }">
                   <label for="payment-amount">Amount</label>
                   <span class="error">{{ errors[0] }}</span>
                   <input name="payment-amount" type="text" v-model.trim="formBidAmount" />
@@ -58,10 +58,11 @@ extend("required", {
 });
 
 extend("min_value", {
-  validate: (value, min) => {
-    return parseInt(value) >= parseInt(min[0]);
+  params: ["minimumBid"],
+  validate: (value, param) => {
+    return parseInt(value) >= parseInt(param.minimumBid);
   },
-  message: "The bid must be greater than the minimum value allowed by the auction.",
+  message: "The minimum bid for this auction is {minimumBid}.",
 });
 
 extend("max_decimals", {
@@ -138,7 +139,7 @@ export default {
     //console.log(JSON.stringify(this.auctionInfo));
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-      this.validationRules = "required|muValidDecimals|min_value:" + this.auctionInfo.auction_info.minimum_bid;
+      this.validationRules = "required|min_value:" + this.auctionInfo.auction_info.minimum_bid + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
       this.formBidAmount = this.auctionInfo.auction_info.minimum_bid;
     }
   },
