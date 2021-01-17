@@ -4,10 +4,10 @@
     
         <block>
           <h2>Auction Info</h2>
-          <div>Amount: {{auctionInfo.auction_info.sell_amount / Math.pow(10, auctionInfo.auction_info.sell_token.token_info.decimals)}}</div>
+          <div>Amount: {{ sellAmountFromFractional }}</div>
           <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }}</div>
           <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.symbol }}</div>
-          <div>Min Bid: {{ auctionInfo.auction_info.minimum_bid / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}}</div>
+          <div>Min Bid: {{ minimumBidFromFractional }}</div>
           <div>Description: {{ auctionInfo.auction_info.description }}</div>
           <div>Status: {{ auctionInfo.auction_info.status }}</div>
           <div v-if="bidInfo.bid.amount_bid > 0">
@@ -30,7 +30,7 @@
               </ul>
 
               <div class="form__frame">
-                <validation-provider rules="required|min_value:1|max_decimals:6" v-slot="{ errors }">
+                <validation-provider :rules="validationRules" v-slot="{ errors }">
                   <label for="payment-amount">Amount</label>
                   <span class="error">{{ errors[0] }}</span>
                   <input name="payment-amount" type="text" v-model.trim="formBidAmount" />
@@ -51,17 +51,16 @@ import { required, min_value, max_decimals } from "vee-validate/dist/rules";
 import TokenAmountInput from '../../components/TokenAmountInput.vue';
 
 extend("required", {
-  validate: value => {
-    return String(value.amount).trim().length;
-  },
+  ...required,
   message: "This field is required",
 });
 
 extend("min_value", {
-  validate: (value, min) => {
-    return parseInt(value) >= parseInt(min[0]);
+  params: ["minimumBid"],
+  validate: (value, param) => {
+    return parseInt(value) >= parseInt(param.minimumBid);
   },
-  message: "The bid must be greater than the minimum value allowed by the auction.",
+  message: "The minimum bid for this auction is {minimumBid}.",
 });
 
 extend("max_decimals", {
@@ -138,13 +137,24 @@ export default {
     console.log(this.auctionInfo);
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-      this.validationRules = "required|muValidDecimals|min_value:" + this.auctionInfo.auction_info.minimum_bid;
-      this.formBidAmount = this.auctionInfo.auction_info.minimum_bid;
+      this.validationRules = "required|min_value:" + this.minimumBidFromFractional + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
+      this.formBidAmount = this.minimumBidFromFractional;
+    }
+  },
+  computed: {
+    sellAmountFromFractional: function () {
+      return this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)
+    },
+    minimumBidFromFractional: function () {
+      return this.auctionInfo.auction_info.minimum_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
+    },
+    formBidAmountToFractional: function () {
+      return this.formBidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
     }
   },
   methods: {
     async placeBid() {
-      let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmount);
+      let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmountToFractional);
       //console.log(placedBid);
     },
     async retractBid() {
