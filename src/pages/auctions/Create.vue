@@ -112,6 +112,7 @@ export default {
     },
     methods: {
         async createAuction() {
+            const endsAt = new Date(this.formEndDateTime);
             //secretcli tx compute execute --label *factory_contract_label* '{"create_auction":{"label":"*your_auction_name*","sell_contract":{"code_hash":"*sale_tokens_code_hash*","address":"*sale_tokens_contract_address*"},"bid_contract":{"code_hash":"*bid_tokens_code_hash*","address":"*bid_tokens_contract_address*"},"sell_amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*","minimum_bid":"*minimum_accepted_bid_in_smallest_denomination_of_bid_token*","description":"*optional_text_description*"}}' --from *your_key_alias_or_addr* --gas 400000 -y
             const consignAllowance = await this.$auctions.consignAllowance(this.formSellToken.tokenAddress, this.formSellAmount);
             console.log(JSON.parse(new TextDecoder("utf-8").decode(consignAllowance.data)));
@@ -121,7 +122,7 @@ export default {
                 this.formSellAmount,
                 this.formMinBidAmount,
                 this.formDescription,
-                this.formEndDateTime
+                endsAt.getTime()
             );
             console.log(JSON.parse(new TextDecoder("utf-8").decode(auction.data)));
         }
