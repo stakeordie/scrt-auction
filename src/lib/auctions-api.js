@@ -104,7 +104,7 @@ export class AuctionsApi {
         }
     }
 
-    async getViewingKey(address, contractAddress ) {
+    async getViewingKey(address, contractAddress) {
         const wallet = await this.getWallet();
         if (wallet === undefined || wallet.length == 0) {
             return undefined;

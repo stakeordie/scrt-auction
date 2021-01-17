@@ -118,8 +118,10 @@ export default {
     };
   },
   async created() {
+    console.log("TEST")
+    console.log(this.selectedAccount)
     this.auctionAddress = this.$route.params.address;
-    const viewingKey = await this.$auctions.getViewingKey();
+    const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
     if(viewingKey) {
       const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
       if(!bidInfoResponse.viewing_key_error) {
@@ -155,6 +157,8 @@ export default {
   methods: {
     async placeBid() {
       let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmountToFractional);
+      const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
+      await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey, "211");
       //console.log(placedBid);
     },
     async retractBid() {
