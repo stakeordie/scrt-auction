@@ -2,14 +2,8 @@ import { AuctionsApi } from '../lib/auctions-api.js'
 
 import Vuex from 'vuex';
 
-
-
-
 const tokens2Decimal = (amount, decimals) => {
     return Number(amount / Math.pow(10, decimals));
-};
-const tokens2Human = (amount, decimals) => {
-    return tokens2Decimal(amount, decimals).toFixed(decimals);
 };
 
 const colorHash = (str) => {
@@ -41,7 +35,6 @@ export default {
                 sell: {
                     amount: rawction.sell_amount,
                     decimalAmount: tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
-                    humanAmount: tokens2Human(rawction.sell_amount, rawction.sell_decimals),
                     decimals: rawction.sell_decimals,
                     denom: rawction.pair.split("-")[0],
                 },
@@ -54,14 +47,12 @@ export default {
             if(status == "active") {
                 auction.bid.minimum = rawction.minimum_bid;
                 auction.bid.decimalMinimum = tokens2Decimal(rawction.minimum_bid, rawction.bid_decimals);
-                auction.bid.humanMinimum = tokens2Human(rawction.minimum_bid, rawction.bid_decimals);
                 auction.closed = false;
             }
             if(status == "closed") {
                 if(auction.winning_bid) {
                     auction.winning = {
                         amount: auction.winning_bid,
-                        humanAmount: tokens2Human(auction.winning_bid, auction.bid_decimals),
                         timestamp: auction.timestamp,
                     }
                 }
@@ -160,7 +151,8 @@ export default {
 
                         let primaryA, primaryB, primaryOrderFactor,
                             secondaryA, secondaryB, secondaryOrderFactor;
-                        if(state.auctionsFilter.sort.priority[0] == "sell") {
+
+                        if(state.auctionsFilter.sort.priority == "sell") {
                             primaryA = a.sell.decimalAmount;
                             primaryB = b.sell.decimalAmount;
                             primaryOrderFactor = sellOrderFactor;

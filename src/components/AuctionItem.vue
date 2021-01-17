@@ -4,36 +4,35 @@
     <router-link class="auction__bid-action button" v-if="!auction.closed" :to="'/auctions/' + auction.address"
       :class="'theme-' + auction.color2">Bid</router-link>
 
-    <h3 class="auction__pair">
+
+    <h2 class="auction__pair">
       <span class="sell-denom">{{ auction.sell.denom }}</span> -> 
       <span class="bid-denom">{{ auction.bid.denom }}</span>
-    </h3>
+    </h2>
 
-    <dl class="auction__sell">
-      <dt>Sell</dt>
-      <dd><span class="amount">{{ auction.sell.humanAmount }}</span> <span class="denom">{{ auction.sell.denom }}</span></dd>
-    </dl>
+    <h3 class="auction__sell"><token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals" :denom="auction.sell.denom"></token-amount></h3>
 
     <dl class="auction__bid" v-if="!auction.closed">
       <dt>Minimum bid</dt>
-
-      <dd><span class="amount">{{ auction.bid.humanMinimum }}</span> <span class="denom">{{ auction.sell.denom }}</span></dd>
+      <dd>
+        <token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
+      </dd>
     </dl>
     
     <dl class="auction__winner" v-if="auction.winning">
       <dt>Winning Bid</dt>
-      <dd>{{ auction.winning.humanAmount }}</dd>
-    </dl>
-
-    <dl class="auction__label">
-      <dt>Label</dt>
-      <dd>{{ auction.label }}</dd>
+      <dd>
+        <token-amount :amount="auction.winning.decimalAmount" :decimals="auction.bid.decimals" :denom="auction.bid.decimalAmount"></token-amount>
+        </dd>
     </dl>
   </div>
 </template>
 
 <script>
+import TokenAmount from "./TokenAmount.vue"
+
 export default {
+  components: { TokenAmount },
   props: ["auction"]
 };
 </script>
@@ -49,7 +48,7 @@ export default {
   position: relative;
   transition: background-color 0.7s;
 
-  h3, dd {
+  h2, h3, dd {
     margin-bottom: 0;
     line-height: 1em;
   }
@@ -74,8 +73,8 @@ export default {
     color: var(--theme-anti-color);
     background-color: var(--theme-color);
 
-    top: var(--f-gutter-s);
-    right: var(--f-gutter-s);
+    top: 11px;
+    right: 11px;
     position: absolute;
     padding-left: var(--f-gutter-l);
     padding-right: var(--f-gutter-l);
@@ -92,8 +91,11 @@ export default {
     }
   }
 
+  // Layout specific
+
   &.grid {
     display: grid;
+    gap: var(--f-gutter);
 
     .auction__bid-action {
       opacity: 0;
@@ -101,7 +103,7 @@ export default {
   }
 
   &.list {
-    display: grid;
+    display: flex;
 
     .auction__bid-action {
       opacity: 0.3;
@@ -112,8 +114,10 @@ export default {
       grid-template-columns: 1fr;
     }
     @include respond-to(">=m") {
-      grid-auto-flow: column;
-      grid-template-columns: 320px 200px 1fr;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: flex-start;
+      align-items: center;
     }
     
   }
