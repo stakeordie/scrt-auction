@@ -15,9 +15,9 @@
 
 <script>
 import DefaultLayout from "../../layouts/DefaultLayout";
-import AccountQueryForm from "./components/AccountQueryForm";
-import QueryBlock from "./components/QueryBlock.vue";
-import QueryLatestBlocks from "./components/QueryLatestBlocks.vue";
+import AccountQueryForm from "../../components/examples/AccountQueryForm";
+import QueryBlock from "../../components/examples/QueryBlock.vue";
+import QueryLatestBlocks from "../../components/examples/QueryLatestBlocks.vue";
 
 export default {
   components: {

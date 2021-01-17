@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import TransactionSend from "./components/TransactionSend.vue";
+import TransactionSend from "../../components/examples/TransactionSend.vue";
 export default {
   components: {
     TransactionSend

@@ -136,7 +136,7 @@ export default {
       }
     }
     this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
-    //console.log(JSON.stringify(this.auctionInfo));
+    console.log(this.auctionInfo);
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.validationRules = "required|min_value:" + this.minimumBidFromFractional + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
