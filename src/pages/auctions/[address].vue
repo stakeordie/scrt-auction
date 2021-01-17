@@ -30,17 +30,10 @@
               </ul>
 
               <div class="form__frame">
-                <validation-provider :rules="validationRules" v-slot="{ errors }">
-                  <label for="tokenAmountInputField">Bid Amount</label>
+                <validation-provider rules="required|min_value:1|max_decimals:6" v-slot="{ errors }">
+                  <label for="payment-amount">Amount</label>
                   <span class="error">{{ errors[0] }}</span>
-                  <!-- <input type="text" v-model="formBidAmount"/> -->
-                  <token-amount-input
-                    name="tokenAmountInputField"
-                    v-model="formBidAmount"
-                    :decimals="auctionInfo.auction_info.bid_token.token_info.decimals"
-                    :fmuSymbol="'u' + auctionInfo.auction_info.bid_token.token_info.symbol"
-                    :muSymbol="auctionInfo.auction_info.bid_token.token_info.symbol"
-                  ></token-amount-input>
+                  <input name="payment-amount" type="text" v-model.trim="formBidAmount" />
                 </validation-provider>
                 <button :disabled="invalid">Place Bid</button>
               </div>
@@ -54,7 +47,7 @@
 
 <script>
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required, integer, min_value } from "vee-validate/dist/rules";
+import { required, min_value, max_decimals } from "vee-validate/dist/rules";
 import TokenAmountInput from '../../components/TokenAmountInput.vue';
 
 extend("required", {
@@ -64,25 +57,20 @@ extend("required", {
   message: "This field is required",
 });
 
-extend("muValidDecimals", {
-  validate: value => {
-    var match = (""+value.fmuAmount).split(".");
-    if (match.length > 1) { 
-      // No Error
-      return false;
-    } else {
-      // Error
-      return true;
-    }
-  },
-  message: "Decimals are not allowed in the Fractional Montery Unit.",
-});
-
 extend("min_value", {
   validate: (value, min) => {
-    return parseInt(value.fmuAmount) >= parseInt(min[0]);
+    return parseInt(value) >= parseInt(min[0]);
   },
   message: "The bid must be greater than the minimum value allowed by the auction.",
+});
+
+extend("max_decimals", {
+  params: ["maxDecimalsAllowed"],
+  validate: (value, param) => {
+    console.log(parseFloat(value).countDecimals())
+    return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
+  },
+  message: "The maximum # of decimals allowed is {maxDecimalsAllowed}",
 });
 
 export default {
@@ -97,7 +85,7 @@ export default {
           "amount_bid": ""
         }
       },
-      formBidAmount: {},
+      formBidAmount: 1,
       codeHash: "",
       auctionInfo: {
         auction_info: {
@@ -151,12 +139,12 @@ export default {
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.validationRules = "required|muValidDecimals|min_value:" + this.auctionInfo.auction_info.minimum_bid;
-      this.formBidAmount = { "amount": this.auctionInfo.auction_info.minimum_bid };
+      this.formBidAmount = this.auctionInfo.auction_info.minimum_bid;
     }
   },
   methods: {
     async placeBid() {
-      let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmount.denomValue);
+      let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmount);
       //console.log(placedBid);
     },
     async retractBid() {

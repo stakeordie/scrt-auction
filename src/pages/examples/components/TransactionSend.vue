@@ -26,11 +26,15 @@
             <span class="error">{{ errors[0] }}</span>
             <input name="payment-recipient" type="text" v-model.trim="payment.recipient" />
           </validation-provider>
-        
+          
           <validation-provider rules="required" v-slot="{ errors }" v-if="payment.type !== 'SCRT'">
-            <label for="token-contract-address">Token</label>
+            <label class="auctions-tools__filter-label" for="sell-token">SNIP-20s</label>
             <span class="error">{{ errors[0] }}</span>
-            <input name="token-contract-address" type="text" v-model="payment.tokenAddress" />
+            <select class="auctions-tools__filter-select" name="sell-token" v-model="payment.tokenAddress">
+                <option v-for="token in tokenData" :key="token.address" v-bind:value="token.address">
+                    {{ token.symbol }}
+                </option>
+            </select><br />
           </validation-provider>
 
           <validation-provider rules="required|min_value:1|max_decimals:6" v-slot="{ errors }">
@@ -58,6 +62,7 @@
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value, max_decimals } from "vee-validate/dist/rules";
 import KeplrAccount from '../../../components/KeplrAccount.vue';
+import { mapGetters } from 'vuex'
 
 extend("required", {
   ...required,
@@ -94,9 +99,16 @@ export default {
       errors: [],
     };
   },
+  computed: {
+      ...mapGetters("$auctions", [
+          "tokenData"
+      ])
+  },
   methods: {
-    send() {
-      this.$scrtjs.sendTokens(this.payment);
+    async send() {
+      console.log(this.payment)
+      const response = await this.$scrtjs.sendTokens(this.payment);
+      console.log(response);
     }
   }
 }
