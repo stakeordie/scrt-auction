@@ -15,13 +15,13 @@
                         <validation-provider class="auction-form__label" rules="required" v-slot="{ errors }">
                             <label for="auction-label">Label</label>
                             <span class="error">{{ errors[0] }}</span>
-                            <input name="auction-label" type="text" v-model.trim="auctionForm.label" placeholder="This will appear in the list..." />
+                            <input name="auction-label" type="text" v-model.trim="auctionForm.label" />
                         </validation-provider>
 
                         <!-- New auction description -->
                         <validation-provider class="auction-form__description">
-                            <label for="auction-description">Description -optional-</label>
-                            <textarea name="auction-description" v-model.trim="auctionForm.description"></textarea>
+                            <label for="auction-description">Description</label>
+                            <textarea name="auction-description" v-model.trim="auctionForm.description" placeholder="This is optional"></textarea>
                         </validation-provider>
 
                         <!-- Sell token -->
@@ -67,12 +67,12 @@
                             <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
 
                             <p>Can be closed after 
-                                <input class="auction-form__end-time__amount" type="number" min="1" max="60" v-model="endTimeAmount">
+                                <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="endTimeAmount">
                                 <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
-                                    <option value="1">minute</option>
-                                    <option value="60">hour</option>
-                                    <option value="1440">day</option>
-                                    <option value="10080">week</option>
+                                    <option value="1">minute<span v-if="endTimeAmount > 1">s</span></option>
+                                    <option value="60">hour<span v-if="endTimeAmount > 1">s</span></option>
+                                    <option value="1440">day<span v-if="endTimeAmount > 1">s</span></option>
+                                    <option value="10080">week<span v-if="endTimeAmount > 1">s</span></option>
                                 </select>
                             </p>
                         </validation-provider>
@@ -87,7 +87,8 @@
                 <div class="stage-panel stage-panel__info">
                     <h3><span class="number">1</span> Fill the form</h3>
                     <div class="details">
-                        <p>Fill up the form with the auction information and click "Continue" when you are ready.</p>
+                        <p>Fill up the form with the auction information.</p>
+                        <p>Click <strong>"Continue"</strong> when you are ready.</p>
                     </div>
                 </div>
                 <div class="stage-panel stage-panel__auction">
@@ -99,7 +100,7 @@
                             <li>The factory then creates your auction and lists it in the auctions list.</li>
                         </ul>
                         <button class="allowance-form__action" :disabled="stage != 'auction'" @click="createAuction()">Go</button>
-                        <a href="" @clic.prevent="stage = 'info'">Cancel</a>
+                        <a href="" @click="stage = 'info'">Cancel</a>
                     </div>
                 </div>
                 <div class="stage-panel stage-panel__keys">
@@ -136,6 +137,8 @@ export default {
         return {
             stage: "info", // info, auction, keys
             interval: null,
+
+            infoComplete: false,
             endTimeAmount: 1,
             endTimeUnit: "60",
 
@@ -157,7 +160,7 @@ export default {
         ,
         endTimeString() {
             return this.auctionForm.endTime.toLocaleString();
-        }
+        },
     },
     mounted () {
         this.updateEndTime();
@@ -175,7 +178,7 @@ export default {
         },
         updateEndTime() {
             if(this.stage == "info") {
-                this.auctionForm.endTime = new Date((new Date()).getTime() + (Number(this.endTimeAmount) * Number(this.endTimeUnit) * 60000));
+                this.auctionForm.endTime = new Date((new Date()).getTime() + (Number(this.endTimeAmount || 1) * Number(this.endTimeUnit) * 60000));
             }
         }
     },
@@ -279,6 +282,10 @@ export default {
         
         .stage-panel__info {
             border: 1px solid rgba(255,255,255,0.5);
+            .number {
+                background-color: var(--color-yellow-secondary);
+                color: black;
+            }
             .details {
                 display: block;
             }
@@ -299,6 +306,10 @@ export default {
         }
         .stage-panel__auction {
             border: 1px solid rgba(255,255,255,0.5);
+            .number {
+                background-color: var(--color-yellow-secondary);
+                color: black;
+            }
             .details {
                 display: block;
             }
@@ -315,6 +326,7 @@ export default {
         .stage-panel__info, .stage-panel__auction {
             .number {
                 background-color: var(--color-positive);
+                color: black;
             }
             opacity: 0.5;
         }
@@ -322,6 +334,7 @@ export default {
             border: 1px solid rgba(255,255,255,0.5);
             .number {
                 background-color: var(--color-positive);
+                color: black;
             }
             .details {
                 display: block;

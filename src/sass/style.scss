@@ -59,6 +59,10 @@ html {
     background-color: var(--default-background-color);
 }
 
+strong {
+    font-weight: 600;
+}
+
 hr {
     margin: var(--f-gutter-xl) 0;
 }
