@@ -224,7 +224,7 @@ export default {
                 sellAmountToFractional.toString(),
                 bidAmountToFractional.toString(),
                 this.auctionForm.formDescription,
-                this.auctionForm.endTime.getTime()
+                this.auctionForm.endTime.getTime() / 1000
             );
             // Log status
             console.log("new/CreateAuction/this.$scrtjs.decodedResponse(auction)"); console.log(this.$scrtjs.decodedResponse(auction))
