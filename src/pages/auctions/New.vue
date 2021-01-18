@@ -25,7 +25,7 @@
                         </validation-provider>
 
                         <!-- Sell token -->
-                        <validation-provider class="auction-form__sell-amount" rules="required" v-slot="{ errors }">
+                        <validation-provider class="auction-form__sell-amount" :rules="sellAmountValidationRules" v-slot="{ errors }">
                             <label for="sell-amount">Selling</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input name="sell-amount" type="text" v-model.trim="auctionForm.sellAmount" />
@@ -42,7 +42,7 @@
                         </validation-provider>
 
                         <!-- Bid token -->
-                        <validation-provider class="auction-form__bid-amount" rules="required" v-slot="{ errors }">
+                        <validation-provider class="auction-form__bid-amount" :rules="bidAmountValidationRules" v-slot="{ errors }">
                             <label for="minimum-bid-amount">Minimum bid</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input name="minimum-bid-amount" type="text" v-model.trim="auctionForm.bidAmount" />
@@ -123,12 +123,20 @@
 import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required, min_value, max_decimals } from "vee-validate/dist/rules";
+import { required, max_decimals } from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
 extend("required", {
   ...required,
   message: "This field is required",
+});
+
+extend("max_decimals", {
+  params: ["maxDecimalsAllowed"],
+  validate: (value, param) => {
+    return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
+  },
+  message: "The maximum # of decimals allowed is {maxDecimalsAllowed}",
 });
 
 export default {
@@ -142,22 +150,24 @@ export default {
             endTimeAmount: 1,
             endTimeUnit: "60",
 
+            hasViewingKey: false,
+
             auctionForm: {
                 sellAmount: 0.1,
                 sellTokenAddress: "",
                 bidAmount: 0.1,
                 bidTokenAddress: "",
                 label: "",
-
+                description: "",
                 endTime: new Date(),
             },
         }
     },
     computed: {
         ...mapGetters("$auctions", [
-        "availableTokens", 
-        ])
-        ,
+            "availableTokens",
+            "getToken"
+        ]),
         endTimeString() {
             return this.auctionForm.endTime.toLocaleString();
         },
@@ -166,11 +176,31 @@ export default {
         },
         bidAmountToFractional: function () {
             return this.auctionForm.bidAmount * Math.pow(10, 6 /* get decimals */)
+        },
+        sellAmountValidationRules: function () {
+            const decimals = 6;
+            if(this.auctionForm.sellTokenAddress !== "") {
+                const decimals = (this.getToken(this.auctionForm.sellTokenAddress)).decimals;
+            }
+            return "required|max_decimals:" + decimals;
+        },
+        bidAmountValidationRules: function () {
+            const decimals = 6;
+            if(this.auctionForm.bidTokenAddress !== "") {
+                const decimals = (this.getToken(this.auctionForm.bidTokenAddress)).decimals;
+            }
+            return "required|max_decimals:" + decimals;
         }
     },
     mounted () {
         this.updateEndTime();
         this.interval = setInterval(this.updateEndTime, 1000);
+    },
+    async created () {
+        const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
+        if(viewingKey) {
+            this.hasViewingKey = true;
+        }
     },
     destroyed () {
         clearInterval(this.interval);
@@ -181,11 +211,34 @@ export default {
         },
         async createAuction() {
             this.stage = "keys";
+            const sellToken = this.getToken(this.auctionForm.sellTokenAddress);
+            const bidToken = this.getToken(this.auctionForm.bidTokenAddress)
+            //console.log("new/CreateAuction/sellToken"); console.log(sellToken);
+            const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, sellToken.decimals)
+            const bidAmountToFractional = this.auctionForm.bidAmount * Math.pow(10, bidToken.decimals)
             //Allowance
-            const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellTokenAddress, this.sellAmountToFractional.toString());
-            //status
-            console.log(consignedAllowance)
-            console.log(this.$scrtjs.decodedResponse(consignedAllowance))
+            const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellTokenAddress, sellAmountToFractional.toString());
+            
+            //console.log("new/CreateAuction/consignedAllowance"); console.log(consignedAllowance)
+            //console.log("new/CreateAuction/this.$scrtjs.decodedResponse(consignedAllowance)"); console.log(this.$scrtjs.decodedResponse(consignedAllowance))
+
+            //Create auction
+            const auction = await this.$auctions.createAuction(this.auctionForm.label,
+                this.auctionForm.sellTokenAddress,
+                this.auctionForm.bidTokenAddress,
+                sellAmountToFractional.toString(),
+                bidAmountToFractional.toString(),
+                this.auctionForm.formDescription,
+                this.auctionForm.endTime.getTime()
+            );
+            // Log status
+            console.log("new/CreateAuction/this.$scrtjs.decodedResponse(auction)"); console.log(this.$scrtjs.decodedResponse(auction))
+
+            // Create viewing key if none exists
+            if(!this.hasViewingKey) {
+                const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
+                await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
+            }
         },
         updateEndTime() {
             if(this.stage == "info") {
