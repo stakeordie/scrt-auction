@@ -202,8 +202,6 @@ export default {
 
         Vue.prototype.$store.commit('$auctions/updateAvailableTokens', options.availableTokens);
 
-        console.log(Vue.prototype.$store.getters['$auctions/getToken']('secret1rdz9e9hln0lv0y33se380fczmmst72ffzlqg9a'));
-
         Vue.prototype.$auctions.updateAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctions');
         };
