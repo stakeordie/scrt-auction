@@ -109,13 +109,7 @@ export class AuctionsApi {
         if (wallet === undefined || wallet.length == 0) {
             return undefined;
         }
-        console.log(wallet[0].address);
-        console.log(address);
-        console.log(typeof(wallet[0].address));
-        console.log(typeof(address));
-        console.log(wallet[0].address === address);
         let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
-        console.log(walletEntryIndex);
         if(walletEntryIndex > -1) {
             let WalletEntryKey = await wallet[walletEntryIndex].keys.find(key => key.contractAddress === contractAddress);
             return WalletEntryKey.viewingKey;

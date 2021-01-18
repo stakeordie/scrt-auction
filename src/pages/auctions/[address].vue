@@ -66,7 +66,6 @@ extend("min_value", {
 extend("max_decimals", {
   params: ["maxDecimalsAllowed"],
   validate: (value, param) => {
-    console.log(parseFloat(value).countDecimals())
     return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
   },
   message: "The maximum # of decimals allowed is {maxDecimalsAllowed}",
@@ -78,6 +77,7 @@ export default {
     return {
       errors: [],
       auctionAddress: "",
+      hasViewingKey: false,
       bidInfo: {
         "bid": {
           "message": "",
@@ -118,16 +118,19 @@ export default {
     };
   },
   async created() {
-    console.log("TEST")
-    console.log(this.selectedAccount)
     this.auctionAddress = this.$route.params.address;
     const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
+    console.log("[address].vue/created/viewingKey")
+    console.log(viewingKey);
     if(viewingKey) {
+      this.hasViewingKey = true;
       const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
       if(!bidInfoResponse.viewing_key_error) {
         this.bidInfo = bidInfoResponse;
       }
       const userAuctions = await this.$auctions.listUserAuctions();
+      console.log("[address].vue/created/userAuctions")
+      console.log(userAuctions);
       if(userAuctions?.list_my_auctions?.active?.as_seller) {
         const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
         if(is_owner.length > 0) {
@@ -136,7 +139,6 @@ export default {
       }
     }
     this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
-    console.log(this.auctionInfo);
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.validationRules = "required|min_value:" + this.minimumBidFromFractional + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
@@ -157,8 +159,10 @@ export default {
   methods: {
     async placeBid() {
       let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmountToFractional);
-      const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
-      await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey, "211");
+      if(!this.hasViewingKey) {
+        const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
+        await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
+      }
       //console.log(placedBid);
     },
     async retractBid() {
