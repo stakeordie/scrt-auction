@@ -160,8 +160,10 @@ export default {
                 availableTokens: state => {
                     return state.availableTokens;
                 },
-                getToken: (state, address) => {
-                    return state.availableTokens.filter(token => { return token.address == address});
+                getToken: (state) => {
+                    return (address) => {
+                        return state.availableTokens.filter(token => { return token.address == address})[0];
+                    };
                 }
               },
               mutations: {
@@ -199,6 +201,8 @@ export default {
         Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
 
         Vue.prototype.$store.commit('$auctions/updateAvailableTokens', options.availableTokens);
+
+        console.log(Vue.prototype.$store.getters['$auctions/getToken']('secret1rdz9e9hln0lv0y33se380fczmmst72ffzlqg9a'));
 
         Vue.prototype.$auctions.updateAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctions');
