@@ -111,8 +111,12 @@ export class AuctionsApi {
         }
         let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
         if(walletEntryIndex > -1) {
-            let WalletEntryKey = await wallet[walletEntryIndex].keys.find(key => key.contractAddress === contractAddress);
-            return WalletEntryKey.viewingKey;
+            let walletEntryKey = await wallet[walletEntryIndex].keys.find(key => key.contractAddress === contractAddress);
+            if(walletEntryKey) {
+                return walletEntryKey.viewingKey;
+            } else {
+                return undefined;
+            }
         } else {
             return undefined;
         }
