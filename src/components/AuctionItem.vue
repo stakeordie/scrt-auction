@@ -5,6 +5,10 @@
       <dd>{{ auction.label }}</dd>
     </dl>
 
+    <dl class="auction__label">
+      <dd>{{ auction.label }}</dd>
+    </dl>
+
     <h3 class="auction__pair">
       <span class="sell-denom">{{ auction.sell.denom }}</span> -> 
       <span class="bid-denom">{{ auction.bid.denom }}</span>
