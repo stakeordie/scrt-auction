@@ -160,6 +160,9 @@ export default {
                 availableTokens: state => {
                     return state.availableTokens;
                 },
+                getToken: (state, address) => {
+                    return state.availableTokens.filter(token => { return token.address == address});
+                }
               },
               mutations: {
                 updateAuctions: (state, auctions) => {
