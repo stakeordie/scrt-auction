@@ -60,7 +60,6 @@ export class SecretJsClient {
   }
 
   async decryptTxResponse(response) {
-    console.log(response);
     return await this.client.restClient.decryptTxsResponse(response);
   }
 
@@ -83,7 +82,6 @@ export class SecretJsClient {
         const response = await this.signingClient.sendTokens(payment.recipient, [{amount: payment.amount, denom: "uscrt"}], payment.memo);
         const query = {id: response.transactionHash}
         const tx = await this.client.searchTx(query)
-        console.log('Transaction: ', tx);
       } catch(error) {
         console.log(error);
       }
@@ -95,13 +93,11 @@ export class SecretJsClient {
           }
       };
       const response = await this.executeContract(payment.tokenAddress, msg);
-      console.log(response);
       return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
   }
 
   async executeContract(address, handleMsg, fees = defaultFees) {
-    console.log(handleMsg);
     const chainId = await this.getChainId();
     try {
       await window.keplr.enable(chainId);
