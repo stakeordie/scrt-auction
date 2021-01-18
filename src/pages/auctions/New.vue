@@ -161,6 +161,12 @@ export default {
         endTimeString() {
             return this.auctionForm.endTime.toLocaleString();
         },
+        sellAmountToFractional: function () {
+            return this.auctionForm.sellAmount * Math.pow(10, 6 /* get decimals */)
+        },
+        bidAmountToFractional: function () {
+            return this.auctionForm.bidAmount * Math.pow(10, 6 /* get decimals */)
+        }
     },
     mounted () {
         this.updateEndTime();
@@ -173,8 +179,13 @@ export default {
         submitInfo() {
             this.stage = "auction";
         },
-        createAuction() {
+        async createAuction() {
             this.stage = "keys";
+            //Allowance
+            const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellTokenAddress, this.sellAmountToFractional.toString());
+            //status
+            console.log(consignedAllowance)
+            console.log(this.$scrtjs.decodedResponse(consignedAllowance))
         },
         updateEndTime() {
             if(this.stage == "info") {

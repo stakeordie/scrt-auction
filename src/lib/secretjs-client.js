@@ -159,4 +159,13 @@ export class SecretJsClient {
   getRandomMnemonic() {
     return Bip39.encode(Random.getBytes(16)).toString();
   }
+
+  decodedResponse(response) {
+    try {
+      return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+    } catch(e) {
+      console.log(e);
+      return "Decode Error"
+    }
+  }
 }
