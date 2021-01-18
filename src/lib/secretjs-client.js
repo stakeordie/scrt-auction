@@ -110,8 +110,8 @@ export class SecretJsClient {
         fees
       );
       return await this.signingClient.execute(address, handleMsg);
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      throw err;
     }
   }
 

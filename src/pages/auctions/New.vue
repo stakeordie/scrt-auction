@@ -108,6 +108,7 @@
                     <div class="details">
                         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus ea quo adipisci asperiores.</p>
                         <g-link class="auction-creation__action-list button" to="/auctions">Go to the list</g-link>
+                        <a href="" @click="stage = 'auction'">Cancel</a>
                     </div>
                 </div>
             </block>
@@ -196,12 +197,6 @@ export default {
         this.updateEndTime();
         this.interval = setInterval(this.updateEndTime, 1000);
     },
-    async created () {
-        const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-        if(viewingKey) {
-            this.hasViewingKey = true;
-        }
-    },
     destroyed () {
         clearInterval(this.interval);
     },
@@ -210,13 +205,13 @@ export default {
             this.stage = "auction";
         },
         async createAuction() {
-            this.stage = "keys";
+            
+            // First we calculate
             const sellToken = this.getToken(this.auctionForm.sellTokenAddress);
             const bidToken = this.getToken(this.auctionForm.bidTokenAddress)
-            //console.log("new/CreateAuction/sellToken"); console.log(sellToken);
+
             const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, sellToken.decimals)
             const bidAmountToFractional = this.auctionForm.bidAmount * Math.pow(10, bidToken.decimals)
-            //Allowance
             const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellTokenAddress, sellAmountToFractional.toString());
             
             //console.log("new/CreateAuction/consignedAllowance"); console.log(consignedAllowance)
@@ -234,6 +229,7 @@ export default {
             // Log status
             console.log("new/CreateAuction/this.$scrtjs.decodedResponse(auction)"); console.log(this.$scrtjs.decodedResponse(auction))
 
+            this.stage = "keys";
             // Create viewing key if none exists
             if(!this.hasViewingKey) {
                 const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);

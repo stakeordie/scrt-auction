@@ -122,13 +122,13 @@ export class AuctionsApi {
         }
     }
 
-    async createViewingKey(contractAddress) {
+    async createViewingKey() {
         const msg = {
             "create_viewing_key":{
                 "entropy": "A Random String for Entropy"
             }
         }
-        const response = await this.scrtClient.executeContract(contractAddress, msg);
+        const response = await this.scrtClient.executeContract(this.factoryAddress, msg);
         const parsedResponse = JSON.parse(new TextDecoder("utf-8").decode(response.data));
         if(parsedResponse.create_viewing_key) {
             return parsedResponse.create_viewing_key.key;
@@ -318,16 +318,20 @@ export class AuctionsApi {
     }
 
     async consignAllowance(sellTokenAddress, sellAmount) {
-        //secretcli tx compute execute *sale_tokens_contract_address* '{"increase_allowance":{"spender":"secret1xr4mdrh5pr68846rehk3m2jgldfaek03dx0nsn","amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*"}}' --from *your_key_alias_or_addr* --gas 150000 -y
-        const msg = {
-            "increase_allowance":
-            {
-                "spender": this.factoryAddress,
-                "amount": sellAmount
+        try {
+            //secretcli tx compute execute *sale_tokens_contract_address* '{"increase_allowance":{"spender":"secret1xr4mdrh5pr68846rehk3m2jgldfaek03dx0nsn","amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*"}}' --from *your_key_alias_or_addr* --gas 150000 -y
+            const msg = {
+                "increase_allowance":
+                {
+                    "spender": this.factoryAddress,
+                    "amount": sellAmount
+                }
             }
+            const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
+            return response;
+        } catch(e) {
+            throw e;
         }
-        const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
-        return response;
     }
 
     async createAuction(
@@ -339,26 +343,31 @@ export class AuctionsApi {
         description,
         endDateTime
     ) {
-        const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
-        const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
-        const msg = {
-            "create_auction": {
-                "label": label,
-                "sell_contract": {
-                    "code_hash": sellTokenHash,
-                    "address": sellTokenAddress
-                },
-                "bid_contract": {
-                    "code_hash": bidTokenHash,
-                    "address": bidTokenAddress
-                },
-                "sell_amount": amount,
-                "minimum_bid": minBid,
-                "description": description,
-                "ends_at": endDateTime
-            }
-        };
 
-        return await this.scrtClient.executeContract(this.factoryAddress, msg);
+        try {
+            const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
+            const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
+            const msg = {
+                "create_auction": {
+                    "label": label,
+                    "sell_contract": {
+                        "code_hash": sellTokenHash,
+                        "address": sellTokenAddress
+                    },
+                    "bid_contract": {
+                        "code_hash": bidTokenHash,
+                        "address": bidTokenAddress
+                    },
+                    "sell_amount": amount,
+                    "minimum_bid": minBid,
+                    "description": description,
+                    "ends_at": endDateTime
+                }
+            };
+    
+            return await this.scrtClient.executeContract(this.factoryAddress, msg);
+        } catch(e) {
+            throw e;
+        }
     }
 }
