@@ -1,16 +1,16 @@
 <template>
   <div class="auction" :class="['theme-' + auction.color, { closed: auction.closed}]">
 
-    <router-link class="auction__bid-action button" v-if="!auction.closed" :to="'/auctions/' + auction.address"
-      :class="'theme-' + auction.color2">Bid</router-link>
+    <dl class="auction__label">
+      <dd>{{ auction.label }}</dd>
+    </dl>
 
-
-    <h2 class="auction__pair">
+    <h3 class="auction__pair">
       <span class="sell-denom">{{ auction.sell.denom }}</span> -> 
       <span class="bid-denom">{{ auction.bid.denom }}</span>
-    </h2>
+    </h3>
 
-    <h3 class="auction__sell"><token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals" :denom="auction.sell.denom"></token-amount></h3>
+    <h2 class="auction__sell"><token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals" :denom="auction.sell.denom"></token-amount></h2>
 
     <dl class="auction__bid" v-if="!auction.closed">
       <dt>Minimum bid</dt>
@@ -18,6 +18,9 @@
         <token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
       </dd>
     </dl>
+
+    <router-link class="auction__bid-action button" v-if="!auction.closed" :to="'/auctions/' + auction.address"
+      :class="'theme-' + auction.color2">Bid</router-link>
     
     <dl class="auction__winner" v-if="auction.winning">
       <dt>Winning Bid</dt>
@@ -73,13 +76,12 @@ export default {
     color: var(--theme-anti-color);
     background-color: var(--theme-color);
 
-    top: 11px;
-    right: 11px;
-    position: absolute;
     padding-left: var(--f-gutter-l);
     padding-right: var(--f-gutter-l);
 
     transition: opacity 2s;
+
+    margin-bottom: 0;
   }
 
   &__pair {
@@ -105,10 +107,18 @@ export default {
   &.list {
     display: grid;
     gap: var(--f-gutter);
-    grid-template-columns: 300px 200px 200px 1fr;
+    grid-template-columns: repeat(3, 1fr) 100px;
+    align-items: center;
 
-    .auction__bid-action {
-      opacity: 0.3;
+    .auction {
+      &__bid-action {
+        opacity: 0.3;
+      }
+  
+      &__label {
+        grid-column: 1 / span 3;
+        grid-row: 2 / 3;
+      }
     }
   }
 }

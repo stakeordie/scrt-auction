@@ -82,48 +82,7 @@ export default {
                         }
                     }
                   },
-                  tokenData: [
-                    {
-                        codeId: 1,
-                        symbol: "SODTA",
-                        address: "secret1qvq5h3ta2qpng3vdlln7pu8mnhn98getzsw9ga",
-                        name: "sodta",
-                        label: "sodta",
-                        decimals: 8
-                    },
-                    {
-                        codeId: 1,
-                        symbol: "SODTB",
-                        address: "secret1wma0dyp30mncz8rdzga0426s9fzx6jmqmp79uy",
-                        name: "sodtb",
-                        label: "sodtb",
-                        decimals: 6
-                    },
-                    {
-                        codeId: 1,
-                        symbol: "SODTC",
-                        address: "secret1rdz9e9hln0lv0y33se380fczmmst72ffzlqg9a",
-                        name: "SODTC",
-                        label: "sodtc",
-                        decimals: 6
-                    },
-                    {
-                        codeId: 1,
-                        symbol: "SODTD",
-                        address: "secret1yt94lse0rl89a9kdylhr80jffpuekv0tzpx2k0",
-                        name: "Stake or Die Token D",
-                        label: "sodtd",
-                        decimals: 6
-                    },
-                    {
-                        codeId: 1,
-                        symbol: "SODTE",
-                        address: "secret18u0m2um6vv08ftzxls897gytd4tzcc2w6vlem6",
-                        name: "Stake or Die Token E",
-                        label: "sodta",
-                        decimals: 6
-                    }
-                  ]
+                  availableTokens: [],
               },
               getters: {
                 // Since filter and sorting is done in the client, this is performed by a getter instead
@@ -196,8 +155,11 @@ export default {
                     }))];
                 },
                 tokenData: state => {
-                    return state.tokenData;
-                }
+                    return state.availableTokens;
+                },
+                availableTokens: state => {
+                    return state.availableTokens;
+                },
               },
               mutations: {
                 updateAuctions: (state, auctions) => {
@@ -206,9 +168,12 @@ export default {
                 updateAuctionsFilter: (state, auctionsFilter) => {
                     state.auctionsFilter = auctionsFilter;
                 },
+                updateAvailableTokens(state, availableTokens) {
+                    state.availableTokens = availableTokens;
+                },
               },
               actions: {
-                updateAuctions: async ({ commit }) => {                    
+                  updateAuctions: async ({ commit }) => {                    
                     const activeAuctions = (await auctionsApi.listAuctions("active"))?.map(auction => {
                         return transformAuction(auction, "active");
                     }) || [];
@@ -229,6 +194,8 @@ export default {
         });
         
         Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
+
+        Vue.prototype.$store.commit('$auctions/updateAvailableTokens', options.availableTokens);
 
         Vue.prototype.$auctions.updateAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctions');

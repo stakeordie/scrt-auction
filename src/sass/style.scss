@@ -19,19 +19,23 @@
     
     --f-primary-action-color: var(--color-blue-primary);
     --f-primary-action-anticolor: black;
-    --f-primary-action-color--hover: var(--color-green-primary);
+    --f-primary-action-color--hover: var(--color-turquoise-secondary);
     --f-primary-action-anticolor--hover: black;
 
     --f-secondary-action-color: var(--color-cream-primary);
     --f-secondary-action-anticolor: black;
 
     
-    --f-links-text-color: var(--color-blue-primary);
-    --f-links-text-hover-color: var(--color-green-primary);
+    --f-links-text-color: var(--color-yellow-primary);
+    --f-links-text-hover-color: var(--color-blue-primary);
     --f-links-text-visited-color: var(--color-blue-primary);
     --f-links-text-active-color: var(--color-yellow-primary);
     
+    --f-forms-button-text-size: 13px;
+    --f-forms-input-text-size: 14px;
+
     --f-forms-button-radius: 4px;
+    --f-forms-input-radius: 4px;
 
     // Application specific variables
     // some of them are pulled from flare but use
@@ -59,16 +63,16 @@ hr {
 
 dt {
     font-weight: bold;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 label {
     display: inline-block;
+    font-size: 13px;
 }
 
 button, .button {
     font-weight: 600;
-    font-size: 13px;
 }
 
 .--flare-columns {

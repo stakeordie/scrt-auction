@@ -8,7 +8,6 @@
         <nav>
           <g-link to="/auctions">Auctions</g-link>
           <g-link to="/faqs">FAQs</g-link>
-          <g-link to="/examples">Examples</g-link>
         </nav>
         <div class="actions">
           <div class="user-info">

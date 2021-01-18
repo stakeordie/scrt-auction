@@ -1,7 +1,5 @@
 <template>
-  <div class="keplr__account">
-    <input readonly :value="address">
-  </div>
+  <input class="keplr__account" readonly :value="address">
 </template>
 
 <script>
@@ -21,4 +19,12 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss">
+  .keplr__account {
+    background-image: url("../assets/keplr-icon.svg");
+    background-size: auto calc(100% - 10px);
+    background-repeat: no-repeat;
+    background-position: 4px center;
+    padding-left: 30px;
+  }
+</style>
