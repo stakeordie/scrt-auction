@@ -116,7 +116,9 @@ export class SecretJsClient {
   }
 
   async getContract(address) {
-    return await this.client.getContract(address);
+    const contract = await this.client.getContract(address);
+    //console.log(secretjs-client/getContract(contract)); console.log(x);
+    return contract;
   }
 
 

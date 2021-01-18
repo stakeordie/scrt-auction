@@ -54,7 +54,8 @@
                 </tr>
                 <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress" >
                     <td></td>
-                    <td>{{tokenData.find(token => token.address === key.contractAddress).name + " (" + tokenData.find(token => token.address === key.contractAddress).symbol + ")"}}</td>
+                    <td v-if="key.contractCodeId == 1">{{tokenData.find(token => token.address === key.contractAddress).name + " (" + tokenData.find(token => token.address === key.contractAddress).symbol + ")"}}</td>
+                    <td v-if="key.contractCodeId != 1">TEST</td>
                     <td>{{wallet[index].keys[index2].balance}}</td>
                 </tr>
             </table>
@@ -118,7 +119,13 @@ export default {
             for(let i=0;i<aWallet.length;i++) {
                 entryAddress = aWallet[i].address;
                 for(let j=0; j<aWallet[i].keys.length; j++) {
-                    msg = { "balance": { "address": entryAddress, "key": aWallet[i].keys[j].viewingKey}};
+                    switch(aWallet[i].keys[j].contractCodeId) {
+                        case 1:
+                            msg = { "balance": { "address": entryAddress, "key": aWallet[i].keys[j].viewingKey}};
+                            break;
+                        default: 
+                            continue;
+                    }
                     //console.log(entryAddress + ": " + aWallet[i].keys[j].contractAddress + " | " +aWallet[i].keys[j].viewingKey);
                     info = await this.$scrtjs.queryContract(aWallet[i].keys[j].contractAddress, msg);
                     if(info.balance?.amount) {
