@@ -3,6 +3,13 @@
 </template>
 
 <script>
+const shorten = (str) => {
+  if(str == undefined) {
+    return undefined;
+  }
+  return str.substring(0, 8) + "..." + str.substring(str.length - 8, str.length);
+}
+
 export default {
   props: {
     value: {
@@ -13,7 +20,7 @@ export default {
   computed: {
     address() {
       this.$emit("input", this.$store.state.$keplr.selectedAccount?.address);
-      return this.$store.state.$keplr.selectedAccount?.address;
+      return shorten(this.$store.state.$keplr.selectedAccount?.address) || "No account available";
     },
   },
 };

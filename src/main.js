@@ -1,5 +1,6 @@
 import "@fontsource/hind/600.css"
 import "@fontsource/montserrat"
+import "@fontsource/montserrat/600.css"
 import "animate.css"
 import "./sass/style.scss"
 

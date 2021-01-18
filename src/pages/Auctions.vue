@@ -256,6 +256,7 @@ export default {
       flex-flow: row nowrap;
       .on {
         color: var(--color-turquoise-secondary);
+        font-weight: 600;
       }
     }
   }

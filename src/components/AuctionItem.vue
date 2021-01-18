@@ -57,7 +57,7 @@ export default {
   }
   
   &:not(.closed) {
-    border: 1px solid rgba(255,255,255,0.41);
+    border: 1px solid rgba(255,255,255,0.5);
 
     &:hover {
       border-color: var(--theme-washed-color);
@@ -100,7 +100,7 @@ export default {
     gap: var(--f-gutter);
 
     .auction__bid-action {
-      opacity: 0;
+      opacity: 0.1;
     }
   }
 

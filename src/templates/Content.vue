@@ -10,6 +10,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="scss">
+.--flare-columns {
+    --f-columns-weight-ratio: 3;
+}
 </style>

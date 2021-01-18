@@ -7,7 +7,7 @@ const tokens2Decimal = (amount, decimals) => {
 };
 
 const colorHash = (str) => {
-    const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green", "white"];
+    const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green"];
 
     var hash = 0, i, chr;
     for (i = 0; i < str.length; i++) {

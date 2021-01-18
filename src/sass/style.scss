@@ -50,6 +50,8 @@
 
     // Animation variables
     --animate-duration: 0.4s;
+
+    --f-text-selection-color: var(--color-purple-secondary);
 }
 
 
@@ -62,7 +64,6 @@ hr {
 }
 
 dt {
-    font-weight: bold;
     font-size: 12px;
 }
 
@@ -71,10 +72,19 @@ label {
     font-size: 13px;
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 button, .button {
     font-weight: 600;
 }
 
-.--flare-columns {
-    --f-columns-weight-ratio: 3;
-}
