@@ -291,7 +291,8 @@ export class AuctionsApi {
         const msg = {
             "send": {
                 "recipient": auctionAddress, 
-                "amount": bidAmount.toString()
+                "amount": bidAmount.toString(),
+                "padding": "100"
             }
         };
         const bidFees = {
@@ -300,8 +301,9 @@ export class AuctionsApi {
                 gas: '400000',
             },
         }
+        console.log("auctions-api/placeBid/msg"); console.log(msg);
         const response = await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
-        console.log(response)
+        console.log("auctions-api/placeBid/response"); console.log(await this.scrtClient.decryptTxHash(response.transactionHash));
         return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
 
