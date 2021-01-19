@@ -173,8 +173,8 @@ export default {
                 updateAuctionsFilter: (state, auctionsFilter) => {
                     state.auctionsFilter = auctionsFilter;
                 },
-                updateAvailableTokens(state, availableTokens) {
-                    state.availableTokens = availableTokens;
+                updateAvailableTokens(state, tokenData) {
+                    state.tokenData = tokenData;
                 },
               },
               actions: {
