@@ -5,7 +5,7 @@
       <dd>{{ auction.label }}</dd>
     </dl>
 
-    <dl class="auction__label">
+    <dl class="auction__closing-time">
       <dd>{{ auction.label }}</dd>
     </dl>
 

@@ -82,7 +82,7 @@ export default {
                         }
                     }
                   },
-                  availableTokens: [],
+                  tokenData: [],
               },
               getters: {
                 // Since filter and sorting is done in the client, this is performed by a getter instead
@@ -155,14 +155,14 @@ export default {
                     }))];
                 },
                 tokenData: state => {
-                    return state.availableTokens;
+                    return state.tokenData;
                 },
                 availableTokens: state => {
-                    return state.availableTokens;
+                    return state.tokenData;
                 },
                 getToken: (state) => {
                     return (address) => {
-                        return state.availableTokens.filter(token => { return token.address == address})[0];
+                        return state.tokenData.filter(token => { return token.address == address})[0];
                     };
                 }
               },
