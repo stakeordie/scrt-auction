@@ -31,8 +31,8 @@ export default {
                 label: rawction.label,
                 pair: rawction.pair,
                 emoji: arrayHash(rawction.address, emojis),
-                color: arrayHash(rawction.address, colors),
-                color2: arrayHash(rawction.pair, colors),
+                color: arrayHash(rawction.pair, colors),
+                color2: arrayHash(rawction.address, colors),
                 sell: {
                     amount: rawction.sell_amount,
                     decimalAmount: tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),

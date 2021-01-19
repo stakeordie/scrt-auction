@@ -62,10 +62,10 @@ export default {
   }
   
   &:not(.closed) {
-    border: 1px solid rgba(255,255,255,0.5);
+    border: 1px solid transparent;
 
     &:hover {
-      border-color: var(--theme-washed-color);
+      border: 1px solid var(--theme-washed-color);
       background-color: black;
 
       .auction {

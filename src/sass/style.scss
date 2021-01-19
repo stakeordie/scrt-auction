@@ -69,6 +69,10 @@ hr {
 
 dt {
     font-size: 12px;
+    margin-bottom: var(--f-gutter-xxs);
+}
+dd {
+    font-weight: 600;
 }
 
 label {
