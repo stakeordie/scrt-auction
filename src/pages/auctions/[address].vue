@@ -19,11 +19,36 @@
           <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bids on this auction.</div>
         </block>
 
-        
-        
-        <button v-if="isOwner || ( isBidder & isEnded )" @click="closeAuction()">Close Auction</button>
+        <button v-show="isOwner & !isEnded & !updateEndTimeRequested" @click="updateEndTimeRequested = !updateEndTimeRequested">Update End Time</button><br/>
 
-        <block v-if="!isClosed">
+        <validation-observer v-show="isOwner & !isEnded & updateEndTimeRequested" v-slot="{ handleSubmit, invalid }">
+          <form class="auction-form" @submit.prevent="handleSubmit(changeEndTime)">
+            <!-- End auction date time -->
+            <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
+
+                <label for="auction-end-time">End time</label>
+                <span class="error">{{ errors[0] }}</span>
+                <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
+
+                <p>Can be closed after 
+                    <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="endTimeAmount">
+                    <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
+                        <option value="1">minute<span v-if="endTimeAmount > 1">s</span></option>
+                        <option value="60">hour<span v-if="endTimeAmount > 1">s</span></option>
+                        <option value="1440">day<span v-if="endTimeAmount > 1">s</span></option>
+                        <option value="10080">week<span v-if="endTimeAmount > 1">s</span></option>
+                    </select>
+                </p>
+            </validation-provider>
+          
+            <button :disabled="invalid">Change End Time</button>
+            
+          </form>
+        </validation-observer>
+
+        <button v-show="isOwner || ( isBidder & isEnded )" @click="closeAuction()">Close Auction</button>
+
+        <block v-show="!isClosed">
           <h2>Place a Bid</h2>
           <validation-observer v-slot="{ handleSubmit, invalid }">
             <form class="form" @submit.prevent="handleSubmit(placeBid)">
@@ -121,8 +146,20 @@ export default {
       isOwner: false,
       isEnded: false,
       isBidder: false,
-      isClosed: false
+      isClosed: false,
+
+      updateEndTimeRequested: false,
+      endTimeAmount: 1,
+      endTimeUnit: "60",
+      newEndTime: new Date()
     };
+  },
+  mounted () {
+      this.updateEndTime();
+      this.interval = setInterval(this.updateEndTime, 1000);
+  },
+  destroyed () {
+      clearInterval(this.interval);
   },
   async created() {
     this.auctionAddress = this.$route.params.address;
@@ -173,6 +210,9 @@ export default {
     },
     formBidAmountToFractional: function () {
       return this.formBidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
+    },
+    endTimeString() {
+        return this.newEndTime.toLocaleString();
     }
   },
   methods: {
@@ -188,8 +228,14 @@ export default {
       let bidRetracted = await this.$auctions.retractBid(this.auctionAddress);
       //console.log(bidRetracted);
     },
+    async changeEndTime() {
+      let changedEndTime = await this.$auctions.changeEndTime(this.auctionAddress, this.newEndTime);
+    },
     async closeAuction() {
       let closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
+    },
+    updateEndTime() {
+        this.newEndTime = new Date((new Date()).getTime() + (Number(this.endTimeAmount || 1) * Number(this.endTimeUnit) * 60000));
     }
   }
 };
