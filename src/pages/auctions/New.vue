@@ -12,17 +12,17 @@
                         </validation-provider>
 
                         <!-- New auction label -->
-                        <validation-provider class="auction-form__label" rules="required" v-slot="{ errors }">
+                        <!--validation-provider class="auction-form__label" rules="required" v-slot="{ errors }">
                             <label for="auction-label">Label</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input name="auction-label" type="text" v-model.trim="auctionForm.label" />
-                        </validation-provider>
+                        </validation-provider-->
 
                         <!-- New auction description -->
-                        <validation-provider class="auction-form__description">
+                        <!--validation-provider class="auction-form__description">
                             <label for="auction-description">Description</label>
                             <textarea name="auction-description" v-model.trim="auctionForm.description" placeholder="This is optional"></textarea>
-                        </validation-provider>
+                        </validation-provider-->
 
                         <!-- Sell token -->
                         <validation-provider class="auction-form__sell-amount" :rules="sellAmountValidationRules" v-slot="{ errors }">
@@ -158,7 +158,7 @@ export default {
                 sellTokenAddress: "",
                 bidAmount: 0.1,
                 bidTokenAddress: "",
-                label: "",
+                label: (new Date()).getTime.toString(),
                 description: "",
                 endTime: new Date(),
             },
@@ -265,7 +265,8 @@ export default {
 
     input:read-only {
         color: var(--f-default-text-color);
-        background-color: var(--default-background-color);
+        background-color: var(--color-black);
+        border: none;
         font-weight: 600;
     }
 

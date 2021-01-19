@@ -32,6 +32,9 @@ export default {
 
 
         Vue.prototype.$vkeys = {
+            list: (userAddress, contractAddress) => {
+
+            },
             get: (userAddress, contractAddress) => {
 
             },

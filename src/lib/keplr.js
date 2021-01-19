@@ -1,5 +1,20 @@
 const KEPLR_ADDRESS_REFRESH_RATE = 1000;
 
+// Keplr is the first implementation of an offline wallet compatible with
+// Stake or Die! javascript stack
+//
+// This class describes the wallet specification and this would be adjusted
+// when other wallets are integrated, i.e. Metamask
+// 
+// Wallet's functions are: 
+// - constructor(chainId, chainName, restUrl, rpcUrl, loadListener)
+// - async enable
+// - async checkAddressUpdates()
+// - async getSelectedKey()         <--- should this be renamed?
+// -       getSigner()
+// -       getSeed()
+// - async suggestExperimental()
+//
 export default class Keplr {
   chainId;
   chainName;

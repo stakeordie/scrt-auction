@@ -17,3 +17,12 @@ cp .env.testnet .env
 yarn run develop
 ````
 
+
+Conversation points
+
+- What pagination tools required possible?
+- Closed auctions have pagination active don't
+- The role of the label, hide it from the user
+- Application specific viewing keys
+- Transaction management
+- 
