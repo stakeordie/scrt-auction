@@ -1,7 +1,7 @@
 <template>
   <page>
     <columns>
-    
+        <h1>Secret Auction</h1>
         <block>
           <h2>Auction Info</h2>
           <div>Amount: {{ sellAmountFromFractional }}</div>
@@ -10,7 +10,8 @@
           <div>Min Bid: {{ minimumBidFromFractional }}</div>
           <div>Description: {{ auctionInfo.auction_info.description }}</div>
           <div>Status: {{ auctionInfo.auction_info.status }}</div>
-          <div>Ends At: {{  }}</div>
+          <div v-if="isClosed">Winning Bid: {{ winningBidFromFractional }} </div>
+          <div>Ends At: {{  auctionInfo.auction_info.ends_at }}</div>
           <div v-if="bidInfo.bid.amount_bid > 0">
             <div>Open Bid: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}} {{auctionInfo.auction_info.bid_token.token_info.symbol}}</div>
             <button @click="retractBid()">Retract Your Bid</button>
@@ -18,11 +19,11 @@
           <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bids on this auction.</div>
         </block>
 
-        <h1>Secret Auction</h1>
+        
         
         <button v-if="isOwner || ( isBidder & isEnded )" @click="closeAuction()">Close Auction</button>
 
-        <block>
+        <block v-if="!isClosed">
           <h2>Place a Bid</h2>
           <validation-observer v-slot="{ handleSubmit, invalid }">
             <form class="form" @submit.prevent="handleSubmit(placeBid)">
@@ -112,12 +113,15 @@ export default {
           description: "",
           auction_address: "",
           status: "",
+          ends_at: "",
+          winning_bid: ""
         }
       },
       validationRules: "",
       isOwner: false,
       isEnded: false,
-      isBidder: false
+      isBidder: false,
+      isClosed: false
     };
   },
   async created() {
@@ -146,13 +150,23 @@ export default {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.validationRules = "required|min_value:" + this.minimumBidFromFractional + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
       this.formBidAmount = this.minimumBidFromFractional;
+      if(this.auctionInfo.auction_info.status == "Closed") {
+        this.isClosed = true;
+      }
       // if ends_at is in the past
-      this.isEnded = true;
+      const ended = new Date(this.auctionInfo.auction_info.ends_at);
+      const now = new Date();
+      if(now > ended) {
+        this.isEnded = true;
+      }
     }
   },
   computed: {
     sellAmountFromFractional: function () {
       return this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)
+    },
+    winningBidFromFractional: function () {
+      return this.auctionInfo.auction_info.winning_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
     },
     minimumBidFromFractional: function () {
       return this.auctionInfo.auction_info.minimum_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)

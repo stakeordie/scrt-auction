@@ -6,7 +6,7 @@
             <validation-observer v-slot="{ handleSubmit, invalid }">
             <form class="form" @submit.prevent="handleSubmit(createAuction)">
                 <ul>
-                <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
+                    <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
                 </ul>
 
                 <div class="form__frame">
