@@ -14,7 +14,7 @@
                         </validation-provider>
 
                         <!-- Sell token -->
-                        <validation-provider class="auction-form__sell-amount" :rules="sellAmountValidationRules" v-slot="{ errors }">
+                        <validation-provider class="auction-form__sell-amount" :rules="`required|max_decimals:${auctionForm.sellToken ? auctionForm.sellToken.decimals : 0}`" v-slot="{ errors }">
                             <label for="sell-amount">Selling</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input name="sell-amount" type="text" v-model.trim="auctionForm.sellAmount" />
@@ -31,7 +31,7 @@
                         </validation-provider>
 
                         <!-- Bid token -->
-                        <validation-provider class="auction-form__bid-amount" :rules="bidAmountValidationRules" v-slot="{ errors }">
+                        <validation-provider class="auction-form__bid-amount" :rules="`required|max_decimals:${auctionForm.bidToken ? auctionForm.bidToken.decimals : 0}`" v-slot="{ errors }">
                             <label for="minimum-bid-amount">Minimum bid</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input name="minimum-bid-amount" type="text" v-model.trim="auctionForm.bidAmount" />
@@ -120,7 +120,7 @@
 import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required, max_decimals } from "vee-validate/dist/rules";
+import { required } from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
 extend("required", {
@@ -174,20 +174,6 @@ export default {
         bidAmountToFractional: function () {
             return this.auctionForm.bidAmount * Math.pow(10, 6 /* get decimals */)
         },
-        sellAmountValidationRules: function () {
-            // const decimals = 6;
-            // if(this.auctionForm.sellToken.address !== "") {
-            //     const decimals = (this.getToken(this.auctionForm.sellToken.address)).decimals;
-            // }
-            // return "required|max_decimals:" + decimals;
-        },
-        bidAmountValidationRules: function () {
-            // const decimals = 6;
-            // if(this.auctionForm.bidToken.address !== "") {
-            //     const decimals = (this.getToken(this.auctionForm.bidToken.address)).decimals;
-            // }
-            // return "required|max_decimals:" + decimals;
-        }
     },
     mounted () {
         this.updateEndTime();
