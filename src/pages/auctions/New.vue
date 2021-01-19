@@ -179,6 +179,12 @@ export default {
         this.updateEndTime();
         this.interval = setInterval(this.updateEndTime, 1000);
     },
+    async created () {
+        const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
+        if(viewingKey) {
+            this.hasViewingKey = true;
+        }
+    },
     destroyed () {
         clearInterval(this.interval);
     },
