@@ -336,6 +336,10 @@ export class AuctionsApi {
         }
     }
 
+    async changeEndTime(auctionAddress, newEndTime) {
+        return true;
+    }
+
     async createAuction(
         label,
         sellTokenAddress,
