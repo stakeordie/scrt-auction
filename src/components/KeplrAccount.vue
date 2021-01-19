@@ -3,11 +3,16 @@
 </template>
 
 <script>
-const shorten = (str) => {
+const shorten = (str, length) => {
   if(str == undefined) {
     return undefined;
   }
-  return str.substring(0, 8) + "..." + str.substring(str.length - 8, str.length);
+  if(typeof length == "number") {
+    const half = Math.round(length / 2);
+    return str.substring(0, half) + "..." + str.substring(str.length - half, str.length);
+  } else {
+    return str;
+  }
 }
 
 export default {
@@ -16,11 +21,15 @@ export default {
       type: String,
       default: null,
     },
+    abbreviation: {
+      type: Number,
+      default: null,
+    },
   },
   computed: {
     address() {
       this.$emit("input", this.$store.state.$keplr.selectedAccount?.address);
-      return shorten(this.$store.state.$keplr.selectedAccount?.address) || "No account available";
+      return shorten(this.$store.state.$keplr.selectedAccount?.address, this.abbreviation) || "No account available";
     },
   },
 };
@@ -32,6 +41,6 @@ export default {
     background-size: auto calc(100% - 10px);
     background-repeat: no-repeat;
     background-position: 4px center;
-    padding-left: 30px;
+    padding-left: 2em;
   }
 </style>

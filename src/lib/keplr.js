@@ -82,6 +82,16 @@ export default class Keplr {
       }
     });
   }
+
+  async suggestToken(contractAddress) {
+    return await this.command(async () => {
+      try {
+        return await window.keplr.suggestToken(contractAddress);
+      } catch(err) {
+        throw err;
+      }
+    })
+  }
   
   getSigner() {
     return window.getOfflineSigner(this.chainId);
