@@ -1,13 +1,6 @@
 <template>
   <div class="auction" :class="['theme-' + auction.color, { closed: auction.closed}]">
 
-    <dl class="auction__label">
-      <dd>{{ auction.label }}</dd>
-    </dl>
-
-    <dl class="auction__closing-time">
-      <dd>{{ auction.label }}</dd>
-    </dl>
 
     <h3 class="auction__pair">
       <span class="sell-denom">{{ auction.sell.denom }}</span> -> 
@@ -21,6 +14,15 @@
       <dd>
         <token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
       </dd>
+    </dl>
+
+    <dl class="auction__label">
+      <dd>{{ auction.label }}</dd>
+    </dl>
+
+    <dl class="auction__closing-time">
+      <dt>Ends at</dt>
+      <dd>{{ auction.endsAt.toLocaleString() }}</dd>
     </dl>
 
     <router-link class="auction__bid-action button" v-if="!auction.closed" :to="'/auctions/' + auction.address"
@@ -122,6 +124,11 @@ export default {
       &__label {
         grid-column: 1 / span 3;
         grid-row: 2 / 3;
+      }
+
+      &__closing-time {
+        grid-column: 3 / 4;
+        grid-row:  2 / 3;
       }
     }
   }

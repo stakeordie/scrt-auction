@@ -26,7 +26,6 @@ export default {
         const auctionsApi = new AuctionsApi(options.chainClient, options.factoryAddress);
 
         const transformAuction = (rawction, status) => {
-            // console.log(rawction);
             const auction = {
                 address: rawction.address,
                 label: rawction.label,
@@ -43,6 +42,7 @@ export default {
                     decimals: rawction.bid_decimals,
                     denom: rawction.pair.split("-")[1],
                 },
+                endsAt: new Date(rawction.ends_at * 1000),
             };
 
             if(status == "active") {
