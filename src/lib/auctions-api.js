@@ -343,7 +343,7 @@ export class AuctionsApi {
         description,
         endDateTime
     ) {
-
+        console.log("auctions-api/createAuction/endDateTime"); console.log(endDateTime);
         try {
             const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
             const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);

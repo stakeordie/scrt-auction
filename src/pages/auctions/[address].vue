@@ -10,6 +10,7 @@
           <div>Min Bid: {{ minimumBidFromFractional }}</div>
           <div>Description: {{ auctionInfo.auction_info.description }}</div>
           <div>Status: {{ auctionInfo.auction_info.status }}</div>
+          <div>Ends At: {{  }}</div>
           <div v-if="bidInfo.bid.amount_bid > 0">
             <div>Open Bid: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}} {{auctionInfo.auction_info.bid_token.token_info.symbol}}</div>
             <button @click="retractBid()">Retract Your Bid</button>
@@ -19,7 +20,7 @@
 
         <h1>Secret Auction</h1>
         
-        <button v-if="isOwner" @click="closeAuction()">Close Auction</button>
+        <button v-if="isOwner || ( isBidder & isEnded )" @click="closeAuction()">Close Auction</button>
 
         <block>
           <h2>Place a Bid</h2>
@@ -114,23 +115,24 @@ export default {
         }
       },
       validationRules: "",
-      isOwner: false
+      isOwner: false,
+      isEnded: false,
+      isBidder: false
     };
   },
   async created() {
     this.auctionAddress = this.$route.params.address;
     const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-    console.log("[address].vue/created/viewingKey")
-    console.log(viewingKey);
+    console.log("[address].vue/created/viewingKey"); console.log(viewingKey);
     if(viewingKey) {
       this.hasViewingKey = true;
       const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
       if(!bidInfoResponse.viewing_key_error) {
         this.bidInfo = bidInfoResponse;
+        this.isBidder = true;
       }
       const userAuctions = await this.$auctions.listUserAuctions();
-      console.log("[address].vue/created/userAuctions")
-      console.log(userAuctions);
+      console.log("[address].vue/created/userAuctions"); console.log(userAuctions);
       if(userAuctions?.list_my_auctions?.active?.as_seller) {
         const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
         if(is_owner.length > 0) {
@@ -139,10 +141,13 @@ export default {
       }
     }
     this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
+    console.log("[address]/created/auctionInfo"); console.log(this.auctionInfo);
     if(this.auctionInfo) {
       this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
       this.validationRules = "required|min_value:" + this.minimumBidFromFractional + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
       this.formBidAmount = this.minimumBidFromFractional;
+      // if ends_at is in the past
+      this.isEnded = true;
     }
   },
   computed: {
