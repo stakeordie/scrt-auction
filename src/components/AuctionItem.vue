@@ -1,6 +1,8 @@
 <template>
   <div class="auction" :class="['theme-' + auction.color, { closed: auction.closed}]">
-
+    <div class="auction__emoji">
+      {{ String.fromCodePoint(auction.emoji) }}
+    </div>
 
     <h3 class="auction__pair">
       <span class="sell-denom">{{ auction.sell.denom }}</span> -> 
@@ -16,17 +18,11 @@
       </dd>
     </dl>
 
-    <dl class="auction__label">
-      <dd>{{ auction.label }}</dd>
-    </dl>
-
     <dl class="auction__closing-time">
       <dt>Ends at</dt>
       <dd>{{ auction.endsAt.toLocaleString() }}</dd>
     </dl>
 
-    <router-link class="auction__bid-action button" v-if="!auction.closed" :to="'/auctions/' + auction.address"
-      :class="'theme-' + auction.color2">Bid</router-link>
     
     <dl class="auction__winner" v-if="auction.winning">
       <dt>Winning Bid</dt>
@@ -34,6 +30,9 @@
         <token-amount :amount="auction.winning.decimalAmount" :decimals="auction.bid.decimals" :denom="auction.bid.decimalAmount"></token-amount>
         </dd>
     </dl>
+
+    <router-link class="auction__bid-action button" v-if="!auction.closed" :to="'/auctions/' + auction.address"
+      :class="'theme-' + auction.color2">Bid</router-link>
   </div>
 </template>
 
@@ -69,11 +68,17 @@ export default {
       border-color: var(--theme-washed-color);
       background-color: black;
 
-      .auction__bid-action {
-        opacity: 1;
-        transition: opacity 0.5s, background-color 0.5s;
+      .auction {
+        &__bid-action, &__bid, &__closing-time {
+          opacity: 1;
+          transition: opacity 0.5s, background-color 0.5s;
+        }
       }
     }
+  }
+
+  &__emoji {
+    display: none;
   }
 
   &__bid-action {
@@ -99,16 +104,30 @@ export default {
     }
   }
 
+  &__bid, &__closing-time {
+    opacity: 0.3;
+  }
+
+
+
   // Layout specific
 
   &.grid {
     display: grid;
     gap: var(--f-gutter);
 
+    .auction__emoji {
+      display: block;
+      position: absolute;
+      top: var(--f-gutter-l);
+      right: var(--f-gutter-l);
+      font-size: 40px;
+    }
+
     .auction__bid-action {
       opacity: 0.1;
       position: absolute;
-      top: var(--f-gutter);
+      bottom: var(--f-gutter);
       right: var(--f-gutter);
     }
   }
@@ -116,22 +135,12 @@ export default {
   &.list {
     display: grid;
     gap: var(--f-gutter);
-    grid-template-columns: repeat(3, 1fr) 100px;
+    grid-template-columns: repeat(4, 1fr) 100px;
     align-items: center;
 
     .auction {
       &__bid-action {
         opacity: 0.3;
-      }
-  
-      &__label {
-        grid-column: 1 / span 3;
-        grid-row: 2 / 3;
-      }
-
-      &__closing-time {
-        grid-column: 3 / 4;
-        grid-row:  2 / 3;
       }
     }
   }

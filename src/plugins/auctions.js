@@ -1,4 +1,5 @@
 import { AuctionsApi } from '../lib/auctions-api.js'
+import emojis from '../lib/emojis.js'
 
 import Vuex from 'vuex';
 
@@ -6,18 +7,15 @@ const tokens2Decimal = (amount, decimals) => {
     return Number(amount / Math.pow(10, decimals));
 };
 
-const colorHash = (str) => {
-    const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green"];
-
+const arrayHash = (str, array) => {
     var hash = 0, i, chr;
     for (i = 0; i < str.length; i++) {
       chr   = str.charCodeAt(i);
       hash  = ((hash << 5) - hash) + chr;
       hash |= 0; // Convert to 32bit integer
     }
-    return colors[Math.abs(hash) % colors.length];
+    return array[Math.abs(hash) % array.length];
 }
-
 
 // This plugin is the abstraction layer in charge of picking up the domain from the API client, 
 // and convert it into a model usable by the UI
@@ -26,12 +24,15 @@ export default {
         const auctionsApi = new AuctionsApi(options.chainClient, options.factoryAddress);
 
         const transformAuction = (rawction, status) => {
+            const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green"];
+
             const auction = {
                 address: rawction.address,
                 label: rawction.label,
                 pair: rawction.pair,
-                color: colorHash(rawction.address),
-                color2: colorHash(rawction.pair),
+                emoji: arrayHash(rawction.address, emojis),
+                color: arrayHash(rawction.address, colors),
+                color2: arrayHash(rawction.pair, colors),
                 sell: {
                     amount: rawction.sell_amount,
                     decimalAmount: tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),

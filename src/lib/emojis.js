@@ -1,0 +1,24 @@
+const emojis = [
+    0x1F41D,   // Bee
+    0x1F600,   // Happy face
+    0x1F34A,   // Orange
+    0x1F344,   // Mushroom
+    0x1F37F,   // Popcorn
+    0x1F363,   // Sushi
+    0x1F370, 
+    0x1F355,     
+    0x1F354, 
+    0x1F35F, 
+    0x1F6C0, 
+    0x1F48E, 
+    0x1F5FA, 
+    0x23F0, 
+    0x1F579, 
+    0x1F4DA,   
+    0x1F431, 
+    0x1F42A, 
+    0x1F439, 
+    0x1F424
+];
+
+export default emojis;

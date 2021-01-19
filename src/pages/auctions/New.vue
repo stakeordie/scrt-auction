@@ -90,7 +90,7 @@
                 <div class="stage-panel stage-panel__auction">
                     <h3><span class="number">2</span> Create auction</h3>
                     <div class="details">
-                        <p>Now, two transactions are needed. Please make sure to have enough gas and authorize both of them!</p>
+                        <p>We are ready to creat the auction. Please make sure to have enough gas and authorize both of them!</p>
                         <ul>
                             <li>An allowance is placed so the Secret Auctions Factory can sell your tokens.</li>
                             <li>The factory then creates your auction and lists it in the auctions list.</li>
@@ -133,7 +133,7 @@ extend("max_decimals", {
   validate: (value, param) => {
     return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
   },
-  message: "The maximum # of decimals allowed is {maxDecimalsAllowed}",
+  message: "The max decimals allowed are {maxDecimalsAllowed}",
 });
 
 export default {
