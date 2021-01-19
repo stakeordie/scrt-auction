@@ -107,6 +107,9 @@ export default {
 
     .auction__bid-action {
       opacity: 0.1;
+      position: absolute;
+      top: var(--f-gutter);
+      right: var(--f-gutter);
     }
   }
 
