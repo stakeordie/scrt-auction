@@ -30,7 +30,7 @@ export default {
                 address: rawction.address,
                 label: rawction.label,
                 pair: rawction.pair,
-                emoji: arrayHash(rawction.address, emojis),
+                emoji: arrayHash(rawction.label, emojis),
                 color: arrayHash(rawction.pair, colors),
                 color2: arrayHash(rawction.address, colors),
                 sell: {
