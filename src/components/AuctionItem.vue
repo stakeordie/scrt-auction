@@ -78,7 +78,7 @@ export default {
   }
 
   &__emoji {
-    display: none;
+    font-size: 40px;
   }
 
   &__bid-action {
@@ -117,11 +117,9 @@ export default {
     gap: var(--f-gutter);
 
     .auction__emoji {
-      display: block;
       position: absolute;
       top: var(--f-gutter-l);
       right: var(--f-gutter-l);
-      font-size: 40px;
     }
 
     .auction__bid-action {
@@ -135,7 +133,7 @@ export default {
   &.list {
     display: grid;
     gap: var(--f-gutter);
-    grid-template-columns: repeat(4, 1fr) 100px;
+    grid-template-columns: 50px repeat(4, 1fr) 100px;
     align-items: center;
 
     .auction {

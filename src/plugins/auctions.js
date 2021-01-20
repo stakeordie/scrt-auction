@@ -203,6 +203,10 @@ export default {
 
         Vue.prototype.$store.commit('$auctions/updateAvailableTokens', options.availableTokens);
 
+        Vue.prototype.$auctions.emojiHash = (label) => {
+            return arrayHash(label, emojis);
+        };
+
         Vue.prototype.$auctions.updateAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctions');
         };

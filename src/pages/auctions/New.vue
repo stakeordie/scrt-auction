@@ -5,16 +5,20 @@
                 <h1>Auction Info</h1>
                 <validation-observer v-slot="{ handleSubmit, invalid }">
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
+                        <div class="auction-form__label">
+                            <label for="auction-label">Label</label>
+                            <a href="" @click="randomizeLabel()" class="auction-form__label-emoji no-button">{{ String.fromCodePoint($auctions.emojiHash(auctionForm.label)) }}</a>
+                        </div>
 
                         <!-- Using keplr to get the account -->
                         <validation-provider class="auction-form__account" rules="required" v-slot="{ errors }">
                             <label for="auction-account">Account</label>
                             <span class="error" v-show="errors.length > 0">Authenticate using Keplr</span>
-                            <keplr-account v-model.trim="auctionForm.account" :abbreviation="20"></keplr-account>
+                            <keplr-account v-model.trim="auctionForm.account" :abbreviation="16"></keplr-account>
                         </validation-provider>
 
                         <!-- Sell token -->
-                        <validation-provider class="auction-form__sell-amount" :rules="`required|max_decimals:${auctionForm.sellToken ? auctionForm.sellToken.decimals : 0}`" v-slot="{ errors }">
+                        <validation-provider class="auction-form__sell-amount" :rules="`required|max_decimals:${auctionForm.sellToken ? auctionForm.sellToken.decimals : 18}`" v-slot="{ errors }">
                             <label for="sell-amount">Selling</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input name="sell-amount" type="text" v-model.trim="auctionForm.sellAmount" />
@@ -31,10 +35,16 @@
                         </validation-provider>
 
                         <!-- Bid token -->
-                        <validation-provider class="auction-form__bid-amount" :rules="`required|max_decimals:${auctionForm.bidToken ? auctionForm.bidToken.decimals : 0}`" v-slot="{ errors }">
+                        <validation-provider class="auction-form__bid-price" rules="required" v-slot="{ errors }">
+                            <label for="minimum-bid-price">Bid price</label>
+                            <span class="error" v-if="errors.length > 0">Required</span>
+                            <input name="minimum-bid-price" type="text" v-model.trim="auctionForm.bidPrice" />
+                        </validation-provider>
+
+                        <validation-provider class="auction-form__min-bid-amount" rules="required|min_value:0" v-slot="{ errors }">
                             <label for="minimum-bid-amount">Minimum bid</label>
                             <span class="error">{{ errors[0] }}</span>
-                            <input name="minimum-bid-amount" type="text" v-model.trim="auctionForm.bidAmount" />
+                            <input name="minimum-bid-amount" readonly type="text" v-model="minBidAmount" />
                         </validation-provider>
 
                         <validation-provider class="auction-form__bid-denom" rules="required" v-slot="{ errors }">
@@ -45,7 +55,6 @@
                                     {{ bidToken.symbol }}
                                 </option>
                             </select>
-                            <a href="" @click="$keplr.suggestToken('')"></a>
                         </validation-provider>
 
 
@@ -61,8 +70,6 @@
                                 <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
                                     <option value="1">minute<span v-if="endTimeAmount > 1">s</span></option>
                                     <option value="60">hour<span v-if="endTimeAmount > 1">s</span></option>
-                                    <option value="1440">day<span v-if="endTimeAmount > 1">s</span></option>
-                                    <option value="10080">week<span v-if="endTimeAmount > 1">s</span></option>
                                 </select>
                             </p>
                         </validation-provider>
@@ -96,20 +103,23 @@
                             <li>The factory then creates your auction and lists it in the auctions list.</li>
                         </ul>
                         <button class="allowance-form__action" :disabled="stage != 'auction'" @click="createAuction()">Go</button>
-                        <a href="" @click="stage = 'info'">Cancel</a>
+                        <a href="" @click="stage = 'info'">Go back</a>
                     </div>
                 </div>
                 <div class="stage-panel stage-panel__keys">
                     <h3><span class="number">3</span> Viewing keys</h3>
                     <div class="details">
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Necessitatibus ea quo adipisci asperiores.</p>
-                        <g-link class="auction-creation__action-list button" to="/auctions">Go to the list</g-link>
-                        <a href="" @click="stage = 'auction'">Cancel</a>
+                        <p>You need a viewing key.</p>
+                        <p>Viewing keys are used in the Secret Netwwork to get access to the Secret Auction bids.</p>
+                        <g-link class="auction-creation__action-list" to="/auctions">See the auction list</g-link>
                     </div>
                 </div>
             </block>
 
             <block>
+                <div class="status">
+                    <p></p>
+                </div>
             </block>
 
         </column>
@@ -120,12 +130,17 @@
 import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required } from "vee-validate/dist/rules";
+import { required, min_value } from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
 extend("required", {
   ...required,
   message: "This field is required",
+});
+
+extend("min_value", {
+  ...required,
+  message: "Must be greater than 0",
 });
 
 extend("max_decimals", {
@@ -149,12 +164,14 @@ export default {
 
             hasViewingKey: false,
 
+            statusLog: [],
+
             auctionForm: {
                 sellAmount: 0.1,
                 sellToken: null,
-                bidAmount: 0.1,
+                bidPrice: 1,
                 bidToken: null,
-                label: (new Date()).getTime().toString(),
+                label: null,
                 description: "",
                 endTime: new Date(),
             },
@@ -165,14 +182,15 @@ export default {
             "availableTokens",
             "getToken"
         ]),
+        minBidAmount() {
+            if(this.auctionForm.bidToken) {
+                return (this.auctionForm.bidPrice * this.auctionForm.sellAmount).toFixed(this.auctionForm.bidToken.decimals);
+            } else {
+                return this.auctionForm.bidPrice * this.auctionForm.sellAmount;
+            }
+        },
         endTimeString() {
             return this.auctionForm.endTime.toLocaleString();
-        },
-        sellAmountToFractional: function () {
-            return this.auctionForm.sellAmount * Math.pow(10, 6 /* get decimals */)
-        },
-        bidAmountToFractional: function () {
-            return this.auctionForm.bidAmount * Math.pow(10, 6 /* get decimals */)
         },
     },
     mounted () {
@@ -180,6 +198,7 @@ export default {
         this.interval = setInterval(this.updateEndTime, 1000);
     },
     async created () {
+        this.randomizeLabel();
         const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
         if(viewingKey) {
             this.hasViewingKey = true;
@@ -192,19 +211,15 @@ export default {
         submitInfo() {
             this.stage = "auction";
         },
+        randomizeLabel() {
+            this.auctionForm.label = "auction-" + Math.round(Math.random() * 1000000);
+        },
         async createAuction() {
-            
-            // First we calculate
-            const sellToken = this.getToken(this.auctionForm.sellToken.address);
-            const bidToken = this.getToken(this.auctionForm.bidToken.address)
+            const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, this.auctionForm.sellToken.decimals);
+            const bidAmountToFractional = this.minBidAmount * Math.pow(10, this.auctionForm.bidToken.decimals);
 
-            const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, sellToken.decimals)
-            const bidAmountToFractional = this.auctionForm.bidAmount * Math.pow(10, bidToken.decimals)
             const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional.toString());
             
-            //console.log("new/CreateAuction/consignedAllowance"); console.log(consignedAllowance)
-            //console.log("new/CreateAuction/this.$scrtjs.decodedResponse(consignedAllowance)"); console.log(this.$scrtjs.decodedResponse(consignedAllowance))
-
             //Create auction
             const auction = await this.$auctions.createAuction(this.auctionForm.label,
                 this.auctionForm.sellToken.address,
@@ -243,7 +258,7 @@ export default {
 
 .auction-form {
     display: grid;
-    grid-template-columns: 1fr 100px;
+    grid-template-columns: 70px 1fr 100px;
     column-gap: var(--f-gutter);
     align-items: end;
 
@@ -254,7 +269,7 @@ export default {
     input:read-only {
         color: var(--f-default-text-color);
         background-color: var(--color-black);
-        border: none;
+        border: 1px solid var(--color-black);
         font-weight: 600;
     }
 
@@ -262,18 +277,39 @@ export default {
         margin-bottom: var(--f-gutter-xxs);
     }
 
-    &__sell-amount, &__label, &__bid-amount {
+    &__account {
+        grid-column: 2 / 4;
+    }
+    &__sell-amount {
+        grid-column: 1 / 3;
+    }
+    &__bid-amount {
+        grid-column: 2 / 3;
+    }
+    &__bid-price {
         grid-column: 1 / 2;
     }
     &__bid-sell, &__bid-denom {
-        grid-column: 2 / 3;
+        grid-column: 3 / 4;
     }
-    &__account, &__info-action, &__end-time, &__description {
-        grid-column: 1 / 3;
+    &__info-action, &__end-time, &__description {
+        grid-column: 1 / 4;
     }
 
     .keplr__account {
         font-size: 21px;
+    }
+
+    &__label {
+        text-align: center;
+        align-self: start;
+        &-emoji {
+            font-size: 40px;
+            text-decoration: none;
+        }
+        &-change {
+            font-size: 13px;
+        }
     }
 
     &__description textarea {

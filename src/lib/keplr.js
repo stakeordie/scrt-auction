@@ -86,7 +86,7 @@ export default class Keplr {
   async suggestToken(contractAddress) {
     return await this.command(async () => {
       try {
-        return await window.keplr.suggestToken(contractAddress);
+        return await window.keplr.suggestToken(this.chainId, contractAddress);
       } catch(err) {
         throw err;
       }

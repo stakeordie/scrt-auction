@@ -29,7 +29,7 @@
 
               <!-- Filtering by bid -->
               <div class="auctions-tools__filter-filter">
-                <label class="auctions-tools__filter-label" for="bid-token">Bid</label>
+                <label class="auctions-tools__filter-label" for="bid-token">Min bid</label>
                 <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
                   <option value=""></option>
                   <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
@@ -213,6 +213,7 @@ export default {
 
       &-label {
         margin-right: var(--f-gutter);
+        white-space: nowrap;
       }
 
       &-toggle {
