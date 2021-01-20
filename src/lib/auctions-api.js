@@ -125,7 +125,8 @@ export class AuctionsApi {
     async createViewingKey() {
         const msg = {
             "create_viewing_key":{
-                "entropy": "A Random String for Entropy"
+                "entropy": "A Random String for Entropy",
+                "padding": "*".repeat((40 - "A Random String for Entropy".length))
             }
         }
         const response = await this.scrtClient.executeContract(this.factoryAddress, msg);
@@ -275,7 +276,11 @@ export class AuctionsApi {
 
     async closeAuction(auctionAddress) {
         //secretcli tx compute execute *auction_contract_address* '{"finalize": {"only_if_bids": *true_or_false*}}' --from *your_key_alias_or_addr* --gas 2000000 -y
-        const msg = {"finalize": {"only_if_bids": false}};
+        const msg = {
+            "finalize": {
+                "only_if_bids": false
+            }
+        };
         const bidFees = {
             exec: {
                 amount: [{ amount: '1000000', denom: 'uscrt' }],
@@ -286,13 +291,32 @@ export class AuctionsApi {
         return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
 
+    async changeMinimumBid(auctionAddress, newMinimumBidAmount) {
+        const msg = {
+            "change_minimum_bid": {
+                "minimum_bid": newMinimumBidAmount.toString()
+            }
+        }
+        const bidFees = {
+            exec: {
+                amount: [{ amount: '400000', denom: 'uscrt' }],
+                gas: '400000',
+            },
+        }
+        console.log("auctions-api/changeMinimumBid/msg"); console.log(msg);
+        const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
+        console.log("auctions-api/changeMinimumBid/response"); console.log(await this.scrtClient.decryptTxHash(response.transactionHash));
+        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+    }
+
     async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
+        //console.log("auctions-api/placeBid/padding"); console.log("*".repeat((40 - bidAmount.toString().length)));
         //secretcli tx compute execute *bid_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*bid_amount_in_smallest_denomination_of_bidding_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
         const msg = {
             "send": {
                 "recipient": auctionAddress, 
                 "amount": bidAmount.toString(),
-                "padding": "100"
+                "padding": "*".repeat((40 - bidAmount.toString().length))
             }
         };
         const bidFees = {
@@ -326,7 +350,8 @@ export class AuctionsApi {
                 "increase_allowance":
                 {
                     "spender": this.factoryAddress,
-                    "amount": sellAmount
+                    "amount": sellAmount,
+                    "padding": "*".repeat((40 - sellAmount.toString().length))
                 }
             }
             const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
@@ -334,6 +359,10 @@ export class AuctionsApi {
         } catch(e) {
             throw e;
         }
+    }
+
+    async changeEndTime(auctionAddress, newEndTime) {
+        return true;
     }
 
     async createAuction(

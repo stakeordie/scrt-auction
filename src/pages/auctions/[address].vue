@@ -19,8 +19,19 @@
           <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bids on this auction.</div>
         </block>
 
-        <button v-show="isOwner & !isEnded & !updateEndTimeRequested" @click="updateEndTimeRequested = !updateEndTimeRequested">Update End Time</button><br/>
+        <button v-show="isOwner & !changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Change Minimum Bid</button><br/>
+        <validation-observer v-show="changeMinimumBidRequested" v-slot="{ handleSubmit, invalid }">
+          <form class="auction-form" @submit.prevent="handleSubmit(changeMinimumBid)">
+            <validation-provider class="auction-form__bid-amount" :rules="`required|max_decimals:${auctionInfo.auction_info.bid_token.token_info.decimals ? auctionInfo.auction_info.bid_token.token_info.decimals : 0}`" v-slot="{ errors }">
+              <label for="minimum-bid-amount">Minimum bid</label>
+              <span class="error">{{ errors[0] }}</span>
+              <input name="minimum-bid-amount" type="text" v-model.trim="newMinimumBid" />
+            </validation-provider>
+            <button :disabled="invalid">Change Minimum Bid</button>
+          </form>
+        </validation-observer>
 
+        <button v-show="isOwner & !isEnded & !updateEndTimeRequested" @click="updateEndTimeRequested = !updateEndTimeRequested">Update End Time</button><br/>
         <validation-observer v-show="isOwner & !isEnded & updateEndTimeRequested" v-slot="{ handleSubmit, invalid }">
           <form class="auction-form" @submit.prevent="handleSubmit(changeEndTime)">
             <!-- End auction date time -->
@@ -46,7 +57,7 @@
           </form>
         </validation-observer>
 
-        <button v-show="isOwner || ( isBidder & isEnded )" @click="closeAuction()">Close Auction</button>
+        <button v-show="isOwner || isEnded" @click="closeAuction()">Close Auction</button>
 
         <block v-show="!isClosed">
           <h2>Place a Bid</h2>
@@ -148,6 +159,9 @@ export default {
       isBidder: false,
       isClosed: false,
 
+      changeMinimumBidRequested: false,
+      newMinimumBid: 0,
+
       updateEndTimeRequested: false,
       endTimeAmount: 1,
       endTimeUnit: "60",
@@ -162,41 +176,7 @@ export default {
       clearInterval(this.interval);
   },
   async created() {
-    this.auctionAddress = this.$route.params.address;
-    const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-    console.log("[address].vue/created/viewingKey"); console.log(viewingKey);
-    if(viewingKey) {
-      this.hasViewingKey = true;
-      const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
-      if(!bidInfoResponse.viewing_key_error) {
-        this.bidInfo = bidInfoResponse;
-        this.isBidder = true;
-      }
-      const userAuctions = await this.$auctions.listUserAuctions();
-      console.log("[address].vue/created/userAuctions"); console.log(userAuctions);
-      if(userAuctions?.list_my_auctions?.active?.as_seller) {
-        const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
-        if(is_owner.length > 0) {
-          this.isOwner = true;
-        }
-      }
-    }
-    this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
-    console.log("[address]/created/auctionInfo"); console.log(this.auctionInfo);
-    if(this.auctionInfo) {
-      this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-      this.validationRules = "required|min_value:" + this.minimumBidFromFractional + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
-      this.formBidAmount = this.minimumBidFromFractional;
-      if(this.auctionInfo.auction_info.status == "Closed") {
-        this.isClosed = true;
-      }
-      // if ends_at is in the past
-      const ended = new Date(this.auctionInfo.auction_info.ends_at);
-      const now = new Date();
-      if(now > ended) {
-        this.isEnded = true;
-      }
-    }
+    this.refreshAuction();
   },
   computed: {
     sellAmountFromFractional: function () {
@@ -208,6 +188,9 @@ export default {
     minimumBidFromFractional: function () {
       return this.auctionInfo.auction_info.minimum_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
     },
+    newMinimumBidToFractional: function () {
+      return this.newMinimumBid * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
+    },
     formBidAmountToFractional: function () {
       return this.formBidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
     },
@@ -217,26 +200,73 @@ export default {
   },
   methods: {
     async placeBid() {
-      let placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmountToFractional);
+      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmountToFractional);
       if(!this.hasViewingKey) {
         const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
         await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
       }
+      this.refreshAuction();
       //console.log(placedBid);
     },
     async retractBid() {
-      let bidRetracted = await this.$auctions.retractBid(this.auctionAddress);
+      const bidRetracted = await this.$auctions.retractBid(this.auctionAddress);
+      this.refreshAuction();
+      //console.log(bidRetracted);
+    },
+    async changeMinimumBid() {
+      const changedMinimumBid = await this.$auctions.changeMinimumBid(this.auctionAddress, this.newMinimumBidToFractional);
+      this.refreshAuction();
       //console.log(bidRetracted);
     },
     async changeEndTime() {
-      let changedEndTime = await this.$auctions.changeEndTime(this.auctionAddress, this.newEndTime);
+      const changedEndTime = await this.$auctions.changeEndTime(this.auctionAddress, this.newEndTime);
+      this.refreshAuction();
     },
     async closeAuction() {
-      let closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
+      const closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
+      this.refreshAuction();
+    },
+    async refreshAuction() {
+      this.auctionAddress = this.$route.params.address;
+      const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
+      console.log("[address].vue/created/viewingKey"); console.log(viewingKey);
+      if(viewingKey) {
+        this.hasViewingKey = true;
+        const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
+        if(!bidInfoResponse.viewing_key_error) {
+          this.bidInfo = bidInfoResponse;
+          this.isBidder = true;
+        }
+        const userAuctions = await this.$auctions.listUserAuctions();
+        console.log("[address].vue/created/userAuctions"); console.log(userAuctions);
+        if(userAuctions?.list_my_auctions?.active?.as_seller) {
+          const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
+          if(is_owner.length > 0) {
+            this.isOwner = true;
+          }
+        }
+      }
+      this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
+      console.log("[address]/created/auctionInfo"); console.log(this.auctionInfo);
+      if(this.auctionInfo) {
+        this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
+        this.validationRules = "required|min_value:" + this.minimumBidFromFractional + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
+        this.formBidAmount = this.minimumBidFromFractional;
+        this.newMinimumBid = this.minimumBidFromFractional;
+        if(this.auctionInfo.auction_info.status == "Closed") {
+          this.isClosed = true;
+        }
+        // if ends_at is in the past
+        const ended = new Date(this.auctionInfo.auction_info.ends_at);
+        const now = new Date();
+        if(now > ended) {
+          this.isEnded = true;
+        }
+      }
     },
     updateEndTime() {
         this.newEndTime = new Date((new Date()).getTime() + (Number(this.endTimeAmount || 1) * Number(this.endTimeUnit) * 60000));
-    }
+    },
   }
 };
 </script>
