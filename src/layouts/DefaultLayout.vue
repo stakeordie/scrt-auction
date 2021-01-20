@@ -1,4 +1,5 @@
 <template>
+<ClientOnly>
   <simple-layout>
     <template #header>
       <simple-header>
@@ -27,6 +28,7 @@
     </template>
 
   </simple-layout>
+  </ClientOnly>
 </template>
 
 <script>
