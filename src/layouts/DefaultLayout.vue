@@ -11,6 +11,7 @@
         </nav>
         <div class="actions">
           <div class="user-info">
+            <viewing-key></viewing-key>
             <keplr-user></keplr-user>
           </div>
         </div>
@@ -30,9 +31,10 @@
 
 <script>
 import KeplrUser from '../components/KeplrUser.vue'
+import ViewingKey from '../components/ViewingKey.vue'
 
 export default {
-  components: { KeplrUser },  
+  components: { KeplrUser, ViewingKey },  
 }
 </script>
 
