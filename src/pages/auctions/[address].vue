@@ -66,12 +66,16 @@
               <ul>
                 <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
               </ul>
-
               <div class="form__frame">
                 <validation-provider :rules="validationRules" v-slot="{ errors }">
-                  <label for="payment-amount">Amount</label>
+                  <label for="payment-amount">Price</label>
                   <span class="error">{{ errors[0] }}</span>
-                  <input name="payment-amount" type="text" v-model.trim="formBidAmount" />
+                  <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
+                </validation-provider>
+                <validation-provider class="auction-form__min-bid-amount" rules="required|min_value:0" v-slot="{ errors }">
+                    <label for="minimum-bid-amount">Minimum bid</label>
+                    <span class="error">{{ errors[0] }}</span>
+                    <input name="minimum-bid-amount" readonly type="text" v-model="bidAmount" />
                 </validation-provider>
                 <button :disabled="invalid">Place Bid</button>
               </div>
@@ -160,6 +164,16 @@ export default {
       isBidder: false,
       isClosed: false,
 
+      placeBidForm: { 
+        bidPrice: 1
+      },
+      updateMinimumBidForm: {
+
+      },
+      closeAuctionForm: {
+
+      },
+      
       changeMinimumBidRequested: false,
       newMinimumBid: 0,
 
@@ -171,8 +185,14 @@ export default {
   },
   computed: {
     ...mapGetters("$auctions", [
-      "getAuction"
+      ""
     ]),
+    auction: function() {
+      return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
+    },
+    bidAmount: function() {
+      return this.placeBidForm.bidPrice * this.auction.sell.decimalAmount
+    },
     sellAmountFromFractional: function () {
       return this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)
     },
@@ -193,8 +213,8 @@ export default {
     }
   },
   mounted () {
-      this.updateEndTime();
-      this.interval = setInterval(this.updateEndTime, 1000);
+    this.updateEndTime();
+    this.interval = setInterval(this.updateEndTime, 1000);
   },
   destroyed () {
       clearInterval(this.interval);
@@ -204,7 +224,7 @@ export default {
   },
   methods: {
     async placeBid() {
-      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.formBidAmountToFractional);
+      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auction.address, (this.placeBidForm.bidPrice * this.auction.sell.decimalAmount) * Math.pow(10, this.auction.sell.decimals));
       if(!this.hasViewingKey) {
         const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
         await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
