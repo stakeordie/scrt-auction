@@ -175,7 +175,7 @@ export default {
   destroyed () {
       clearInterval(this.interval);
   },
-  async created() {
+  created () {
     this.refreshAuction();
   },
   computed: {
@@ -228,6 +228,7 @@ export default {
     },
     async refreshAuction() {
       this.auctionAddress = this.$route.params.address;
+      console.log("[address]/refreshAuction/keprWalletAddress"); console.log(this.$store.state.$keplr.selectedAccount?.address);
       const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
       console.log("[address].vue/created/viewingKey"); console.log(viewingKey);
       if(viewingKey) {
