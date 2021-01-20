@@ -33,17 +33,15 @@ export default class Keplr {
     this.rpcUrl = rpcUrl;
 
     this.address = null;
-    if (process.isClient) {
-      window.onload = (async () => {
-        if(typeof loadListener === 'function') {
-          await loadListener();
-        }
-        this.checkInterval = setInterval(() => {
-          this.checkAddressUpdates();
-        }, KEPLR_ADDRESS_REFRESH_RATE);
+    window.onload = (async () => {
+      if(typeof loadListener === 'function') {
+        await loadListener();
+      }
+      this.checkInterval = setInterval(() => {
         this.checkAddressUpdates();
-      });
-    }
+      }, KEPLR_ADDRESS_REFRESH_RATE);
+      this.checkAddressUpdates();
+    });
   }
 
   // Prompts the user to enable the wallet
