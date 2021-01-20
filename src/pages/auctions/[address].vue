@@ -84,9 +84,10 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value, max_decimals } from "vee-validate/dist/rules";
-import TokenAmountInput from '../../components/TokenAmountInput.vue';
 
 extend("required", {
   ...required,
@@ -110,7 +111,7 @@ extend("max_decimals", {
 });
 
 export default {
-  components: { TokenAmountInput, ValidationObserver, ValidationProvider},
+  components: {ValidationObserver, ValidationProvider},
   data() {
     return {
       errors: [],
@@ -168,17 +169,10 @@ export default {
       newEndTime: new Date()
     };
   },
-  mounted () {
-      this.updateEndTime();
-      this.interval = setInterval(this.updateEndTime, 1000);
-  },
-  destroyed () {
-      clearInterval(this.interval);
-  },
-  created () {
-    this.refreshAuction();
-  },
   computed: {
+    ...mapGetters("$auctions", [
+      "getAuction"
+    ]),
     sellAmountFromFractional: function () {
       return this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)
     },
@@ -197,6 +191,16 @@ export default {
     endTimeString() {
         return this.newEndTime.toLocaleString();
     }
+  },
+  mounted () {
+      this.updateEndTime();
+      this.interval = setInterval(this.updateEndTime, 1000);
+  },
+  destroyed () {
+      clearInterval(this.interval);
+  },
+  created () {
+    this.refreshAuction();
   },
   methods: {
     async placeBid() {

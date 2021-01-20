@@ -165,6 +165,11 @@ export default {
                     return (address) => {
                         return state.tokenData.filter(token => { return token.address == address})[0];
                     };
+                },
+                getAuction: (state) => {
+                    return (address) => {
+                        return state.auctions.filter(auction => { return auction.address == address})[0];
+                    };
                 }
               },
               mutations: {
