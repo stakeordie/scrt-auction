@@ -24,7 +24,7 @@
                         </validation-provider>
 
                         <validation-provider class="auction-form__sell-denom" rules="required" v-slot="{ errors }">
-                            <span class="error" v-show="errors.length > 0">Required</span>
+                            <span class="error">{{ errors[0] }}</span>
                             <select name="sell-denom" v-model="auctionForm.sellToken">
                                 <option value=""></option>
                                 <option v-for="sellToken in availableTokens" :key="sellToken.address" v-bind:value="sellToken">
@@ -36,7 +36,7 @@
                         <!-- Bid token -->
                         <validation-provider class="auction-form__bid-price" rules="required" v-slot="{ errors }">
                             <label for="minimum-bid-price">Bid price</label>
-                            <span class="error" v-if="errors.length > 0">Required</span>
+                            <span class="error">{{ errors[0] }}</span>
                             <input name="minimum-bid-price" type="text" v-model.trim="auctionForm.bidPrice" />
                         </validation-provider>
 
@@ -47,7 +47,7 @@
                         </validation-provider>
 
                         <validation-provider class="auction-form__bid-denom" rules="required" v-slot="{ errors }">
-                            <span class="error" v-if="errors.length > 0">Required</span>
+                            <span class="error">{{ errors[0] }}</span>
                             <select name="bid-denom" v-model="auctionForm.bidToken">
                                 <option value=""></option>
                                 <option v-for="bidToken in availableTokens" :key="bidToken.address" v-bind:value="bidToken">
@@ -154,7 +154,7 @@ import KeplrAccount from '../../components/KeplrAccount.vue';
 
 extend("required", {
   ...required,
-  message: "This field is required",
+  message: "Required",
 });
 
 extend("min_value", {
