@@ -6,8 +6,8 @@
           <keplr-account v-model="keplrAccount" :abbreviation="16"></keplr-account>
           <h2>Auction Info</h2>
           <div>Amount: {{ sellAmountFromFractional }}</div>
-          <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }}</div>
-          <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.symbol }}</div>
+          <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.name }} ({{ auctionInfo.auction_info.sell_token.token_info.symbol }})</div>
+          <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.name }} ({{ auctionInfo.auction_info.bid_token.token_info.symbol }})</div>
           <div>Min Bid: {{ minimumBidFromFractional }}</div>
           <div>Description: {{ auctionInfo.auction_info.description }}</div>
           <div>Status: {{ auctionInfo.auction_info.status }}</div>
@@ -204,13 +204,13 @@ export default {
       return Number(Math.round((this.placeBidForm.bidPrice * this.sellAmountFromFractional)+'e'+this.auctionInfo.auction_info.bid_token.token_info.decimals)+'e-'+this.auctionInfo.auction_info.bid_token.token_info.decimals)
     },
     sellAmountFromFractional: function () {
-      return this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)
+      return (this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)).toFixed(this.auctionInfo.auction_info.sell_token.token_info.decimals).replace(/\.?0+$/,"")
     },
     winningBidFromFractional: function () {
       return this.auctionInfo.auction_info.winning_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
     },
     minimumBidFromFractional: function () {
-      return this.auctionInfo.auction_info.minimum_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
+      return (this.auctionInfo.auction_info.minimum_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)).toFixed(this.auctionInfo.auction_info.bid_token.token_info.decimals).replace(/\.?0+$/,"")
     },
     newMinimumBidToFractional: function () {
       return this.newMinimumBid * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
