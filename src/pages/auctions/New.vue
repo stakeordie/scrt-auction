@@ -115,7 +115,7 @@
                             </div>
                             <div v-if="stage == 'auction'">
                                 <p>It seems the transaction failed or was cancelled.</p>
-                                <p class="auction-error">{{ auctionError }}</p>
+                                <p class="error">{{ auctionError }}</p>
                                 <ul>
                                     <li><a href="" @click="createAuction()">Try again</a></li>
                                     <li><a href="" @click="stage = 'info'; auctionError = null;">Back</a></li>
@@ -128,8 +128,9 @@
                         <h3>Congratulations</h3>
                         <div class="details">
                             <p>Your Secret Auction is ready.</p>
+                            <textarea v-if="viewingKey" readonly v-model="viewingKey"></textarea>
                             <p><g-link class="auction-creation__action-list" to="/auctions">See the auction list</g-link></p>
-                            <button @click="createViewingKey()">Create Viewing Key</button>
+                            <button v-if="!viewingKey" @click="createViewingKey()">Create and save viewing Key</button>
                         </div>
                     </div>
 
@@ -182,7 +183,7 @@ export default {
             endTimeAmount: 1,
             endTimeUnit: "60",
 
-            hasViewingKey: false,
+            viewingKey: null,
 
             statusLog: [],
 
@@ -279,9 +280,12 @@ export default {
             }
         },
         async createViewingKey() {
-            const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
-            console.log(viewingKey);
-            await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
+            //console.log(this.$vkeys.get('x', 'x'));
+            //console.log(this.$vkeys.get(this.auctionForm.account));
+            this.viewingKey = await this.$auctions.createViewingKey();
+            if(this.viewingKey) {
+                 await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey);
+            }
         },
         updateEndTime() {
             if(this.stage == "info") {
@@ -393,6 +397,10 @@ export default {
 
     p, li {
         font-size: 15px;
+    }
+
+    .error {
+        margin-bottom: var(--f-gutter);
     }
 
     .number {
