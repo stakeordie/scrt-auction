@@ -130,6 +130,22 @@ export default function(Vue, { router, head, isClient }) {
       },
       {
           codeId: 1,
+          symbol: "TSWBTC",
+          address: "secret1ml8up5nmp8gdv7763h8fzc6sxy3ep7t5zcjrsp",
+          name: "Test Secret Wrapped Bitcoin",
+          label: "tsWBTC",
+          decimals: 8
+      },
+      {
+          codeId: 1,
+          symbol: "TSLINK",
+          address: "secret15nj999umj4ttdwulewaazzd0v6q8459mh6lejl",
+          name: "Test Secret Chainlink",
+          label: "tsLINK",
+          decimals: 18
+      },
+      {
+          codeId: 1,
           symbol: "TSSNDY",
           address: "secret10urze7sugs0phls3zvd7fh5354e993ta32873p",
           name: "Test Secret Sandy",
@@ -182,6 +198,14 @@ export default function(Vue, { router, head, isClient }) {
           address: "secret1jp9e3jnnesacndgwhhwm3glq3p6y56v6vxdzd7",
           name: "Test Secret Brendan",
           label: "tsBRDN",
+          decimals: 2
+      },
+      {
+          codeId: 1,
+          symbol: "TSBDRK",
+          address: "secret1ea0s86n93trx5d7jecl49je4km0n3kx7vfs3hw",
+          name: "Test Secret Baedrik",
+          label: "tsBDRK",
           decimals: 2
       }
     ]
