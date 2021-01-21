@@ -397,7 +397,10 @@ export class AuctionsApi {
     
             return await this.scrtClient.executeContract(this.factoryAddress, msg);
         } catch(e) {
-            throw e;
+            // TODO improve this
+            const regex = /\"msg\":\"(.*)\"/g;
+            console.log(e.message);
+            throw new Error(e.message.match(regex));
         }
     }
 }

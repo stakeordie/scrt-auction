@@ -3,6 +3,7 @@
     <columns>
         <h1>Secret Auction</h1>
         <block>
+          <keplr-account v-model="keplrAccount" :abbreviation="16"></keplr-account>
           <h2>Auction Info</h2>
           <div>Amount: {{ sellAmountFromFractional }}</div>
           <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.symbol }}</div>
@@ -92,6 +93,7 @@ import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value, max_decimals } from "vee-validate/dist/rules";
+import KeplrAccount from '../../components/KeplrAccount.vue';
 
 extend("required", {
   ...required,
@@ -115,7 +117,7 @@ extend("max_decimals", {
 });
 
 export default {
-  components: {ValidationObserver, ValidationProvider},
+  components: {ValidationObserver, ValidationProvider, KeplrAccount},
   data() {
     return {
       errors: [],
@@ -127,6 +129,7 @@ export default {
           "amount_bid": ""
         }
       },
+      keplrAccount: null,
       formBidAmount: 1,
       codeHash: "",
       auctionInfo: {
@@ -182,6 +185,11 @@ export default {
       endTimeUnit: "60",
       newEndTime: new Date()
     };
+  },
+  watch: {
+    keplrAccount(newValue, oldValue) {
+      console.log("ACCOUNT'S READY YO", newValue);
+    }
   },
   computed: {
     ...mapGetters("$auctions", [

@@ -7,6 +7,7 @@ import "./sass/style.scss"
 
 import Flare from "@lkmx/flare"
 
+import VKeys from "./plugins/vkeys"
 import Keplr from "./plugins/keplr"
 import ScrtJs from "./plugins/scrt"
 import AuctionsApi from "./plugins/auctions"
@@ -28,10 +29,11 @@ export default function(Vue, { router, head, isClient }) {
   Vue.use(Flare);
 
 
-  Vue.use(Vuex)
+  Vue.use(Vuex);
   Vue.prototype.$store = new Vuex.Store({});
 
-
+  Vue.use(VKeys);
+  
   Vue.use(Keplr, { 
     chainId: process.env.GRIDSOME_SECRET_CHAIN_ID,
     chainName: process.env.GRIDSOME_SECRET_CHAIN_NAME,
