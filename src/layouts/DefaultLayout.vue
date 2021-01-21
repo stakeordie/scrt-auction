@@ -23,6 +23,7 @@
     <template #footer>
       <simple-footer>
         <p>Secret Project</p>
+        <p>If you have and suggestion, notice any issues, or want to see new features. Create an issue on github <g-link to="https://github.com/stakeordie/scrt-auction">here.</g-link></p>
       </simple-footer>
     </template>
 
