@@ -201,7 +201,7 @@ export default {
       return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
     },
     bidAmount: function() {
-      return this.placeBidForm.bidPrice * this.auction.sell.decimalAmount
+      return this.placeBidForm.bidPrice * this.sellAmountFromFractional
     },
     sellAmountFromFractional: function () {
       return this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)
