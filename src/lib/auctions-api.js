@@ -74,11 +74,15 @@ export class AuctionsApi {
     }
 
     async getWallet() {
-        let wallet = localStorage.getItem('sodWallet');
-        if(wallet == null) {
-            return [];
+        if(process.isClient) {
+            let wallet = localStorage.getItem('sodWallet');
+            if(wallet == null) {
+                return [];
+            } else {
+                return JSON.parse(wallet);
+            }
         } else {
-            return JSON.parse(wallet);
+            return [];
         }
     }
 
@@ -95,12 +99,16 @@ export class AuctionsApi {
     }
 
     async getViewingKeys(address) {
-        let rawViewingKeys = localStorage.getItem('viewingKeys');
-        if(rawViewingKeys !== null) {
-            return JSON.parse(rawViewingKeys);
+        if(process.isClient) {
+            let rawViewingKeys = localStorage.getItem('viewingKeys');
+            if(rawViewingKeys !== null) {
+                return JSON.parse(rawViewingKeys);
+            } else {
+                rawViewingKeys = [];
+                return rawViewingKeys
+            }
         } else {
-            rawViewingKeys = [];
-            return rawViewingKeys
+            return [];
         }
     }
 
@@ -265,13 +273,17 @@ export class AuctionsApi {
     }
 
     async saveViewingKeys(viewingKeys) {
-        const parsed = JSON.stringify(viewingKeys);
-        localStorage.setItem('viewingKeys', parsed);
+        if(process.isClient) {
+            const parsed = JSON.stringify(viewingKeys);
+            localStorage.setItem('viewingKeys', parsed);
+        }
     }
 
     async saveWallet(wallet) {
-        const parsed = JSON.stringify(wallet);
-        localStorage.setItem('sodWallet', parsed);
+        if(process.isClient) {
+            const parsed = JSON.stringify(wallet);
+            localStorage.setItem('sodWallet', parsed);
+        }
     }
 
     async closeAuction(auctionAddress) {
