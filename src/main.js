@@ -106,43 +106,83 @@ export default function(Vue, { router, head, isClient }) {
     availableTokens: [
       {
           codeId: 1,
-          symbol: "SODTA",
-          address: "secret1qvq5h3ta2qpng3vdlln7pu8mnhn98getzsw9ga",
-          name: "sodta",
-          label: "sodta",
-          decimals: 8
+          symbol: "TSUNI",
+          address: "secret16v7a5lhuglkp5szdkfdxwhgkg3g2t2hmmy92h4",
+          name: "Test Secret Uniswap",
+          label: "tsUNI",
+          decimals: 18
       },
       {
           codeId: 1,
-          symbol: "SODTB",
-          address: "secret1wma0dyp30mncz8rdzga0426s9fzx6jmqmp79uy",
-          name: "sodtb",
-          label: "sodtb",
+          symbol: "TSDAI",
+          address: "secret1r4z6fh6gzlqdf4gaqx29mr6340w9vastj4jhvv",
+          name: "Test Secret Dai",
+          label: "tsDAI",
+          decimals: 18
+      },
+      {
+          codeId: 1,
+          symbol: "TSUSDT",
+          address: "secret196uyuzlw039hztfmv4g0kjp2u376ucsfv0fmss",
+          name: "Test Secret Tether",
+          label: "tsUSDT",
           decimals: 6
       },
       {
           codeId: 1,
-          symbol: "SODTC",
-          address: "secret1rdz9e9hln0lv0y33se380fczmmst72ffzlqg9a",
-          name: "SODTC",
-          label: "sodtc",
-          decimals: 6
+          symbol: "TSSNDY",
+          address: "secret10urze7sugs0phls3zvd7fh5354e993ta32873p",
+          name: "Test Secret Sandy",
+          label: "tsSNDY",
+          decimals: 2
       },
       {
           codeId: 1,
-          symbol: "SODTD",
-          address: "secret1yt94lse0rl89a9kdylhr80jffpuekv0tzpx2k0",
-          name: "Stake or Die Token D",
-          label: "sodtd",
-          decimals: 6
+          symbol: "TSVCTR",
+          address: "secret1apmpvsvue9skm7a7vedpplgzdc46uv7h346m00",
+          name: "Test Secret Victor",
+          label: "tsVCTR",
+          decimals: 2
       },
       {
           codeId: 1,
-          symbol: "SODTE",
-          address: "secret18u0m2um6vv08ftzxls897gytd4tzcc2w6vlem6",
-          name: "Stake or Die Token E",
-          label: "sodta",
-          decimals: 6
+          symbol: "TSCAN",
+          address: "secret10cwxfegdvusw05n095dec3a26ewk8nuluwvt28",
+          name: "Test Secret Can",
+          label: "tsCAN",
+          decimals: 2
+      },
+      {
+          codeId: 1,
+          symbol: "TSTOR",
+          address: "secret15vh7r8c379r7vp86m24r6uwequ2az6agnhfh4p",
+          name: "Test Secret Tor",
+          label: "tsTOR",
+          decimals: 2
+      },
+      {
+          codeId: 1,
+          symbol: "TSJRDN",
+          address: "secret1u42dr4kxrgjsj9c37e3lq9a9akhdxzrzg32ez3",
+          name: "Test Secret Jordan",
+          label: "tsJRDN",
+          decimals: 2
+      },
+      {
+          codeId: 1,
+          symbol: "TSCRTR",
+          address: "secret1m8px7yknnyaxvhmk0ekyxtkekj6gud0dalk2g2",
+          name: "Test Secret Carter",
+          label: "tsCRTR",
+          decimals: 2
+      },
+      {
+          codeId: 1,
+          symbol: "TSBRDN",
+          address: "secret1jp9e3jnnesacndgwhhwm3glq3p6y56v6vxdzd7",
+          name: "Test Secret Brendan",
+          label: "tsBRDN",
+          decimals: 2
       }
     ]
   });
