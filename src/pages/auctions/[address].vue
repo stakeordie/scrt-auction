@@ -23,7 +23,7 @@
         <button v-show="isOwner & !changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Change Minimum Bid</button><br/>
         <validation-observer v-show="changeMinimumBidRequested" v-slot="{ handleSubmit, invalid }">
           <form class="auction-form" @submit.prevent="handleSubmit(changeMinimumBid)">
-            <validation-provider class="auction-form__bid-amount" :rules="`required|max_decimals:${auctionInfo.auction_info.bid_token.token_info.decimals ? auctionInfo.auction_info.bid_token.token_info.decimals : 0}`" v-slot="{ errors }">
+            <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
               <label for="minimum-bid-amount">Minimum bid</label>
               <span class="error">{{ errors[0] }}</span>
               <input name="minimum-bid-amount" type="text" v-model.trim="newMinimumBid" />
@@ -234,7 +234,8 @@ export default {
   },
   methods: {
     async placeBid() {
-      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auction.address, this.bidPrice * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals));
+      console.log(this.bidPrice)
+      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.bidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals));
       if(!this.hasViewingKey) {
         const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
         await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
