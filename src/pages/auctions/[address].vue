@@ -188,7 +188,9 @@ export default {
   },
   watch: {
     keplrAccount(newValue, oldValue) {
-      console.log("ACCOUNT'S READY YO", newValue);
+      if(newValue) {
+        this.refreshAuction();
+      }
     }
   },
   computed: {
@@ -226,9 +228,6 @@ export default {
   },
   destroyed () {
       clearInterval(this.interval);
-  },
-  created () {
-    this.refreshAuction();
   },
   methods: {
     async placeBid() {
