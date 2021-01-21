@@ -92,7 +92,7 @@
 import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required, min_value, max_decimals } from "vee-validate/dist/rules";
+import { required, min_value/*, max_decimals */} from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
 extend("required", {
