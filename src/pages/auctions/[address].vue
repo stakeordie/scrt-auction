@@ -234,7 +234,7 @@ export default {
   },
   methods: {
     async placeBid() {
-      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auction.address, bidPrice * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals));
+      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auction.address, this.bidPrice * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals));
       if(!this.hasViewingKey) {
         const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
         await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
