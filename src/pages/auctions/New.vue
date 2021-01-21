@@ -1,13 +1,12 @@
 <template>
-    <page>
-        <column :class="'new-auction__stage-' + stage" number="3" number-m="1" number-s="1">
-            <block class="scrt-box">
-                <h1>Auction Info</h1>
-                <validation-observer v-slot="{ handleSubmit, invalid }">
+    <validation-observer v-slot="{ handleSubmit, invalid }">
+        <page>
+            <column :class="'new-auction__stage-' + stage" number="3" number-m="1" number-s="1">
+                <block class="scrt-box">
+                    <h1>Auction Info</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
                         <div class="auction-form__label">
-                            <label for="auction-label">Label</label>
-                            <a href="" @click="randomizeLabel()" class="auction-form__label-emoji no-button">{{ String.fromCodePoint($auctions.emojiHash(auctionForm.label)) }}</a>
+                            <a href="" :title="auctionForm.label" @click="randomizeLabel()" class="auction-form__label-emoji no-button">{{ String.fromCodePoint($auctions.emojiHash(auctionForm.label)) }}</a>
                         </div>
 
                         <!-- Using keplr to get the account -->
@@ -82,48 +81,68 @@
 
                         <button class="auction-form__info-action" :disabled="invalid || stage != 'info'">Continue</button>
                     </form>
-                </validation-observer>
-            </block>
+                </block>
 
 
-            <block>
-                <div class="stage-panel stage-panel__info">
-                    <h3><span class="number">1</span> Fill the form</h3>
-                    <div class="details">
-                        <p>Fill up the form with the auction information.</p>
-                        <p>Click <strong>"Continue"</strong> when you are ready.</p>
+                <block>
+                    <!-- Form panel -->
+                    <div class="stage-panel stage-panel__info">
+                        <h3><span class="number" :class="{ valid: !invalid }">1</span> Fill the form</h3>
+                        <div class="details">
+                            <p>Fill up the form with the auction information.</p>
+                            <p>Click <strong>"Continue"</strong> when you are ready.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="stage-panel stage-panel__auction">
-                    <h3><span class="number">2</span> Create auction</h3>
-                    <div class="details">
-                        <p>We are ready to creat the auction. Please make sure to have enough gas and authorize both of them!</p>
-                        <ul>
-                            <li>An allowance is placed so the Secret Auctions Factory can sell your tokens.</li>
-                            <li>The factory then creates your auction and lists it in the auctions list.</li>
-                        </ul>
-                        <button class="allowance-form__action" :disabled="stage != 'auction'" @click="createAuction()">Go</button>
-                        <a href="" @click="stage = 'info'">Go back</a>
-                    </div>
-                </div>
-                <div class="stage-panel stage-panel__keys">
-                    <h3><span class="number">3</span> Viewing keys</h3>
-                    <div class="details">
-                        <p>You need a viewing key.</p>
-                        <p>Viewing keys are used in the Secret Netwwork to get access to the Secret Auction bids.</p>
-                        <g-link class="auction-creation__action-list" to="/auctions">See the auction list</g-link>
-                    </div>
-                </div>
-            </block>
 
-            <block>
-                <div class="status">
-                    <p></p>
-                </div>
-            </block>
+                    <!-- Allowance panel -->
+                    <div class="stage-panel stage-panel__allowance">
+                        <h3><span class="number">2</span> Increase allowance</h3>
+                        <div class="details">
+                            <p>Now we are ready to create your Secret Auction.</p>
+                            <p>First an allowance will be set so the secret auctions factory can lock the tokens to be auctioned.</p>
+                            <p><a href="" @click="stage = 'info'">Back</a></p>
+                            <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Go' }}</button>
+                        </div>
+                    </div>
 
-        </column>
-    </page>
+                    <!-- Auction panel -->
+                    <div class="stage-panel stage-panel__auction">
+                        <h3><span class="number">3</span> Creating auction</h3>
+                        <div class="details">
+                            <div v-if="stage == 'auction--creating'">
+                                <p>We are now creating the auction, accept the transaction to continue.</p>
+                                <p>Make sure not to close this window until the process is complete</p>
+                            </div>
+                            <div v-if="stage == 'auction'">
+                                <p>It seems the transaction failed or was cancelled.</p>
+                                <ul>
+                                    <li><a href="" @click="createAuction()">Try again</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Viewing keys panel -->
+                    <div class="stage-panel stage-panel__keys">
+                        <h3><span class="number">4</span> Viewing keys</h3>
+                        <div class="details">
+                            <p>Your Secret Auction is ready</p>
+                            <p>Viewing keys are used in the Secret Network to get access to the Secret Auction bids.</p>
+                            <button @click="createViewingKey()">Create Viewing Key</button>
+                            <p><g-link class="auction-creation__action-list" to="/auctions">See the auction list</g-link></p>
+                        </div>
+                    </div>
+                </block>
+
+                <block>
+                    <div class="status">
+                        <button @click="stage='keys'">GO TO KEYS</button>
+                    </div>
+                </block>
+
+            </column>
+        </page>
+    </validation-observer>
 </template>
 
 <script>
@@ -209,43 +228,62 @@ export default {
     },
     methods: {
         submitInfo() {
-            this.stage = "auction";
+            this.stage = "allowance";
         },
         randomizeLabel() {
-            this.auctionForm.label = "auction-" + Math.round(Math.random() * 1000000);
+            if(this.stage == 'info') {
+                this.auctionForm.label = "auction-" + Math.round(Math.random() * 10000000);
+            }
+        },
+        async increaseAllowance() {
+            try {
+                this.stage = "allowance--creating";
+    
+                const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, this.auctionForm.sellToken.decimals);   
+                const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional.toString());
+                
+                this.createAuction();                
+            } catch(err) {
+                this.stage = "allowance";
+            }
         },
         async createAuction() {
-            const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, this.auctionForm.sellToken.decimals);
-            const bidAmountToFractional = this.minBidAmount * Math.pow(10, this.auctionForm.bidToken.decimals);
+            try {
+                this.stage = "auction--creating";
 
-            const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional.toString());
-            
-            //Create auction
-            const auction = await this.$auctions.createAuction(this.auctionForm.label,
-                this.auctionForm.sellToken.address,
-                this.auctionForm.bidToken.address,
-                sellAmountToFractional.toString(),
-                bidAmountToFractional.toString(),
-                this.auctionForm.formDescription,
+                const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, this.auctionForm.sellToken.decimals);
+                const bidAmountToFractional = this.minBidAmount * Math.pow(10, this.auctionForm.bidToken.decimals);
 
-                // Converts from millis to a second-based UNIX friendly epoch time
-                Math.round(this.auctionForm.endTime.getTime() / 1000)
-            );
-            // Log status
-            console.log("new/CreateAuction/this.$scrtjs.decodedResponse(auction)"); console.log(this.$scrtjs.decodedResponse(auction))
-
-            this.stage = "keys";
-            // Create viewing key if none exists
-            if(!this.hasViewingKey) {
-                const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
-                await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
+                //Create auction
+                const auction = await this.$auctions.createAuction(this.auctionForm.label,
+                    this.auctionForm.sellToken.address,
+                    this.auctionForm.bidToken.address,
+                    sellAmountToFractional.toString(),
+                    bidAmountToFractional.toString(),
+                    this.auctionForm.formDescription,
+    
+                    // Converts from millis to a second-based UNIX friendly epoch time
+                    Math.round(this.auctionForm.endTime.getTime() / 1000)
+                );
+                // Log status
+                console.log("Auction:", auction);
+    
+                this.stage = "keys";
+            } catch(err) {
+                console.log(err);
+                this.stage = "auction";
             }
+        },
+        async createViewingKey() {
+            const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
+            console.log(viewingKey);
+            await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
         },
         updateEndTime() {
             if(this.stage == "info") {
                 this.auctionForm.endTime = new Date((new Date()).getTime() + (Number(this.endTimeAmount || 1) * Number(this.endTimeUnit) * 60000));
             }
-        }
+        }, 
     },
 }
 </script>
@@ -301,8 +339,7 @@ export default {
     }
 
     &__label {
-        text-align: center;
-        align-self: start;
+        align-self: center;
         &-emoji {
             font-size: 40px;
             text-decoration: none;
@@ -346,9 +383,16 @@ export default {
   padding: var(--f-gutter);
   border-radius: 10px;
   margin-bottom: var(--f-gutter);
+  padding-bottom: 0;
+
+  transition: height 1s;
 
   .details {
       display: none;
+  }
+
+  h3 {
+      display: inline-block;
   }
 
   p, li {
@@ -373,13 +417,18 @@ export default {
 
 // All the stage fun comes here...
 .new-auction {
+
+    // Info stage
     &__stage-info {
         
         .stage-panel__info {
             border: 1px solid rgba(255,255,255,0.5);
             .number {
-                background-color: var(--color-yellow-secondary);
                 color: black;
+                background-color: var(--color-yellow-primary);
+                &.valid {
+                    background-color: var(--color-positive);
+                }
             }
             .details {
                 display: block;
@@ -390,7 +439,8 @@ export default {
         }
     }
 
-    &__stage-auction {
+    // Allowance stage
+    &__stage-allowance, &__stage-allowance--creating {
         .auction-form {
             opacity: 0.3;
         }
@@ -399,26 +449,52 @@ export default {
                 background-color: var(--color-positive);
             }
         }
-        .stage-panel__auction {
+        .stage-panel__allowance {
             border: 1px solid rgba(255,255,255,0.5);
             .number {
-                background-color: var(--color-yellow-secondary);
+                background-color: var(--color-yellow-primary);
                 color: black;
             }
             .details {
                 display: block;
             }
         }
-        .stage-panel__info, .stage-panel__keys {
+        .stage-panel__info, .stage-panel__auction, .stage-panel__keys {
             opacity: 0.5;
         }
     }
 
+    // Auction stage
+    &__stage-auction, &__stage-auction--creating {
+        .auction-form {
+            opacity: 0.3;
+        }
+        .stage-panel__info, .stage-panel__allowance {
+            .number {
+                background-color: var(--color-positive);
+            }
+        }
+        .stage-panel__auction {
+            border: 1px solid rgba(255,255,255,0.5);
+            .number {
+                background-color: var(--color-yellow-primary);
+                color: black;
+            }
+            .details {
+                display: block;
+            }
+        }
+        .stage-panel__info, .stage-panel__keys, .stage-panel__allowance {
+            opacity: 0.5;
+        }
+    }
+
+    // Keys stage
     &__stage-keys {
         .auction-form {
             opacity: 0.3;
         }
-        .stage-panel__info, .stage-panel__auction {
+        .stage-panel__info, .stage-panel__auction, .stage-panel__allowance {
             .number {
                 background-color: var(--color-positive);
                 color: black;
@@ -428,7 +504,7 @@ export default {
         .stage-panel__keys {
             border: 1px solid rgba(255,255,255,0.5);
             .number {
-                background-color: var(--color-positive);
+                background-color: var(--color-yellow-primary);
                 color: black;
             }
             .details {
