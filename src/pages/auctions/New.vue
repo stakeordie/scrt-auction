@@ -211,9 +211,11 @@ export default {
         ]),
         minBidAmount() {
             if(this.auctionForm.bidToken) {
-                return (this.auctionForm.bidPrice * this.auctionForm.sellAmount).toFixed(this.auctionForm.bidToken.decimals);
+                const rawBidAmount = new Decimal(this.auctionForm.bidPrice * this.auctionForm.sellAmount);
+                return Number(Math.round(rawBidAmount+'e'+this.auctionForm.bidToken.decimals)+'e-'+this.auctionForm.bidToken.decimals);
             } else {
-                return this.auctionForm.bidPrice * this.auctionForm.sellAmount;
+                return "Select a Bid Token"
+                //return this.auctionForm.bidPrice * this.auctionForm.sellAmount;
             }
         },
         endTimeString() {
