@@ -12,6 +12,7 @@
     "@gridsome/vue-remark": "^0.2.6",
     "@lkmx/flare": "^0.3.20",
     "animate.css": "^4.1.1",
+    "decimal.js": "^10.2.1",
     "dotenv": "^8.2.0",
     "eslint": "^7.17.0",
     "gridsome": "^0.7.0",

@@ -87,7 +87,7 @@
                 <block>
                     <!-- Form panel -->
                     <div class="stage-panel stage-panel__info">
-                        <h3><span class="number" :class="{ valid: !invalid }">1</span> Fill the form</h3>
+                        <h3><span class="number" :class="{ valid: !invalid }">1</span> Fill auction details</h3>
                         <div class="details" v-if="stage == 'info'">
                             <p>Fill up the form with the auction information.</p>
                             <p>Click <strong>"Continue"</strong> when you are ready.</p>
@@ -150,6 +150,10 @@ import { mapGetters } from 'vuex'
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value } from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
+
+import { Decimal } from 'decimal.js';
+
+
 
 extend("required", {
   ...required,
@@ -242,9 +246,10 @@ export default {
         async increaseAllowance() {
             try {
                 this.stage = "allowance--creating";
+
     
                 const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, this.auctionForm.sellToken.decimals);   
-                const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional.toString());
+                const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, (new Decimal(sellAmountToFractional).toFixed(0)));
                 
                 this.createAuction();                
             } catch(err) {
@@ -263,8 +268,8 @@ export default {
                 const auction = await this.$auctions.createAuction(this.auctionForm.label,
                     this.auctionForm.sellToken.address,
                     this.auctionForm.bidToken.address,
-                    sellAmountToFractional.toString(),
-                    bidAmountToFractional.toString(),
+                    new Decimal(sellAmountToFractional).toFixed(0),
+                    new Decimal(bidAmountToFractional).toFixed(0),
                     this.auctionForm.formDescription,
     
                     // Converts from millis to a second-based UNIX friendly epoch time
