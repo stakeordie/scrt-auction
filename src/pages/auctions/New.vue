@@ -135,7 +135,7 @@
                     </div>
 
                 </block>
-                    <button @click="stage='congrats'">GO TO LAST</button>
+                    <!--button @click="stage='congrats'">GO TO LAST</button-->
                 <block>
                 </block>
 
