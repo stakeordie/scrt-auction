@@ -103,18 +103,18 @@ extend("required", {
 extend("min_value", {
   params: ["minimumBid"],
   validate: (value, param) => {
-    return parseInt(value) >= parseInt(param.minimumBid);
+    return parseFloat(value) >= parseFloat(param.minimumBid);
   },
   message: "The minimum bid for this auction is {minimumBid}.",
 });
 
-extend("max_decimals", {
-  params: ["maxDecimalsAllowed"],
-  validate: (value, param) => {
-    return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
-  },
-  message: "The maximum # of decimals allowed is {maxDecimalsAllowed}",
-});
+// extend("max_decimals", {
+//   params: ["maxDecimalsAllowed"],
+//   validate: (value, param) => {
+//     return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
+//   },
+//   message: "The maximum # of decimals allowed is {maxDecimalsAllowed}",
+// });
 
 export default {
   components: {ValidationObserver, ValidationProvider, KeplrAccount},
@@ -201,7 +201,7 @@ export default {
       return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
     },
     bidAmount: function() {
-      return this.placeBidForm.bidPrice * this.sellAmountFromFractional
+      return Number(Math.round((this.placeBidForm.bidPrice * this.sellAmountFromFractional)+'e'+this.auctionInfo.auction_info.bid_token.token_info.decimals)+'e-'+this.auctionInfo.auction_info.bid_token.token_info.decimals)
     },
     sellAmountFromFractional: function () {
       return this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)
@@ -218,6 +218,9 @@ export default {
     formBidAmountToFractional: function () {
       return this.formBidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
     },
+    minimumPrice: function () {
+      return this.minimumBidFromFractional / this.sellAmountFromFractional;
+    },
     endTimeString() {
         return this.newEndTime.toLocaleString();
     }
@@ -231,7 +234,7 @@ export default {
   },
   methods: {
     async placeBid() {
-      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auction.address, (this.placeBidForm.bidPrice * this.auction.sell.decimalAmount) * Math.pow(10, this.auction.sell.decimals));
+      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auction.address, bidPrice * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals));
       if(!this.hasViewingKey) {
         const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
         await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
@@ -282,8 +285,8 @@ export default {
       console.log("[address]/created/auctionInfo"); console.log(this.auctionInfo);
       if(this.auctionInfo) {
         this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-        this.validationRules = "required|min_value:" + this.minimumBidFromFractional + "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals;
-        this.formBidAmount = this.minimumBidFromFractional;
+        this.validationRules = "required|min_value:" + this.minimumPrice /*+ "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals*/;
+        this.placeBidForm.bidPrice = this.minimumPrice;
         this.newMinimumBid = this.minimumBidFromFractional;
         if(this.auctionInfo.auction_info.status == "Closed") {
           this.isClosed = true;
