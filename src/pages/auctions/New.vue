@@ -210,13 +210,8 @@ export default {
             "getToken"
         ]),
         minBidAmount() {
-            if(this.auctionForm.bidToken) {
-                const rawBidAmount = new Decimal(this.auctionForm.bidPrice * this.auctionForm.sellAmount);
-                return rawBidAmount.toFixed(this.auctionForm.bidToken.decimals).replace(/\.?0+$/,"");
-            } else {
-                return "Select a Bid Token"
-                //return this.auctionForm.bidPrice * this.auctionForm.sellAmount;
-            }
+            const rawBidAmount = new Decimal(this.auctionForm.bidPrice).times(this.auctionForm.sellAmount);
+            return rawBidAmount.toFixed(this.auctionForm.bidToken?.decimals);
         },
         endTimeString() {
             return this.auctionForm.endTime.toLocaleString();
