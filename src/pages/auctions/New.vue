@@ -89,7 +89,7 @@
                     <div class="stage-panel stage-panel__info">
                         <h3><span class="number" :class="{ valid: !invalid }">1</span> Fill auction details</h3>
                         <div class="details" v-if="stage == 'info'">
-                            <p>Fill up the form with the auction information.</p>
+                            <p>Fill up the form with the auction details.</p>
                             <p>Click <strong>"Continue"</strong> when you are ready.</p>
                         </div>
                     </div>
@@ -100,8 +100,13 @@
                         <div class="details" v-if="stage == 'allowance' || stage == 'allowance--creating'">
                             <p>Now we are ready to create your Secret Auction.</p>
                             <p>First an allowance will be set so the secret auctions factory can lock the tokens to be auctioned.</p>
-                            <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Go' }}</button>
-                            <p v-if="stage == 'allowance'"><a href="" @click="stage = 'info'">Back</a></p>
+                            <div class="allowance-action" v-if="stage == 'allowance'">
+                                <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Go' }}</button>
+                                <p><a href="" @click="stage = 'info'">Back</a></p>
+                            </div>
+                            <loading-icon v-if="stage == 'allowance--creating'">
+                                <p>Increasing allowance</p>
+                            </loading-icon>
                         </div>
                     </div>
 
@@ -110,8 +115,10 @@
                         <h3><span class="number">3</span> Creating auction</h3>
                         <div class="details">
                             <div v-if="stage == 'auction--creating'">
-                                <p>We are now creating the auction, accept the transaction to continue.</p>
-                                <p>Make sure to not to refresh or close this window until the process is complete.</p>
+                                <loading-icon v-if="stage == 'auction--creating'">
+                                    <p>Executing the contract</p>
+                                </loading-icon>
+                                <p>Sign it using your Keplr wallet.</p>
                             </div>
                             <div v-if="stage == 'auction'">
                                 <p>It seems the transaction failed or was cancelled.</p>
@@ -128,14 +135,13 @@
                         <h3>Congratulations</h3>
                         <div class="details">
                             <p>Your Secret Auction is ready.</p>
-                            <textarea v-if="viewingKey" readonly v-model="viewingKey"></textarea>
+                            <create-vkey></create-vkey>
                             <p><g-link class="auction-creation__action-list" to="/auctions">See the auction list</g-link></p>
-                            <button v-if="!viewingKey" @click="createViewingKey()">Create and save viewing Key</button>
                         </div>
                     </div>
 
                 </block>
-                    <!--button @click="stage='congrats'">GO TO LAST</button-->
+                    <button @click="stage='congrats'">GO TO LAST</button>
                 <block>
                 </block>
 
@@ -152,6 +158,8 @@ import { required, min_value } from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
 import { Decimal } from 'decimal.js';
+import LoadingIcon from '../../components/LoadingIcon.vue';
+import CreateVkey from '../../components/CreateVkey.vue';
 
 
 
@@ -174,7 +182,7 @@ extend("max_decimals", {
 });
 
 export default {
-    components: { ValidationObserver, ValidationProvider, KeplrAccount },
+    components: { ValidationObserver, ValidationProvider, KeplrAccount, LoadingIcon, CreateVkey },
     metaInfo: {
         title: 'New auction',
     },
@@ -210,8 +218,8 @@ export default {
             "getToken"
         ]),
         minBidAmount() {
-            const rawBidAmount = new Decimal(this.auctionForm.bidPrice).times(this.auctionForm.sellAmount);
-            return rawBidAmount.toFixed(this.auctionForm.bidToken?.decimals);
+            const rawBidAmount = new Decimal(this.auctionForm.bidPrice || 0).times(this.auctionForm.sellAmount || 0);
+            return rawBidAmount.toString();
         },
         endTimeString() {
             return this.auctionForm.endTime.toLocaleString();
@@ -244,9 +252,8 @@ export default {
             try {
                 this.stage = "allowance--creating";
 
-    
-                const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, this.auctionForm.sellToken.decimals);   
-                const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, (new Decimal(sellAmountToFractional).toFixed(0)));
+                const sellAmountToFractional =new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
+                const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional);
                 
                 this.createAuction();                
             } catch(err) {
@@ -279,14 +286,6 @@ export default {
             } catch(err) {
                 this.stage = "auction";
                 this.auctionError = err.message;
-            }
-        },
-        async createViewingKey() {
-            //console.log(this.$vkeys.get('x', 'x'));
-            //console.log(this.$vkeys.get(this.auctionForm.account));
-            this.viewingKey = await this.$auctions.createViewingKey();
-            if(this.viewingKey) {
-                 await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey);
             }
         },
         updateEndTime() {

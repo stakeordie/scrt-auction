@@ -22,7 +22,7 @@
 
     <template #footer>
       <simple-footer>
-        <p>If you have thoughts, notice any issues, or want to see any specific features. Create an issue on github <g-link to="https://github.com/stakeordie/scrt-auction">here.</g-link></p>
+        <p>Create an issue on <g-link to="https://github.com/stakeordie/scrt-auction">Github</g-link> if you have thoughts, notice any issues, or want to see any specific features.</p>
       </simple-footer>
     </template>
 
