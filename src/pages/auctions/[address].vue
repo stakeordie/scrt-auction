@@ -211,7 +211,7 @@ export default {
       }
     },
     sellAmountFromFractional: function () {
-      return (this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)).toFixed(this.auctionInfo.auction_info.sell_token.token_info.decimals).replace(/\.?0+$/,"")
+      return new Decimal(this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)).toFixed(this.auctionInfo.auction_info.sell_token.token_info.decimals).replace(/\.?0+$/,"")
     },
     winningBidFromFractional: function () {
       return this.auctionInfo.auction_info.winning_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
