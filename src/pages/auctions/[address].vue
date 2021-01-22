@@ -95,6 +95,8 @@ import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value/*, max_decimals */} from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
+import { Decimal } from 'decimal.js';
+
 extend("required", {
   ...required,
   message: "This field is required",
@@ -201,7 +203,12 @@ export default {
       return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
     },
     bidAmount: function() {
-      return Number(Math.round((this.placeBidForm.bidPrice * this.sellAmountFromFractional)+'e'+this.auctionInfo.auction_info.bid_token.token_info.decimals)+'e-'+this.auctionInfo.auction_info.bid_token.token_info.decimals)
+      if(this.auctionInfo.auction_info.bid_token.token_info?.decimals) {
+        const rawBidAmount = new Decimal(this.placeBidForm.bidPrice * this.sellAmountFromFractional);
+        return rawBidAmount.toFixed(this.auctionInfo.auction_info.bid_token.token_info.decimals).replace(/\.?0+$/,"");
+      } else {
+        return 0;
+      }
     },
     sellAmountFromFractional: function () {
       return (this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)).toFixed(this.auctionInfo.auction_info.sell_token.token_info.decimals).replace(/\.?0+$/,"")
@@ -235,7 +242,8 @@ export default {
   methods: {
     async placeBid() {
       console.log(this.bidPrice)
-      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, this.bidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals));
+      const bidAmountToFractional = this.bidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals);
+      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
       if(!this.hasViewingKey) {
         const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
         await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);

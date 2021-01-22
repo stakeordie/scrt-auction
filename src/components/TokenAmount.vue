@@ -25,7 +25,7 @@ export default {
     },
     computed: {
         amountHuman() {
-            return this.amount.toFixed(this.decimals); 
+            return this.amount.toFixed(this.decimals).replace(/\.?0+$/,""); 
         },
     },
 }
