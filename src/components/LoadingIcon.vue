@@ -40,6 +40,7 @@
 }
 .lds-ring div:nth-child(1) {
   animation-delay: -0.45s;
+  border: 8px solid var(--color-blue-primary);
 }
 .lds-ring div:nth-child(2) {
   animation-delay: -0.3s;

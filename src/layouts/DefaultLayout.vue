@@ -11,8 +11,8 @@
         </nav>
         <div class="actions">
           <div class="user-info">
-            <viewing-key></viewing-key>
-            <keplr-user></keplr-user>
+            <vkeys-wallet :account="keplrAccount" :contract="$auctions.factoryAddress"></vkeys-wallet>
+            <keplr-user v-model="keplrAccount"></keplr-user>
           </div>
         </div>
       </simple-header>
@@ -32,9 +32,15 @@
 <script>
 import KeplrUser from '../components/KeplrUser.vue'
 import ViewingKey from '../components/ViewingKey.vue'
+import VkeysWallet from '../components/VkeysWallet.vue'
 
 export default {
-  components: { KeplrUser, ViewingKey },  
+  components: { KeplrUser, ViewingKey, VkeysWallet },
+  data() {
+    return {
+      keplrAccount: null
+    }
+  },
 }
 </script>
 
@@ -53,6 +59,10 @@ query {
       height: 50px;
     }
     //padding: var(--f-gutter-s) 0; // var(--f-gutter);
+  }
+  .user-info {
+    display: flex;
+    flex-flow: row nowrap;
   }
 }
 </style>

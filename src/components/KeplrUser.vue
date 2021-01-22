@@ -23,6 +23,12 @@
 const AUTO_CLOSE_TIME = 3000;
 
 export default {
+  props: {
+    value: {
+      type: String,
+      default: null,
+    },
+  },
   data () {
     return {
         showDetails: false,
@@ -31,6 +37,7 @@ export default {
   },
   computed: {
     address() {
+      this.$emit("input", this.$store.state.$keplr.selectedAccount?.address);
       return this.$store.state.$keplr.selectedAccount?.address;
     },
   },

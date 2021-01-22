@@ -3,7 +3,7 @@
         <page>
             <column :class="'new-auction__stage-' + stage" number="3" number-m="1" number-s="1">
                 <block class="scrt-box">
-                    <h1>Auction Info</h1>
+                    <h1>New auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
                         <div class="auction-form__label">
                             <a href="" :title="auctionForm.label" @click="randomizeLabel()" class="auction-form__label-emoji no-button">{{ String.fromCodePoint($auctions.emojiHash(auctionForm.label)) }}</a>
@@ -112,13 +112,13 @@
 
                     <!-- Auction panel -->
                     <div class="stage-panel stage-panel__auction" :class="{ error: auctionError }">
-                        <h3><span class="number">3</span> Creating auction</h3>
+                        <h3><span class="number">3</span> Create auction</h3>
                         <div class="details">
                             <div v-if="stage == 'auction--creating'">
                                 <loading-icon v-if="stage == 'auction--creating'">
                                     <p>Executing the contract</p>
                                 </loading-icon>
-                                <p>Sign it using your Keplr wallet.</p>
+                                <p>Sign it using your Keplr wallet. Please don't close or refresh this window.</p>
                             </div>
                             <div v-if="stage == 'auction'">
                                 <p>It seems the transaction failed or was cancelled.</p>
@@ -135,14 +135,14 @@
                         <h3>Congratulations</h3>
                         <div class="details">
                             <p>Your Secret Auction is ready.</p>
-                            <create-vkey></create-vkey>
-                            <p><g-link class="auction-creation__action-list" to="/auctions">See the auction list</g-link></p>
+                            <app-vkey :contract="$auctions.factoryAddress" :account="auctionForm.account"></app-vkey>
+                            <p><g-link class="auction-creation__action-list" to="/auctions">See your auction</g-link></p>
+                            <p><g-link class="auction-creation__action-list" to="/auctions">Go to the auction list</g-link></p>
                         </div>
                     </div>
-
                 </block>
-                    <button @click="stage='congrats'">GO TO LAST</button>
                 <block>
+                    <app-vkey :contract="$auctions.factoryAddress" :account="auctionForm.account"></app-vkey>
                 </block>
 
             </column>
@@ -155,12 +155,11 @@ import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value } from "vee-validate/dist/rules";
-import KeplrAccount from '../../components/KeplrAccount.vue';
+import KeplrAccount from '../../components/KeplrAccount';
 
 import { Decimal } from 'decimal.js';
-import LoadingIcon from '../../components/LoadingIcon.vue';
-import CreateVkey from '../../components/CreateVkey.vue';
-
+import LoadingIcon from '../../components/LoadingIcon';
+import AppVkey from '../../components/AppVkey'
 
 
 extend("required", {
@@ -182,7 +181,7 @@ extend("max_decimals", {
 });
 
 export default {
-    components: { ValidationObserver, ValidationProvider, KeplrAccount, LoadingIcon, CreateVkey },
+    components: { ValidationObserver, ValidationProvider, KeplrAccount, LoadingIcon, AppVkey },
     metaInfo: {
         title: 'New auction',
     },
@@ -252,7 +251,7 @@ export default {
             try {
                 this.stage = "allowance--creating";
 
-                const sellAmountToFractional =new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
+                const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
                 const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional);
                 
                 this.createAuction();                
@@ -265,8 +264,8 @@ export default {
                 this.stage = "auction--creating";
                 this.auctionError = null;
 
-                const sellAmountToFractional = this.auctionForm.sellAmount * Math.pow(10, this.auctionForm.sellToken.decimals);
-                const bidAmountToFractional = this.minBidAmount * Math.pow(10, this.auctionForm.bidToken.decimals);
+                const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
+                const bidAmountToFractional  = new Decimal(10).toPower(this.auctionForm.bidToken.decimals).times(this.minBidAmount).toFixed(0);
 
                 //Create auction
                 const auction = await this.$auctions.createAuction(this.auctionForm.label,
