@@ -73,6 +73,14 @@ export class AuctionsApi {
         return await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }});
     }
 
+    async getAuctionHasBids(auctionAddress,viewingKey) {
+        //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
+        const chainId = await this.scrtClient.getChainId()
+        const offlineSigner = await window.getOfflineSigner(chainId);
+        const address = (await offlineSigner.getAccounts())[0].address;
+        return await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": address,"viewing_key": viewingKey }});
+    }
+
     async getWallet() {
         if(process.isClient) {
             let wallet = localStorage.getItem('sodWallet');

@@ -6,18 +6,20 @@
           <keplr-account v-model="keplrAccount" :abbreviation="16"></keplr-account>
           <h2>Auction Info</h2>
           <div>Amount: {{ sellAmountFromFractional }}</div>
-          <div>Sell Token: {{ auctionInfo.auction_info.sell_token.token_info.name }} ({{ auctionInfo.auction_info.sell_token.token_info.symbol }})</div>
-          <div>Bid Token: {{ auctionInfo.auction_info.bid_token.token_info.name }} ({{ auctionInfo.auction_info.bid_token.token_info.symbol }})</div>
+          <div>Sell Token: {{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</div>
+          <div>Bid Token: {{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</div>
           <div>Min Bid: {{ minimumBidFromFractional }}</div>
-          <div>Description: {{ auctionInfo.auction_info.description }}</div>
-          <div>Status: {{ auctionInfo.auction_info.status }}</div>
+          <div>Description: {{ auctionInfo.description }}</div>
+          <div>Status: {{ auctionInfo.status }}</div>
           <div v-if="isClosed">Winning Bid: {{ winningBidFromFractional }} </div>
-          <div>Ends At: {{  auctionInfo.auction_info.ends_at }}</div>
+          <div>Ends At: {{  auctionInfo.ends_at }}</div>
           <div v-if="bidInfo.bid.amount_bid > 0">
-            <div>Open Bid: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.auction_info.bid_token.token_info.decimals)}} {{auctionInfo.auction_info.bid_token.token_info.symbol}}</div>
+            <div>Open Bid: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.bid_token.token_info.decimals)}} {{auctionInfo.bid_token.token_info.symbol}}</div>
             <button @click="retractBid()">Retract Your Bid</button>
           </div>
-          <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bids on this auction.</div>
+          <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bid on this auction.</div>
+          <div v-if="isOwner && hasBids">This auction has 1 or more bids</div>
+          <div v-else-if="isOwner">This auction has 0 total bids</div>
         </block>
 
         <button v-show="isOwner & !changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Change Minimum Bid</button><br/>
@@ -32,33 +34,44 @@
           </form>
         </validation-observer>
 
-        <button v-show="isOwner & !isEnded & !updateEndTimeRequested" @click="updateEndTimeRequested = !updateEndTimeRequested">Update End Time</button><br/>
-        <validation-observer v-show="isOwner & !isEnded & updateEndTimeRequested" v-slot="{ handleSubmit, invalid }">
-          <form class="auction-form" @submit.prevent="handleSubmit(changeEndTime)">
-            <!-- End auction date time -->
-            <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
+        <button v-show="!isOwner && isEnded" @click="closeAuctionSimple">Close Auction</button>
+        <button v-show="isOwner && !closeAuctionRequested" @click="closeAuctionRequested = !closeAuctionRequested">Close Auction</button>
+        <div v-show="closeAuctionRequested" class="stage-panel stage-panel__info">
+            <h3><span class="number">1</span> Fill auction details</h3>
+            <div class="details">
+                <p>Fill up the form with the auction details.</p>
+                <p>Click <strong>"Continue"</strong> when you are ready.</p>
+            </div>
+            <validation-observer v-slot="{ handleSubmit, invalid }">
+              <form class="auction-form" @submit.prevent="handleSubmit(closeAuctionInvolved)">
+                <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
+                  <label for="minimum-bid-amount">Minimum bid</label>
+                  <span class="error">{{ errors[0] }}</span>
+                  <input name="minimum-bid-amount" type="text" v-model.trim="newMinimumBid" />
+                </validation-provider>
+                <validation-provider v-show="closeAuctionAdvancedRequested" class="auction-form__end-time" rules="required" v-slot="{ errors }">
 
-                <label for="auction-end-time">End time</label>
-                <span class="error">{{ errors[0] }}</span>
-                <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
+                    <label for="auction-end-time">End time</label>
+                    <span class="error">{{ errors[0] }}</span>
+                    <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
 
-                <p>Can be closed after 
-                    <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="endTimeAmount">
-                    <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
-                        <option value="1">minute<span v-if="endTimeAmount > 1">s</span></option>
-                        <option value="60">hour<span v-if="endTimeAmount > 1">s</span></option>
-                        <option value="1440">day<span v-if="endTimeAmount > 1">s</span></option>
-                        <option value="10080">week<span v-if="endTimeAmount > 1">s</span></option>
-                    </select>
-                </p>
-            </validation-provider>
-          
-            <button :disabled="invalid">Change End Time</button>
-            
-          </form>
-        </validation-observer>
+                    <p>Can be closed after 
+                        <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="endTimeAmount">
+                        <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
+                            <option value="1">minute<span v-if="endTimeAmount > 1">s</span></option>
+                            <option value="60">hour<span v-if="endTimeAmount > 1">s</span></option>
+                            <option value="1440">day<span v-if="endTimeAmount > 1">s</span></option>
+                            <option value="10080">week<span v-if="endTimeAmount > 1">s</span></option>
+                        </select>
+                    </p>
+                </validation-provider>
+                <a @click="closeAuctionAdvancedRequested = !closeAuctionAdvancedRequested" onclick="return false;" style='cursor: pointer;'>Advanced</a>
+                
+                <button :disabled="invalid">Complete Close Auction</button>
+              </form>
+            </validation-observer>
+        </div>
 
-        <button v-show="isOwner || isEnded" @click="closeAuction()">Close Auction</button>
 
         <block v-show="!isClosed">
           <h2>Place a Bid</h2>
@@ -135,7 +148,6 @@ export default {
       formBidAmount: 1,
       codeHash: "",
       auctionInfo: {
-        auction_info: {
           sell_token: {
             contract_address: "",
             token_info: {
@@ -161,7 +173,6 @@ export default {
           status: "",
           ends_at: "",
           winning_bid: ""
-        }
       },
       validationRules: "",
       isOwner: false,
@@ -180,6 +191,8 @@ export default {
       },
       
       changeMinimumBidRequested: false,
+      closeAuctionRequested: false,
+      closeAuctionAdvancedRequested: false,
       newMinimumBid: 0,
 
       updateEndTimeRequested: false,
@@ -203,27 +216,27 @@ export default {
       return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
     },
     bidAmount: function() {
-      if(this.auctionInfo.auction_info.bid_token.token_info?.decimals) {
+      if(this.auctionInfo.bid_token.token_info?.decimals) {
         const rawBidAmount = new Decimal(this.placeBidForm.bidPrice * this.sellAmountFromFractional);
-        return rawBidAmount.toFixed(this.auctionInfo.auction_info.bid_token.token_info.decimals).replace(/\.?0+$/,"");
+        return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
       } else {
         return 0;
       }
     },
     sellAmountFromFractional: function () {
-      return new Decimal(this.auctionInfo.auction_info.sell_amount / Math.pow(10, this.auctionInfo.auction_info.sell_token.token_info.decimals)).toFixed(this.auctionInfo.auction_info.sell_token.token_info.decimals).replace(/\.?0+$/,"")
+      return new Decimal(this.auctionInfo.sell_amount / Math.pow(10, this.auctionInfo.sell_token.token_info.decimals)).toFixed(this.auctionInfo.sell_token.token_info.decimals).replace(/\.?0+$/,"")
     },
     winningBidFromFractional: function () {
-      return this.auctionInfo.auction_info.winning_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
+      return this.auctionInfo.winning_bid / Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)
     },
     minimumBidFromFractional: function () {
-      return (this.auctionInfo.auction_info.minimum_bid / Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)).toFixed(this.auctionInfo.auction_info.bid_token.token_info.decimals).replace(/\.?0+$/,"")
+      return (this.auctionInfo.minimum_bid / Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
     },
     newMinimumBidToFractional: function () {
-      return this.newMinimumBid * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
+      return this.newMinimumBid * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)
     },
     formBidAmountToFractional: function () {
-      return this.formBidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals)
+      return this.formBidAmount * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)
     },
     minimumPrice: function () {
       return this.minimumBidFromFractional / this.sellAmountFromFractional;
@@ -242,8 +255,8 @@ export default {
   methods: {
     async placeBid() {
       console.log(this.bidPrice)
-      const bidAmountToFractional = this.bidAmount * Math.pow(10, this.auctionInfo.auction_info.bid_token.token_info.decimals);
-      const placedBid = await this.$auctions.placeBid(this.auctionInfo.auction_info.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
+      const bidAmountToFractional = this.bidAmount * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
+      const placedBid = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
       if(!this.hasViewingKey) {
         const viewingKey = await this.$auctions.createViewingKey(this.$auctions.factoryAddress);
         await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress,viewingKey);
@@ -265,15 +278,17 @@ export default {
       const changedEndTime = await this.$auctions.changeEndTime(this.auctionAddress, this.newEndTime);
       this.refreshAuction();
     },
-    async closeAuction() {
+    async closeAuctionSimple() {
+      const closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
+      this.refreshAuction();
+    },
+    async closeAuctionInvolved() {
       const closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
       this.refreshAuction();
     },
     async refreshAuction() {
       this.auctionAddress = this.$route.params.address;
-      console.log("[address]/refreshAuction/keprWalletAddress"); console.log(this.$store.state.$keplr.selectedAccount?.address);
       const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-      console.log("[address].vue/created/viewingKey"); console.log(viewingKey);
       if(viewingKey) {
         this.hasViewingKey = true;
         const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
@@ -287,21 +302,23 @@ export default {
           const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
           if(is_owner.length > 0) {
             this.isOwner = true;
+            this.hasBids = (await this.$auctions.getAuctionHasBids(this.auctionAddress, viewingKey)).has_bids.has_bids;
           }
         }
       }
-      this.auctionInfo = await this.$auctions.getAuctionInfo(this.auctionAddress);
+      const auctionInfoResult = await this.$auctions.getAuctionInfo(this.auctionAddress);
+      this.auctionInfo = auctionInfoResult.auction_info;
       console.log("[address]/created/auctionInfo"); console.log(this.auctionInfo);
       if(this.auctionInfo) {
         this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-        this.validationRules = "required|min_value:" + this.minimumPrice /*+ "|max_decimals:" + this.auctionInfo.auction_info.bid_token.token_info.decimals*/;
+        this.validationRules = "required|min_value:" + this.minimumPrice /*+ "|max_decimals:" + this.auctionInfo.bid_token.token_info.decimals*/;
         this.placeBidForm.bidPrice = this.minimumPrice;
         this.newMinimumBid = this.minimumBidFromFractional;
-        if(this.auctionInfo.auction_info.status == "Closed") {
+        if(this.auctionInfo.status == "Closed") {
           this.isClosed = true;
         }
         // if ends_at is in the past
-        const ended = new Date(this.auctionInfo.auction_info.ends_at);
+        const ended = new Date(this.auctionInfo.ends_at);
         const now = new Date();
         if(now > ended) {
           this.isEnded = true;
@@ -315,4 +332,215 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+
+.auction-form {
+    display: grid;
+    grid-template-columns: 70px 1fr 100px;
+    column-gap: var(--f-gutter);
+    align-items: end;
+
+    select, textarea, input {
+        width: 100%;
+    }
+
+    input:read-only {
+        color: var(--f-default-text-color);
+        background-color: var(--color-black);
+        border: 1px solid var(--color-black);
+        font-weight: 600;
+    }
+
+    label {
+        margin-bottom: var(--f-gutter-xxs);
+    }
+
+    &__account {
+        grid-column: 2 / 4;
+    }
+    &__sell-amount {
+        grid-column: 1 / 3;
+    }
+    &__bid-amount {
+        grid-column: 2 / 3;
+    }
+    &__bid-price {
+        grid-column: 1 / 2;
+    }
+    &__bid-sell, &__bid-denom {
+        grid-column: 3 / 4;
+    }
+    &__info-action, &__end-time, &__description {
+        grid-column: 1 / 4;
+    }
+
+    .keplr__account {
+        font-size: 21px;
+    }
+
+    &__label {
+        align-self: center;
+        &-emoji {
+            font-size: 40px;
+            text-decoration: none;
+        }
+        &-change {
+            font-size: 13px;
+        }
+    }
+
+    &__description textarea {
+        min-height: 70px;
+    }
+
+    &__end-time {
+        &__amount {
+            display: inline;
+            max-width: 4ch;
+            margin: 0 1ch;
+        }
+        select {
+            display: inline;
+            width: min-content;
+        }
+    }
+}
+
+.allowance-form {
+    &__action {
+        width: 100%;
+    }
+}
+
+.auction-creation {
+    &__action-list {
+        width: 100%;
+    }
+}
+
+.stage-panel {
+    background-color: var(--color-black);
+    padding: var(--f-gutter);
+    border-radius: 10px;
+    margin-bottom: var(--f-gutter);
+    padding-bottom: 0;
+
+    transition: height 1s;
+
+    h3 {
+        display: inline-block;
+    }
+
+    p, li {
+        font-size: 15px;
+    }
+
+    .error {
+        margin-bottom: var(--f-gutter);
+    }
+
+    .number {
+        display: inline-grid;
+        margin-right: var(--f-gutter-s);
+        background-color: var(--color-purple-primary);
+        border-radius: 1000px;
+        line-height: 1em;
+        width:  30px;
+        height: 30px;
+        justify-items: center;
+        align-items: center;
+        padding-top: 2px;
+    }
+
+}
+
+
+// All the stage fun comes here...
+.new-auction {
+
+    // Info stage
+    &__stage-info {
+        
+        .stage-panel__info {
+            border: 1px solid rgba(255,255,255,0.5);
+            .number {
+                color: black;
+                background-color: var(--color-yellow-primary);
+                &.valid {
+                    background-color: var(--color-positive);
+                }
+            }
+        }
+        .stage-panel__allowance, .stage-panel__auction, .stage-panel__congrats {
+            opacity: 0.5;
+        }
+    }
+
+    // Allowance stage
+    &__stage-allowance, &__stage-allowance--creating {
+        .auction-form {
+            opacity: 0.3;
+        }
+        .stage-panel__info {
+            .number {
+                background-color: var(--color-positive);
+            }
+        }
+        .stage-panel__allowance {
+            border: 1px solid rgba(255,255,255,0.5);
+            .number {
+                background-color: var(--color-yellow-primary);
+                color: black;
+            }
+        }
+        .stage-panel__info, .stage-panel__auction, .stage-panel__congrats {
+            opacity: 0.5;
+        }
+    }
+
+    // Auction stage
+    &__stage-auction, &__stage-auction--creating {
+        .auction-form {
+            opacity: 0.3;
+        }
+        .stage-panel__info, .stage-panel__allowance {
+            .number {
+                background-color: var(--color-positive);
+            }
+        }
+        .stage-panel__auction {
+            &.error {
+                border: 1px solid var(--color-negative);
+            }
+            &:not(.error) {
+                border: 1px solid rgba(255,255,255,0.5);
+            }
+            .number {
+                background-color: var(--color-yellow-primary);
+                color: black;
+            }
+        }
+        .stage-panel__info, .stage-panel__keys, .stage-panel__allowance {
+            opacity: 0.5;
+        }
+    }
+
+    // Congrats stage
+    &__stage-congrats {
+        .auction-form {
+            opacity: 0.3;
+        }
+        .stage-panel__info, .stage-panel__auction, .stage-panel__allowance {
+            .number {
+                background-color: var(--color-positive);
+                color: black;
+            }
+            opacity: 0.5;
+        }
+        .stage-panel__congrats {
+            border: 1px solid var(--color-positive);
+        }
+    }
+}
+
+</style>
