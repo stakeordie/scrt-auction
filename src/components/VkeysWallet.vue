@@ -1,7 +1,7 @@
 <template>
   <div class="vkeys-wallet">
     <div class="wallet-icon">
-      {{savedViewingKey.key}}
+      
     </div>
   </div>
 </template>
