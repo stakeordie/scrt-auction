@@ -74,7 +74,7 @@ export default {
     right: 0;
     background-color: var(--default-background-color);
     padding: var(--gutter);
-    z-index: 11000;
+    z-index: 10000;
 
     box-shadow: 0px 0px 16px -6px rgba(0,0,0,1);
   }

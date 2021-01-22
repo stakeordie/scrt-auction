@@ -10,10 +10,8 @@
           <g-link to="/faqs">FAQs</g-link>
         </nav>
         <div class="actions">
-          <div class="user-info">
-            <vkeys-wallet :account="keplrAccount" :contract="$auctions.factoryAddress"></vkeys-wallet>
-            <keplr-user v-model="keplrAccount"></keplr-user>
-          </div>
+          <vkeys-wallet :account="keplrAccount" :contract="$auctions.factoryAddress"></vkeys-wallet>
+          <keplr-user v-model="keplrAccount"></keplr-user>
         </div>
       </simple-header>
     </template>
@@ -60,9 +58,10 @@ query {
     }
     //padding: var(--f-gutter-s) 0; // var(--f-gutter);
   }
-  .user-info {
-    display: flex;
-    flex-flow: row nowrap;
-  }
+}
+.actions {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: var(--f-gutter);
 }
 </style>

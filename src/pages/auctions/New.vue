@@ -136,7 +136,7 @@
                         <div class="details">
                             <p>Your Secret Auction is ready.</p>
                             <app-vkey :contract="$auctions.factoryAddress" :account="auctionForm.account"></app-vkey>
-                            <p><g-link class="auction-creation__action-list" to="/auctions">See your auction</g-link></p>
+                            <!--p><g-link class="auction-creation__action-list" to="/auctions">See your auction</g-link></p-->
                             <p><g-link class="auction-creation__action-list" to="/auctions">Go to the auction list</g-link></p>
                         </div>
                     </div>
