@@ -1,26 +1,43 @@
 <template>
-  <div class="app-vkey" v-if="account">
-    <div class="no-key" v-if="!savedViewingKey && !viewingKey">
-        <div class="vkey-error" v-if="isInError && !isInProgress">
-            <p>Error creating your viewing key. Do you have enough SCRT?</p>
+  <div class="app-vkey">
+    <div v-if="!account">
+        <p>Please log in using your<br>Keplr wallet</p>
+    </div>
+    <div v-if="account">
+        <div class="no-key" v-if="!savedViewingKey && !viewingKey">
+            <div class="vkey-error" v-if="isInError && !isInProgress">
+                <p>Error creating your viewing key. Do you have enough SCRT?</p>
+            </div>
+            <loading-icon v-if="isInProgress">
+                <p>Creating viewing key</p>
+            </loading-icon>
+            <button v-if="viewingKey == null && !isInProgress" @click="createViewingKey()">Create a viewing key</button>
         </div>
-        <loading-icon v-if="isInProgress">
-            <p>Creating viewing key</p>
-        </loading-icon>
-        <button v-if="viewingKey == null && !isInProgress" @click="createViewingKey()">Create a viewing key</button>
-    </div>
 
-    <div class="saved-key" v-if="savedViewingKey && !isViewingKeyVisible">
-        <button @click="isViewingKeyVisible = true">🔑 See viewing key</button>
-    </div>
+        <div class="saved-key" v-if="savedViewingKey && !isViewingKeyVisible">
+            <button @click="isViewingKeyVisible = true">🔑 See viewing key</button>
+        </div>
 
-    <div class="vkey" v-if="isViewingKeyVisible">
-        <textarea class="vkey__key" readonly v-model="viewingKey.key"></textarea>
-        <div class="vkey__tools">
-            <a v-if="savedViewingKey != viewingKey" href="" @click="saveViewingKey()">Save it to memory</a>
+        <div class="vkey" v-if="viewingKey && isViewingKeyVisible">
+            <dl v-if="savedViewingKey == viewingKey">
+                <dt>Viewing key</dt>
+                <dd class="vkey__saved-key">
+                    {{ viewingKey.key | abbrv(20) }} 
+                    <a class="delete" v-if="savedViewingKey && savedViewingKey == viewingKey" href="" @click="deleteViewingKey()">&times;</a>
+                </dd>
+            </dl>
+            <div class="vkey__tools" v-if="savedViewingKey != viewingKey">
+                <dl>
+                    <dt>Viewing key</dt>
+                </dl>
+                <textarea v-if="savedViewingKey != viewingKey" class="vkey__key" readonly v-model="viewingKey.key"></textarea>
+                <a  href="" @click="saveViewingKey()">Save to wallet</a>
+                <a class="remove" href="" @click="forgetViewingKey()">Forget</a>
+            </div>
         </div>
     </div>
   </div>
+
 </template>
 
 <script>
@@ -58,6 +75,12 @@ export default {
         saveViewingKey() {
             this.$vkeys.put(this.account, this.contract, this.viewingKey.key);
         },
+        deleteViewingKey() {
+            this.$vkeys.delete(this.account, this.contract);
+        },
+        forgetViewingKey() {
+            this.viewingKey = null;
+        },
         async createViewingKey() {
             try {
                 //console.log(this.$vkeys.get('x', 'x'));
@@ -87,13 +110,39 @@ export default {
         &__key {
             margin-bottom: var(--f-gutter-s);
         }
-        &__tools {
+        &__saved-key {
             display: flex;
             flex-flow: row nowrap;
+            justify-content: space-between;
+
+            .delete {
+                text-decoration: none;
+                font-size: 32px;
+                font-weight: 400;
+                line-height: 16px;
+            }
+        }
+        &__tools {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: space-evenly;
             margin-bottom: var(--f-gutter);
+            row-gap: var(--f-gutter-xs);
+            column-gap: var(--f-gutter-l);
+
+            dl {
+                margin-right: auto;
+            }
+
+            textarea {
+                width: 100%;
+            }
     
             a {
-                font-size: 0.8em;
+                font-size: 0.9em;
+                &.remove {
+                    color: var(--color-negative);
+                }
             }
         }
     }

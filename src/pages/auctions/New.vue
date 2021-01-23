@@ -1,7 +1,7 @@
 <template>
     <validation-observer v-slot="{ handleSubmit, invalid }">
         <page>
-            <column :class="'new-auction__stage-' + stage" number="3" number-m="1" number-s="1">
+            <column :class="'new-auction__stage-' + stage" number="2" number-m="1" number-s="1">
                 <block class="scrt-box">
                     <h1>New auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
@@ -131,20 +131,16 @@
                         </div>
                     </div>
                     <!-- Viewing keys panel -->
-                    <div class="stage-panel stage-panel__congrats" v-if="stage == 'congrats'">
-                        <h3>Congratulations</h3>
-                        <div class="details">
-                            <p>Your Secret Auction is ready.</p>
+                    <div class="stage-panel stage-panel__congrats">
+                        <h3>Extra: Viewing Key</h3>
+                        <div class="details" v-if="stage == 'congrats'">
+                            <p>Congratulations! Your Secret Auction is ready. Use your viewing key to easily find it and perform operations.</p>
                             <app-vkey :contract="$auctions.factoryAddress" :account="auctionForm.account"></app-vkey>
                             <!--p><g-link class="auction-creation__action-list" to="/auctions">See your auction</g-link></p-->
                             <p><g-link class="auction-creation__action-list" to="/auctions">Go to the auction list</g-link></p>
                         </div>
                     </div>
                 </block>
-                <block>
-                    <app-vkey :contract="$auctions.factoryAddress" :account="auctionForm.account"></app-vkey>
-                </block>
-
             </column>
         </page>
     </validation-observer>

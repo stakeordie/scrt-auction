@@ -4,9 +4,14 @@
 
     <transition 
       enter-active-class="animate__animated animate__flipInX"
-      leave-active-class="animate__animated animate__fadeOutUp">
+      leave-active-class="animate__animated animate__flipOutX">
 
       <div class="wallet-modal" v-show="modalVisible">
+        <h5>Viewing keys</h5>
+        <dl>
+          <dt>Factory address</dt>
+          <dd>{{$auctions.factoryAddress | abbrv }}</dd>
+        </dl>
         <app-vkey :account="account" :contract="$auctions.factoryAddress"></app-vkey>
       </div>
 
@@ -57,15 +62,21 @@ export default {
 }
 
 .wallet-modal {
-    width: 300px;
+    width: 320px;
     position: absolute;
     right: 0;
     background-color: var(--default-background-color);
-    padding: var(--gutter);
     z-index: 11000;
+    padding: var(--gutter);
+    border-radius: var(--gutter);
 
+
+    background-image: radial-gradient(86% 65%, #232323 86%, #050709 100%);
     padding-bottom: 0;
-
     box-shadow: 0px 0px 16px -6px rgba(0,0,0,1);
+
+    dt {
+      color: var(--color-blue-primary);
+    }
 }
 </style>

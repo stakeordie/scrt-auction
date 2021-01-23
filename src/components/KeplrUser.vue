@@ -6,7 +6,7 @@
       </a>
       <transition 
         enter-active-class="animate__animated animate__flipInX"
-        leave-active-class="animate__animated animate__fadeOutUp">
+        leave-active-class="animate__animated animate__flipOutX">
 
         <div v-show="showDetails" class="keplr__details">
           <div v-show="address" class="keplr__account">

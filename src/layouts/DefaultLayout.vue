@@ -29,11 +29,10 @@
 
 <script>
 import KeplrUser from '../components/KeplrUser.vue'
-import ViewingKey from '../components/ViewingKey.vue'
 import VkeysWallet from '../components/VkeysWallet.vue'
 
 export default {
-  components: { KeplrUser, ViewingKey, VkeysWallet },
+  components: { KeplrUser, VkeysWallet },
   data() {
     return {
       keplrAccount: null
