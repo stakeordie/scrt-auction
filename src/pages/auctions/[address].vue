@@ -37,24 +37,25 @@
         <button v-show="!isOwner && isEnded" @click="closeAuctionSimple">Close Auction</button>
         <button v-show="isOwner && !closeAuctionRequested" @click="closeAuctionRequested = !closeAuctionRequested">Close Auction</button>
         <div v-show="closeAuctionRequested" class="stage-panel stage-panel__info">
-            <h3><span class="number">1</span> Fill auction details</h3>
+            <h3>Close Auction</h3>
             <div class="details">
-                <p>Fill up the form with the auction details.</p>
-                <p>Click <strong>"Continue"</strong> when you are ready.</p>
+                <p>As the owner of this auction you have ways to close.</p>
+                <p>You can close as is, or you can choose to extend the auction if there are no bids.</p>
+                <p>If you select to extend, you will be given additional options</p>
+                <button @click="closeAuctionSimple">Complete Close Auction</button>
+                <button @click="closeAuctionAdvancedRequested = true">Extend if no bids</button>
             </div>
-            <validation-observer v-slot="{ handleSubmit, invalid }">
-              <form class="auction-form" @submit.prevent="handleSubmit(closeAuctionInvolved)">
-                <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
+            <validation-observer v-show="closeAuctionAdvancedRequested" v-slot="{ handleSubmit, invalid }">
+              <form class="auction-form" @submit.prevent="handleSubmit(closeAuctionWithOptions)">
+                <validation-provider  class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
                   <label for="minimum-bid-amount">Minimum bid</label>
                   <span class="error">{{ errors[0] }}</span>
                   <input name="minimum-bid-amount" type="text" v-model.trim="newMinimumBid" />
                 </validation-provider>
-                <validation-provider v-show="closeAuctionAdvancedRequested" class="auction-form__end-time" rules="required" v-slot="{ errors }">
-
+                <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
                     <label for="auction-end-time">End time</label>
                     <span class="error">{{ errors[0] }}</span>
                     <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
-
                     <p>Can be closed after 
                         <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="endTimeAmount">
                         <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
@@ -65,9 +66,7 @@
                         </select>
                     </p>
                 </validation-provider>
-                <a @click="closeAuctionAdvancedRequested = !closeAuctionAdvancedRequested" onclick="return false;" style='cursor: pointer;'>Advanced</a>
-                
-                <button :disabled="invalid">Complete Close Auction</button>
+                <button :disabled="invalid">Close with options</button>
               </form>
             </validation-observer>
         </div>
@@ -282,8 +281,9 @@ export default {
       const closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
       this.refreshAuction();
     },
-    async closeAuctionInvolved() {
-      const closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
+    async closeAuctionWithOptions() {
+      const endTime = Math.round(this.newEndTime.getTime() / 1000)
+      const closedAuction = await this.$auctions.closeAuctionWithOptions(this.auctionAddress,endTime,this.newMinimumBidToFractional)
       this.refreshAuction();
     },
     async refreshAuction() {
@@ -327,7 +327,7 @@ export default {
     },
     updateEndTime() {
         this.newEndTime = new Date((new Date()).getTime() + (Number(this.endTimeAmount || 1) * Number(this.endTimeUnit) * 60000));
-    },
+    }
   }
 };
 </script>

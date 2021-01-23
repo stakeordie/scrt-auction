@@ -311,6 +311,25 @@ export class AuctionsApi {
         return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
 
+    async closeAuctionWithOptions(auctionAddress, endDateTime, newMinBid) {
+        //secretcli tx compute execute *auction_contract_address* '{"finalize": {"only_if_bids": *true_or_false*}}' --from *your_key_alias_or_addr* --gas 2000000 -y
+        const msg = {
+            "finalize": {
+                "new_ends_at": endDateTime,
+                "new_minimum_bid": newMinBid.toString()
+            }
+        };
+        console.log("Close with options message", msg)
+        const bidFees = {
+            exec: {
+                amount: [{ amount: '1000000', denom: 'uscrt' }],
+                gas: '1000000',
+            },
+        }
+        const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
+        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+    }
+
     async changeMinimumBid(auctionAddress, newMinimumBidAmount) {
         const msg = {
             "change_minimum_bid": {
