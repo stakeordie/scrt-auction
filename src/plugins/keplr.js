@@ -6,6 +6,11 @@ import Vuex from 'vuex';
 export default {
   install(Vue, options) {
 
+    Vue.filter("bech32", (str, abbrv) => {
+      const half = (abbrv / 2) || 8;
+      return str?.substring(0, half) + "..." + str?.substring(str.length - half, str.length);
+    });
+
     Vue.use(Vuex);
     Vue.prototype.$store.registerModule('$keplr', {
           namespaced: true,

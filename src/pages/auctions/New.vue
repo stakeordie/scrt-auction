@@ -1,7 +1,7 @@
 <template>
     <validation-observer v-slot="{ handleSubmit, invalid }">
         <page>
-            <column :class="'new-auction__stage-' + stage" number="2" number-m="1" number-s="1">
+            <column :class="'new-auction__stage-' + stage" mode-xl="slim" number="2" number-m="1" number-s="1">
                 <block class="scrt-box">
                     <h1>New auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
@@ -140,6 +140,7 @@
                             <p><g-link class="auction-creation__action-list" to="/auctions">Go to the auction list</g-link></p>
                         </div>
                     </div>
+                    <a @click="stage='congrats'" href="">Go to congrats (debug)</a>
                 </block>
             </column>
         </page>

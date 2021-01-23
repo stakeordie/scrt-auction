@@ -4,15 +4,22 @@
       <a href="" @click="clicked()">
         <img class="keplr__icon" src="@/assets/keplr-icon.svg" :class="{ 'keplr--off': keplrIsOff }">
       </a>
+
+      <secret-overlay :show="showDetails"></secret-overlay>
+
       <transition 
         enter-active-class="animate__animated animate__flipInX"
         leave-active-class="animate__animated animate__flipOutX">
 
-        <div v-show="showDetails" class="keplr__details">
+        <div v-show="showDetails" class="modal user-modal">
+          <h3>Keplr account</h3>
           <div v-show="address" class="keplr__account">
             <!-- this.$keplr.chainId is not reactive but there's no need, it's left here as an example -->
-            <span class="account account__chain">{{ $keplr.chainId }}</span>
-            <span class="account account__address">{{ address }}</span>
+            <dl>
+              <dt>{{ $keplr.chainId }}</dt>
+              <dd>{{ address | bech32 }}</dd>
+            </dl>
+            <a class="close" @click="showDetails = false" href="">Close</a>
           </div>
         </div>
     </transition>
@@ -22,7 +29,10 @@
 <script>
 const AUTO_CLOSE_TIME = 3000;
 
+import SecretOverlay from './SecretOverlay.vue';
+
 export default {
+  components: { SecretOverlay },
   props: {
     value: {
       type: String,
@@ -53,9 +63,6 @@ export default {
 
     toggleDetails(value) {
       this.showDetails = value || !this.showDetails;
-      if(this.showDetails) {
-        setTimeout(() => { this.showDetails = false}, AUTO_CLOSE_TIME);
-      }
     },
   },
 }
@@ -67,16 +74,6 @@ export default {
 
   &__icon {
     width: 32px;
-  }
-
-  &__details {
-    position: absolute;
-    right: 0;
-    background-color: var(--default-background-color);
-    padding: var(--gutter);
-    z-index: 10000;
-
-    box-shadow: 0px 0px 16px -6px rgba(0,0,0,1);
   }
 
   &__error {
@@ -98,6 +95,17 @@ export default {
       background-color: var(--default-success-color, green);
     }
 
+  }
+  
+  .user-modal {
+    width: 400px;
+    h3 {
+      color: var(--color-purple-secondary);
+    }
+
+    dt {
+      color: var(--color-blue-primary);
+    }
   }
 
   .account {

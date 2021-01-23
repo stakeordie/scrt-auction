@@ -56,7 +56,7 @@ export default {
   position: relative;
   transition: background-color 0.7s;
 
-  h2, h3, dd {
+  h2, h3 {
     margin-bottom: 0;
     line-height: 1em;
   }

@@ -11,11 +11,11 @@
             <loading-icon v-if="isInProgress">
                 <p>Creating viewing key</p>
             </loading-icon>
-            <button v-if="viewingKey == null && !isInProgress" @click="createViewingKey()">Create a viewing key</button>
+            <button class="no-button" v-if="viewingKey == null && !isInProgress" @click="createViewingKey()">&#x1F511; Create viewing key</button>
         </div>
 
         <div class="saved-key" v-if="savedViewingKey && !isViewingKeyVisible">
-            <button @click="isViewingKeyVisible = true">🔑 See viewing key</button>
+            <button @click="isViewingKeyVisible = true">&#x1F511; Show viewing key</button>
         </div>
 
         <div class="vkey" v-if="viewingKey && isViewingKeyVisible">
@@ -23,7 +23,7 @@
                 <dt>Viewing key</dt>
                 <dd class="vkey__saved-key">
                     {{ viewingKey.key | abbrv(20) }} 
-                    <a class="delete" v-if="savedViewingKey && savedViewingKey == viewingKey" href="" @click="deleteViewingKey()">&times;</a>
+                    <a class="delete" v-if="savedViewingKey && savedViewingKey == viewingKey" href="" @click="deleteViewingKey()"><img src="@/assets/trash-can-icon.svg" ></a>
                 </dd>
             </dl>
             <div class="vkey__tools" v-if="savedViewingKey != viewingKey">
@@ -31,7 +31,7 @@
                     <dt>Viewing key</dt>
                 </dl>
                 <textarea v-if="savedViewingKey != viewingKey" class="vkey__key" readonly v-model="viewingKey.key"></textarea>
-                <a  href="" @click="saveViewingKey()">Save to wallet</a>
+                <a class="save" href="" @click="saveViewingKey()">Save to wallet</a>
                 <a class="remove" href="" @click="forgetViewingKey()">Forget</a>
             </div>
         </div>
@@ -103,6 +103,18 @@ export default {
 </script>
 
 <style lang="scss">
+    .app-vkey {
+        button {
+            width: 100%;
+            font-weight: 600;
+            font-size: 16px;
+
+            &:hover {
+                color: black;
+                background-color: var(--color-white-secondary);
+            }
+        }
+    }
     .vkey-error p {
         color: var(--color-negative);
     }
@@ -114,12 +126,11 @@ export default {
             display: flex;
             flex-flow: row nowrap;
             justify-content: space-between;
+            align-content: baseline;
 
             .delete {
                 text-decoration: none;
-                font-size: 32px;
                 font-weight: 400;
-                line-height: 16px;
             }
         }
         &__tools {
@@ -127,7 +138,7 @@ export default {
             flex-flow: row wrap;
             justify-content: space-evenly;
             margin-bottom: var(--f-gutter);
-            row-gap: var(--f-gutter-xs);
+            row-gap: var(--f-gutter-s);
             column-gap: var(--f-gutter-l);
 
             dl {
@@ -140,6 +151,12 @@ export default {
     
             a {
                 font-size: 0.9em;
+                font-weight: 600;
+                text-decoration: none;
+
+                &.save {
+                    color: var(--color-positive);
+                }
                 &.remove {
                     color: var(--color-negative);
                 }

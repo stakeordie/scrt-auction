@@ -13,17 +13,7 @@ export default {
         Vue.prototype.$store.registerModule('$vkeys', {
             namespaced: true,
             state: {
-                vkeys: [
-                    {
-                        userAddress: "xxxsecret1dt90gy0e8kqlckx85a62euyv04hpk39f4ngxsl",
-                        viewingKeys: [
-                            {
-                                contractAddress: "secret1j769nz95fklgzge976veqhlknph76ss34k97zw",
-                                key: "kkk=",
-                            }
-                        ]
-                    }
-                ],
+                vkeys: [],
             },
             getters: {
                 listViewingKeys: (state) => {

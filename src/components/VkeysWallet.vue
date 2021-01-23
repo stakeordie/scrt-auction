@@ -2,17 +2,20 @@
   <div class="vkeys-wallet">
     <a href="" @click="modalVisible = !modalVisible"><g-image class="wallet-icon" :class="{ enabled: savedViewingKey != null }" :immediate="true" src="@/assets/key-icon.png"></g-image></a>
 
+    <secret-overlay :show="modalVisible"></secret-overlay>
+
     <transition 
       enter-active-class="animate__animated animate__flipInX"
       leave-active-class="animate__animated animate__flipOutX">
 
-      <div class="wallet-modal" v-show="modalVisible">
-        <h5>Viewing keys</h5>
+      <div class="modal wallet-modal" v-show="modalVisible">
+        <h3>Viewing keys</h3>
         <dl>
           <dt>Factory address</dt>
           <dd>{{$auctions.factoryAddress | abbrv }}</dd>
         </dl>
         <app-vkey :account="account" :contract="$auctions.factoryAddress"></app-vkey>
+        <a class="close" @click="modalVisible = false" href="">Close</a>
       </div>
 
     </transition>
@@ -21,9 +24,10 @@
 
 <script>
 import AppVkey from './AppVkey';
+import SecretOverlay from './SecretOverlay.vue';
 
 export default {
-  components: { AppVkey },
+  components: { AppVkey, SecretOverlay },
   props: {
     account: {
       type: String,
@@ -62,21 +66,14 @@ export default {
 }
 
 .wallet-modal {
-    width: 320px;
-    position: absolute;
-    right: 0;
-    background-color: var(--default-background-color);
-    z-index: 11000;
-    padding: var(--gutter);
-    border-radius: var(--gutter);
-
-
-    background-image: radial-gradient(86% 65%, #232323 86%, #050709 100%);
-    padding-bottom: 0;
-    box-shadow: 0px 0px 16px -6px rgba(0,0,0,1);
-
-    dt {
-      color: var(--color-blue-primary);
+  width: 400px;
+  h3 {
+    color: var(--color-blue-primary);
     }
+
+  dt {
+    color: var(--color-purple-secondary);
+  }
 }
+
 </style>

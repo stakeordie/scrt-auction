@@ -17,6 +17,12 @@
     width: 100%;
     display: grid;
     justify-items: center;
+
+    p {
+      font-weight: 600;
+      font-size: 0.9em;
+      color: var(--color-turquoise-secondary);
+    }
 }
 
 .lds-ring {
@@ -30,9 +36,9 @@
   box-sizing: border-box;
   display: block;
   position: absolute;
-  width: 64px;
-  height: 64px;
-  margin: 8px;
+  width: 60px;
+  height: 60px;
+  margin: 14px 7px;
   border: 7px solid #fff;
   border-radius: 50%;
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;

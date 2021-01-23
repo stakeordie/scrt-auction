@@ -96,3 +96,27 @@ button, .button {
     font-weight: 600;
 }
 
+
+
+// Common visual assets
+.modal {
+    position: absolute;
+    right: 0;
+    top: var(--f-gutter-l);
+    background-color: #232323;
+    z-index: 11000;
+    padding: var(--f-gutter-l) var(--f-gutter-l) var(--f-gutter);
+    border-radius: var(--f-gutter-l);
+    box-shadow: 0px 0px 16px -6px rgba(0,0,0,1);
+
+
+    .close {
+      position: absolute;
+      text-decoration: none;
+      top: var(--f-gutter-l);
+      right: var(--f-gutter-l);
+      line-height: 20px;
+      font-size: 0.8em;
+      color: var(--color-yellow-primary)
+    }
+}
