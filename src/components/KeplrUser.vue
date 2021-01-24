@@ -13,7 +13,7 @@
 
         <div v-show="showDetails" class="modal user-modal">
           <h3>Keplr account</h3>
-          <div v-show="address" class="keplr__account">
+          <div v-show="address">
             <!-- this.$keplr.chainId is not reactive but there's no need, it's left here as an example -->
             <dl>
               <dt>{{ $keplr.chainId }}</dt>

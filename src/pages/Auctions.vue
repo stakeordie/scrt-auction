@@ -4,7 +4,7 @@
       <!-- Auctions header -->
       <div class="auctions-header">
         <h1>Auctions</h1>
-        <router-link :to="'/auctions/new'" class="button">Create a new auction</router-link>
+        <router-link :to="'/auctions/new'" class="button">New auction</router-link>
           <!--button @click="createViewingKey()">Create Viewing Key</button-->
           <!--button @click="listUserAuctions()">ListUserAuctions</button-->
       </div>

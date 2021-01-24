@@ -53,6 +53,10 @@ export default {
             type: String,
             default: null,
         },
+        value: {
+            type: String,
+            default: null,
+        },
     },
     data() {
         return {
@@ -60,6 +64,11 @@ export default {
             isInError: false,
             isInProgress: false,
             viewingKey: null,
+        }
+    },
+    watch: {
+        account(newValue, oldValue) {
+            this.viewingKey = null;
         }
     },
     computed: {
@@ -107,7 +116,6 @@ export default {
         button {
             width: 100%;
             font-weight: 600;
-            font-size: 16px;
 
             &:hover {
                 color: black;
