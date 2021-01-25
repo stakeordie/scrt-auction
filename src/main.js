@@ -207,6 +207,14 @@ export default function(Vue, { router, head, isClient }) {
           name: "Test Secret Baedrik",
           label: "tsBDRK",
           decimals: 2
+      },
+      {
+          codeId: 1,
+          symbol: "TSLORA",
+          address: "secret1vyydr9lznuxugmy0qtqgu3uh8x3x8nlysphl2p",
+          name: "Test Secret Laura",
+          label: "tsLORA",
+          decimals: 2
       }
     ]
   });

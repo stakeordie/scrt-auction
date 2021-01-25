@@ -10,7 +10,7 @@ export class AuctionsApi {
     /*
         Factory Methods:
         `create_auction`,
-        `register_auction`, 
+        `register_auction`,
         `close_auction`, 
         `register_bidder`, 
         `remove_bidder`, 
@@ -28,8 +28,8 @@ export class AuctionsApi {
         return address;
     }
 
-    // secretcli q compute query *factory_contract_address* '{"list_active_auctions":{}}'
     async listAuctions(auctionState) {
+        // secretcli q compute query *factory_contract_address* '{"list_active_auctions":{}}'
         if(auctionState == "active") {
             return (await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})).list_active_auctions.active;
         } else if(auctionState == "closed") {
@@ -37,9 +37,8 @@ export class AuctionsApi {
         }
     }
     
-    // BELOW HERE ADDED BY SANDY
-    // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
     async listUserAuctions() {
+         // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
         const address =  await this.getUserAddress();
         const viewingKey = await this.getViewingKey(address, this.factoryAddress);
         if(viewingKey) {
@@ -48,7 +47,7 @@ export class AuctionsApi {
             console.log("No viewingKey Record found")
         }
     }
-    //secretcli tx compute execute --label *factory_contract_label* '{"create_viewing_key":{"entropy":"*Some arbitrary string used as entropy in generating the random viewing key*"}}' --from *your_key_alias_or_addr* --gas 200000 -y
+    
     async listAllTokens() {
         const snip20Tokens =  await this.scrtClient.listContracts(1);
         console.log(snip20Tokens);
