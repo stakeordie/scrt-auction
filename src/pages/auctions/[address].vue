@@ -1,8 +1,12 @@
 <template>
   <page>
     <columns>
-        <h2>{{ auctionInfo.sell_token.token_info.symbol }} -> {{ auctionInfo.bid_token.token_info.symbol }}</h2>
-        <h4 v-if="auctionInfo.description">{{ auctionInfo.description }}</h4>
+
+        <div class="page-title">
+            <h1>Auction Detail</h1>
+            <h3>{{ auctionInfo.auction_address }}</h3>
+            <h4 v-if="auctionInfo.description">{{ auctionInfo.description }}</h4>
+        </div>
         <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
         <block>
           <column number="2" number-m="1" number-s="1">
@@ -285,6 +289,7 @@ export default {
     }
   },
   mounted () {
+    this.getAuction()
     this.updateEndTime();
     this.interval = setInterval(this.updateEndTime, 1000);
   },
@@ -326,29 +331,9 @@ export default {
       const closedAuction = await this.$auctions.closeAuctionWithOptions(this.auctionAddress,endTime,this.newMinimumBidToFractional)
       this.refreshAuction();
     },
-    async refreshAuction() {
+    async getAuction() {
       this.auctionAddress = this.$route.params.address;
-      const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-      if(viewingKey) {
-        this.hasViewingKey = true;
-        const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
-        if(!bidInfoResponse.viewing_key_error) {
-          this.bidInfo = bidInfoResponse;
-          this.isBidder = true;
-        }
-        const userAuctions = await this.$auctions.listUserAuctions();
-        console.log("[address].vue/created/userAuctions"); console.log(userAuctions);
-        if(userAuctions?.list_my_auctions?.active?.as_seller) {
-          const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
-          if(is_owner.length > 0) {
-            this.isOwner = true;
-            this.hasBids = (await this.$auctions.getAuctionHasBids(this.auctionAddress, viewingKey)).has_bids.has_bids;
-          }
-        }
-      }
-      const auctionInfoResult = await this.$auctions.getAuctionInfo(this.auctionAddress);
-      this.auctionInfo = auctionInfoResult.auction_info;
-      console.log("[address]/created/auctionInfo"); console.log(this.auctionInfo);
+      this.auctionInfo = (await this.$auctions.getAuctionInfo(this.auctionAddress)).auction_info;
       if(this.auctionInfo) {
         this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
         this.validationRules = "required|min_value:" + this.askingPrice /*+ "|max_decimals:" + this.auctionInfo.bid_token.token_info.decimals*/;
@@ -362,6 +347,26 @@ export default {
         const now = new Date();
         if(now > ended) {
           this.isEnded = true;
+        }
+      }
+    },
+    async refreshAuction() {
+      this.auctionAddress = this.$route.params.address;
+      const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
+      if(viewingKey) {
+        this.hasViewingKey = true;
+        const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
+        if(!bidInfoResponse.viewing_key_error) {
+          this.bidInfo = bidInfoResponse;
+          this.isBidder = true;
+        }
+        const userAuctions = await this.$auctions.listUserAuctions();
+        if(userAuctions?.list_my_auctions?.active?.as_seller) {
+          const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
+          if(is_owner.length > 0) {
+            this.isOwner = true;
+            this.hasBids = (await this.$auctions.getAuctionHasBids(this.auctionAddress, viewingKey)).has_bids.has_bids;
+          }
         }
       }
     },

@@ -432,7 +432,7 @@ export class AuctionsApi {
                     "ends_at": endDateTime
                 }
             };
-    
+            console.log("msg in auction-api/createAuction", msg)
             return await this.scrtClient.executeContract(this.factoryAddress, msg);
         } catch(e) {
             // TODO improve this

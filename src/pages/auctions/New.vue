@@ -269,7 +269,7 @@ export default {
                     this.auctionForm.bidToken.address,
                     new Decimal(sellAmountToFractional).toFixed(0),
                     new Decimal(bidAmountToFractional).toFixed(0),
-                    this.auctionForm.formDescription,
+                    this.auctionForm.description,
     
                     // Converts from millis to a second-based UNIX friendly epoch time
                     Math.round(this.auctionForm.endTime.getTime() / 1000)
