@@ -3,99 +3,145 @@
     <columns>
         <h1>Secret Auction</h1>
         <block>
-          <keplr-account v-model="keplrAccount" :abbreviation="16"></keplr-account>
-          <h2>Auction Info</h2>
-          <div>Amount: {{ sellAmountFromFractional }}</div>
-          <div>Sell Token: {{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</div>
-          <div>Bid Token: {{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</div>
-          <div>Min Bid: {{ minimumBidFromFractional }}</div>
-          <div>Description: {{ auctionInfo.description }}</div>
-          <div>Status: {{ auctionInfo.status }}</div>
-          <div v-if="isClosed">Winning Bid: {{ winningBidFromFractional }} </div>
-          <div>Ends At: {{  auctionInfo.ends_at }}</div>
-          <div v-if="bidInfo.bid.amount_bid > 0">
-            <div>Open Bid: {{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.bid_token.token_info.decimals)}} {{auctionInfo.bid_token.token_info.symbol}}</div>
-            <button @click="retractBid()">Retract Your Bid</button>
-          </div>
-          <div v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">Bid: You have no open bid on this auction.</div>
-          <div v-if="isOwner && hasBids">This auction has 1 or more bids</div>
-          <div v-else-if="isOwner">This auction has 0 total bids</div>
-        </block>
-
-        <button v-show="isOwner & !changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Change Minimum Bid</button><br/>
-        <validation-observer v-show="changeMinimumBidRequested" v-slot="{ handleSubmit, invalid }">
-          <form class="auction-form" @submit.prevent="handleSubmit(changeMinimumBid)">
-            <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
-              <label for="minimum-bid-amount">Minimum bid</label>
-              <span class="error">{{ errors[0] }}</span>
-              <input name="minimum-bid-amount" type="text" v-model.trim="newMinimumBid" />
-            </validation-provider>
-            <button :disabled="invalid">Change Minimum Bid</button>
-          </form>
-        </validation-observer>
-
-        <button v-show="!isOwner && isEnded" @click="closeAuctionSimple">Close Auction</button>
-        <button v-show="isOwner && !closeAuctionRequested" @click="closeAuctionRequested = !closeAuctionRequested">Close Auction</button>
-        <div v-show="closeAuctionRequested" class="stage-panel stage-panel__info">
-            <h3>Close Auction</h3>
-            <div class="details">
-                <p>As the owner of this auction you have ways to close.</p>
-                <p>You can close as is, or you can choose to extend the auction if there are no bids.</p>
-                <p>If you select to extend, you will be given additional options</p>
-                <button @click="closeAuctionSimple">Complete Close Auction</button>
-                <button @click="closeAuctionAdvancedRequested = true">Extend if no bids</button>
-            </div>
-            <validation-observer v-show="closeAuctionAdvancedRequested" v-slot="{ handleSubmit, invalid }">
-              <form class="auction-form" @submit.prevent="handleSubmit(closeAuctionWithOptions)">
-                <validation-provider  class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
-                  <label for="minimum-bid-amount">Minimum bid</label>
-                  <span class="error">{{ errors[0] }}</span>
-                  <input name="minimum-bid-amount" type="text" v-model.trim="newMinimumBid" />
-                </validation-provider>
-                <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
-                    <label for="auction-end-time">End time</label>
-                    <span class="error">{{ errors[0] }}</span>
-                    <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
-                    <p>Can be closed after 
-                        <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="endTimeAmount">
-                        <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
-                            <option value="1">minute<span v-if="endTimeAmount > 1">s</span></option>
-                            <option value="60">hour<span v-if="endTimeAmount > 1">s</span></option>
-                            <option value="1440">day<span v-if="endTimeAmount > 1">s</span></option>
-                            <option value="10080">week<span v-if="endTimeAmount > 1">s</span></option>
-                        </select>
-                    </p>
-                </validation-provider>
-                <button :disabled="invalid">Close with options</button>
-              </form>
-            </validation-observer>
-        </div>
-
-
-        <block v-show="!isClosed">
-          <h2>Place a Bid</h2>
-          <validation-observer v-slot="{ handleSubmit, invalid }">
-            <form class="form" @submit.prevent="handleSubmit(placeBid)">
-              <ul>
-                <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
-              </ul>
-              <div class="form__frame">
-                <validation-provider :rules="validationRules" v-slot="{ errors }">
-                  <label for="payment-amount">Price</label>
-                  <span class="error">{{ errors[0] }}</span>
-                  <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
-                </validation-provider>
-                <validation-provider class="auction-form__min-bid-amount" rules="required|min_value:0" v-slot="{ errors }">
-                    <label for="minimum-bid-amount">Minimum bid</label>
-                    <span class="error">{{ errors[0] }}</span>
-                    <input name="minimum-bid-amount" readonly type="text" v-model="bidAmount" />
-                </validation-provider>
-                <button :disabled="invalid">Place Bid</button>
+          <column number="2" number-m="1" number-s="1">
+            <block v-show="!isClosed">
+              <h2>Place a Bid</h2>
+              <validation-observer v-slot="{ handleSubmit, invalid }">
+                <form class="form" @submit.prevent="handleSubmit(placeBid)">
+                  <ul>
+                    <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
+                  </ul>
+                  <div class="form__frame">
+                    <validation-provider :rules="validationRules" v-slot="{ errors }">
+                      <label for="payment-amount">Price</label>
+                      <span class="error">{{ errors[0] }}</span>
+                      <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
+                    </validation-provider>
+                    <validation-provider class="auction-form__min-bid-amount" rules="required|min_value:0" v-slot="{ errors }">
+                        <label for="minimum-bid-amount">Minimum bid</label>
+                        <span class="error">{{ errors[0] }}</span>
+                        <input name="minimum-bid-amount" readonly type="text" v-model="bidAmount" />
+                    </validation-provider>
+                    <button :disabled="invalid">Place Bid</button>
+                  </div>
+                </form>
+              </validation-observer>
+            </block>
+            <block>
+              <div class="stage-panel">
+                  <h2>Auction Info</h2>
+                  <h3 class="auction__pair">
+                    <span class="sell-denom">{{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</span> -> 
+                    <span class="bid-denom">{{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</span>
+                  </h3>
+                  <dl>
+                    <dt>Amount</dt>
+                    <dd>
+                      {{ sellAmountFromFractional }}
+                    </dd>
+                  </dl>
+                  <dl>
+                    <dt>Status</dt>
+                    <dd>
+                      {{ auctionInfo.status }}
+                    </dd>
+                  </dl>
+                  <dl v-if="auctionInfo.description">
+                    <dt>Description</dt>
+                    <dd>
+                      {{ auctionInfo.description }}
+                    </dd>
+                  </dl>
+                  <dl>
+                    <dt>Ends at</dt>
+                    <dd>
+                      {{  auctionInfo.ends_at }}
+                    </dd>
+                  </dl>
+                  <dl v-if="isClosed">
+                    <dt>Winning Bid</dt>
+                    <dd>
+                      {{ winningBidFromFractional }}
+                    </dd>
+                  </dl>
+                  <dl>
+                    <dt>Minimum Bid</dt>
+                    <dd>
+                      {{ minimumBidFromFractional }}
+                    </dd>
+                    <dd>
+                      <button v-show="isOwner & !changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Change Minimum Bid</button><br/>
+                      <validation-observer v-show="changeMinimumBidRequested" v-slot="{ handleSubmit, invalid }">
+                        <form class="auction-form" @submit.prevent="handleSubmit(changeMinimumBid)">
+                          <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
+                            <label for="minimum-bid-amount">Minimum bid</label>
+                            <span class="error">{{ errors[0] }}</span>
+                            <input name="minimum-bid-amount" type="text" v-model.trim="newMinimumBid" />
+                          </validation-provider>
+                          <button :disabled="invalid">Change Minimum Bid</button>
+                        </form>
+                      </validation-observer>
+                    </dd>
+                  </dl>
+                  <dl v-if="bidInfo.bid.amount_bid > 0">
+                    <dt>Open Bid</dt>
+                    <dd>{{ bidInfo.bid.message }} in the amount of {{ bidInfo.bid.amount_bid  / Math.pow(10, auctionInfo.bid_token.token_info.decimals)}} {{auctionInfo.bid_token.token_info.symbol}}</dd>
+                    <dd><button @click="retractBid()" class="red-btn">Retract Your Bid</button></dd>
+                  </dl>
+                  <dl>
+                    <dt>Bid</dt>
+                    <dd v-if="bidInfo.bid.amount_bid == 0 || bidInfo.bid.status == 'Failure'">
+                      You have no open bid on this auction.
+                    </dd>
+                    <dd v-if="isOwner && hasBids">
+                      This auction has 1 or more bids.
+                    </dd>
+                    <dd v-if="isOwner && hasBids">
+                      <button v-show="!isOwner && isEnded" @click="closeAuctionSimple">Close Auction</button>
+                      <button v-show="isOwner && !closeAuctionRequested" @click="closeAuctionRequested = !closeAuctionRequested" class="orange-btn">Close Auction</button>
+                      <div v-show="closeAuctionRequested" class="stage-panel stage-panel__info">
+                          <h3>Close Auction</h3>
+                          <div class="details">
+                              <p>As the owner of this auction you have ways to close.</p>
+                              <p>You can close as is, or you can choose to extend the auction if there are no bids.</p>
+                              <p>If you select to extend, you will be given additional options</p>
+                              <button @click="closeAuctionSimple">Complete Close Auction</button>
+                              <button @click="closeAuctionAdvancedRequested = true">Extend if no bids</button>
+                          </div>
+                          <validation-observer v-show="closeAuctionAdvancedRequested" v-slot="{ handleSubmit, invalid }">
+                            <form class="auction-form" @submit.prevent="handleSubmit(closeAuctionWithOptions)">
+                              <validation-provider  class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
+                                <label for="minimum-bid-amount">Minimum bid</label>
+                                <span class="error">{{ errors[0] }}</span>
+                                <input name="minimum-bid-amount" type="text" v-model.trim="newMinimumBid" />
+                              </validation-provider>
+                              <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
+                                  <label for="auction-end-time">End time</label>
+                                  <span class="error">{{ errors[0] }}</span>
+                                  <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
+                                  <p>Can be closed after 
+                                      <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="endTimeAmount">
+                                      <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
+                                          <option value="1">minute<span v-if="endTimeAmount > 1">s</span></option>
+                                          <option value="60">hour<span v-if="endTimeAmount > 1">s</span></option>
+                                          <option value="1440">day<span v-if="endTimeAmount > 1">s</span></option>
+                                          <option value="10080">week<span v-if="endTimeAmount > 1">s</span></option>
+                                      </select>
+                                  </p>
+                              </validation-provider>
+                              <button :disabled="invalid">Close with options</button>
+                            </form>
+                          </validation-observer>
+                      </div>
+                    </dd>
+                    <dd v-else-if="isOwner">
+                      This auction has 0 total bids.
+                    </dd>
+                  </dl>
               </div>
-            </form>
-          </validation-observer>
+            </block>
+          </column>
         </block>
-
       </columns>
   </page>
 </template>
@@ -423,7 +469,7 @@ export default {
     padding: var(--f-gutter);
     border-radius: 10px;
     margin-bottom: var(--f-gutter);
-    padding-bottom: 0;
+    //padding-bottom: 0;
 
     transition: height 1s;
 
@@ -450,6 +496,18 @@ export default {
         justify-items: center;
         align-items: center;
         padding-top: 2px;
+    }
+    dl {
+      dd {
+        button {
+          &.red-btn {
+            background-color: var(--color-red-primary);
+          }
+          &.orange-btn {
+            background-color: var(--color-orange-primary);
+          }
+        }
+      }
     }
 
 }
