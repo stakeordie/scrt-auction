@@ -14,15 +14,11 @@
                   </ul>
                   <div class="form__frame">
                     <validation-provider :rules="validationRules" v-slot="{ errors }">
-                      <label for="payment-amount">Price</label>
+                      <label for="payment-amount">Bid Price</label>
                       <span class="error">{{ errors[0] }}</span>
                       <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
                     </validation-provider>
-                    <validation-provider class="auction-form__min-bid-amount" rules="required|min_value:0" v-slot="{ errors }">
-                        <label for="minimum-bid-amount">Minimum bid</label>
-                        <span class="error">{{ errors[0] }}</span>
-                        <input name="minimum-bid-amount" readonly type="text" v-model="bidAmount" />
-                    </validation-provider>
+                    <div class="bid-price-conversion">Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
                     <button :disabled="invalid">Place Bid</button>
                   </div>
                 </form>
@@ -30,23 +26,41 @@
             </block>
             <block>
               <div class="stage-panel">
-                  <h2>Auction Info</h2>
-                  <h3 class="auction__pair">
+                  <h2>Selling</h2>
+                  <!-- <h3 class="auction__pair">
                     <span class="sell-denom">{{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</span> -> 
                     <span class="bid-denom">{{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</span>
-                  </h3>
-                  <dl>
-                    <dt>Amount</dt>
-                    <dd>
-                      {{ sellAmountFromFractional }}
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt>Status</dt>
-                    <dd>
-                      {{ auctionInfo.status }}
-                    </dd>
-                  </dl>
+                  </h3> -->
+                  <div>
+                    <dl>
+                      <dt>Selling</dt>
+                      <dd>
+                        {{ auctionInfo.sell_token.token_info.symbol }}
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>Asking</dt>
+                      <dd>
+                        {{ auctionInfo.bid_token.token_info.symbol }}
+                      </dd>
+                    </dl>
+                  </div>
+                  <div>
+                    <dl>
+                      <dt>Amount</dt>
+                      <dd>
+                        {{ sellAmountFromFractional }} 
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt>Asking Price</dt>
+                      <dd>
+                        {{ askingPrice }}
+                      </dd>
+                    </dl>
+                  </div>
+              </div>
+              <div class="staging-panel">
                   <dl v-if="auctionInfo.description">
                     <dt>Description</dt>
                     <dd>
@@ -66,10 +80,6 @@
                     </dd>
                   </dl>
                   <dl>
-                    <dt>Minimum Bid</dt>
-                    <dd>
-                      {{ minimumBidFromFractional }}
-                    </dd>
                     <dd>
                       <button v-show="isOwner & !changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Change Minimum Bid</button><br/>
                       <validation-observer v-show="changeMinimumBidRequested" v-slot="{ handleSubmit, invalid }">
@@ -155,6 +165,7 @@ import { required, min_value/*, max_decimals */} from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
 import { Decimal } from 'decimal.js';
+import TokenAmount from '../../components/TokenAmount.vue';
 
 extend("required", {
   ...required,
@@ -178,7 +189,7 @@ extend("min_value", {
 // });
 
 export default {
-  components: {ValidationObserver, ValidationProvider, KeplrAccount},
+  components: {ValidationObserver, ValidationProvider, KeplrAccount, TokenAmount},
   data() {
     return {
       errors: [],
@@ -263,8 +274,10 @@ export default {
     },
     bidAmount: function() {
       if(this.auctionInfo.bid_token.token_info?.decimals) {
-        const rawBidAmount = new Decimal(this.placeBidForm.bidPrice * this.sellAmountFromFractional);
-        return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
+         const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
+        return rawBidAmount
+        // const rawBidAmount = new Decimal(this.placeBidForm.bidPrice) * new Decimal(this.sellAmountFromFractional);
+        // return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
       } else {
         return 0;
       }
@@ -284,7 +297,7 @@ export default {
     formBidAmountToFractional: function () {
       return this.formBidAmount * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)
     },
-    minimumPrice: function () {
+    askingPrice: function () {
       return this.minimumBidFromFractional / this.sellAmountFromFractional;
     },
     endTimeString() {
@@ -358,8 +371,8 @@ export default {
       console.log("[address]/created/auctionInfo"); console.log(this.auctionInfo);
       if(this.auctionInfo) {
         this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-        this.validationRules = "required|min_value:" + this.minimumPrice /*+ "|max_decimals:" + this.auctionInfo.bid_token.token_info.decimals*/;
-        this.placeBidForm.bidPrice = this.minimumPrice;
+        this.validationRules = "required|min_value:" + this.askingPrice /*+ "|max_decimals:" + this.auctionInfo.bid_token.token_info.decimals*/;
+        this.placeBidForm.bidPrice = this.askingPrice;
         this.newMinimumBid = this.minimumBidFromFractional;
         if(this.auctionInfo.status == "Closed") {
           this.isClosed = true;
@@ -511,6 +524,13 @@ export default {
       }
     }
 
+}
+
+.bid-price-conversion {
+  padding-bottom: 22px;
+  font-size: 13px;
+  margin-top: -4px;
+  text-align: right;
 }
 
 
