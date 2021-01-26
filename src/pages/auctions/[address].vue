@@ -2,7 +2,8 @@
   <page>
     <columns>
         <h1>Secret Auction</h1>
-        <keplr-account v-model="keplrAccount" :abbreviation="16"></keplr-account>
+        <h2>{{ auctionInfo.sell_token.token_info.symbol }} -> {{ auctionInfo.bid_token.token_info.symbol }}</h2>
+        <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
         <block>
           <column number="2" number-m="1" number-s="1">
             <block v-show="!isClosed">
@@ -26,39 +27,22 @@
             </block>
             <block>
               <div class="stage-panel">
-                  <h2>Selling</h2>
                   <!-- <h3 class="auction__pair">
                     <span class="sell-denom">{{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</span> -> 
                     <span class="bid-denom">{{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</span>
                   </h3> -->
-                  <div>
                     <dl>
                       <dt>Selling</dt>
                       <dd>
-                        {{ auctionInfo.sell_token.token_info.symbol }}
-                      </dd>
-                    </dl>
-                    <dl>
-                      <dt>Asking</dt>
-                      <dd>
-                        {{ auctionInfo.bid_token.token_info.symbol }}
-                      </dd>
-                    </dl>
-                  </div>
-                  <div>
-                    <dl>
-                      <dt>Amount</dt>
-                      <dd>
-                        {{ sellAmountFromFractional }} 
+                        {{ sellAmountFromFractional }} {{ auctionInfo.sell_token.token_info.symbol }}
                       </dd>
                     </dl>
                     <dl>
                       <dt>Asking Price</dt>
                       <dd>
-                        {{ askingPrice }}
+                        {{ askingPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px">({{bidAmount}} {{ auctionInfo.bid_token.token_info.symbol }})</span>
                       </dd>
                     </dl>
-                  </div>
               </div>
               <div class="staging-panel">
                   <dl v-if="auctionInfo.description">
@@ -274,7 +258,7 @@ export default {
     },
     bidAmount: function() {
       if(this.auctionInfo.bid_token.token_info?.decimals) {
-         const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
+        const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
         return rawBidAmount
         // const rawBidAmount = new Decimal(this.placeBidForm.bidPrice) * new Decimal(this.sellAmountFromFractional);
         // return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");

@@ -1,5 +1,5 @@
 <template>
-  <input class="keplr__account" readonly :value="address">
+  <input class="keplr__account" readonly :value="address" :type="hidden ? `hidden` : `text`">
 </template>
 
 <script>
@@ -25,6 +25,10 @@ export default {
       type: Number,
       default: null,
     },
+    hidden: {
+      type: Boolean,
+      default: false
+    }
   },
   computed: {
     address() {
