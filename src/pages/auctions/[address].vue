@@ -2,6 +2,7 @@
   <page>
     <columns>
         <h1>Secret Auction</h1>
+        <keplr-account v-model="keplrAccount" :abbreviation="16"></keplr-account>
         <block>
           <column number="2" number-m="1" number-s="1">
             <block v-show="!isClosed">
