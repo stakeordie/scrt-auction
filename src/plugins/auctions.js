@@ -184,7 +184,7 @@ export default {
                 },
               },
               actions: {
-                  updateAuctions: async ({ commit }) => {
+                updateAuctions: async ({ commit }) => {
                     const activeAuctions = (await auctionsApi.listAuctions("active"))?.map(auction => {
                         return transformAuction(auction, "active");
                     }) || [];

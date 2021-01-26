@@ -11,7 +11,10 @@
             <loading-icon v-if="isInProgress">
                 <p>Creating viewing key</p>
             </loading-icon>
-            <button class="no-button" v-if="viewingKey == null && !isInProgress" @click="createViewingKey()">&#x1F511; Create viewing key</button>
+            <div v-if="!isInProgress">
+                <small>Viewing key for the factory contract will allow you to see the auctions you have participated in as a buyer and seller.</small>
+                <button class="no-button" @click="createViewingKey()">&#x1F511; Create viewing key</button>
+            </div>
         </div>
 
         <div class="saved-key" v-if="savedViewingKey && !isViewingKeyVisible">
@@ -26,11 +29,12 @@
                     <a class="delete" v-if="savedViewingKey && savedViewingKey == viewingKey" href="" @click="deleteViewingKey()"><img src="@/assets/trash-can-icon.svg" ></a>
                 </dd>
             </dl>
-            <div class="vkey__tools" v-if="savedViewingKey != viewingKey">
+            <div class="vkey__tools" v-if="viewingKey != savedViewingKey">
                 <dl>
                     <dt>Viewing key</dt>
                 </dl>
-                <textarea v-if="savedViewingKey != viewingKey" class="vkey__key" readonly v-model="viewingKey.key"></textarea>
+                <small>You have successfully created a viewing key. You will now be able to see your active bids or whether there are active bids in an auction you have created.</small>
+                <textarea class="vkey__key" readonly v-model="viewingKey.key"></textarea>
                 <a class="save" href="" @click="saveViewingKey()">Save to wallet</a>
                 <a class="remove" href="" @click="forgetViewingKey()">Forget</a>
             </div>
@@ -136,9 +140,9 @@ export default {
             justify-content: space-between;
             align-content: baseline;
 
-            .delete {
-                text-decoration: none;
-                font-weight: 400;
+            .delete img {
+                width: 16px;
+                height: auto;
             }
         }
         &__tools {
@@ -170,6 +174,12 @@ export default {
                 }
             }
         }
+    }
+    small {
+        display: block;
+        font-size: 13px;
+        line-height: 1.5em;
+        margin-bottom: var(--f-gutter);
     }
     
 </style>

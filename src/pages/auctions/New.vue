@@ -99,7 +99,7 @@
                         <h3><span class="number">2</span> Increase allowance</h3>
                         <div class="details" v-if="stage == 'allowance' || stage == 'allowance--creating'">
                             <p>Now we are ready to create your Secret Auction.</p>
-                            <p>First an allowance will be set so the secret auctions factory can lock the tokens to be auctioned.</p>
+                            <p>Before creating the auction you have to allow the auction contract to access your tokens. By setting allowance, you will enable the application to automate transactions for you.</p>
                             <div class="allowance-action" v-if="stage == 'allowance'">
                                 <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Go' }}</button>
                                 <p><a href="" @click="stage = 'info'">Back</a></p>
@@ -140,7 +140,6 @@
                             <p><g-link class="auction-creation__action-list" to="/auctions">Go to the auction list</g-link></p>
                         </div>
                     </div>
-                    <a @click="stage='congrats'" href="">Go to congrats (debug)</a>
                 </block>
             </column>
         </page>
@@ -251,7 +250,7 @@ export default {
                 const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
                 const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional);
                 
-                this.createAuction();                
+                this.createAuction();
             } catch(err) {
                 this.stage = "allowance";
             }
