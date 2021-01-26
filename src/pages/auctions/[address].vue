@@ -1,8 +1,8 @@
 <template>
   <page>
     <columns>
-        <h1>Secret Auction</h1>
         <h2>{{ auctionInfo.sell_token.token_info.symbol }} -> {{ auctionInfo.bid_token.token_info.symbol }}</h2>
+        <h4 v-if="auctionInfo.description">{{ auctionInfo.description }}</h4>
         <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
         <block>
           <column number="2" number-m="1" number-s="1">
@@ -40,29 +40,23 @@
                     <dl>
                       <dt>Asking Price</dt>
                       <dd>
-                        {{ askingPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px">({{bidAmount}} {{ auctionInfo.bid_token.token_info.symbol }})</span>
+                        {{ askingPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="sellAmountFromFractional != 1">({{ this.minimumBidFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
+                      </dd>
+                    </dl>
+                    <dl>
+                      <dt v-if="!isClosed" @hover="endsAtModal">Ends At <sup>*</sup></dt>
+                      <dd>
+                        {{  auctionInfo.ends_at }}
+                      </dd>
+                    </dl>
+                    <dl v-if="isClosed">
+                      <dt>Winning Bid</dt>
+                      <dd>
+                        {{ winningBidFromFractional }}
                       </dd>
                     </dl>
               </div>
               <div class="staging-panel">
-                  <dl v-if="auctionInfo.description">
-                    <dt>Description</dt>
-                    <dd>
-                      {{ auctionInfo.description }}
-                    </dd>
-                  </dl>
-                  <dl>
-                    <dt>Ends at</dt>
-                    <dd>
-                      {{  auctionInfo.ends_at }}
-                    </dd>
-                  </dl>
-                  <dl v-if="isClosed">
-                    <dt>Winning Bid</dt>
-                    <dd>
-                      {{ winningBidFromFractional }}
-                    </dd>
-                  </dl>
                   <dl>
                     <dd>
                       <button v-show="isOwner & !changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Change Minimum Bid</button><br/>
@@ -239,7 +233,9 @@ export default {
       updateEndTimeRequested: false,
       endTimeAmount: 1,
       endTimeUnit: "60",
-      newEndTime: new Date()
+      newEndTime: new Date(),
+      
+      hasBids: false
     };
   },
   watch: {
@@ -258,10 +254,10 @@ export default {
     },
     bidAmount: function() {
       if(this.auctionInfo.bid_token.token_info?.decimals) {
-        const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
-        return rawBidAmount
-        // const rawBidAmount = new Decimal(this.placeBidForm.bidPrice) * new Decimal(this.sellAmountFromFractional);
-        // return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
+        // const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
+        // return rawBidAmount
+        const rawBidAmount = new Decimal(this.placeBidForm.bidPrice) * new Decimal(this.sellAmountFromFractional);
+        return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
       } else {
         return 0;
       }
@@ -371,6 +367,9 @@ export default {
     },
     updateEndTime() {
         this.newEndTime = new Date((new Date()).getTime() + (Number(this.endTimeAmount || 1) * Number(this.endTimeUnit) * 60000));
+    },
+    endsAtModal() {
+
     }
   }
 };
@@ -510,6 +509,8 @@ export default {
 
 }
 
+// Sandy vvvv
+
 .bid-price-conversion {
   padding-bottom: 22px;
   font-size: 13px;
@@ -517,6 +518,11 @@ export default {
   text-align: right;
 }
 
+.whatsthis {
+  font-size: 10px;
+}
+
+// Sandy ^^^^^^
 
 // All the stage fun comes here...
 .new-auction {
