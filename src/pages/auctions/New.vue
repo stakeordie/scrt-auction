@@ -249,37 +249,37 @@ export default {
 
                 const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
                 const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional);
+                console.log(consignedAllowance);
                 this.createAuction();
             } catch(err) {
                 this.stage = "allowance";
             }
         },
         async createAuction() {
-            try {
-                this.stage = "auction--creating";
-                this.auctionError = null;
+            this.stage = "auction--creating";
+            this.auctionError = null;
 
-                const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
-                const bidAmountToFractional  = new Decimal(10).toPower(this.auctionForm.bidToken.decimals).times(this.minBidAmount).toFixed(0);
+            const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
+            const bidAmountToFractional  = new Decimal(10).toPower(this.auctionForm.bidToken.decimals).times(this.minBidAmount).toFixed(0);
 
-                //Create auction
-                const auction = await this.$auctions.createAuction(this.auctionForm.label,
-                    this.auctionForm.sellToken.address,
-                    this.auctionForm.bidToken.address,
-                    new Decimal(sellAmountToFractional).toFixed(0),
-                    new Decimal(bidAmountToFractional).toFixed(0),
-                    this.auctionForm.description,
-    
-                    // Converts from millis to a second-based UNIX friendly epoch time
-                    Math.round(this.auctionForm.endTime.getTime() / 1000)
-                );
-                // Log status
-                console.log("Auction:", auction);
-    
+            //Create auction
+            const auction = await this.$auctions.createAuction(this.auctionForm.label,
+                this.auctionForm.sellToken.address,
+                this.auctionForm.bidToken.address,
+                new Decimal(sellAmountToFractional).toFixed(0),
+                new Decimal(bidAmountToFractional).toFixed(0),
+                this.auctionForm.description,
+
+                // Converts from millis to a second-based UNIX friendly epoch time
+                Math.round(this.auctionForm.endTime.getTime() / 1000)
+            );
+            // Log status
+            //console.log("Auction:", auction);
+            if(!auction.error) {
                 this.stage = "congrats";
-            } catch(err) {
+            } else {
                 this.stage = "auction";
-                this.auctionError = err.message;
+                this.auctionError = auction.error;
             }
         },
         updateEndTime() {

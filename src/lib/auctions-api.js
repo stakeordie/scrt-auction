@@ -378,23 +378,19 @@ export class AuctionsApi {
     }
 
     async consignAllowance(sellTokenAddress, sellAmount) {
-        try {
-            //secretcli tx compute execute *sale_tokens_contract_address* '{"increase_allowance":{"spender":"secret1xr4mdrh5pr68846rehk3m2jgldfaek03dx0nsn","amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*"}}' --from *your_key_alias_or_addr* --gas 150000 -y
-            const expiration = new Date((new Date()).getTime() + (Number(1) * Number(10) * 60000));
-            const msg = {
-                "increase_allowance":
-                {
-                    "spender": this.factoryAddress,
-                    "amount": sellAmount,
-                    "padding": "*".repeat((40 - sellAmount.toString().length)),
-                    "expiration": Math.round(expiration.getTime() / 1000)
-                }
+        //secretcli tx compute execute *sale_tokens_contract_address* '{"increase_allowance":{"spender":"secret1xr4mdrh5pr68846rehk3m2jgldfaek03dx0nsn","amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*"}}' --from *your_key_alias_or_addr* --gas 150000 -y
+        const expiration = new Date((new Date()).getTime() + (Number(1) * Number(10) * 60000));
+        const msg = {
+            "increase_allowance":
+            {
+                "spender": this.factoryAddress,
+                "amount": sellAmount,
+                "padding": "*".repeat((40 - sellAmount.toString().length)),
+                "expiration": Math.round(expiration.getTime() / 1000)
             }
-            const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
-            return this.parseResponse(response);
-        } catch(e) {
-            return this.parseResponse(e);
         }
+        const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
+        return response;
     }
 
     async changeEndTime(auctionAddress, newEndTime) {
@@ -431,7 +427,7 @@ export class AuctionsApi {
                 }
             };
             console.log("msg in auction-api/createAuction", msg)
-            return this.parseResponse(await this.scrtClient.executeContract(this.factoryAddress, msg));
+            return await this.scrtClient.executeContract(this.factoryAddress, msg);
         } catch(e) {
             // TODO improve this
             const regex = /\"msg\":\"(.*)\"/g;
