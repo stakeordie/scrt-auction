@@ -389,8 +389,7 @@ export class AuctionsApi {
                 "expiration": Math.round(expiration.getTime() / 1000)
             }
         }
-        const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
-        return response;
+        return await this.scrtClient.executeContract(sellTokenAddress, msg);
     }
 
     async changeEndTime(auctionAddress, newEndTime) {
@@ -406,7 +405,7 @@ export class AuctionsApi {
         description,
         endDateTime
     ) {
-        try {
+        /*try {*/
             const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
             const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
             const msg = {
@@ -426,13 +425,13 @@ export class AuctionsApi {
                     "ends_at": endDateTime
                 }
             };
-            console.log("msg in auction-api/createAuction", msg)
+            //console.log("msg in auction-api/createAuction", msg)
             return await this.scrtClient.executeContract(this.factoryAddress, msg);
-        } catch(e) {
+        /*} catch(e) {
             // TODO improve this
             const regex = /\"msg\":\"(.*)\"/g;
             console.log(e.message);
             throw new Error(e.message.match(regex));
-        }
+        }*/
     }
 }

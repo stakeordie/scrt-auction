@@ -56,7 +56,6 @@
                             </select>
                         </validation-provider>
 
-
                         <!-- New auction date time -->
                         <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
 
@@ -101,6 +100,9 @@
                             <p>Now we are ready to create your Secret Auction.</p>
                             <p>Before creating the auction you have to allow the auction contract to access your tokens. By setting allowance, you will enable the application to automate transactions for you.</p>
                             <div class="allowance-action" v-if="stage == 'allowance'">
+                                <div v-if="allowanceError != ''">
+                                    <p class="error">Error: {{ allowanceError }}</p>
+                                </div>
                                 <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Go' }}</button>
                                 <p><a href="" @click="stage = 'info'">Back</a></p>
                             </div>
@@ -130,6 +132,7 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Viewing keys panel -->
                     <div class="stage-panel stage-panel__congrats">
                         <h3>Extra: Viewing Key</h3>
@@ -195,6 +198,7 @@ export default {
             statusLog: [],
 
             auctionError: null,
+            allowanceError: "",
 
             auctionForm: {
                 sellAmount: 0.1,
@@ -244,15 +248,15 @@ export default {
             }
         },
         async increaseAllowance() {
-            try {
-                this.stage = "allowance--creating";
-
-                const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
-                const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional);
-                console.log(consignedAllowance);
+            this.stage = "allowance--creating";
+            this.allowanceError = "";
+            const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
+            const response = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional);
+            if(!response.error) {
                 this.createAuction();
-            } catch(err) {
+            } else {
                 this.stage = "allowance";
+                this.allowanceError = response.error;
             }
         },
         async createAuction() {
