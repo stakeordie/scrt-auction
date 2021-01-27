@@ -249,7 +249,6 @@ export default {
 
                 const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
                 const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional);
-                
                 this.createAuction();
             } catch(err) {
                 this.stage = "allowance";
@@ -269,7 +268,7 @@ export default {
                     this.auctionForm.bidToken.address,
                     new Decimal(sellAmountToFractional).toFixed(0),
                     new Decimal(bidAmountToFractional).toFixed(0),
-                    this.auctionForm.formDescription,
+                    this.auctionForm.description,
     
                     // Converts from millis to a second-based UNIX friendly epoch time
                     Math.round(this.auctionForm.endTime.getTime() / 1000)

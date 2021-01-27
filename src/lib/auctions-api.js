@@ -341,9 +341,9 @@ export class AuctionsApi {
                 gas: '400000',
             },
         }
-        console.log("auctions-api/changeMinimumBid/msg"); console.log(msg);
+        console.log("auctions-api/changeMinimumBid/msg",msg);
         const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
-        console.log("auctions-api/changeMinimumBid/response"); console.log(await this.scrtClient.decryptTxHash(response.transactionHash));
+        console.log("auctions-api/changeMinimumBid/response",await this.scrtClient.decryptTxHash(response.transactionHash));
         return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     }
 
@@ -363,10 +363,8 @@ export class AuctionsApi {
                 gas: '400000',
             },
         }
-        console.log("auctions-api/placeBid/msg"); console.log(msg);
         const response = await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
-        console.log("auctions-api/placeBid/response"); console.log(await this.scrtClient.decryptTxHash(response.transactionHash));
-        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+        return this.parseResponse(response);
     }
 
     async retractBid(auctionAddress) {
@@ -384,16 +382,18 @@ export class AuctionsApi {
     async consignAllowance(sellTokenAddress, sellAmount) {
         try {
             //secretcli tx compute execute *sale_tokens_contract_address* '{"increase_allowance":{"spender":"secret1xr4mdrh5pr68846rehk3m2jgldfaek03dx0nsn","amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*"}}' --from *your_key_alias_or_addr* --gas 150000 -y
+            const expiration = new Date((new Date()).getTime() + (Number(1) * Number(10) * 60000));
             const msg = {
                 "increase_allowance":
                 {
                     "spender": this.factoryAddress,
                     "amount": sellAmount,
-                    "padding": "*".repeat((40 - sellAmount.toString().length))
+                    "padding": "*".repeat((40 - sellAmount.toString().length)),
+                    "expiration": Math.round(expiration.getTime() / 1000)
                 }
             }
             const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
-            return response;
+            return this.parseResponse(response);
         } catch(e) {
             throw e;
         }
@@ -432,13 +432,21 @@ export class AuctionsApi {
                     "ends_at": endDateTime
                 }
             };
-    
-            return await this.scrtClient.executeContract(this.factoryAddress, msg);
+            console.log("msg in auction-api/createAuction", msg)
+            return this.parseResponse(await this.scrtClient.executeContract(this.factoryAddress, msg));
         } catch(e) {
             // TODO improve this
             const regex = /\"msg\":\"(.*)\"/g;
             console.log(e.message);
             throw new Error(e.message.match(regex));
+        }
+    }
+
+    parseResponse(response) {
+        try {
+            return JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, ""));
+        } catch(e) {
+            return JSON.parse(new TextDecoder("utf-8").decode(response.data));
         }
     }
 }
