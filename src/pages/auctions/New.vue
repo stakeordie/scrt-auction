@@ -249,7 +249,6 @@ export default {
 
                 const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
                 const consignedAllowance = await this.$auctions.consignAllowance(this.auctionForm.sellToken.address, sellAmountToFractional);
-                
                 this.createAuction();
             } catch(err) {
                 this.stage = "allowance";

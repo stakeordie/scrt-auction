@@ -7,7 +7,7 @@
         <validation-observer v-slot="{handleSubmit, invalid}">
             <form class="form" @submit.prevent="handleSubmit(addViewingKey)">
                 <ul>
-                <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
+                    <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
                 </ul>
                 <div class="form__frame">
                     <div>
@@ -52,11 +52,12 @@
                         Balance
                     </th>
                 </tr>
-                <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress" >
+                <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress">
                     <td></td>
                     <!--td v-if="key.contractCodeId == 1">{{tokenData.find(token => token.address === key.contractAddress).name + " (" + tokenData.find(token => token.address === key.contractAddress).symbol + ")"}}</td-->
-                    <td v-if="key.contractCodeId != 1">TEST</td>
-                    <td>{{wallet[index].keys[index2].balance}}</td>
+                    <td >{{ key.contractAddress }}</td>
+                    <td v-if="key.contractCodeId == 1">{{ wallet[index].keys[index2].balance }}</td>
+                    <td v-else>Test</td>
                 </tr>
             </table>
         </div>
