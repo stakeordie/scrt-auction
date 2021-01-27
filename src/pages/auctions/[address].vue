@@ -102,6 +102,10 @@
           <!-- Close Auction for non owners -->
           <dl v-if="!isOwner && isEnded">
             <dt>The auction can now be closed by anyone</dt>
+            <loading-icon v-if="closingAuctionSimpleNonOwner">
+              <p>Closing Auction</p>
+            </loading-icon>
+            <div v-if="closeAuctionSimpleNonOwnerNotification">{{closedAuctionSimpleNonOwnerResponse}}</div>
             <dd><button v-show="!isOwner && isEnded" @click="closeAuctionSimple">Close Auction</button></dd>
           </dl>
           <!-- -->
@@ -166,6 +170,10 @@
             </dl>
           </div>
         </div>
+        <loading-icon v-if="placingBidInProgress">
+          <p>Placing Bid</p>
+        </loading-icon>
+        <div v-if="placeBidNotification">{{placedBidResponse}}</div>
         <validation-observer v-slot="{ handleSubmit, invalid }">
           <form class="form" @submit.prevent="handleSubmit(placeBid)">
             <ul>
@@ -179,10 +187,6 @@
               </validation-provider>
               <div class="bid-price-conversion">Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
               <button :disabled="invalid">Place Bid</button>
-              <loading-icon v-if="placingBidInProgress">
-                  <p>Placing Bid</p>
-              </loading-icon>
-              <div v-if="placeBidNotification">{{placedBidResponse}}</div>
             </div>
           </form>
         </validation-observer>
@@ -293,7 +297,15 @@ export default {
 
       placingBidInProgress: false,
       placeBidNotification: false,
-      placedBidResponse: {}
+      placedBidResponse: {},
+
+      closingAuctionSimpleNonOwner: false,
+      closeAuctionSimpleNonOwnerNotification: false,
+      closedAuctionSimpleNonOwnerResponse: {},
+
+      closingAuctionSimple: false,
+      closeAuctionSimpleNotification: false,
+      closedAuctionSimpleResponse: {},
     };
   },
   watch: {
@@ -407,7 +419,19 @@ export default {
       this.refreshAuction();
     },
     async closeAuctionSimple() {
+      if(this.isOwner) {
+        this.closingAuctionSimple = true;
+      } else {
+        this.closingAuctionSimpleNonOwner = true
+      }
       const closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
+      if(this.isOwner) {
+        this.closingAuctionSimple = false;
+        this.closingAuctionSimpleNotification = true;
+      } else {
+        this.closingAuctionSimpleNonOwner = false;
+        this.closingAuctionSimpleNonOwnerNotification = true;
+      }
       this.refreshAuction();
     },
     async closeAuctionWithOptions() {
