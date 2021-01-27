@@ -10,6 +10,22 @@
       <block>
         <div class="stage-panel">
             <h3>Details</h3>
+            <h4 v-if="isClosed">Auction Status: Closed</h4>
+            <h4 v-else>Auction Status: Open</h4>
+            <div class="flex">
+              <dl>
+                <dt>Sale Token</dt>
+                <dd>
+                  {{ auctionInfo.sell_token.token_info.symbol }}
+                </dd>
+              </dl>
+              <dl>
+                <dt>Bid Token</dt>
+                <dd>
+                  {{ auctionInfo.bid_token.token_info.symbol }}
+                </dd>
+              </dl>
+            </div>
             <div class="flex">
             <!-- <h3 class="auction__pair">
               <span class="sell-denom">{{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</span> -> 
@@ -28,15 +44,15 @@
                 </dd>
               </dl>
               <dl v-if="!isClosed">
-                <dt  @hover="endsAtModal">Ends At <sup>*</sup></dt>
+                <dt style="cursor: context-menu;" @hover="endsAtModal">Ends At <sup>*</sup></dt>
                 <dd>
                   {{ endTimeString }}
                 </dd>
               </dl>
               <dl v-if="isClosed">
-                <dt>Winning Bid</dt>
+                <dt>Winning Bid Price</dt>
                 <dd v-if="auctionInfo.winning_bid">
-                  {{ winningBidFromFractional }}
+                  {{ winningBidPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="winningBidFromFractional != 1">({{ this.winningBidFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
                 </dd>
                 <dd v-else>
                     Closed without a winner
@@ -46,41 +62,7 @@
         </div>
       </block>
     </columns>
-    <column number="2" number-m="1" number-s="1">
-      <block v-show="!isClosed">
-        <h2>Place a Bid</h2>
-        <div class="stage-panel" v-if="bidInfo.amount_bid > 0">
-          <div>
-            <h5>Current Bid</h5>
-            <dl>
-              <dd>
-                {{ bidInfoPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="sellAmountFromFractional != 1">({{ bidInfoAmountFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
-              </dd>
-            </dl>
-            <dl>
-              <dd class="no-margin">
-                <button @click="retractBid()" class="red-btn no-margin">Retract</button>
-              </dd>
-            </dl>
-          </div>
-        </div>
-        <validation-observer v-slot="{ handleSubmit, invalid }">
-          <form class="form" @submit.prevent="handleSubmit(placeBid)">
-            <ul>
-              <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
-            </ul>
-            <div class="form__frame">
-              <validation-provider :rules="validationRules" v-slot="{ errors }">
-                <label for="payment-amount">Bid Price</label>
-                <span class="error">{{ errors[0] }}</span>
-                <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
-              </validation-provider>
-              <div class="bid-price-conversion">Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
-              <button :disabled="invalid">Place Bid</button>
-            </div>
-          </form>
-        </validation-observer>
-      </block>
+    <column :number="(isOwner || isEnded) && !isClosed ? '2' : '1'" number-m="1" number-s="1">
       <block>
         <div class="stage-panel" v-if="(isOwner || isEnded) && !isClosed">
           <h3>Manage Auction</h3>
@@ -132,8 +114,10 @@
                       <p>As the owner of this auction you have ways to close.</p>
                       <p>You can close as is, or you can choose to extend the auction if there are no bids.</p>
                       <p>If you select to extend, you will be given additional options</p>
+                      <div class="flex">
                       <button @click="closeAuctionSimple">Complete Close Auction</button>
                       <button @click="closeAuctionAdvancedRequested = true">Extend if no bids</button>
+                      </div>
                   </div>
                   <validation-observer v-show="closeAuctionAdvancedRequested" v-slot="{ handleSubmit, invalid }">
                     <form @submit.prevent="handleSubmit(closeAuctionWithOptions)">
@@ -164,7 +148,41 @@
             </dd>
           </dl>
         </div>
-      </block> 
+      </block>
+      <block v-show="!isClosed">
+        <h2>Place a Bid</h2>
+        <div class="stage-panel" v-if="bidInfo.amount_bid > 0">
+          <div>
+            <h5>Current Bid</h5>
+            <dl>
+              <dd>
+                {{ bidInfoPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="sellAmountFromFractional != 1">({{ bidInfoAmountFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
+              </dd>
+            </dl>
+            <dl>
+              <dd class="no-margin">
+                <button @click="retractBid()" class="red-btn no-margin">Retract</button>
+              </dd>
+            </dl>
+          </div>
+        </div>
+        <validation-observer v-slot="{ handleSubmit, invalid }">
+          <form class="form" @submit.prevent="handleSubmit(placeBid)">
+            <ul>
+              <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
+            </ul>
+            <div class="form__frame">
+              <validation-provider :rules="validationRules" v-slot="{ errors }">
+                <label for="payment-amount">Bid Price</label>
+                <span class="error">{{ errors[0] }}</span>
+                <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
+              </validation-provider>
+              <div class="bid-price-conversion">Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
+              <button :disabled="invalid">Place Bid</button>
+            </div>
+          </form>
+        </validation-observer>
+      </block>
     </column>
   </page>
 </template>
@@ -317,6 +335,9 @@ export default {
     },
     winningBidFromFractional: function () {
       return this.auctionInfo.winning_bid / Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)
+    },
+    winningBidPrice: function () {
+      return this.winningBidFromFractional / this.sellAmountFromFractional;
     },
     minimumBidFromFractional: function () {
       return (this.auctionInfo.minimum_bid / Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")

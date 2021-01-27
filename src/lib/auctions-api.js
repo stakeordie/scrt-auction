@@ -433,7 +433,7 @@ export class AuctionsApi {
                 }
             };
             console.log("msg in auction-api/createAuction", msg)
-            return await this.scrtClient.executeContract(this.factoryAddress, msg);
+            return this.parseResponse(await this.scrtClient.executeContract(this.factoryAddress, msg));
         } catch(e) {
             // TODO improve this
             const regex = /\"msg\":\"(.*)\"/g;
