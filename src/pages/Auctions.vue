@@ -4,7 +4,7 @@
       <!-- Auctions header -->
       <div class="auctions-header">
         <h1>Auctions</h1>
-        <router-link :to="'/auctions/new'" class="button">New auction</router-link>
+        <router-link :to="'/auctions/new'" class="button">Create auction</router-link>
           <!--button @click="createViewingKey()">Create Viewing Key</button-->
           <!--button @click="listUserAuctions()">ListUserAuctions</button-->
       </div>
@@ -16,20 +16,20 @@
             <div class="auctions-tools__filter-filters">
               <!-- Filtering by sell -->
               <div class="auctions-tools__filter-filter">
-                <label class="auctions-tools__filter-label" for="sell-token">Sell</label>
+                <label class="auctions-tools__filter-label" for="sell-token">I want to buy</label>
                 <select class="auctions-tools__filter-select" name="sell-token" v-model="auctionsFilter.sellToken" @change="filterChanged()">
                   <option value=""></option>
                   <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
                     {{ sellToken }}
                   </option>
                 </select>
-                <button class="auctions-tools__filter-sort no-button"
-                    :class="[auctionsFilter.sort.fields.sell, { active: auctionsFilter.sort.priority == 'sell'}]" @click="toggleSort('sell')"></button>
+                <!--button class="auctions-tools__filter-sort no-button"
+                    :class="[auctionsFilter.sort.fields.sell, { active: auctionsFilter.sort.priority == 'sell'}]" @click="toggleSort('sell')"></button-->
               </div>
 
               <!-- Filtering by bid -->
               <div class="auctions-tools__filter-filter">
-                <label class="auctions-tools__filter-label" for="bid-token">Min bid</label>
+                <label class="auctions-tools__filter-label" for="bid-token">paying in</label>
                 <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
                   <option value=""></option>
                   <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
@@ -44,7 +44,7 @@
             <!-- Filtering by status -->
             <div class="auctions-tools__filter-toggles">
               <button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button>
-              <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">Closed</button>
+              <!--button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">Closed</button-->
               <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="toggleStatus('mine')">🔑 Only mine</button>
             </div>
 
