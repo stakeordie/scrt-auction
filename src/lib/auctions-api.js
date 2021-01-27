@@ -381,7 +381,6 @@ export class AuctionsApi {
 
     async consignAllowance(sellTokenAddress, sellAmount) {
         try {
-            console.log("try");
             //secretcli tx compute execute *sale_tokens_contract_address* '{"increase_allowance":{"spender":"secret1xr4mdrh5pr68846rehk3m2jgldfaek03dx0nsn","amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*"}}' --from *your_key_alias_or_addr* --gas 150000 -y
             const expiration = new Date((new Date()).getTime() + (Number(1) * Number(10) * 60000));
             const msg = {
