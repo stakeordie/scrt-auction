@@ -109,9 +109,10 @@ export class SecretJsClient {
         this.wallet.getSeed(),
         fees
       );
-      return await this.signingClient.execute(address, handleMsg);
+      return this.handleResponse(await this.signingClient.execute(address, handleMsg));
     } catch (err) {
-      throw err;
+      return this.handleResponse(err);
+      //throw err;
     }
   }
 
@@ -170,4 +171,35 @@ export class SecretJsClient {
       return "Decode Error"
     }
   }
+
+  handleResponse(response) {
+    try {
+      console.log("secretjs-client/handleResponse", JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, "")));
+      return JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, ""));
+    } catch(e) {
+        try{
+            console.log("secretjs-client/handleResponse", JSON.parse(new TextDecoder("utf-8").decode(response.data)));
+            return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+        } catch (e) {
+          let errorMessage = "";
+          switch(true) {
+            case /unknown variant/.test(response.message):
+              errorMessage = "Bad tx send to chain";
+              break;
+            case /Auction has ended. Bid tokens have been returned/.test(response.message):
+              errorMessage = "Auction has ended. Bid tokens have been returned";
+              break;
+            case /insufficient funds:/.test(response.message):
+              errorMessage = "Insufficient Funds";
+              break;
+            default:
+              errorMessage = response.message;
+          }
+          console.log("secretjs-client/handleResponse", {"error": errorMessage});
+          return {"error": errorMessage};
+        }
+    }
+    
+  }
+
 }

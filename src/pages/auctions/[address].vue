@@ -182,7 +182,7 @@
               <loading-icon v-if="placingBidInProgress">
                   <p>Placing Bid</p>
               </loading-icon>
-              <div v-if="placeBidNotification">{{placedBidResponse.bid.message}}</div>
+              <div v-if="placeBidNotification">{{placedBidResponse}}</div>
             </div>
           </form>
         </validation-observer>
@@ -232,7 +232,8 @@ export default {
       hasViewingKey: false,
       bidInfo: {
         "message": "",
-        "amount_bid": ""
+        "status": "",
+        "amount_bid": 0
       },
       keplrAccount: null,
       formBidAmount: 1,
@@ -387,7 +388,6 @@ export default {
       const bidAmountToFractional = this.bidAmount * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
       this.placedBidResponse = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placingBidInProgress = false;
-      console.log("[address]/placedBid/placeBid", this.placedBidResponse);
       this.placeBidNotification = true;
       this.refreshAuction();
     },
@@ -417,6 +417,8 @@ export default {
       this.refreshAuction();
     },
     async getAuction() {
+      this.isClosed = false;
+      this.isEnded = false;
       this.auctionAddress = this.$route.params.address;
       this.auctionInfo = (await this.$auctions.getAuctionInfo(this.auctionAddress)).auction_info;
       if(this.auctionInfo) {
@@ -439,21 +441,34 @@ export default {
     },
     async refreshAuction() {
       this.getAuction();
+      //reset bidder / owner
+      this.bidInfo = {
+        "message": "",
+        "status": "",
+        "amount_bid": 0
+      }
+      this.isBidder = false;
+      this.isOwner = false;
+      this.hasBids = false;
+      this.hasViewingKey = false;
+
       this.auctionAddress = this.$route.params.address;
       const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
       if(viewingKey) {
         this.hasViewingKey = true;
         const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
         if(!bidInfoResponse.viewing_key_error) {
-          this.bidInfo = bidInfoResponse.bid;
-          this.isBidder = true;
-        }
-        const userAuctions = await this.$auctions.listUserAuctions();
-        if(userAuctions?.list_my_auctions?.active?.as_seller) {
-          const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
-          if(is_owner.length > 0) {
-            this.isOwner = true;
-            this.hasBids = (await this.$auctions.getAuctionHasBids(this.auctionAddress, viewingKey)).has_bids.has_bids;
+          if(bidInfoResponse?.bid?.status != "Failure") {
+            this.bidInfo = bidInfoResponse.bid;
+            this.isBidder = true;
+          }
+          const userAuctions = await this.$auctions.listUserAuctions();
+          if(userAuctions?.list_my_auctions?.active?.as_seller) {
+            const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
+            if(is_owner.length > 0) {
+              this.isOwner = true;
+              this.hasBids = (await this.$auctions.getAuctionHasBids(this.auctionAddress, viewingKey)).has_bids.has_bids;
+            }
           }
         }
       }

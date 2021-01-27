@@ -145,11 +145,10 @@ export class AuctionsApi {
             }
         }
         const response = await this.scrtClient.executeContract(this.factoryAddress, msg);
-        const parsedResponse = JSON.parse(new TextDecoder("utf-8").decode(response.data));
-        if(parsedResponse.create_viewing_key) {
-            return parsedResponse.create_viewing_key.key;
+        if(response.create_viewing_key) {
+            return response.create_viewing_key.key;
         } else {
-            return parsedResponse.viewing_key.key;
+            return response.viewing_key.key;
         }
     }
 
@@ -307,7 +306,7 @@ export class AuctionsApi {
             },
         }
         const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
-        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+        return response;
     }
 
     async closeAuctionWithOptions(auctionAddress, endDateTime, newMinBid) {
@@ -326,7 +325,7 @@ export class AuctionsApi {
             },
         }
         const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
-        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+        return response;
     }
 
     async changeMinimumBid(auctionAddress, newMinimumBidAmount) {
@@ -343,33 +342,27 @@ export class AuctionsApi {
         }
         console.log("auctions-api/changeMinimumBid/msg",msg);
         const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
-        console.log("auctions-api/changeMinimumBid/response",await this.scrtClient.decryptTxHash(response.transactionHash));
-        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+        return response;
     }
 
     async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
         //console.log("auctions-api/placeBid/padding"); console.log("*".repeat((40 - bidAmount.toString().length)));
         
         //secretcli tx compute execute *bid_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*bid_amount_in_smallest_denomination_of_bidding_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
-        try {
-            const msg = {
-                "send": {
-                    "recipient": auctionAddress, 
-                    "amount": bidAmount.toString(),
-                    "padding": "*".repeat((40 - bidAmount.toString().length))
-                }
-            };
-            const bidFees = {
-                exec: {
-                    amount: [{ amount: '400000', denom: 'uscrt' }],
-                    gas: '400000',
-                },
+        const msg = {
+            "send": {
+                "recipient": auctionAddress, 
+                "amount": bidAmount.toString(),
+                "padding": "*".repeat((40 - bidAmount.toString().length))
             }
-            const response = await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
-            return this.parseResponse(response);
-        } catch(e) {
-            throw(e)
-        } 
+        };
+        const bidFees = {
+            exec: {
+                amount: [{ amount: '400000', denom: 'uscrt' }],
+                gas: '400000',
+            },
+        }
+        return await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
     }
 
     async retractBid(auctionAddress) {
@@ -381,7 +374,7 @@ export class AuctionsApi {
             },
         }
         const response = await this.scrtClient.executeContract(auctionAddress, {"retract_bid": {}}, retractBidFees);
-        return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+        return response;
     }
 
     async consignAllowance(sellTokenAddress, sellAmount) {
@@ -444,18 +437,6 @@ export class AuctionsApi {
             const regex = /\"msg\":\"(.*)\"/g;
             console.log(e.message);
             throw new Error(e.message.match(regex));
-        }
-    }
-
-    parseResponse(response) {
-        try {
-            return JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, ""));
-        } catch(e) {
-            try{
-                return JSON.parse(new TextDecoder("utf-8").decode(response.data));
-            } catch (e) {
-                return e
-            }
         }
     }
 }
