@@ -179,6 +179,10 @@
               </validation-provider>
               <div class="bid-price-conversion">Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
               <button :disabled="invalid">Place Bid</button>
+              <loading-icon v-if="placingBidInProgress">
+                  <p>Placing Bid</p>
+              </loading-icon>
+              <div v-if="placeBidNotification">{{placedBidResponse.bid.message}}</div>
             </div>
           </form>
         </validation-observer>
@@ -196,6 +200,7 @@ import KeplrAccount from '../../components/KeplrAccount.vue';
 
 import { Decimal } from 'decimal.js';
 import TokenAmount from '../../components/TokenAmount.vue';
+import LoadingIcon from '../../components/LoadingIcon.vue';
 
 extend("required", {
   ...required,
@@ -219,7 +224,7 @@ extend("min_value", {
 // });
 
 export default {
-  components: {ValidationObserver, ValidationProvider, KeplrAccount, TokenAmount},
+  components: {ValidationObserver, ValidationProvider, KeplrAccount, TokenAmount, LoadingIcon},
   data() {
     return {
       errors: [],
@@ -266,7 +271,7 @@ export default {
       isClosed: false,
 
       placeBidForm: { 
-        bidPrice: 1
+        bidPrice: 1,
       },
       updateAskingPriceForm: {
         askingPrice: 0,
@@ -283,7 +288,11 @@ export default {
       closeAuctionRequested: false,
       closeAuctionAdvancedRequested: false,
       
-      hasBids: false
+      hasBids: false,
+
+      placingBidInProgress: false,
+      placeBidNotification: false,
+      placedBidResponse: {}
     };
   },
   watch: {
@@ -374,9 +383,12 @@ export default {
   },
   methods: {
     async placeBid() {
+      this.placingBidInProgress = true;
       const bidAmountToFractional = this.bidAmount * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
-      const placedBid = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
-      console.log("[address]/placedBid/placeBid", placedBid);
+      this.placedBidResponse = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
+      this.placingBidInProgress = false;
+      console.log("[address]/placedBid/placeBid", this.placedBidResponse);
+      this.placeBidNotification = true;
       this.refreshAuction();
     },
     async retractBid() {

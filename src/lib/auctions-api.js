@@ -349,22 +349,27 @@ export class AuctionsApi {
 
     async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
         //console.log("auctions-api/placeBid/padding"); console.log("*".repeat((40 - bidAmount.toString().length)));
+        
         //secretcli tx compute execute *bid_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*bid_amount_in_smallest_denomination_of_bidding_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
-        const msg = {
-            "send": {
-                "recipient": auctionAddress, 
-                "amount": bidAmount.toString(),
-                "padding": "*".repeat((40 - bidAmount.toString().length))
+        try {
+            const msg = {
+                "send": {
+                    "recipient": auctionAddress, 
+                    "amount": bidAmount.toString(),
+                    "padding": "*".repeat((40 - bidAmount.toString().length))
+                }
+            };
+            const bidFees = {
+                exec: {
+                    amount: [{ amount: '400000', denom: 'uscrt' }],
+                    gas: '400000',
+                },
             }
-        };
-        const bidFees = {
-            exec: {
-                amount: [{ amount: '400000', denom: 'uscrt' }],
-                gas: '400000',
-            },
-        }
-        const response = await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
-        return this.parseResponse(response);
+            const response = await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
+            return this.parseResponse(response);
+        } catch(e) {
+            throw(e)
+        } 
     }
 
     async retractBid(auctionAddress) {
@@ -395,7 +400,7 @@ export class AuctionsApi {
             const response = await this.scrtClient.executeContract(sellTokenAddress, msg);
             return this.parseResponse(response);
         } catch(e) {
-            throw e;
+            return this.parseResponse(e);
         }
     }
 
@@ -446,7 +451,11 @@ export class AuctionsApi {
         try {
             return JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, ""));
         } catch(e) {
-            return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+            try{
+                return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+            } catch (e) {
+                return e
+            }
         }
     }
 }
