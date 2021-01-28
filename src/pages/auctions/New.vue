@@ -51,6 +51,7 @@
                             <select name="bid-denom" v-model="auctionForm.bidToken">
                                 <option value=""></option>
                                 <option v-for="bidToken in availableTokens" :key="bidToken.address" v-bind:value="bidToken">
+                                    <g-image class="token-icon" :src="'@/assets/token-icons/' + bidToken.iconImg"></g-image>
                                     {{ bidToken.symbol }}
                                 </option>
                             </select>
