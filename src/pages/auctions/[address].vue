@@ -773,7 +773,9 @@ export default {
 }
 
 .result-failed {
+  p {
   color: red;
+  }
 }
 
 // Sandy ^^^^^^
