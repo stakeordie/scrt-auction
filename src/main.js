@@ -100,10 +100,22 @@ export default function(Vue, { router, head, isClient }) {
     wallet: Vue.prototype.$keplr 
   });
 
-  Vue.use(AuctionsApi, { 
-    chainClient: Vue.prototype.$scrtjs,
-    factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
-    availableTokens: [
+  let availableTokens;
+
+  if(process.env.GRIDSOME_SECRET_CHAIN_ID == "secret-2") {
+    availableTokens = [
+      {
+        codeId: 5,
+        symbol: "SSCRT",
+        address: "secret1k0jntykt7e4g3y88ltc60czgjuqdy4c9e8fzek",
+        name: "ssecret",
+        label: "sscrt",
+        decimals: 6
+      }
+    ]
+
+  } else {
+    availableTokens = [
       {
           codeId: 1,
           symbol: "TSUNI",
@@ -217,6 +229,12 @@ export default function(Vue, { router, head, isClient }) {
           decimals: 2
       }
     ]
+  }
+
+  Vue.use(AuctionsApi, { 
+    chainClient: Vue.prototype.$scrtjs,
+    factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
+    availableTokens
   });
   
 
