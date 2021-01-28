@@ -63,8 +63,8 @@
       </block>
     </columns>
     <column :number="(isOwner || isEnded) && !isClosed ? '2' : '1'" number-m="1" number-s="1">
-      <block>
-        <div class="stage-panel" v-if="(isOwner || isEnded) && !isClosed">
+      <block v-if="isOwner && !isClosed">
+        <div class="stage-panel">
           <h3>Manage Auction</h3>
           <!-- <h3 class="auction__pair">
             <span class="sell-denom">{{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</span> -> 
@@ -96,7 +96,7 @@
             </dd>
           </dl>
           <!-- Bid Status -->
-          <dl v-if="isOwner">
+          <dl>
             <dt>Bid Status</dt>
             <dd v-if="hasBids">
               1 or more bids;
@@ -105,19 +105,9 @@
               No Bids.
             </dd>
           </dl>
-          <!-- Close Auction for non owners -->
-          <dl v-if="!isOwner && isEnded">
-            <dt>The auction can now be closed by anyone</dt>
-            <loading-icon v-if="closeAuctionSimpleNOSubmit.inProgress">
-              <p>Closing Auction</p>
-            </loading-icon>
-            <div class="result-failed" v-if="closeAuctionSimpleNOSubmit.result == 'error'">
-              <p>{{ closeAuctionSimpleNOSubmit.response.error }}</p>
-            </div>
-            <dd><button v-show="!isOwner && isEnded" @click="closeAuctionSimpleNO">Close Auction</button></dd>
-          </dl>
+          
           <!-- -->
-          <dl v-if="isOwner">
+          <dl>
             <dd>
               <button v-show="isOwner && !closeAuctionRequested" @click="closeAuctionRequested = !closeAuctionRequested" class="orange-btn">Close Auction</button>
               <div v-show="closeAuctionRequested" class="stage-panel stage-panel__info">
@@ -173,7 +163,7 @@
           </dl>
         </div>
       </block>
-      <block v-show="!isClosed">
+      <block v-if="!isClosed">
         <h2>Place a Bid</h2>
         <div class="stage-panel" v-if="bidInfo.amount_bid > 0">
           <div>
@@ -218,6 +208,22 @@
             </div>
           </form>
         </validation-observer>
+      </block>
+      <block v-if="!isOwner && isEnded && !isClosed">
+        <div class="stage-panel">
+          <h3>Close</h3>
+          <p>The auction is past it's "Ends At" time and can be closed by anyone. As long as it hasn't been closed, bids will be accepted</p>
+          <!-- Close Auction for non owners -->
+          <dl>
+            <loading-icon v-if="closeAuctionSimpleNOSubmit.inProgress">
+              <p>Closing Auction</p>
+            </loading-icon>
+            <div class="result-failed" v-if="closeAuctionSimpleNOSubmit.result == 'error'">
+              <p>{{ closeAuctionSimpleNOSubmit.response.error }}</p>
+            </div>
+            <dd><button v-show="!isOwner && isEnded" @click="closeAuctionSimpleNO">Close This Auction</button></dd>
+          </dl>
+        </div>
       </block>
     </column>
   </page>
