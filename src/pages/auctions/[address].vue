@@ -82,6 +82,12 @@
                     <input name="asking-price-form" type="text" v-model.trim="updateAskingPriceForm.askingPrice" />
                     <div class="bid-price-conversion">New Minimum Bid = {{ changeAskingPriceFormMinimumBid }} {{auctionInfo.bid_token.token_info.symbol}}</div>
                   </validation-provider>
+                  <loading-icon v-if="changeAskingPriceSubmit.inProgress">
+                    <p>Updating Asking Price</p>
+                  </loading-icon>
+                  <div class="result-failed" v-if="changeAskingPriceSubmit.result == 'error'">
+                    <p>{{ changeAskingPriceSubmit.response }}</p>
+                  </div>
                   <div style="display: flex; justify-content: flex-end;">
                     <button :disabled="invalid">Enter</button>
                   </div>
@@ -102,11 +108,13 @@
           <!-- Close Auction for non owners -->
           <dl v-if="!isOwner && isEnded">
             <dt>The auction can now be closed by anyone</dt>
-            <loading-icon v-if="closingAuctionSimpleNonOwner">
+            <loading-icon v-if="closeAuctionSimpleNOSubmit.inProgress">
               <p>Closing Auction</p>
             </loading-icon>
-            <div v-if="closeAuctionSimpleNonOwnerNotification">{{closedAuctionSimpleNonOwnerResponse}}</div>
-            <dd><button v-show="!isOwner && isEnded" @click="closeAuctionSimple">Close Auction</button></dd>
+            <div class="result-failed" v-if="closeAuctionSimpleNOSubmit.result == 'error'">
+              <p>{{ closeAuctionSimpleNOSubmit.response }}</p>
+            </div>
+            <dd><button v-show="!isOwner && isEnded" @click="closeAuctionSimpleNO">Close Auction</button></dd>
           </dl>
           <!-- -->
           <dl v-if="isOwner">
@@ -163,6 +171,12 @@
                 {{ bidInfoPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="sellAmountFromFractional != 1">({{ bidInfoAmountFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
               </dd>
             </dl>
+            <loading-icon v-if="retractBidSubmit.inProgress">
+              <p>Retracting Bid</p>
+            </loading-icon>
+            <div class="result-failed" v-if="retractBidSubmit.result == 'error'">
+              <p>{{ retractBidSubmit.response }}</p>
+            </div>
             <dl>
               <dd class="no-margin">
                 <button @click="retractBid()" class="red-btn no-margin">Retract</button>
@@ -170,10 +184,12 @@
             </dl>
           </div>
         </div>
-        <loading-icon v-if="placingBidInProgress">
+        <loading-icon v-if="placeBidSubmit.inProgress">
           <p>Placing Bid</p>
         </loading-icon>
-        <div v-if="placeBidNotification">{{placedBidResponse}}</div>
+        <div class="result-failed" v-if="placeBidSubmit.result == 'error'">
+          <p>{{ placeBidSubmit.response }}</p>
+        </div>
         <validation-observer v-slot="{ handleSubmit, invalid }">
           <form class="form" @submit.prevent="handleSubmit(placeBid)">
             <ul>
@@ -295,17 +311,35 @@ export default {
       
       hasBids: false,
 
-      placingBidInProgress: false,
-      placeBidNotification: false,
-      placedBidResponse: {},
+      placeBidSubmit: {
+        inProgress: false,
+        result: null,
+        response: {} 
+      },
 
-      closingAuctionSimpleNonOwner: false,
-      closeAuctionSimpleNonOwnerNotification: false,
-      closedAuctionSimpleNonOwnerResponse: {},
+      retractBidSubmit: {
+        inProgress: false,
+        result: null,
+        response: {} 
+      },
 
-      closingAuctionSimple: false,
-      closeAuctionSimpleNotification: false,
-      closedAuctionSimpleResponse: {},
+      closeAuctionSimpleNOSubmit: {
+        inProgress: false,
+        result: null,
+        response: {} 
+      },
+
+      closeAuctionSimpleSubmit: {
+        inProgress: false,
+        result: null,
+        response: {}
+      },
+
+      changeAskingPriceSubmit: {
+        inProgress: false,
+        result: null,
+        response: {}
+      },
     };
   },
   watch: {
@@ -396,27 +430,59 @@ export default {
   },
   methods: {
     async placeBid() {
-      this.placingBidInProgress = true;
+      this.placeBidSubmit.result = null;
+      this.placeBidSubmit.inProgress = true;
       const bidAmountToFractional = this.bidAmount * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
-      this.placedBidResponse = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
-      this.placingBidInProgress = false;
-      this.placeBidNotification = true;
-      this.refreshAuction();
+      this.placeBidSubmit.response = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
+      this.placeBidSubmit.inProgress = false;
+      if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
+        console.log("FAILED");
+        this.placeBidSubmit.result = "error"
+      } else {
+        this.placeBidSubmit.result = "success"
+        this.refreshAuction();
+      }
+      
     },
     async retractBid() {
-      const bidRetracted = await this.$auctions.retractBid(this.auctionAddress);
-      this.refreshAuction();
+      this.retractBidSubmit.result = null;
+      this.retractBidSubmit.inProgress = true;
+      this.retractBidSubmit.response = await this.$auctions.retractBid(this.auctionAddress);
+      this.retractBidSubmit.inProgress = false;
+      if(this.retractBidSubmit.response.retractBid?.status == 'Failure' || this.retractBidSubmit.response.error) {
+        this.retractBidSubmit.result = "error"
+      } else {
+        this.retractBidSubmit.result = "success"
+        this.refreshAuction();
+      }
       //console.log(bidRetracted);
     },
     async updateAskingPrice() {
       const newMinimumBidAmount = this.changeAskingPriceFormMinimumBid * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
-      const updatedBidAmount = await this.$auctions.changeMinimumBid(this.auctionAddress, new Decimal(newMinimumBidAmount).toFixed(0));
+      this.changeAskingPriceSubmit.result = null;
+      this.changeAskingPriceSubmit.inProgress = true;
+      this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auctionAddress, new Decimal(newMinimumBidAmount).toFixed(0));
+      this.changeAskingPriceSubmit.inProgress = false;
+      if(this.changeAskingPriceSubmit.response.retractBid?.status == 'Failure' || this.changeAskingPriceSubmit.response.error) {
+        this.changeAskingPriceSubmit.result = "error"
+      } else {
+        this.changeAskingPriceSubmit.result = "success"
+        this.refreshAuction();
+      }
       this.refreshAuction();
       //console.log(bidRetracted);
     },
-    async changeEndTime() {
-      const changedEndTime = await this.$auctions.changeEndTime(this.auctionAddress, this.newEndTime);
-      this.refreshAuction();
+    async closeAuctionSimpleNO() {
+      this.closeAuctionSimpleNOSubmit.result = null;
+      this.closeAuctionSimpleNOSubmit.inProgress = true;
+      this.closeAuctionSimpleNOSubmit.response = await this.$auctions.closeAuction(this.auctionAddress)
+      this.closeAuctionSimpleNOSubmit.inProgress = false;
+      if(this.closeAuctionSimpleNOSubmit.response.retractBid?.status == 'Failure' || this.closeAuctionSimpleNOSubmit.response.error) {
+        this.closeAuctionSimpleNOSubmit.result = "error"
+      } else {
+        this.closeAuctionSimpleNOSubmit.result = "success"
+        this.refreshAuction();
+      }
     },
     async closeAuctionSimple() {
       if(this.isOwner) {
