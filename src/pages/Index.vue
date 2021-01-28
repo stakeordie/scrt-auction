@@ -12,7 +12,7 @@ export default {
     title: 'Secret Auctions'
   },
   mounted() {
-    this.$refs.auctionsLink.click()
+    //this.$refs.auctionsLink.click()
   }
 }
 </script>
