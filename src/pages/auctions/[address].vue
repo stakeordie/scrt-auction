@@ -86,7 +86,7 @@
                     <p>Updating Asking Price</p>
                   </loading-icon>
                   <div class="result-failed" v-if="changeAskingPriceSubmit.result == 'error'">
-                    <p>{{ changeAskingPriceSubmit.response }}</p>
+                    <p>{{ changeAskingPriceSubmit.response.error }}</p>
                   </div>
                   <div style="display: flex; justify-content: flex-end;">
                     <button :disabled="invalid">Enter</button>
@@ -112,7 +112,7 @@
               <p>Closing Auction</p>
             </loading-icon>
             <div class="result-failed" v-if="closeAuctionSimpleNOSubmit.result == 'error'">
-              <p>{{ closeAuctionSimpleNOSubmit.response }}</p>
+              <p>{{ closeAuctionSimpleNOSubmit.response.error }}</p>
             </div>
             <dd><button v-show="!isOwner && isEnded" @click="closeAuctionSimpleNO">Close Auction</button></dd>
           </dl>
@@ -121,41 +121,53 @@
             <dd>
               <button v-show="isOwner && !closeAuctionRequested" @click="closeAuctionRequested = !closeAuctionRequested" class="orange-btn">Close Auction</button>
               <div v-show="closeAuctionRequested" class="stage-panel stage-panel__info">
-                  <h3>Close Auction</h3>
-                  <div class="details">
-                      <p>As the owner of this auction you have ways to close.</p>
-                      <p>You can close as is, or you can choose to extend the auction if there are no bids.</p>
-                      <p>If you select to extend, you will be given additional options</p>
-                      <div class="flex">
-                      <button @click="closeAuctionSimple">Complete Close Auction</button>
-                      <button @click="closeAuctionAdvancedRequested = true">Extend if no bids</button>
-                      </div>
-                  </div>
-                  <validation-observer v-show="closeAuctionAdvancedRequested" v-slot="{ handleSubmit, invalid }">
-                    <form @submit.prevent="handleSubmit(closeAuctionWithOptions)">
-                      <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
-                    <label for="asking-price-form">New Asking Price</label>
-                    <span class="error">{{ errors[0] }}</span>
-                    <input name="asking-price-form" type="text" v-model.trim="closeAuctionForm.askingPrice" />
-                    <div class="bid-price-conversion">New Minimum Bid = {{ closeAuctionFormMinimumBid }} {{auctionInfo.bid_token.token_info.symbol}}</div>
-                  </validation-provider>
-                      <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
-                          <label for="auction-end-time">End time</label>
-                          <span class="error">{{ errors[0] }}</span>
-                          <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="closedAuctionFromEndTimeString" />
-                          <p>Can be closed after 
-                              <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="closeAuctionForm.endTimeAmount">
-                              <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="closeAuctionForm.endTimeUnit">
-                                  <option value="1">minute<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
-                                  <option value="60">hour<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
-                                  <option value="1440">day<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
-                                  <option value="10080">week<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
-                              </select>
-                          </p>
-                      </validation-provider>
-                      <button :disabled="invalid">Close with options</button>
-                    </form>
-                  </validation-observer>
+                <h3>Close Auction</h3>
+                <div class="details">
+                    <p>As the owner of this auction you have two ways to close an Auction.</p>
+                    <p>You can close the auction as is, or you can choose to extend the auction if there are no bids.</p>
+                    <p>If you select to extend, you will be be able to choose the new expiration and change the asking price.</p>
+                    <loading-icon v-if="closeAuctionSimpleSubmit.inProgress">
+                      <p>Closing Auction</p>
+                    </loading-icon>
+                    <div class="result-failed" v-if="closeAuctionSimpleSubmit.result == 'error'">
+                      <p>{{ closeAuctionSimpleSubmit.response.error }}</p>
+                    </div>
+                    <div class="flex close-auction-buttons">
+                      <button @click="closeAuctionWithOptionsRequested = true;">Extend Auction if No Bids</button>
+                      <button @click="closeAuctionSimple">Close Auction No Matter What</button>
+                    </div>
+                </div>
+                <validation-observer v-show="closeAuctionWithOptionsRequested" v-slot="{ handleSubmit, invalid }">
+                  <form @submit.prevent="handleSubmit(closeAuctionWithOptions)">
+                    <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
+                      <label for="asking-price-form">New Asking Price</label>
+                      <span class="error">{{ errors[0] }}</span>
+                      <input name="asking-price-form" type="text" v-model.trim="closeAuctionForm.askingPrice" />
+                      <div class="bid-price-conversion">New Asking Bid = {{ closeAuctionFormMinimumBid }} {{auctionInfo.bid_token.token_info.symbol}}</div>
+                    </validation-provider>
+                    <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
+                        <label for="auction-end-time">End time</label>
+                        <span class="error">{{ errors[0] }}</span>
+                        <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="closedAuctionFromEndTimeString" />
+                        <p>Can be closed after 
+                            <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="closeAuctionForm.endTimeAmount">
+                            <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="closeAuctionForm.endTimeUnit">
+                                <option value="1">minute<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
+                                <option value="60">hour<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
+                                <option value="1440">day<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
+                                <option value="10080">week<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
+                            </select>
+                        </p>
+                    </validation-provider>
+                    <loading-icon v-if="closeAuctionWithOptionsSubmit.inProgress">
+                      <p>Closing Auction</p>
+                    </loading-icon>
+                    <div class="result-failed" v-if="closeAuctionWithOptionsSubmit.result == 'error'">
+                      <p>{{ closeAuctionWithOptionsSubmit.response.error }}</p>
+                    </div>
+                    <button :disabled="invalid">Close with options</button>
+                  </form>
+                </validation-observer>
               </div>
             </dd>
           </dl>
@@ -175,7 +187,7 @@
               <p>Retracting Bid</p>
             </loading-icon>
             <div class="result-failed" v-if="retractBidSubmit.result == 'error'">
-              <p>{{ retractBidSubmit.response }}</p>
+              <p>{{ retractBidSubmit.response.error }}</p>
             </div>
             <dl>
               <dd class="no-margin">
@@ -183,12 +195,6 @@
               </dd>
             </dl>
           </div>
-        </div>
-        <loading-icon v-if="placeBidSubmit.inProgress">
-          <p>Placing Bid</p>
-        </loading-icon>
-        <div class="result-failed" v-if="placeBidSubmit.result == 'error'">
-          <p>{{ placeBidSubmit.response }}</p>
         </div>
         <validation-observer v-slot="{ handleSubmit, invalid }">
           <form class="form" @submit.prevent="handleSubmit(placeBid)">
@@ -202,6 +208,12 @@
                 <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
               </validation-provider>
               <div class="bid-price-conversion">Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
+              <loading-icon v-if="placeBidSubmit.inProgress">
+                <p>Placing Bid</p>
+              </loading-icon>
+              <div class="result-failed" v-if="placeBidSubmit.result == 'error'">
+                <p>{{ placeBidSubmit.response.error }}</p>
+              </div>
               <button :disabled="invalid">Place Bid</button>
             </div>
           </form>
@@ -307,7 +319,7 @@ export default {
       
       changeMinimumBidRequested: false,
       closeAuctionRequested: false,
-      closeAuctionAdvancedRequested: false,
+      closeAuctionWithOptionsRequested: false,
       
       hasBids: false,
 
@@ -330,6 +342,12 @@ export default {
       },
 
       closeAuctionSimpleSubmit: {
+        inProgress: false,
+        result: null,
+        response: {}
+      },
+
+      closeAuctionWithOptionsSubmit: {
         inProgress: false,
         result: null,
         response: {}
@@ -436,7 +454,6 @@ export default {
       this.placeBidSubmit.response = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placeBidSubmit.inProgress = false;
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
-        console.log("FAILED");
         this.placeBidSubmit.result = "error"
       } else {
         this.placeBidSubmit.result = "success"
@@ -467,6 +484,9 @@ export default {
         this.changeAskingPriceSubmit.result = "error"
       } else {
         this.changeAskingPriceSubmit.result = "success"
+        this.changeMinimumBidRequested = false;
+        this.closeAuctionWithOptionsRequested = false;
+        this.closeAuctionRequested = false;
         this.refreshAuction();
       }
       this.refreshAuction();
@@ -485,26 +505,33 @@ export default {
       }
     },
     async closeAuctionSimple() {
-      if(this.isOwner) {
-        this.closingAuctionSimple = true;
+      this.closeAuctionSimpleSubmit.result = null;
+      this.closeAuctionSimpleSubmit.inProgress = true;
+      this.closeAuctionSimpleSubmit.response = await this.$auctions.closeAuction(this.auctionAddress)
+      this.closeAuctionSimpleSubmit.inProgress = false;
+      if(this.closeAuctionSimpleSubmit.response.error) {
+        this.closeAuctionSimpleSubmit.result = "error"
       } else {
-        this.closingAuctionSimpleNonOwner = true
+        this.closeAuctionSimpleSubmit.result = "success"
+        this.refreshAuction();
       }
-      const closedAuction = await this.$auctions.closeAuction(this.auctionAddress)
-      if(this.isOwner) {
-        this.closingAuctionSimple = false;
-        this.closingAuctionSimpleNotification = true;
-      } else {
-        this.closingAuctionSimpleNonOwner = false;
-        this.closingAuctionSimpleNonOwnerNotification = true;
-      }
-      this.refreshAuction();
     },
     async closeAuctionWithOptions() {
+      this.closeAuctionWithOptionsSubmit.result = null;
+      this.closeAuctionWithOptionsSubmit.inProgress = true;
       const newMinimumBidAmount = this.closeAuctionFormMinimumBid * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
       const endTime = Math.round(this.closeAuctionForm.endTime.getTime() / 1000)
-      const closedAuction = await this.$auctions.closeAuctionWithOptions(this.auctionAddress,endTime,new Decimal(newMinimumBidAmount).toFixed(0))
-      this.refreshAuction();
+      this.closeAuctionWithOptionsSubmit.response = await this.$auctions.closeAuctionWithOptions(this.auctionAddress,endTime,new Decimal(newMinimumBidAmount).toFixed(0))
+      this.closeAuctionWithOptionsSubmit.inProgress = false;
+      if(this.closeAuctionWithOptionsSubmit.response.error) {
+        this.closeAuctionWithOptionsSubmit.result = "error"
+      } else {
+        this.closeAuctionWithOptionsSubmit.result = "success"
+        this.changeMinimumBidRequested = false;
+        this.closeAuctionWithOptionsRequested = false;
+        this.closeAuctionRequested = false;
+        this.refreshAuction();
+      }
     },
     async getAuction() {
       this.isClosed = false;
@@ -546,6 +573,7 @@ export default {
       const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
       if(viewingKey) {
         this.hasViewingKey = true;
+        this.$vkeys.put(this.$store.state.$keplr.selectedAccount?.address,this.$auctions.factoryAddress,viewingKey);
         const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
         if(!bidInfoResponse.viewing_key_error) {
           if(bidInfoResponse?.bid?.status != "Failure") {
@@ -663,6 +691,11 @@ export default {
   .flex {
     display: flex;
 
+    &.close-auction-buttons {
+      justify-content: space-between;
+      padding-right: 50px;
+    }
+
     dl {
       margin-right: 100px;
     }
@@ -731,6 +764,10 @@ export default {
 
 .whatsthis {
   font-size: 10px;
+}
+
+.result-failed {
+  color: red;
 }
 
 // Sandy ^^^^^^

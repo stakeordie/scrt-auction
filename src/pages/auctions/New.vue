@@ -201,7 +201,7 @@ export default {
             allowanceError: "",
 
             auctionForm: {
-                sellAmount: 0.1,
+                sellAmount: 1,
                 sellToken: null,
                 bidPrice: 1,
                 bidToken: null,

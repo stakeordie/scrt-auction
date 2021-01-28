@@ -173,13 +173,14 @@ export class SecretJsClient {
   }
 
   handleResponse(response) {
+    let result;
     try {
-      console.log("secretjs-client/handleResponse", JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, "")));
-      return JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, ""));
+      console.log("secretjs-client/handleResponseA", JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, "")));
+      result = JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, ""));
     } catch(e) {
         try{
-            console.log("secretjs-client/handleResponse", JSON.parse(new TextDecoder("utf-8").decode(response.data)));
-            return JSON.parse(new TextDecoder("utf-8").decode(response.data));
+            console.log("secretjs-client/handleResponseB", JSON.parse(new TextDecoder("utf-8").decode(response.data)));
+            result = JSON.parse(new TextDecoder("utf-8").decode(response.data));
         } catch (e) {
           let errorMessage = "";
           switch(true) {
@@ -192,14 +193,19 @@ export class SecretJsClient {
             case /insufficient funds:/.test(response.message):
               errorMessage = "Insufficient Funds";
               break;
+            case /contract account already exists:/.test(response.message):
+              errorMessage = "Auction has already been created";
+              break;
             default:
               errorMessage = response.message;
           }
-          console.log("secretjs-client/handleResponse", {"error": errorMessage});
+          console.log("secretjs-client/handleResponseC", {"error": errorMessage});
           return {"error": errorMessage};
         }
     }
-    
+    //check if error
+    return result;
   }
 
+  
 }
