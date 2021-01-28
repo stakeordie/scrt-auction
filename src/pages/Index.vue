@@ -11,7 +11,7 @@ export default {
   metaInfo: {
     title: 'Secret Auctions'
   },
-  created() {
+  mounted() {
     this.$refs.auctionsLink.click()
   }
 }
