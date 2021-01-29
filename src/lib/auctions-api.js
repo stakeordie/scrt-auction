@@ -24,13 +24,13 @@ export class AuctionsApi {
                 gas = "190000";
                 break;
             case "createViewingKey":
-                gas = "190000";
+                gas = "120000";
                 break;
             case "placeBid":
-                gas = "300000";
+                gas = "400000";
                 break;
             case "retractBid":
-                gas = "300000";
+                gas = "330000";
                 break;
             case "closeAuction":
                 gas = "2000000";

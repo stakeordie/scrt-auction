@@ -193,6 +193,8 @@ export class SecretJsClient {
             case /contract account already exists:/.test(response.message):
               errorMessage = "Auction has already been created";
               break;
+            case /Could not establish connection. Receiving end does not exist./.test(response.message):
+              errorMessage = "Connection Error. Please refresh the page and try again."
             default:
               errorMessage = response.message;
           }

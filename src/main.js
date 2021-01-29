@@ -296,7 +296,7 @@ export default function(Vue, { router, head, isClient }) {
       {
         codeId: 10,
         symbol: "STKDIE",
-        address: "secret1ukn328k6y3th5nw9z00p8lvk5s7m05cr9p06cu",
+        address: "secret1z6dn2vnr7futu9h80xamz75v5m7ya7qxl9e5fz",
         name: "Stake or Die! Token",
         label: "stake-or-die-token",
         decimals: 2,

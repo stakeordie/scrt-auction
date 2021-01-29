@@ -20,7 +20,7 @@
 
     <template #footer>
       <simple-footer>
-        <p>Create an issue on <g-link to="https://github.com/stakeordie/scrt-auction">Github</g-link> if you have thoughts, notice any issues, or want to see any specific features.</p>
+        <p v-if="chainId != 'secret-2'">Create an issue on <g-link to="https://github.com/stakeordie/scrt-auction">Github</g-link> if you have thoughts, notice any issues, or want to see any specific features.</p>
       </simple-footer>
     </template>
 
@@ -35,7 +35,8 @@ export default {
   components: { KeplrUser, VkeysWallet },
   data() {
     return {
-      keplrAccount: null
+      keplrAccount: null,
+      chainId: process.env.GRIDSOME_SECRET_CHAIN_ID
     }
   },
 }
