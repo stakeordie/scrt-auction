@@ -96,6 +96,11 @@ export class SecretJsClient {
 
   async executeContract(address, handleMsg, fees = defaultFees) {
     const chainId = await this.getChainId();
+    console.log("this.secretRestUrl",this.secretRestUrl);
+    console.log("this.wallet.address",this.wallet.address);
+    console.log("this.wallet.getSigner()",this.wallet.getSigner());
+    console.log("this.wallet.getSeed()",this.wallet.getSeed());
+    console.log("fees",fees);
     try {
       await window.keplr.enable(chainId);
 
@@ -106,8 +111,10 @@ export class SecretJsClient {
         this.wallet.getSeed(),
         fees
       );
+
       return this.handleResponse(await this.signingClient.execute(address, handleMsg));
     } catch (err) {
+      console.log("ERROR")
       return this.handleResponse(err);
       //throw err;
     }
@@ -187,15 +194,21 @@ export class SecretJsClient {
             case /Auction has ended. Bid tokens have been returned/.test(response.message):
               errorMessage = "Auction has ended. Bid tokens have been returned";
               break;
+            case /insufficient funds to pay for fees;/.test(response.message):
+              console.log(response);
+              errorMessage = "Not enough SCRT to pay for fees.";
+              break;
             case /insufficient funds:/.test(response.message):
-              errorMessage = "Insufficient Funds";
+              errorMessage = "Insufficient Funds.";
               break;
             case /contract account already exists:/.test(response.message):
               errorMessage = "Auction has already been created";
               break;
             case /Could not establish connection. Receiving end does not exist./.test(response.message):
+            case /Request failed with status code 502/.test(response.message):
               errorMessage = "Connection Error. Please refresh the page and try again."
             default:
+              console.log(response);
               errorMessage = response.message;
           }
           console.log("secretjs-client/handleResponseC", {"error": errorMessage});
