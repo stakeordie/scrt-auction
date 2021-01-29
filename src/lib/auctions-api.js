@@ -7,7 +7,51 @@ export class AuctionsApi {
         this.factoryAddress = factoryAddress;
     }
 
+    getFees(txName) {
+        let feesObj = {};
+        let gas = "1000000";
+        let type = "exec";
+        let amount = "0";
+        let denom = "uscrt";
+        switch(txName) {
+            case "allowance": 
+                gas = "150000";
+                break;
+            case "createAuction":
+                gas = "700000";
+                break;
+            case "changeAskingPrice":
+                gas = "190000";
+                break;
+            case "createViewingKey":
+                gas = "190000";
+                break;
+            case "placeBid":
+                gas = "300000";
+                break;
+            case "retractBid":
+                gas = "300000";
+                break;
+            case "closeAuction":
+                gas = "2000000";
+                break;
+            default:
+        }
+        if(amount == "0") {
+            amount = gas;
+        }
+        
+        feesObj[type] = {
+            amount: [{amount, denom}],
+            gas
+        };
+
+        return feesObj;
+    }
+
     /*
+
+
         Factory Methods:
         `create_auction`,
         `register_auction`,
@@ -138,13 +182,14 @@ export class AuctionsApi {
     }
 
     async createViewingKey() {
+        const fees = this.getFees("createViewingKey");
         const msg = {
             "create_viewing_key":{
                 "entropy": "A Random String for Entropy",
                 "padding": "*".repeat((40 - "A Random String for Entropy".length))
             }
         }
-        const response = await this.scrtClient.executeContract(this.factoryAddress, msg);
+        const response = await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
         if(response.create_viewing_key) {
             return response.create_viewing_key.key;
         } else {
@@ -294,60 +339,42 @@ export class AuctionsApi {
 
     async closeAuction(auctionAddress) {
         //secretcli tx compute execute *auction_contract_address* '{"finalize": {"only_if_bids": *true_or_false*}}' --from *your_key_alias_or_addr* --gas 2000000 -y
+        const fees = this.getFees("closeAuction");
         const msg = {
             "finalize": {
                 "only_if_bids": false
             }
         };
-        const bidFees = {
-            exec: {
-                amount: [{ amount: '1000000', denom: 'uscrt' }],
-                gas: '1000000',
-            },
-        }
-        const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
+        const response = await this.scrtClient.executeContract(auctionAddress, msg, fees);
         return response;
     }
 
     async closeAuctionWithOptions(auctionAddress, endDateTime, newMinBid) {
         //secretcli tx compute execute *auction_contract_address* '{"finalize": {"only_if_bids": *true_or_false*}}' --from *your_key_alias_or_addr* --gas 2000000 -y
+        const fees = this.getFees("closeAuction");
         const msg = {
             "finalize": {
                 "new_ends_at": endDateTime,
                 "new_minimum_bid": newMinBid.toString()
             }
         };
-        console.log("Close with options message", msg)
-        const bidFees = {
-            exec: {
-                amount: [{ amount: '1000000', denom: 'uscrt' }],
-                gas: '1000000',
-            },
-        }
-        const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
+        const response = await this.scrtClient.executeContract(auctionAddress, msg, fees);
         return response;
     }
 
     async changeMinimumBid(auctionAddress, newMinimumBidAmount) {
+        const fees = this.getFees("changeAskingPrice");
         const msg = {
             "change_minimum_bid": {
                 "minimum_bid": newMinimumBidAmount.toString()
             }
         }
-        const bidFees = {
-            exec: {
-                amount: [{ amount: '400000', denom: 'uscrt' }],
-                gas: '400000',
-            },
-        }
-        console.log("auctions-api/changeMinimumBid/msg",msg);
-        const response = await this.scrtClient.executeContract(auctionAddress, msg, bidFees);
+        const response = await this.scrtClient.executeContract(auctionAddress, msg, fees);
         return response;
     }
 
     async placeBid(bidTokenAddress, auctionAddress, bidAmount) {
-        //console.log("auctions-api/placeBid/padding"); console.log("*".repeat((40 - bidAmount.toString().length)));
-        
+        const fees = this.getFees("placeBid");
         //secretcli tx compute execute *bid_tokens_contract_address* '{"send": {"recipient": "*auction_contract_address*", "amount": "*bid_amount_in_smallest_denomination_of_bidding_token*"}}' --from *your_key_alias_or_addr* --gas 500000 -y
         const msg = {
             "send": {
@@ -356,29 +383,19 @@ export class AuctionsApi {
                 "padding": "*".repeat((40 - bidAmount.toString().length))
             }
         };
-        const bidFees = {
-            exec: {
-                amount: [{ amount: '400000', denom: 'uscrt' }],
-                gas: '400000',
-            },
-        }
-        return await this.scrtClient.executeContract(bidTokenAddress, msg, bidFees);
+        return await this.scrtClient.executeContract(bidTokenAddress, msg, fees);
     }
 
     async retractBid(auctionAddress) {
         //secretcli tx compute execute *auction_contract_address* '{"retract_bid": {}}' --from *your_key_alias_or_addr* --gas 300000 -y
-        const retractBidFees = {
-            exec: {
-                amount: [{ amount: '300000', denom: 'uscrt' }],
-                gas: '300000',
-            },
-        }
-        const response = await this.scrtClient.executeContract(auctionAddress, {"retract_bid": {}}, retractBidFees);
+        const fees = this.getFees("retractBid");
+        const response = await this.scrtClient.executeContract(auctionAddress, {"retract_bid": {}}, fees);
         return response;
     }
 
     async consignAllowance(sellTokenAddress, sellAmount) {
         //secretcli tx compute execute *sale_tokens_contract_address* '{"increase_allowance":{"spender":"secret1xr4mdrh5pr68846rehk3m2jgldfaek03dx0nsn","amount":"*amount_being_sold_in_smallest_denomination_of_sale_token*"}}' --from *your_key_alias_or_addr* --gas 150000 -y
+        const fees = this.getFees("allowance");
         const expiration = new Date((new Date()).getTime() + (Number(1) * Number(10) * 60000));
         const msg = {
             "increase_allowance":
@@ -389,7 +406,7 @@ export class AuctionsApi {
                 "expiration": Math.round(expiration.getTime() / 1000)
             }
         }
-        return await this.scrtClient.executeContract(sellTokenAddress, msg);
+        return await this.scrtClient.executeContract(sellTokenAddress, msg, fees);
     }
 
     async changeEndTime(auctionAddress, newEndTime) {
@@ -406,6 +423,7 @@ export class AuctionsApi {
         endDateTime
     ) {
         /*try {*/
+            const fees = this.getFees("createAuction");
             const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
             const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
             const msg = {
@@ -426,7 +444,7 @@ export class AuctionsApi {
                 }
             };
             //console.log("msg in auction-api/createAuction", msg)
-            return await this.scrtClient.executeContract(this.factoryAddress, msg);
+            return await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
         /*} catch(e) {
             // TODO improve this
             const regex = /\"msg\":\"(.*)\"/g;

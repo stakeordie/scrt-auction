@@ -26,7 +26,7 @@
                         <validation-provider class="auction-form__sell-denom" rules="required" v-slot="{ errors }">
                             <span class="error">{{ errors[0] }}</span>
                             <select name="sell-denom" v-model="auctionForm.sellToken">
-                                <option value=""></option>
+                                <option value="" disabled selected hidden>Sell Token</option>
                                 <option v-for="sellToken in availableTokens" :key="sellToken.address" v-bind:value="sellToken">
                                     {{ sellToken.symbol }}
                                 </option>
@@ -48,10 +48,9 @@
 
                         <validation-provider class="auction-form__bid-denom" rules="required" v-slot="{ errors }">
                             <span class="error">{{ errors[0] }}</span>
-                            <select name="bid-denom" v-model="auctionForm.bidToken">
-                                <option value=""></option>
+                            <select name="bid-denom" v-model="auctionForm.bidToken" required>
+                                <option value="" disabled selected hidden>Bid Token</option>
                                 <option v-for="bidToken in availableTokens" :key="bidToken.address" v-bind:value="bidToken">
-                                    <g-image class="token-icon" :src="'@/assets/token-icons/' + bidToken.iconImg"></g-image>
                                     {{ bidToken.symbol }}
                                 </option>
                             </select>
@@ -203,9 +202,9 @@ export default {
 
             auctionForm: {
                 sellAmount: 1,
-                sellToken: null,
+                sellToken: "",
                 bidPrice: 1,
-                bidToken: null,
+                bidToken: "",
                 label: null,
                 description: "",
                 endTime: new Date(),
@@ -300,7 +299,7 @@ export default {
 
 .auction-form {
     display: grid;
-    grid-template-columns: 70px 1fr 100px;
+    grid-template-columns: 70px 1fr 120px;
     column-gap: var(--f-gutter);
     align-items: end;
 

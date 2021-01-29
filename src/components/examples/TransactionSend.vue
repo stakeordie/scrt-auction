@@ -106,9 +106,7 @@ export default {
   },
   methods: {
     async send() {
-      console.log(this.payment)
       const response = await this.$scrtjs.sendTokens(this.payment);
-      console.log(response);
     }
   }
 }

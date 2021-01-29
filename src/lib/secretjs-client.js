@@ -21,9 +21,6 @@ const defaultFees = {
   },
 };
 
-
-
-
 export class SecretJsClient {
   secretRestUrl;
   client;

@@ -126,7 +126,7 @@ export default function(Vue, { router, head, isClient }) {
         codeId: 10,
         symbol: "SUSDT",
         address: "secret18wpjn83dayu4meu6wnn29khfkwdxs7kyrz9c8f",
-        name: "ecret Tether",
+        name: "Secret Tether",
         label: "secret-usdt",
         decimals: 6,
         iconImg: "susdt.png"
@@ -291,6 +291,15 @@ export default function(Vue, { router, head, isClient }) {
         name: "Secret DefiPulseIndex",
         label: "secret-dpi",
         decimals: 18,
+        iconImg: "sdpi.png"
+      },
+      {
+        codeId: 10,
+        symbol: "STKDIE",
+        address: "secret1ukn328k6y3th5nw9z00p8lvk5s7m05cr9p06cu",
+        name: "Stake or Die! Token",
+        label: "stake-or-die-token",
+        decimals: 2,
         iconImg: "sdpi.png"
       }
     ]
