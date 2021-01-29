@@ -42,7 +42,6 @@ export default function(Vue, { router, head, isClient }) {
     
     onLoad: () => {
 
-      console.log(process.env.GRIDSOME_SECRET_EXPERIMENTAL_CHAIN);
       if(process.env.GRIDSOME_SECRET_EXPERIMENTAL_CHAIN) {
         Vue.prototype.$keplr.suggestExperimental({
           chainId: process.env.GRIDSOME_SECRET_CHAIN_ID,
