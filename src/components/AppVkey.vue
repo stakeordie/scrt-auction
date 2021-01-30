@@ -85,11 +85,13 @@ export default {
         }
     },
     methods: {
-        saveViewingKey() {
+        async saveViewingKey() {
             this.$vkeys.put(this.account, this.contract, this.viewingKey.key);
+            await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey.key);
         },
         deleteViewingKey() {
             this.$vkeys.delete(this.account, this.contract);
+            // await this.$auctions.removeViewingKey(this.$auctions.factoryAddress);
         },
         forgetViewingKey() {
             this.viewingKey = null;
@@ -99,10 +101,7 @@ export default {
                 //console.log(this.$vkeys.get('x', 'x'));
                 //console.log(this.$vkeys.get(this.auctionForm.account));
                 this.isInProgress = true;
-                
                 this.viewingKey = { key: await this.$auctions.createViewingKey() };
-                await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey.key);
-                
                 this.isViewingKeyVisible = true;
                 this.isInProgress = false;
                 this.isInError = false;
