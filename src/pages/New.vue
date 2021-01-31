@@ -154,11 +154,11 @@ import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value } from "vee-validate/dist/rules";
-import KeplrAccount from '../../components/KeplrAccount';
+import KeplrAccount from '../components/KeplrAccount';
 
 import { Decimal } from 'decimal.js';
-import LoadingIcon from '../../components/LoadingIcon';
-import AppVkey from '../../components/AppVkey'
+import LoadingIcon from '../components/LoadingIcon';
+import AppVkey from '../components/AppVkey'
 
 
 extend("required", {
