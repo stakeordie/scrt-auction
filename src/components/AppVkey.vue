@@ -89,9 +89,9 @@ export default {
             this.$vkeys.put(this.account, this.contract, this.viewingKey.key);
             await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey.key);
         },
-        deleteViewingKey() {
+        async deleteViewingKey() {
             this.$vkeys.delete(this.account, this.contract);
-            // await this.$auctions.removeViewingKey(this.$auctions.factoryAddress);
+            await this.$auctions.removeViewingKey(this.$auctions.factoryAddress);
         },
         forgetViewingKey() {
             this.viewingKey = null;
