@@ -8,6 +8,7 @@
           <!--button @click="createViewingKey()">Create Viewing Key</button-->
           <!--button @click="listUserAuctions()">ListUserAuctions</button-->
       </div>
+      <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
       <!-- Auctions toolbar -->
       <section class="auctions-tools">
         <div class="auctions-tools__filter">
@@ -79,11 +80,27 @@
 import { mapGetters } from 'vuex'
 
 import AuctionItem from '../components/AuctionItem.vue'
+import KeplrAccount from '../components/KeplrAccount.vue';
 
 export default {
-  components: { AuctionItem }, 
+  components: { AuctionItem, KeplrAccount }, 
   metaInfo: {
     title: 'Secret Auctions',
+  },
+  data() {
+    return {
+      keplrAccount: null
+    }
+  },
+  watch: {
+   async keplrAccount(newValue, oldValue) {
+      if(newValue) {
+        const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
+        if(viewingKey) {
+          this.$vkeys.put(this.$store.state.$keplr.selectedAccount?.address,this.$auctions.factoryAddress,viewingKey);
+        }
+      }
+    }
   },
   computed: {
     auctionsFilter() {
