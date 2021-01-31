@@ -200,6 +200,8 @@ export default {
             auctionError: null,
             allowanceError: "",
 
+            accountSet: false,
+
             auctionForm: {
                 sellAmount: 1,
                 sellToken: "",
@@ -209,6 +211,21 @@ export default {
                 description: "",
                 endTime: new Date(),
             },
+        }
+    },
+    watch: {
+        auctionForm: {
+            async handler(newVal, oldVal){
+                if(newVal.account && !this.accountSet) {
+                    this.accountSet = true;
+                    const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
+                    if(viewingKey) {
+                        await this.$vkeys.put(this.$store.state.$keplr.selectedAccount?.address,this.$auctions.factoryAddress,viewingKey);
+                    }
+                }
+            // do stuff
+            },
+            deep: true
         }
     },
     computed: {
