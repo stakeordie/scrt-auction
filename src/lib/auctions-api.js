@@ -123,7 +123,23 @@ export class AuctionsApi {
         const address = (await offlineSigner.getAccounts())[0].address;
         return await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": address,"viewing_key": viewingKey }});
     }
-
+    
+    async createViewingKey() {
+        const fees = this.getFees("createViewingKey");
+        const msg = {
+            "create_viewing_key":{
+                "entropy": "A Random String for Entropy",
+                "padding": "*".repeat((40 - "A Random String for Entropy".length))
+            }
+        }
+        const response = await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
+        if(response.create_viewing_key) {
+            return response.create_viewing_key.key;
+        } else {
+            return response.viewing_key.key;
+        }
+    }
+    
     async getWallet() {
         if(process.isClient) {
             let wallet = localStorage.getItem('sodWallet');
@@ -136,33 +152,7 @@ export class AuctionsApi {
             return [];
         }
     }
-
-    async getViewingKeyWallet(address) {
-        let viewingKeyStore = this.getViewingKeyStore();
-        let result = viewingKeyStore.find( viewingKeyWallet => viewingKeyWallet.address === address );
-        if(result) {
-            return result;
-        } else {
-            viewingKeyStore.push({ address, viewingKeys: {}});
-            this.saveViewingKeyStore(viewingKeyStore);
-            return { address, viewingKeys: {}};
-        }
-    }
-
-    async getViewingKeys(address) {
-        if(process.isClient) {
-            let rawViewingKeys = localStorage.getItem('viewingKeys');
-            if(rawViewingKeys !== null) {
-                return JSON.parse(rawViewingKeys);
-            } else {
-                rawViewingKeys = [];
-                return rawViewingKeys
-            }
-        } else {
-            return [];
-        }
-    }
-
+    
     async getViewingKey(address, contractAddress) {
         const wallet = await this.getWallet();
         if (wallet === undefined || wallet.length == 0) {
@@ -181,29 +171,13 @@ export class AuctionsApi {
         }
     }
 
-    async createViewingKey() {
-        const fees = this.getFees("createViewingKey");
-        const msg = {
-            "create_viewing_key":{
-                "entropy": "A Random String for Entropy",
-                "padding": "*".repeat((40 - "A Random String for Entropy".length))
-            }
-        }
-        const response = await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
-        if(response.create_viewing_key) {
-            return response.create_viewing_key.key;
-        } else {
-            return response.viewing_key.key;
-        }
-    }
-
     async addUpdateWalletKey(contractAddress, viewingKey) {
         
         const contractCodeId = (await this.scrtClient.getContract(contractAddress)).codeId;
 
-        console.log("auctions-api/addUpdateWalletKey/contractAddress"); console.log(contractAddress);
-        console.log("auctions-api/addUpdateWalletKey/viewingKey"); console.log(viewingKey);
-        console.log("auctions-api/addUpdateWalletKey/contractCodeId"); console.log(contractCodeId);
+        console.log("auctions-api/addUpdateWalletKey/contractAddress", contractAddress);
+        console.log("auctions-api/addUpdateWalletKey/viewingKey", viewingKey);
+        console.log("auctions-api/addUpdateWalletKey/contractCodeId", contractCodeId);
         // get user address
         const address = await this.getUserAddress();
         //console.log("User Address: " +  address);
@@ -254,80 +228,19 @@ export class AuctionsApi {
         // save the store
         await this.saveWallet(wallet);
         //console.log(JSON.stringify(wallet));
-
-        // Model:
-        /*
-            [
-                {
-                    address: abc
-                    wallet: [
-                        {
-                            contractAddress: abcd
-                            veiwingKey: 123
-                        },
-                        {
-                            contractAddress: efgh
-                            veiwingKey: 456
-                        },
-                        {
-                            contractAddress: ijkl
-                            veiwingKey: 789
-                        }
-                    ]
-                },
-                {
-                    address: efg
-                    wallet: [
-                        {
-                            contractAddress: abcd
-                            veiwingKey: 321
-                        },
-                        {
-                            contractAddress: efgh
-                            veiwingKey: 654
-                        },
-                        {
-                            contractAddress: ijkl
-                            veiwingKey: 987
-                        }
-                    ]
-                }
-            ]
-        */
     }
 
-    async addViewingKey(viewingKey) {
-        const chainId = await this.scrtClient.getChainId()
-        const offlineSigner = await window.getOfflineSigner(chainId);
-        const address = (await offlineSigner.getAccounts())[0].address;
-        const newViewingKey = {
-            "address": address,
-            "viewingKey": viewingKey
-        }
-        const currentViewingKey = await this.getViewingKey(address);
-        if(currentViewingKey) {
-            console.log(currentViewingKey);
-            this.removeViewingKey(address)
-        }
-        let viewingKeys = await this.getViewingKeys();
-        viewingKeys.push(newViewingKey);
-        this.saveViewingKeys(viewingKeys);
-    }
-
-    async removeViewingKey() {
-        const chainId = await this.scrtClient.getChainId()
-        const offlineSigner = await window.getOfflineSigner(chainId);
-        const address = (await offlineSigner.getAccounts())[0].address;
-        let viewingKeys = await this.getViewingKeys();
-        viewingKeys.splice(viewingKeys.findIndex(item => item.address === address), 1)
-        this.saveViewingKeys(viewingKeys);
-    }
-
-    async saveViewingKeys(viewingKeys) {
-        if(process.isClient) {
-            const parsed = JSON.stringify(viewingKeys);
-            localStorage.setItem('viewingKeys', parsed);
-        }
+    async removeViewingKey(contractAddress) {
+        const address = await this.getUserAddress();
+        let wallet = await this.getWallet();
+        let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
+        if(walletEntryIndex > -1) {
+            let walletKeyIndex = wallet[walletEntryIndex].keys.findIndex(key => key.contractAddress === contractAddress);
+            if(walletKeyIndex > -1) {
+                wallet.splice(wallet[walletEntryIndex].keys[walletKeyIndex], 1)
+                this.saveWallet(wallet);
+            }
+        } 
     }
 
     async saveWallet(wallet) {
