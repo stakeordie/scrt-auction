@@ -35,7 +35,7 @@
 
                         <!-- Bid token -->
                         <validation-provider class="auction-form__bid-price" rules="required" v-slot="{ errors }">
-                            <label for="minimum-bid-price">Bid price</label>
+                            <label for="minimum-bid-price">Asking Price</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input name="minimum-bid-price" type="text" v-model.trim="auctionForm.bidPrice" />
                         </validation-provider>
