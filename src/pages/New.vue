@@ -470,7 +470,7 @@ export default {
                 }
             }
         }
-        .stage-panel__allowance, .stage-panel__auction, .stage-panel__congrats {
+        .stage-panel__confirm, .stage-panel__allowance, .stage-panel__auction, .stage-panel__congrats {
             opacity: 0.5;
         }
     }
@@ -554,7 +554,6 @@ export default {
         .stage-panel__info, .stage-panel__confirm, .stage-panel__auction, .stage-panel__allowance {
             .number {
                 background-color: var(--color-positive);
-                color: black;
             }
             opacity: 0.5;
         }
