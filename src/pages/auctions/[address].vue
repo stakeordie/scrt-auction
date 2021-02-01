@@ -32,19 +32,21 @@
               <span class="bid-denom">{{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</span>
             </h3> -->
               <dl>
-                <dt>Selling</dt>
+                <dt>For Sale</dt>
                 <dd>
                   {{ sellAmountFromFractional }} {{ auctionInfo.sell_token.token_info.symbol }}
                 </dd>
               </dl>
-              <dl>
+              <dl :title="askingPriceTitle">
                 <dt>Asking Price</dt>
                 <dd>
-                  {{ askingPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="sellAmountFromFractional != 1">({{ this.minimumBidFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
+                  {{ askingPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="sellAmountFromFractional != 1">(Total: {{ this.minimumBidFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
                 </dd>
               </dl>
-              <dl v-if="!isClosed">
-                <dt style="cursor: context-menu;" @hover="endsAtModal">Close Target <sup>*</sup><!-- <tooltip>Auction owner can close auction at any time. After target close passes, anyone can close the auction.</tooltip>--> </dt>
+              <dl title="Auction owner can close auction at any time. After the target close passes, anyone can close the auction." v-if="!isClosed">
+                <dt>
+                  Target Close
+                </dt>
                 <dd>
                   {{ endTimeString }}
                 </dd>
@@ -99,10 +101,10 @@
           <dl>
             <dt>Bid Status</dt>
             <dd v-if="hasBids">
-              1 or more bids;
+              At Least 1 Bid
             </dd>
             <dd v-else>
-              No Bids.
+              0 Bids
             </dd>
           </dl>
           
@@ -442,6 +444,9 @@ export default {
     },
     bidInfoPrice: function () {
       return this.bidInfoAmountFromFractional / this.sellAmountFromFractional; 
+    },
+    askingPriceTitle: function () {
+      return "The price in " + this.auctionInfo.bid_token.token_info.symbol + " per " + this.auctionInfo.sell_token.token_info.symbol;
     }
   },
   mounted () {
@@ -699,7 +704,9 @@ export default {
 
     &.close-auction-buttons {
       justify-content: space-between;
-      padding-right: 50px;
+      button {
+        margin-right: 25px;
+      }
     }
 
     dl {
