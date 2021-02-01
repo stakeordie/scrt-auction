@@ -44,13 +44,13 @@
                 </dd>
               </dl>
               <dl v-if="!isClosed">
-                <dt style="cursor: context-menu;" @hover="endsAtModal">Ends At <sup>*</sup></dt>
+                <dt style="cursor: context-menu;" @hover="endsAtModal">Close Target <sup>*</sup><!-- <tooltip>Auction owner can close auction at any time. After target close passes, anyone can close the auction.</tooltip>--> </dt>
                 <dd>
                   {{ endTimeString }}
                 </dd>
               </dl>
               <dl v-if="isClosed">
-                <dt>Winning Bid Price</dt>
+                <dt>Winning Bid</dt>
                 <dd v-if="auctionInfo.winning_bid">
                   {{ winningBidPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="winningBidFromFractional != 1">({{ this.winningBidFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
                 </dd>
@@ -65,7 +65,7 @@
     <column :number="(isOwner || isEnded) && !isClosed ? '2' : '1'" number-m="1" number-s="1">
       <block v-if="isOwner && !isClosed">
         <div class="stage-panel">
-          <h3>Manage Auction</h3>
+          <h3>Owner: Manage Auction</h3>
           <!-- <h3 class="auction__pair">
             <span class="sell-denom">{{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</span> -> 
             <span class="bid-denom">{{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</span>
@@ -193,11 +193,11 @@
             </ul>
             <div class="form__frame">
               <validation-provider :rules="validationRules" v-slot="{ errors }">
-                <label for="payment-amount">Bid Price</label>
+                <label for="payment-amount">Bid Price Per Token</label>
                 <span class="error">{{ errors[0] }}</span>
                 <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
               </validation-provider>
-              <div class="bid-price-conversion">Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
+              <div class="bid-price-conversion">Total Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
               <loading-icon v-if="placeBidSubmit.inProgress">
                 <p>Placing Bid</p>
               </loading-icon>
