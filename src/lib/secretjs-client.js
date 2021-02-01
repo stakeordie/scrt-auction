@@ -34,8 +34,6 @@ export class SecretJsClient {
     this.client = new CosmWasmClient(this.secretRestUrl);
   }
 
-
-
   async getAccount(address) {
     // If address is undefined it retrieves the balance of
     // the selected account in the wallet
@@ -59,7 +57,6 @@ export class SecretJsClient {
   async decryptTxResponse(response) {
     return await this.client.restClient.decryptTxsResponse(response);
   }
-
 
   async sendTokens(payment) {
     if(payment.type == "SCRT") {
@@ -94,6 +91,18 @@ export class SecretJsClient {
     }
   }
 
+  async mintTokens(mint) {
+    //secretcli tx compute execute secret16v7a5lhuglkp5szdkfdxwhgkg3g2t2hmmy92h4 '{"mint": { "recipient": "secret1u64kcphxpt9lmeppz9xgk9tkjpxcrt60hylgzm", "amount": "500", "address": "secret10uc40qc5rjkh6zhu8dyqheetejyevukzkkecvs"}}' --from testwalleta
+    const msg = {
+        "mint": {
+            "recipient": mint.recipient,
+            "address": mint.recipient,
+            "amount": mint.amount
+        }
+    };
+    return await this.executeContract(mint.tokenAddress, msg);
+  }
+
   async executeContract(address, handleMsg, fees = defaultFees) {
     const chainId = await this.getChainId();
     console.log("this.secretRestUrl",this.secretRestUrl);
@@ -126,7 +135,6 @@ export class SecretJsClient {
     return contract;
   }
 
-
   async getContractHash(address) {
     return await this.client.restClient.getCodeHashByContractAddr(address);
   }
@@ -134,8 +142,6 @@ export class SecretJsClient {
   async listContracts(codeId) {
     return await this.client.getContracts(codeId);
   }
-
-
 
   // General chain section
 
