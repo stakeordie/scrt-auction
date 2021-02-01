@@ -37,17 +37,20 @@
                     {{ bidToken }}
                   </option>
                 </select>
+              </div>
+              <div class="auctions-tools__filter-filter">
                 <button class="auctions-tools__filter-sort no-button"
-                    :class="[auctionsFilter.sort.fields.bid, { active: auctionsFilter.sort.priority == 'bid'}]" @click="toggleSort('bid')"></button>
+                    :class="[auctionsFilter.sort.fields.price, { active: auctionsFilter.sort.priority == 'price'}]" @click="toggleSort('price')"></button>
+                <label class="auctions-tools__filter-label" for="bid-token">sort by price</label>
               </div>
             </div>
 
             <!-- Filtering by status -->
-            <div class="auctions-tools__filter-toggles">
-              <button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button>
+            <!--div class="auctions-tools__filter-toggles"-->
+              <!--button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button-->
               <!--button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">Closed</button-->
-              <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="toggleStatus('mine')">🔑 Only mine</button>
-            </div>
+              <!--button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="toggleStatus('mine')">🔑 Only mine</button-->
+            <!--/div-->
 
           </form>
         </div>
@@ -128,6 +131,9 @@ export default {
         }
         if(field == "bid") {
           this.auctionsFilter.sort.fields.bid  = (this.auctionsFilter.sort.fields.bid == "asc")  ? "desc" : "asc";
+        }
+        if(field == "price") {
+          this.auctionsFilter.sort.fields.price  = (this.auctionsFilter.sort.fields.price == "asc")  ? "desc" : "asc";
         }
       }
       this.auctionsFilter.sort.priority = field;

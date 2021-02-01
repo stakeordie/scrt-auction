@@ -77,10 +77,11 @@ export default {
                     showMine: false,
                     viewMode: "grid",
                     sort: {
-                        priority: "sell",
+                        priority: "price",
                         fields: {
                             sell: "asc",
-                            bid:  "asc"
+                            sell: "asc",
+                            price:  "asc"
                         }
                     }
                   },
@@ -108,42 +109,15 @@ export default {
                         }
                         return false;
                     }).sort((a, b) => {
-                        const sellOrderFactor = state.auctionsFilter.sort.fields.sell == "asc" ? -1 : 1;
-                        const bidOrderFactor = state.auctionsFilter.sort.fields.bid == "asc" ? -1 : 1;
-
-                        let primaryA, primaryB, primaryOrderFactor,
-                            secondaryA, secondaryB, secondaryOrderFactor;
-
-                        if(state.auctionsFilter.sort.priority == "sell") {
-                            primaryA = a.sell.decimalAmount;
-                            primaryB = b.sell.decimalAmount;
-                            primaryOrderFactor = sellOrderFactor;
-
-                            secondaryA = a.bid.decimalMinimum;
-                            secondaryB = b.bid.decimalMinimum;
-                            secondaryOrderFactor = bidOrderFactor;
-                        } else {
-                            primaryA = a.bid.decimalMinimum;
-                            primaryB = b.bid.decimalMinimum;
-                            primaryOrderFactor = bidOrderFactor;
-
-                            secondaryA = a.sell.decimalAmount;
-                            secondaryB = b.sell.decimalAmount;
-                            secondaryOrderFactor = sellOrderFactor;
-                        }
-
-                        if(primaryA == primaryB) {
-                            if(secondaryA > secondaryB) {
-                                return secondaryOrderFactor * -1;
+                        const priceOrderFactor = state.auctionsFilter.sort.fields.price == "asc" ? -1 : 1;
+                        if(state.auctionsFilter.sort.priority == "price") {
+                            if(a.price > b.price) {
+                                return priceOrderFactor * -1;
                             } else {
-                                return secondaryOrderFactor;
+                                return priceOrderFactor;
                             }
                         }
-                        if(primaryA > primaryB) {
-                            return primaryOrderFactor * -1;
-                        } else {
-                            return primaryOrderFactor;
-                        }
+
                     });
                 },
                 sellDenoms: state => {
