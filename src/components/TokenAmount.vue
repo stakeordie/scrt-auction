@@ -41,7 +41,7 @@ export default {
       .amount {
         display: inline-block;
         text-align: right;
-        margin-right: 1ch;
+        margin-right: 0.5ch;
 
         &.medium {
             font-size: 0.9em;
