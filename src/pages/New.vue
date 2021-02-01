@@ -64,10 +64,10 @@
                             <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
 
                             <p>Can be closed after 
-                                <input class="auction-form__end-time__amount" type="number" min="1" max="60" @change="updateEndTime()" v-model="endTimeAmount">
+                                <input class="auction-form__end-time__amount" type="number" min="1" max="60" placeholder="1" @change="updateEndTime()" v-model="endTimeAmount">
                                 <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
-                                    <option value="1">minute<span v-if="endTimeAmount > 1">s</span></option>
-                                    <option value="60">hour<span v-if="endTimeAmount > 1">s</span></option>
+                                    <option value="1">minute<span v-if="endTimeAmount != 1">s</span></option>
+                                    <option value="60">hour<span v-if="endTimeAmount != 1">s</span></option>
                                 </select>
                             </p>
                         </validation-provider>

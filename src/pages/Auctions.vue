@@ -3,7 +3,7 @@
     <column>
       <!-- Auctions header -->
       <div class="auctions-header">
-        <h1>Auctions</h1>
+        <h1>Active auctions</h1>
         <router-link :to="'/new'" class="button">Create auction</router-link>
           <!--button @click="createViewingKey()">Create Viewing Key</button-->
           <!--button @click="listUserAuctions()">ListUserAuctions</button-->
@@ -220,6 +220,7 @@ export default {
       &-sort {
         width: 30px;
         height: 30px;
+        margin-right: var(--f-gutter-s  );
         background: center / 15px 15px no-repeat;
 
         &.desc {

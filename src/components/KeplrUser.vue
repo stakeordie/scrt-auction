@@ -13,13 +13,13 @@
 
         <div v-show="showDetails" class="modal user-modal">
           <h3>Keplr account</h3>
+          <a class="close" @click="showDetails = false" href="">Close</a>
           <div v-show="address">
             <!-- this.$keplr.chainId is not reactive but there's no need, it's left here as an example -->
             <dl>
               <dt>{{ $keplr.chainId }}</dt>
               <dd>{{ address | bech32 }}</dd>
             </dl>
-            <a class="close" @click="showDetails = false" href="">Close</a>
           </div>
         </div>
     </transition>

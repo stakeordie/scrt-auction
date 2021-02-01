@@ -145,6 +145,10 @@ export default {
     grid-template-columns: 50px repeat(4, 1fr) 100px;
     align-items: center;
 
+    dd {
+      margin-bottom: 0;
+    }
+
     .auction {
       &__bid-action {
         opacity: 0.3;

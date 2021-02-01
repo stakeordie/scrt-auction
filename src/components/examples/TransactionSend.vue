@@ -112,7 +112,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 
 .form__frame {
   max-width: 500px;
