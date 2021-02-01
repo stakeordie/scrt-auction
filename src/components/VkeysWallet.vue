@@ -14,7 +14,7 @@
           <dt>Factory address</dt>
           <dd>{{$auctions.factoryAddress | abbrv }}</dd>
         </dl>
-        <app-vkey :account="account" :contract="$auctions.factoryAddress"></app-vkey>
+        <vkeys-address :account="account" :contract="$auctions.factoryAddress"></vkeys-address>
         <a class="close" @click="modalVisible = false" href="">Close</a>
       </div>
 
@@ -23,11 +23,11 @@
 </template>
 
 <script>
-import AppVkey from './AppVkey';
 import SecretOverlay from './SecretOverlay.vue';
+import VkeysAddress from './VkeysAddress.vue';
 
 export default {
-  components: { AppVkey, SecretOverlay },
+  components: { VkeysAddress, SecretOverlay },
   props: {
     account: {
       type: String,

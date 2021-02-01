@@ -138,7 +138,7 @@
                         <h3>Extra: Viewing Key</h3>
                         <div class="details" v-if="stage == 'congrats'">
                             <p>Congratulations! Your Secret Auction is ready. Use your viewing key to easily find it and perform operations.</p>
-                            <app-vkey :contract="$auctions.factoryAddress" :account="auctionForm.account"></app-vkey>
+                            <vkeys-address :contract="$auctions.factoryAddress" :account="auctionForm.account"></vkeys-address>
                             <!--p><g-link class="auction-creation__action-list" to="/auctions">See your auction</g-link></p-->
                             <p><g-link class="auction-creation__action-list" to="/auctions">Go to the auction list</g-link></p>
                         </div>
@@ -158,7 +158,7 @@ import KeplrAccount from '../components/KeplrAccount';
 
 import { Decimal } from 'decimal.js';
 import LoadingIcon from '../components/LoadingIcon';
-import AppVkey from '../components/AppVkey'
+import VkeysAddress from '../components/VkeysAddress.vue'
 
 
 extend("required", {
@@ -180,7 +180,7 @@ extend("max_decimals", {
 });
 
 export default {
-    components: { ValidationObserver, ValidationProvider, KeplrAccount, LoadingIcon, AppVkey },
+    components: { ValidationObserver, ValidationProvider, KeplrAccount, LoadingIcon, VkeysAddress },
     metaInfo: {
         title: 'New auction',
     },
