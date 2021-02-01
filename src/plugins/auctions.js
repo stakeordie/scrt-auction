@@ -49,6 +49,7 @@ export default {
             if(status == "active") {
                 auction.bid.minimum = rawction.minimum_bid;
                 auction.bid.decimalMinimum = tokens2Decimal(rawction.minimum_bid, rawction.bid_decimals);
+                auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
                 auction.closed = false;
             }
             if(status == "closed") {

@@ -12,9 +12,12 @@
     <h2 class="auction__sell"><token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals" :denom="auction.sell.denom"></token-amount></h2>
 
     <dl class="auction__bid" v-if="!auction.closed">
-      <dt>Minimum bid</dt>
-      <dd>
+      <dt>Asking price</dt>
+      <dd v-if="auction.bid.decimalMinimum == 1">
         <token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
+      </dd>
+      <dd v-if="auction.bid.decimalMinimum > 1">
+        {{auction.price}} <small v-if="auction.bid.decimalMinimum > 1">(<token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>)</small>
       </dd>
     </dl>
 
@@ -59,6 +62,12 @@ export default {
   h2, h3 {
     margin-bottom: 0;
     line-height: 1em;
+  }
+
+  small {
+    display: inline-block;
+    font-size: 0.9em;
+    margin-bottom: 0;
   }
   
   &:not(.closed) {
