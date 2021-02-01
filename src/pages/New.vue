@@ -150,7 +150,7 @@
                             <p>Congratulations! Your Secret Auction is ready. Use your viewing key to easily find it and perform operations.</p>
                             <vkeys-address :contract="$auctions.factoryAddress" :account="auctionForm.account"></vkeys-address>
                             <!--p><g-link class="auction-creation__action-list" to="/auctions">See your auction</g-link></p-->
-                            <p><g-link class="auction-creation__action-list" to="/auctions">Go to the auction list</g-link></p>
+                            <p><g-link class="auction-creation__action-list" to="/">Go to the auction list</g-link></p>
                         </div>
                     </div>
                 </block>

@@ -6,8 +6,8 @@
           <img src="@/assets/secret-logo--white.svg">
         </g-link>
         <nav>
-          <g-link to="/auctions">Auctions</g-link>
-          <g-link to="/faqs">FAQs</g-link>
+          <!--g-link to="/auctions">Auctions</g-link>
+          <g-link to="/faqs">FAQs</g-link-->
         </nav>
         <div class="actions">
           <vkeys-wallet :account="keplrAccount" :contract="$auctions.factoryAddress"></vkeys-wallet>
