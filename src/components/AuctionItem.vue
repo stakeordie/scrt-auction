@@ -113,7 +113,7 @@ export default {
     }
   }
 
-  &__bid, &__closing-time {
+  &__closing-time {
     opacity: 0.3;
   }
 

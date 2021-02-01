@@ -41,7 +41,7 @@
               <div class="auctions-tools__filter-filter">
                 <button class="auctions-tools__filter-sort no-button"
                     :class="[auctionsFilter.sort.fields.price, { active: auctionsFilter.sort.priority == 'price'}]" @click="toggleSort('price')"></button>
-                <label class="auctions-tools__filter-label" for="bid-token">sort by price</label>
+                <label class="auctions-tools__filter-label" for="bid-token">sorting by <strong>asking  price</strong></label>
               </div>
             </div>
 
