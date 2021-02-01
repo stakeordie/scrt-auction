@@ -34,6 +34,12 @@ Performs transaction ops.
 
 [Example](/examples/transactions)
 
+## Mint Tokens
+
+Mint Tokens on testnet
+
+[Example](/examples/mint-tokens)
+
 
 ## Contracts
 
