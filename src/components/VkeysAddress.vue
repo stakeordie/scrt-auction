@@ -30,10 +30,10 @@
                 </dd>
             </dl>
             <div class="vkey__tools" v-if="viewingKey != savedViewingKey">
+                <small v-if="isNew">You have successfully created a viewing key. You will now be able to see your active bids or whether there are active bids in an auction you have created.</small>
                 <dl>
                     <dt>Viewing key</dt>
                 </dl>
-                <small>You have successfully created a viewing key. You will now be able to see your active bids or whether there are active bids in an auction you have created.</small>
                 <textarea class="vkey__key" readonly v-model="viewingKey.key"></textarea>
                 <a class="save" href="" @click="saveViewingKey()">Save to wallet</a>
                 <a class="remove" href="" @click="forgetViewingKey()">Forget</a>
@@ -64,6 +64,7 @@ export default {
     },
     data() {
         return {
+            isNew: false,
             isViewingKeyVisible: false,
             isInError: false,
             isInProgress: false,
@@ -86,10 +87,12 @@ export default {
     },
     methods: {
         async saveViewingKey() {
+            this.isNew = false;
             this.$vkeys.put(this.account, this.contract, this.viewingKey.key);
             await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey.key);
         },
         async deleteViewingKey() {
+            this.isNew = false;
             this.$vkeys.delete(this.account, this.contract);
             await this.$auctions.removeViewingKey(this.$auctions.factoryAddress);
         },
@@ -102,6 +105,7 @@ export default {
                 //console.log(this.$vkeys.get(this.auctionForm.account));
                 this.isInProgress = true;
                 this.viewingKey = { key: await this.$auctions.createViewingKey() };
+                this.isNew = true;
                 this.isViewingKeyVisible = true;
                 this.isInProgress = false;
                 this.isInError = false;

@@ -3,7 +3,7 @@
         <page>
             <column :class="'new-auction__stage-' + stage" mode-xl="slim" number="2" number-m="1" number-s="1">
                 <block class="scrt-box">
-                    <h1>New auction</h1>
+                    <h1>Create New Auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
                         <div class="auction-form__label">
                             <a href="" :title="auctionForm.label" @click="randomizeLabel()" class="auction-form__label-emoji no-button">{{ String.fromCodePoint($auctions.emojiHash(auctionForm.label)) }}</a>
@@ -86,24 +86,37 @@
                 <block>
                     <!-- Form panel -->
                     <div class="stage-panel stage-panel__info">
-                        <h3><span class="number" :class="{ valid: !invalid }">1</span> Fill auction details</h3>
+                        <h4><span class="number" :class="{ valid: !invalid }">1</span> Fill auction details</h4>
                         <div class="details" v-if="stage == 'info'">
                             <p>Fill up the form with the auction details.</p>
                             <p>Click <strong>"Continue"</strong> when you are ready.</p>
                         </div>
                     </div>
 
+                    <div class="stage-panel stage-panel__confirm">
+                        <h4><span class="number">2</span> Confirm details</h4>
+                        <div class="details" v-if="stage == 'confirm'">
+                            <ul>
+                                <li>You are agreeing to auction off a total of <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong> tokens to be consigned.</li>
+                                <li>You will receive minimum bids of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong> tokens.</li>
+                                <li>The price per token is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong> token.</li>
+                            </ul>
+                            <p>Please make sure that the terms are acceptable and that you have the sale amount available.</p>
+                            <button class="allowance-form__action" @click="increaseAllowance()">Confirm</button>
+                            <p><a href="" @click="stage = 'info'">Back</a></p>
+                        </div>
+                    </div>
+
                     <!-- Allowance panel -->
-                    <div class="stage-panel stage-panel__allowance">
-                        <h3><span class="number">2</span> Increase allowance</h3>
+                    <div class="stage-panel stage-panel__allowance" :class="{ error: allowanceError }">
+                        <h4><span class="number">3</span> Increase allowance</h4>
                         <div class="details" v-if="stage == 'allowance' || stage == 'allowance--creating'">
-                            <p>Now we are ready to create your Secret Auction.</p>
                             <p>Before creating the auction you have to allow the auction contract to access your tokens. By setting allowance, you will enable the application to automate transactions for you.</p>
                             <div class="allowance-action" v-if="stage == 'allowance'">
                                 <div v-if="allowanceError != ''">
                                     <p class="error">Error: {{ allowanceError }}</p>
                                 </div>
-                                <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Go' }}</button>
+                                <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Try again' }}</button>
                                 <p><a href="" @click="stage = 'info'">Back</a></p>
                             </div>
                             <loading-icon v-if="stage == 'allowance--creating'">
@@ -114,28 +127,25 @@
 
                     <!-- Auction panel -->
                     <div class="stage-panel stage-panel__auction" :class="{ error: auctionError }">
-                        <h3><span class="number">3</span> Create auction</h3>
+                        <h4><span class="number">4</span> Create auction</h4>
                         <div class="details">
                             <div v-if="stage == 'auction--creating'">
                                 <loading-icon v-if="stage == 'auction--creating'">
                                     <p>Executing the contract</p>
                                 </loading-icon>
-                                <p>Sign it using your Keplr wallet. Please don't close or refresh this window.</p>
                             </div>
                             <div v-if="stage == 'auction'">
                                 <p>It seems the transaction failed or was cancelled.</p>
                                 <p class="error">{{ auctionError }}</p>
-                                <ul>
-                                    <li><a href="" @click="createAuction()">Try again</a></li>
-                                    <li><a href="" @click="stage = 'info'; auctionError = null;">Back</a></li>
-                                </ul>
+                                <button @click="createAuction()">Try again</button>
+                                <p><a href="" @click="stage = 'info'; auctionError = null;">Back</a></p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Viewing keys panel -->
                     <div class="stage-panel stage-panel__congrats">
-                        <h3>Extra: Viewing Key</h3>
+                        <h4>Extra: Viewing Key</h4>
                         <div class="details" v-if="stage == 'congrats'">
                             <p>Congratulations! Your Secret Auction is ready. Use your viewing key to easily find it and perform operations.</p>
                             <vkeys-address :contract="$auctions.factoryAddress" :account="auctionForm.account"></vkeys-address>
@@ -261,7 +271,7 @@ export default {
     },
     methods: {
         submitInfo() {
-            this.stage = "allowance";
+            this.stage = "confirm";
         },
         randomizeLabel() {
             if(this.stage == 'info') {
@@ -412,12 +422,16 @@ export default {
 
     transition: height 1s;
 
-    h3 {
+    h4 {
         display: inline-block;
     }
 
     p, li {
-        font-size: 15px;
+        font-size: 13px;
+    }
+
+    strong {
+        color: var(--color-purple-secondary);
     }
 
     .error {
@@ -461,12 +475,34 @@ export default {
         }
     }
 
+    // Confirm stage
+    &__stage-confirm {
+        .auction-form {
+            opacity: 0.3;
+        }
+        .stage-panel__info {
+            .number {
+                background-color: var(--color-positive);
+            }
+        }
+        .stage-panel__confirm {
+            border: 1px solid rgba(255,255,255,0.5);
+            .number {
+                background-color: var(--color-yellow-primary);
+                color: black;
+            }
+        }
+        .stage-panel__info, .stage-panel__allowance, .stage-panel__auction, .stage-panel__congrats {
+            opacity: 0.5;
+        }
+    }
+
     // Allowance stage
     &__stage-allowance, &__stage-allowance--creating {
         .auction-form {
             opacity: 0.3;
         }
-        .stage-panel__info {
+        .stage-panel__info, .stage-panel__confirm {
             .number {
                 background-color: var(--color-positive);
             }
@@ -478,7 +514,7 @@ export default {
                 color: black;
             }
         }
-        .stage-panel__info, .stage-panel__auction, .stage-panel__congrats {
+        .stage-panel__info, .stage-panel__confirm, .stage-panel__auction, .stage-panel__congrats {
             opacity: 0.5;
         }
     }
@@ -488,7 +524,7 @@ export default {
         .auction-form {
             opacity: 0.3;
         }
-        .stage-panel__info, .stage-panel__allowance {
+        .stage-panel__info, .stage-panel__confirm, .stage-panel__allowance {
             .number {
                 background-color: var(--color-positive);
             }
@@ -505,7 +541,7 @@ export default {
                 color: black;
             }
         }
-        .stage-panel__info, .stage-panel__keys, .stage-panel__allowance {
+        .stage-panel__info, .stage-panel__confirm, .stage-panel__keys, .stage-panel__allowance {
             opacity: 0.5;
         }
     }
@@ -515,7 +551,7 @@ export default {
         .auction-form {
             opacity: 0.3;
         }
-        .stage-panel__info, .stage-panel__auction, .stage-panel__allowance {
+        .stage-panel__info, .stage-panel__confirm, .stage-panel__auction, .stage-panel__allowance {
             .number {
                 background-color: var(--color-positive);
                 color: black;
