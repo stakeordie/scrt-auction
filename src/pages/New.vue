@@ -200,7 +200,9 @@ export default {
             auctionError: null,
             allowanceError: "",
 
+            // TODO to be removed
             accountSet: false,
+            // --
 
             auctionForm: {
                 sellAmount: 1,
@@ -213,6 +215,7 @@ export default {
             },
         }
     },
+    // TODO to be removed
     watch: {
         auctionForm: {
             async handler(newVal, oldVal){
@@ -228,6 +231,7 @@ export default {
             deep: true
         }
     },
+    // --
     computed: {
         ...mapGetters("$auctions", [
             "availableTokens",
@@ -360,6 +364,7 @@ export default {
 
     &__label {
         align-self: center;
+        justify-self: center;
         &-emoji {
             font-size: 40px;
             text-decoration: none;

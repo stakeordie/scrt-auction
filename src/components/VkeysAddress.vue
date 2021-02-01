@@ -12,7 +12,7 @@
                 <p>Creating viewing key</p>
             </loading-icon>
             <div v-if="!isInProgress">
-                <small>Viewing key for the factory contract will allow you to see the auctions you have participated in as a buyer and seller.</small>
+                <small>Creating a viewing key for the factory contract will allow you to see the auctions you have participated in as a buyer and seller.</small>
                 <button class="no-button" @click="createViewingKey()">&#x1F511; Create viewing key</button>
             </div>
         </div>
