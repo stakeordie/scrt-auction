@@ -1,7 +1,7 @@
 <template>
     <validation-observer v-slot="{ handleSubmit, invalid }">
         <page>
-            <column :class="'new-auction__stage-' + stage" number="2" number-m="1" number-s="1">
+            <column :class="'new-auction__stage-' + stage" mode-xxl="slim" number="2" number-m="1" number-s="1">
                 <block class="scrt-box">
                     <h1>Create New Auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
@@ -59,7 +59,7 @@
                         <!-- New auction date time -->
                         <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
 
-                            <label for="auction-end-time">End time</label>
+                            <label for="auction-end-time">Target Close</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
 
