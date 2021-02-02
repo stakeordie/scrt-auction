@@ -98,8 +98,8 @@
                         <div class="details" v-if="stage == 'confirm'">
                             <ul>
                                 <li>You are creating an auction to sell a total of <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong>. The tokens will be consigned to the auction after step 4.</li>
-                                <li>Bids will be allowed at or above a minimum of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
-                                <li>This is based on a minimum asking price of <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
+                                <li>The asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
+                                <li>Bids will start at a minimum of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
                             </ul>
                             <p>Please make sure that the terms are acceptable and that you have have the amount sell amount available to consign.</p>
                             <button class="allowance-form__action" @click="increaseAllowance()">Confirm</button>
