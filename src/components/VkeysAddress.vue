@@ -26,7 +26,7 @@
                 <dt>Viewing key</dt>
                 <dd class="vkey__saved-key">
                     {{ viewingKey.key | abbrv(20) }} 
-                    <a class="delete" v-if="savedViewingKey && savedViewingKey == viewingKey" href="" @click="deleteViewingKey()"><img src="@/assets/trash-can-icon.svg" ></a>
+                    <a class="forget" v-if="savedViewingKey && savedViewingKey == viewingKey" href="" @click="forgetViewingKey()">Forget</a>
                 </dd>
             </dl>
             <div class="vkey__tools" v-if="viewingKey != savedViewingKey">
@@ -35,8 +35,8 @@
                     <dt>Viewing key</dt>
                 </dl>
                 <textarea class="vkey__key" readonly v-model="viewingKey.key"></textarea>
-                <a class="save" href="" @click="saveViewingKey()">Save to wallet</a>
-                <a class="remove" href="" @click="forgetViewingKey()">Forget</a>
+                <a class="save" href="" @click="saveViewingKey()">Save</a>
+                <a class="remove" href="" @click="deleteViewingKey()">Delete</a>
             </div>
         </div>
     </div>
@@ -91,12 +91,13 @@ export default {
             this.$vkeys.put(this.account, this.contract, this.viewingKey.key);
             await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey.key);
         },
-        async deleteViewingKey() {
+        async forgetViewingKey() {
             this.isNew = false;
             this.$vkeys.delete(this.account, this.contract);
             await this.$auctions.removeViewingKey(this.$auctions.factoryAddress);
         },
-        forgetViewingKey() {
+        deleteViewingKey() {
+            this.isNew = false;
             this.viewingKey = null;
         },
         async createViewingKey() {
@@ -104,7 +105,10 @@ export default {
                 //console.log(this.$vkeys.get('x', 'x'));
                 //console.log(this.$vkeys.get(this.auctionForm.account));
                 this.isInProgress = true;
+
                 this.viewingKey = { key: await this.$auctions.createViewingKey() };
+                await this.saveViewingKey();
+
                 this.isNew = true;
                 this.isViewingKeyVisible = true;
                 this.isInProgress = false;
@@ -143,9 +147,11 @@ export default {
             justify-content: space-between;
             align-content: baseline;
 
-            .delete img {
-                width: 16px;
-                height: auto;
+            .forget {
+                text-transform: uppercase;
+                text-decoration: none;
+                font-size: 0.8em;
+                color: var(--color-negative);
             }
         }
         &__tools {
