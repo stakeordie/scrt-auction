@@ -4,7 +4,7 @@
             <h1>Transactions</h1>
             <p>Send SCRT to an account</p>
             <block>
-                <form class="form" @submit.prevent="handleSubmit(mintTokens)">
+                <form class="form" @submit.prevent="mintTokens">
                     <div class="form__frame">
                         <div>
                             <label for="payment-sender">My Address</label>
@@ -45,7 +45,8 @@ export default {
             mint: {
                 tokenAddress: null,
                 userAddress: null,
-                recipient: null
+                recipient: null,
+                amount: 0
             }
         }
     },
@@ -56,7 +57,9 @@ export default {
     },
     methods: {
         mintTokens() {
-            console.log(this.mint)
+            const token = this.tokenData.find(token => token.address === this.mint.tokenAddress);
+            this.mint.amount = 500 * Math.pow(10, token.decimals)
+            this.$scrtjs.mintTokens(this.mint);
         }
     }
 }

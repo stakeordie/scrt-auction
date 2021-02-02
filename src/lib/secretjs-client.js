@@ -97,7 +97,7 @@ export class SecretJsClient {
         "mint": {
             "recipient": mint.recipient,
             "address": mint.recipient,
-            "amount": mint.amount
+            "amount": mint.amount.toString()
         }
     };
     return await this.executeContract(mint.tokenAddress, msg);
