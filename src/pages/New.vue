@@ -97,11 +97,11 @@
                         <h4><span class="number">2</span> Confirm details</h4>
                         <div class="details" v-if="stage == 'confirm'">
                             <ul>
-                                <li>You are creating an auction to sell a total of <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong>. The tokens will be consigned to the auction after step 4.</li>
-                                <li>The asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
+                                <li>You are selling <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong>. The tokens will be consigned to the auction after step 4.</li>
+                                <li>Your asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
                                 <li>Bids will start at a minimum of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
                             </ul>
-                            <p>Please make sure that the terms are acceptable and that you have have the amount sell amount available to consign.</p>
+                            <p>Please make sure that the terms are acceptable and that you have the sell amount available to consign.</p>
                             <button class="allowance-form__action" @click="increaseAllowance()">Confirm</button>
                             <p><a href="" @click="stage = 'info'">Back</a></p>
                         </div>
