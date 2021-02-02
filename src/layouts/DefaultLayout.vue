@@ -3,7 +3,7 @@
     <template #header>
       <simple-header>
         <g-link to="/" class="header__logo">
-          <img src="@/assets/secret-logo--white.svg">
+          <img src="@/assets/secretnetwork-logo-primary-white.svg">
         </g-link>
         <nav>
           <g-link to="/auctions">Auctions</g-link>
