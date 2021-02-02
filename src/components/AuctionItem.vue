@@ -20,12 +20,12 @@
     <dl class="auction__bid" v-if="!auction.closed">
       <dt>Asking price</dt>
       <dd>
-        <token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom" suffix="Per Token"></token-amount>
+        <token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom" suffix="per Token"></token-amount>
       </dd>
     </dl>
 
     <dl class="auction__closing-time">
-      <dt>Ends at</dt>
+      <dt>Target Close</dt>
       <dd>{{ auction.endsAt.toLocaleString() }}</dd>
     </dl>
 
