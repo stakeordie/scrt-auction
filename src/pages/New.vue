@@ -97,11 +97,11 @@
                         <h4><span class="number">2</span> Confirm details</h4>
                         <div class="details" v-if="stage == 'confirm'">
                             <ul>
-                                <li>You are selling <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong>. The tokens will be consigned to the auction after step 4.</li>
-                                <li>Your asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
+                                <li>You are creating an auction to sell <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong>. The tokens will be consigned to the auction contract when it is executed at step 4.</li>
+                                <li>The asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
                                 <li>Bids will start at a minimum of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
                             </ul>
-                            <p>Please make sure that the terms are acceptable and that you have the full sell amount available to consign.</p>
+                            <p>Please make sure that the terms are acceptable and that you have <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong> available to consign.</p>
                             <button class="allowance-form__action" @click="increaseAllowance()">Confirm</button>
                             <p><a href="" @click="stage = 'info'">Back</a></p>
                         </div>
@@ -109,7 +109,7 @@
 
                     <!-- Allowance panel -->
                     <div class="stage-panel stage-panel__allowance" :class="{ error: allowanceError }">
-                        <h4><span class="number">3</span> Increase allowance</h4>
+                        <h4><span class="number">3</span> Set Allowance</h4>
                         <div class="details" v-if="stage == 'allowance' || stage == 'allowance--creating'">
                             <p>Before creating the auction you have to allow the auction contract to access your tokens. By setting allowance, you will enable the application to automate transactions for you.</p>
                             <div class="allowance-action" v-if="stage == 'allowance'">
@@ -120,7 +120,7 @@
                                 <p><a href="" @click="stage = 'info'">Back</a></p>
                             </div>
                             <loading-icon v-if="stage == 'allowance--creating'">
-                                <p>Increasing allowance</p>
+                                <p>Setting allowance</p>
                             </loading-icon>
                         </div>
                     </div>
@@ -128,7 +128,8 @@
                     <!-- Auction panel -->
                     <div class="stage-panel stage-panel__auction" :class="{ error: auctionError }">
                         <h4><span class="number">4</span> Create auction</h4>
-                        <div class="details">
+                        <div class="details" v-if="stage == 'auction--creating' || stage == 'auction'">
+                            <p>After completion <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong> will be consigned to the new auction contract from your account.</p>
                             <div v-if="stage == 'auction--creating'">
                                 <loading-icon v-if="stage == 'auction--creating'">
                                     <p>Executing the contract</p>
