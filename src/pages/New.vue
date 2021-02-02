@@ -101,7 +101,7 @@
                                 <li>Your asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
                                 <li>Bids will start at a minimum of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
                             </ul>
-                            <p>Please make sure that the terms are acceptable and that you have the sell amount available to consign.</p>
+                            <p>Please make sure that the terms are acceptable and that you have the full sell amount available to consign.</p>
                             <button class="allowance-form__action" @click="increaseAllowance()">Confirm</button>
                             <p><a href="" @click="stage = 'info'">Back</a></p>
                         </div>
