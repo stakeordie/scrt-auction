@@ -331,10 +331,10 @@ export default {
 
 
 .--flare-columns {
-  --f-columns-normal-width-l:    var(--f-breakpoint-xl);
-  --f-columns-normal-width-xl:   var(--f-breakpoint-xl);
-  --f-columns-normal-width-xxl:  var(--f-breakpoint-xl);
-  --f-columns-normal-width-xxxl: var(--f-breakpoint-xl);
+  --f-columns-normal-width-l:    var(--f-breakpoint-xxl);
+  --f-columns-normal-width-xl:   var(--f-breakpoint-xxl);
+  --f-columns-normal-width-xxl:  var(--f-breakpoint-xxl);
+  --f-columns-normal-width-xxxl: var(--f-breakpoint-xxl);
 }
 
 .auction-form {
