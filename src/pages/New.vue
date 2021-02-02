@@ -1,7 +1,7 @@
 <template>
     <validation-observer v-slot="{ handleSubmit, invalid }">
         <page>
-            <column :class="'new-auction__stage-' + stage" mode-xl="slim" number="2" number-m="1" number-s="1">
+            <column :class="'new-auction__stage-' + stage" number="2" number-m="1" number-s="1">
                 <block class="scrt-box">
                     <h1>Create New Auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
