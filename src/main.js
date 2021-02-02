@@ -344,7 +344,7 @@ export default function(Vue, { router, head, isClient }) {
 
       {
         codeId: 1084,
-        symbol: "ETH",
+        symbol: "sETH",
         address: "secret1j50u6hvume8pkq2c7lcmktrzd7lrymxhujrnax",
         name: "test",
         label: "20:09:20",

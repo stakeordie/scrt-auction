@@ -40,7 +40,7 @@
                             <input name="minimum-bid-price" type="text" v-model.trim="auctionForm.bidPrice" />
                         </validation-provider>
 
-                        <validation-provider class="auction-form__min-bid-amount" rules="required|min_value:0" v-slot="{ errors }">
+                        <validation-provider class="auction-form__min-bid-amount" :rules="`required|greater_than:0|max_decimals:${auctionForm.bidToken ? auctionForm.bidToken.decimals : 18}`" v-slot="{ errors }">
                             <label for="minimum-bid-amount">Minimum bid</label>
                             <span class="error">{{ errors[0] }}</span>
                             <input name="minimum-bid-amount" readonly type="text" v-model="minBidAmount" />
@@ -164,7 +164,7 @@
 import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required, min_value } from "vee-validate/dist/rules";
+import { required } from "vee-validate/dist/rules";
 import KeplrAccount from '../components/KeplrAccount';
 
 import { Decimal } from 'decimal.js';
@@ -177,9 +177,12 @@ extend("required", {
   message: "Required",
 });
 
-extend("min_value", {
-  ...required,
-  message: "Must be greater than 0",
+extend("greater_than", {
+  params: ["greaterThanValue"],
+  validate: (value, param) => {
+    return value > parseInt(param.greaterThanValue)
+  },
+  message: "Must be greater than {greaterThanValue}",
 });
 
 extend("max_decimals", {
@@ -249,7 +252,7 @@ export default {
             "getToken"
         ]),
         minBidAmount() {
-            const rawBidAmount = new Decimal(this.auctionForm.bidPrice || 0).times(this.auctionForm.sellAmount || 0);
+            const rawBidAmount = new Decimal("0" + this.auctionForm.bidPrice || 0).times(this.auctionForm.sellAmount || 0);
             return rawBidAmount.toString();
         },
         endTimeString() {
