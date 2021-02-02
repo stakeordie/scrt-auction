@@ -339,7 +339,7 @@ export default {
 
 .auction-form {
     display: grid;
-    grid-template-columns: 70px 1fr 120px;
+    grid-template-columns: 70px 1fr 1fr 120px;
     column-gap: var(--f-gutter);
     align-items: end;
 
@@ -359,22 +359,22 @@ export default {
     }
 
     &__account {
-        grid-column: 2 / 4;
+        grid-column: 2 / 5;
     }
     &__sell-amount {
-        grid-column: 1 / 3;
+        grid-column: 1 / 4;
     }
     &__bid-amount {
-        grid-column: 2 / 3;
-    }
-    &__bid-price {
-        grid-column: 1 / 2;
-    }
-    &__bid-sell, &__bid-denom {
         grid-column: 3 / 4;
     }
+    &__bid-price {
+        grid-column: 1 / 3;
+    }
+    &__bid-sell, &__bid-denom {
+        grid-column: 4 / 5;
+    }
     &__info-action, &__end-time, &__description {
-        grid-column: 1 / 4;
+        grid-column: 1 / 5;
     }
 
     .keplr__account {
