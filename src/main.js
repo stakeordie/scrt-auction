@@ -294,15 +294,6 @@ export default function(Vue, { router, head, isClient }) {
         iconImg: "sdpi.png"
       },
       {
-        codeId: 10,
-        symbol: "STKDIE",
-        address: "secret1z6dn2vnr7futu9h80xamz75v5m7ya7qxl9e5fz",
-        name: "Stake or Die! Token",
-        label: "stake-or-die-token",
-        decimals: 2,
-        iconImg: "sdpi.png"
-      },
-      {
         codeId: 6,
         symbol: "FATS",
         address: "secret1xzlgeyuuyqje79ma6vllregprkmgwgavk8y798",
@@ -310,10 +301,56 @@ export default function(Vue, { router, head, isClient }) {
         label: "fatsecret",
         decimals: 3,
         iconImg: "sdpi.png"
+      },
+      {
+        codeId: 8,
+        symbol: "SALT",
+        address: "secret1vp5vrl0wacxlkh03xkcvfh6q9tcrw4qrl4q4a5",
+        name: "Secret Alt",
+        label: "sALT",
+        decimals: 6,
+        iconImg: "sdpi.png"
+      },
+      {
+        codeId: 10,
+        symbol: "SKDNY",
+        address: "secret1049zqe7c3uxnp258r2pf2l3npgzj9pcn725h63",
+        name: "Secret Kidney",
+        label: "secret-kidney-type-0",
+        decimals: 0,
+        iconImg: "sdpi.png"
+      },
+      {
+        codeId: 6,
+        symbol: "SMOON",
+        address: "secret1r0l0g7l07y7xrpyys80z3qu2eqvnfjlpcees2x",
+        name: "ScrtMoon",
+        label: "ScrtMoon",
+        decimals: 6,
+        iconImg: "sdpi.png"
+      },
+      {
+        codeId: 10,
+        symbol: "STKDIE",
+        address: "secret1z6dn2vnr7futu9h80xamz75v5m7ya7qxl9e5fz",
+        name: "Stake or Die! Token",
+        label: "stake-or-die-token",
+        decimals: 2,
+        iconImg: "sdpi.png"
       }
     ]
   } else {
     availableTokens = [
+
+      {
+        codeId: 1084,
+        symbol: "ETH",
+        address: "secret1j50u6hvume8pkq2c7lcmktrzd7lrymxhujrnax",
+        name: "test",
+        label: "20:09:20",
+        decimals: 6,
+        iconImg: "secret-icon.png"
+      },
       {
           codeId: 1,
           symbol: "TSUNI",
