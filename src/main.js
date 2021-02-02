@@ -301,6 +301,15 @@ export default function(Vue, { router, head, isClient }) {
         label: "stake-or-die-token",
         decimals: 2,
         iconImg: "sdpi.png"
+      },
+      {
+        codeId: 6,
+        symbol: "FATS",
+        address: "secret1xzlgeyuuyqje79ma6vllregprkmgwgavk8y798",
+        name: "fatsecret",
+        label: "fatsecret",
+        decimals: 3,
+        iconImg: "sdpi.png"
       }
     ]
   } else {
@@ -430,6 +439,15 @@ export default function(Vue, { router, head, isClient }) {
           label: "tsLORA",
           decimals: 2,
           iconImg: "secret-icon.png"
+      },
+      {
+        codeId: 1,
+        symbol: "TSKDNY",
+        address: "secret1kwa70uxqdkpr53kvj3005hrqwvgkfwryrmgx8q",
+        name: "Test Secret Kidney",
+        label: "tsKidney",
+        decimals: 0,
+        iconImg: "secret-icon.png"
       }
     ]
   }
