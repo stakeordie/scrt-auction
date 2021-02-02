@@ -9,15 +9,18 @@
       <span class="bid-denom">{{ auction.bid.denom }}</span>
     </h3>
 
-    <h2 class="auction__sell"><token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals" :denom="auction.sell.denom"></token-amount></h2>
+    <dl class="auction__sell">
+      
+      <dt>For Sale</dt>
+      <dd>
+        <token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals" :denom="auction.sell.denom"></token-amount>
+      </dd>
+    </dl>
 
     <dl class="auction__bid" v-if="!auction.closed">
       <dt>Asking price</dt>
-      <dd v-if="auction.bid.decimalMinimum == 1">
-        <token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
-      </dd>
-      <dd v-if="auction.bid.decimalMinimum > 1">
-        {{auction.price}} <small v-if="auction.bid.decimalMinimum > 1">(<token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>)</small>
+      <dd>
+        <token-amount :amount="auction.bid.decimalMinimum" :decimals="auction.bid.decimals" :denom="auction.bid.denom" suffix="Per Token"></token-amount>
       </dd>
     </dl>
 
@@ -31,7 +34,7 @@
       <dt>Winning Bid</dt>
       <dd>
         <token-amount :amount="auction.winning.decimalAmount" :decimals="auction.bid.decimals" :denom="auction.bid.decimalAmount"></token-amount>
-        </dd>
+      </dd>
     </dl>
 
     <router-link class="auction__bid-action button" v-if="!auction.closed" :to="'/auctions/' + auction.address"
@@ -117,7 +120,9 @@ export default {
     opacity: 0.3;
   }
 
-
+  &__sell {
+    font-size: 22px;
+  }
 
   // Layout specific
 

@@ -2,6 +2,7 @@
   <span class="token-amount">
       <span class="amount" :class="amountSize">{{amountHuman}}</span>
       <span class="denom" v-if="denom">{{denom}}</span>
+      <span class="suffix" v-if="suffix">{{suffix}}</span>
   </span>
 </template>
 
@@ -21,6 +22,10 @@ export default {
             default: 0,
         },
         denom: {
+            type: String,
+            required: false,
+        },
+        suffix: {
             type: String,
             required: false,
         }
@@ -55,6 +60,12 @@ export default {
         display: inline-block;
         min-width: 4ch;
         font-size: 0.7em;
+      }
+      .suffix {
+        display: inline-block;
+        min-width: 4ch;
+        font-size: 0.7em;
+        margin-left: 0.5ch;
       }
   }
 </style>
