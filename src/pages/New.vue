@@ -168,6 +168,8 @@ import { required } from "vee-validate/dist/rules";
 import KeplrAccount from '../components/KeplrAccount';
 
 import { Decimal } from 'decimal.js';
+import moment from 'moment';
+
 import LoadingIcon from '../components/LoadingIcon';
 import VkeysAddress from '../components/VkeysAddress.vue'
 
@@ -258,7 +260,7 @@ export default {
             return rawBidAmount.toString();
         },
         endTimeString() {
-            return this.auctionForm.endTime.toLocaleString();
+            return moment(this.auctionForm.endTime).format("YYYY-MM-DD HH:mm:ss");
         },
     },
     mounted () {
