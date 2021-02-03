@@ -77,7 +77,7 @@ extend("min_value", {
 extend("max_decimals", {
   params: ["maxDecimalsAllowed"],
   validate: (value, param) => {
-    console.log(parseFloat(value).countDecimals())
+    //console.log(parseFloat(value).countDecimals())
     return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
   },
   message: "The maximum # of decimals allowed is {maxDecimalsAllowed}",

@@ -88,13 +88,13 @@ export class AuctionsApi {
         if(viewingKey) {
             return await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
         } else {
-            console.log("No viewingKey Record found")
+            //console.log("No viewingKey Record found")
         }
     }
     
     async listAllTokens() {
         const snip20Tokens =  await this.scrtClient.listContracts(1);
-        console.log(snip20Tokens);
+        //console.log(snip20Tokens);
 
         // How do I do this?
         // let snip20TokensVerbose = [];
@@ -175,9 +175,9 @@ export class AuctionsApi {
         
         const contractCodeId = (await this.scrtClient.getContract(contractAddress)).codeId;
 
-        console.log("auctions-api/addUpdateWalletKey/contractAddress", contractAddress);
-        console.log("auctions-api/addUpdateWalletKey/viewingKey", viewingKey);
-        console.log("auctions-api/addUpdateWalletKey/contractCodeId", contractCodeId);
+        //console.log("auctions-api/addUpdateWalletKey/contractAddress", contractAddress);
+        //console.log("auctions-api/addUpdateWalletKey/viewingKey", viewingKey);
+        //console.log("auctions-api/addUpdateWalletKey/contractCodeId", contractCodeId);
         // get user address
         const address = await this.getUserAddress();
         //console.log("User Address: " +  address);
@@ -361,7 +361,7 @@ export class AuctionsApi {
         /*} catch(e) {
             // TODO improve this
             const regex = /\"msg\":\"(.*)\"/g;
-            console.log(e.message);
+            //console.log(e.message);
             throw new Error(e.message.match(regex));
         }*/
     }

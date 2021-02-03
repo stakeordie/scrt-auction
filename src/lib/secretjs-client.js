@@ -77,7 +77,7 @@ export class SecretJsClient {
         const query = {id: response.transactionHash}
         const tx = await this.client.searchTx(query)
       } catch(error) {
-        console.log(error);
+        //console.log(error);
       }
     } else {
       const msg = {
@@ -105,11 +105,11 @@ export class SecretJsClient {
 
   async executeContract(address, handleMsg, fees = defaultFees) {
     const chainId = await this.getChainId();
-    console.log("this.secretRestUrl",this.secretRestUrl);
-    console.log("this.wallet.address",this.wallet.address);
-    console.log("this.wallet.getSigner()",this.wallet.getSigner());
-    console.log("this.wallet.getSeed()",this.wallet.getSeed());
-    console.log("fees",fees);
+    //console.log("this.secretRestUrl",this.secretRestUrl);
+    //console.log("this.wallet.address",this.wallet.address);
+    //console.log("this.wallet.getSigner()",this.wallet.getSigner());
+    //console.log("this.wallet.getSeed()",this.wallet.getSeed());
+    //console.log("fees",fees);
     try {
       await window.keplr.enable(chainId);
 
@@ -123,7 +123,7 @@ export class SecretJsClient {
 
       return this.handleResponse(await this.signingClient.execute(address, handleMsg));
     } catch (err) {
-      console.log("ERROR")
+      //console.log("ERROR")
       return this.handleResponse(err);
       //throw err;
     }
@@ -131,7 +131,7 @@ export class SecretJsClient {
 
   async getContract(address) {
     const contract = await this.client.getContract(address);
-    //console.log(secretjs-client/getContract(contract)); console.log(x);
+    //console.log(secretjs-client/getContract(contract)); //console.log(x);
     return contract;
   }
 
@@ -177,7 +177,7 @@ export class SecretJsClient {
     try {
       return JSON.parse(new TextDecoder("utf-8").decode(response.data));
     } catch(e) {
-      console.log(e);
+      //console.log(e);
       return "Decode Error"
     }
   }
@@ -185,11 +185,11 @@ export class SecretJsClient {
   handleResponse(response) {
     let result;
     try {
-      console.log("secretjs-client/handleResponseA", JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, "")));
+      //console.log("secretjs-client/handleResponseA", JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, "")));
       result = JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, ""));
     } catch(e) {
         try{
-            console.log("secretjs-client/handleResponseB", JSON.parse(new TextDecoder("utf-8").decode(response.data)));
+            //console.log("secretjs-client/handleResponseB", JSON.parse(new TextDecoder("utf-8").decode(response.data)));
             result = JSON.parse(new TextDecoder("utf-8").decode(response.data));
         } catch (e) {
           let errorMessage = "";
@@ -201,7 +201,7 @@ export class SecretJsClient {
               errorMessage = "Auction has ended. Bid tokens have been returned";
               break;
             case /insufficient funds to pay for fees;/.test(response.message):
-              console.log(response);
+              //console.log(response);
               errorMessage = "Not enough SCRT to pay for fees.";
               break;
             case /insufficient funds:/.test(response.message):
@@ -214,10 +214,10 @@ export class SecretJsClient {
             case /Request failed with status code 502/.test(response.message):
               errorMessage = "Connection Error. Please refresh the page and try again."
             default:
-              console.log(response);
+              //console.log(response);
               errorMessage = response.message;
           }
-          console.log("secretjs-client/handleResponseC", {"error": errorMessage});
+          //console.log("secretjs-client/handleResponseC", {"error": errorMessage});
           return {"error": errorMessage};
         }
     }
