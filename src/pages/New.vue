@@ -150,7 +150,7 @@
                         <div class="details" v-if="stage == 'congrats'">
                             <p>Congratulations! Your Secret Auction is ready. Use your viewing key to easily find it and perform operations.</p>
                             <vkeys-address :contract="$auctions.factoryAddress" :account="auctionForm.account"></vkeys-address>
-                            <!--p><g-link class="auction-creation__action-list" to="/auctions">See your auction</g-link></p-->
+                            <p v-if="newAuctionPath != ''"><g-link class="auction-creation__action-list" :to="newAuctionPath">See your auction</g-link></p>
                             <p><g-link class="auction-creation__action-list" to="/">Go to the auction list</g-link></p>
                         </div>
                     </div>
@@ -227,6 +227,8 @@ export default {
                 description: "",
                 endTime: new Date(),
             },
+
+            newAuctionPath: "",
         }
     },
     // TODO to be removed
@@ -314,6 +316,8 @@ export default {
             );
             // Log status
             //console.log("Auction:", auction);
+            //console.log("Auction Address", auction.auctionAddress);
+            this.newAuctionPath = "/auctions/" + auction.auctionAddress;
             if(!auction.error) {
                 this.stage = "congrats";
             } else {

@@ -335,7 +335,6 @@ export class AuctionsApi {
         description,
         endDateTime
     ) {
-        /*try {*/
             const fees = this.getFees("createAuction");
             const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
             const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
@@ -358,11 +357,5 @@ export class AuctionsApi {
             };
             //console.log("msg in auction-api/createAuction", msg)
             return await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
-        /*} catch(e) {
-            // TODO improve this
-            const regex = /\"msg\":\"(.*)\"/g;
-            //console.log(e.message);
-            throw new Error(e.message.match(regex));
-        }*/
     }
 }

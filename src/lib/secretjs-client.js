@@ -120,8 +120,9 @@ export class SecretJsClient {
         this.wallet.getSeed(),
         fees
       );
-
-      return this.handleResponse(await this.signingClient.execute(address, handleMsg));
+      const response = await this.signingClient.execute(address, handleMsg);
+      console.log(response);
+      return this.handleResponse(response);
     } catch (err) {
       //console.log("ERROR")
       return this.handleResponse(err);
@@ -185,8 +186,14 @@ export class SecretJsClient {
   handleResponse(response) {
     let result;
     try {
-      //console.log("secretjs-client/handleResponseA", JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, "")));
       result = JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("response") > -1).value.replace(/\\/g, ""));
+      if(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("auction_address") > -1)) {
+        result.auctionAddress = response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("auction_address") > -1).value.replace(/\s/g, "")
+      }
+      //console.log(secretjs-client/handleResponseA,result);
+      // if(logKey) {
+      //   result[logKey] = JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf(logKey) > -1).value.replace(/\\/g, ""));
+      // }
     } catch(e) {
         try{
             //console.log("secretjs-client/handleResponseB", JSON.parse(new TextDecoder("utf-8").decode(response.data)));
