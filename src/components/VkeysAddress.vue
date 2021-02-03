@@ -13,7 +13,8 @@
             </loading-icon>
             <div v-if="!isInProgress">
                 <small>Creating a viewing key for the factory contract will allow you to see the auctions you have participated in as a buyer and seller.</small>
-                <button class="no-button" @click="createViewingKey()">&#x1F511; Create viewing key</button>
+                <button class="no-button" @click="createViewingKey()">&#x1F511; Create Viewing Key</button>
+                <button class="no-button" @click="manuallyAddViewingKey()">&#x1F511; Enter Existing Key</button>
             </div>
         </div>
 
@@ -37,6 +38,15 @@
                 <textarea class="vkey__key" readonly v-model="viewingKey.key"></textarea>
                 <a class="save" href="" @click="saveViewingKey()">Save</a>
                 <a class="remove" href="" @click="deleteViewingKey()">Delete</a>
+            </div>
+        </div>
+        <div class="vkey" v-if="manualEntry && !viewingKey">
+            <div class="vkey__tools">
+                <dl>
+                    <dt>Viewing key</dt>
+                </dl>
+                <textarea class="vkey__key" v-model="manualEntryValue"></textarea>
+                <a class="save" href="" @click="saveManualViewingKey()">Save</a>
             </div>
         </div>
     </div>
@@ -69,6 +79,8 @@ export default {
             isInError: false,
             isInProgress: false,
             viewingKey: null,
+            manualEntry: false,
+            manualEntryValue: ""
         }
     },
     watch: {
@@ -86,10 +98,18 @@ export default {
         }
     },
     methods: {
+        manuallyAddViewingKey() {
+            this.manualEntry = true;
+        },
         async saveViewingKey() {
             this.isNew = false;
+            this.manualEntry = false;
             this.$vkeys.put(this.account, this.contract, this.viewingKey.key);
             await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey.key);
+        },
+        async saveManualViewingKey() {
+            this.viewingKey = { key: this.manualEntryValue }
+            await this.saveViewingKey();
         },
         async forgetViewingKey() {
             this.isNew = false;
@@ -98,6 +118,7 @@ export default {
         },
         deleteViewingKey() {
             this.isNew = false;
+            this.manualEntry = false;
             this.viewingKey = null;
         },
         async createViewingKey() {
