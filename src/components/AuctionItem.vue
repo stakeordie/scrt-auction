@@ -5,7 +5,7 @@
     </div>
 
     <h3 class="auction__pair">
-      <span class="sell-denom">{{ auction.sell.denom }}</span> -> 
+      <span class="sell-denom">{{ auction.sell.denom }}</span> /
       <span class="bid-denom">{{ auction.bid.denom }}</span>
     </h3>
 
@@ -26,7 +26,7 @@
 
     <dl class="auction__closing-time">
       <dt>Target Close</dt>
-      <dd>{{ auction.endsAt.toLocaleString() }}</dd>
+      <dd>{{ targetClose }}</dd>
     </dl>
 
     
@@ -45,9 +45,16 @@
 <script>
 import TokenAmount from "./TokenAmount.vue"
 
+import moment from 'moment'
+
 export default {
   components: { TokenAmount },
-  props: ["auction"]
+  props: ["auction"],
+  computed: {
+    targetClose() {
+      return moment(this.auction.endsAt).format("YYYY-MM-DD HH:mm:ss");
+    }
+  }
 };
 </script>
 
@@ -110,6 +117,10 @@ export default {
   &__pair {
     margin: 0;
     margin-bottom: var(--f-gutter);
+
+    .sell-denom {
+      font-size: 32px;
+    }
   
     .sell-denom, .bid-denom {
       color: var(--theme-washed-color);
