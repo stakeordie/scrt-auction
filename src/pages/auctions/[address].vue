@@ -383,34 +383,34 @@ export default {
       return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
     },
     bidAmount: function() {
-      if(this.auctionInfo.bid_token.token_info?.decimals) {
+      //if(this.auctionInfo.bid_token.token_info?.decimals || this.auctionInfo.bid_token.token_info?.decimals == 0) {
         // const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
         // return rawBidAmount
         const rawBidAmount = new Decimal(this.placeBidForm.bidPrice) * new Decimal(this.sellAmountFromFractional);
         return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-      } else {
-        return 0;
-      }
+      // } else {
+      //   return 0;
+      // }
     },
     changeAskingPriceFormMinimumBid: function () {
-      if(this.auctionInfo.bid_token.token_info?.decimals) {
+      //if(this.auctionInfo.bid_token.token_info?.decimals || this.auctionInfo.bid_token.token_info?.decimals == 0) {
         // const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
         // return rawBidAmount
         const rawBidAmount = new Decimal(this.updateAskingPriceForm.askingPrice) * new Decimal(this.sellAmountFromFractional);
         return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-      } else {
-        return 0;
-      }
+      // } else {
+      //   return 0;
+      // }
     },
     closeAuctionFormMinimumBid: function () {
-      if(this.auctionInfo.bid_token.token_info?.decimals) {
+      //if(this.auctionInfo.bid_token.token_info?.decimals || this.auctionInfo.bid_token.token_info?.decimals == 0) {
         // const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
         // return rawBidAmount
         const rawBidAmount = new Decimal(this.closeAuctionForm.askingPrice) * new Decimal(this.sellAmountFromFractional);
         return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-      } else {
-        return 0;
-      }
+      // } else {
+      //   return 0;
+      // }
     },
     sellAmountFromFractional: function () {
       return new Decimal(this.auctionInfo.sell_amount / Math.pow(10, this.auctionInfo.sell_token.token_info.decimals)).toFixed(this.auctionInfo.sell_token.token_info.decimals).replace(/\.?0+$/,"")
