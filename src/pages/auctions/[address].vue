@@ -239,6 +239,8 @@ import { required, min_value/*, max_decimals */} from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
 import { Decimal } from 'decimal.js';
+import moment from 'moment';
+
 import TokenAmount from '../../components/TokenAmount.vue';
 import LoadingIcon from '../../components/LoadingIcon.vue';
 
@@ -434,10 +436,10 @@ export default {
       return this.minimumBidFromFractional / this.sellAmountFromFractional;
     },
     endTimeString: function () {
-      return new Date(this.auctionInfo.ends_at).toLocaleString();
+      return moment(new Date(this.auctionInfo.ends_at)).format("YYYY-MM-DD HH:mm:ss");
     },
     closedAuctionFromEndTimeString: function() {
-      return this.closeAuctionForm.endTime.toLocaleString();
+      return moment(this.closeAuctionForm.endTime).format("YYYY-MM-DD HH:mm:ss");
     },
     bidInfoAmountFromFractional: function() {
       return (this.bidInfo.amount_bid / Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
