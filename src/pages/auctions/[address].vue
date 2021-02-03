@@ -562,9 +562,7 @@ export default {
           this.isClosed = true;
         }
         // if ends_at is in the past
-        const ended = new Date(this.auctionInfo.ends_at);
-        const now = new Date();
-        if(now > ended) {
+        if(moment(new Date(this.auctionInfo.ends_at)).isBefore()) {
           this.isEnded = true;
         }
       }
