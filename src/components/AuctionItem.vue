@@ -119,7 +119,11 @@ export default {
     margin-bottom: var(--f-gutter);
 
     .sell-denom {
-      font-size: 32px;
+      font-size: 115%;
+    }
+
+    .bid-denom {
+      font-size: 85%;
     }
   
     .sell-denom, .bid-denom {
