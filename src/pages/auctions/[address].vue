@@ -562,9 +562,7 @@ export default {
           this.isClosed = true;
         }
         // if ends_at is in the past
-        if(moment(new Date(this.auctionInfo.ends_at)).isBefore()) {
-          this.isEnded = true;
-        }
+        this.isEnded = moment(new Date(this.auctionInfo.ends_at)).isBefore();
       }
     },
     async refreshAuction() {

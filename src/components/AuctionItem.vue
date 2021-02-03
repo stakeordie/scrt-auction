@@ -26,7 +26,7 @@
 
     <dl class="auction__closing-time">
       <dt>Target Close</dt>
-      <dd>{{ targetClose }}</dd>
+      <dd :class="isEnded ? 'ended': ''">{{ targetClose }}</dd>
     </dl>
 
     
@@ -53,6 +53,9 @@ export default {
   computed: {
     targetClose() {
       return moment(this.auction.endsAt).format("YYYY-MM-DD HH:mm:ss");
+    },
+    isEnded() {
+      return moment(this.auction.endsAt).isBefore();
     }
   }
 };
@@ -133,6 +136,9 @@ export default {
 
   &__closing-time {
     opacity: 0.3;
+    .ended {
+      color: var(--color-negative);
+    }
   }
 
   &__sell {
