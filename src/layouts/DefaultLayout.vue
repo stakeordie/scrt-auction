@@ -70,7 +70,8 @@ query {
   gap: var(--f-gutter);
 }
 
-footer {
+.simple-footer {
+  background-color: var(--f-header-background-color);
   .flex-footer {
     display: flex;
     justify-content: space-between;
