@@ -391,7 +391,7 @@ export default {
       }
     },
     vkViewingKey(newValue, oldValue) {
-      console.log(newValue)
+      //console.log(newValue)
       if(newValue) {
         this.refreshAuction();
       }

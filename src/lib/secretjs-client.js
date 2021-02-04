@@ -121,7 +121,7 @@ export class SecretJsClient {
         fees
       );
       const response = await this.signingClient.execute(address, handleMsg);
-      console.log(response);
+      //console.log(response);
       return this.handleResponse(response);
     } catch (err) {
       //console.log("ERROR")

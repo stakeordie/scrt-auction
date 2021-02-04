@@ -137,7 +137,7 @@ export default {
                     }
                     //console.log(entryAddress + ": " + aWallet[i].keys[j].contractAddress + " | " +aWallet[i].keys[j].viewingKey);
                     info = await this.$scrtjs.queryContract(aWallet[i].keys[j].contractAddress, msg);
-                    console.log(info);
+                    //console.log(info);
                     if(info.balance?.amount) {
                         aWallet[i].keys[j].balance = info.balance.amount;
                     } else {

@@ -190,7 +190,7 @@ extend("greater_than", {
 extend("max_decimals", {
   params: ["maxDecimalsAllowed"],
   validate: (value, param) => {
-      console.log(parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals());
+      //console.log(parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals());
     return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
     
   },
