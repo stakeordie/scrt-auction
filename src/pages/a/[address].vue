@@ -13,6 +13,8 @@
 <script>
 import AuctionItem from '../../components/AuctionItem.vue'
 export default {
+  watch: {
+  },
   components: { AuctionItem },
   computed: {
     auction() {

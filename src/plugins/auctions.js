@@ -90,7 +90,6 @@ export default {
               getters: {
                 getAuction: state => {
                     return (auctionAddress) => {
-                        console.log(state.auctions);
                         return state.auctions.find(auction => auction.address == auctionAddress);
                     }
                 },
