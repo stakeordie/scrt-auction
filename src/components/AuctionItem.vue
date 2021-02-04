@@ -19,8 +19,8 @@
 
     <dl class="auction__bid" v-if="!auction.closed">
       <dt>Asking price</dt>
-      <dd>
-        <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom" suffix="per Token"></token-amount>
+      <dd class="auction__asking-price">
+        <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount> per token
       </dd>
     </dl>
 
@@ -99,6 +99,10 @@ export default {
 
   &__emoji {
     font-size: 40px;
+  }
+
+  &__asking-price {
+    font-size: 0.9em;
   }
 
   &__bid-action {

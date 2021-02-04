@@ -106,6 +106,10 @@ export default {
     dt {
       color: var(--color-blue-primary);
     }
+
+    dd {
+      margin-bottom: 0;
+    }
   }
 
   .account {

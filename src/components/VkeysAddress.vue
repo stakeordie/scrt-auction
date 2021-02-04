@@ -22,20 +22,22 @@
         </div>
 
         <div class="vkey" v-if="viewingKey && isViewingKeyVisible">
-            <dl v-if="savedViewingKey == viewingKey">
-                <dt>Viewing key</dt>
-                <dd class="vkey__saved-key">
-                    {{ viewingKey.key | abbrv(20) }} 
-                    <a class="forget" v-if="savedViewingKey && savedViewingKey == viewingKey" href="" @click="forgetViewingKey()">Forget</a>
-                </dd>
-            </dl>
+            <div class="vkey__tools" v-if="viewingKey == savedViewingKey">
+                <dl>
+                    <dt>Viewing key</dt>
+                    <dd class="vkey__saved-key">
+                        {{ viewingKey.key }} 
+                    </dd>
+                </dl>
+                <a class="hide"  href="" @click="hideViewingKey()">Hide</a>
+                <a class="forget" v-if="savedViewingKey" href="" @click="forgetViewingKey()">Forget</a>
+            </div>
             <div class="vkey__tools" v-if="viewingKey != savedViewingKey">
-                <small v-if="isNew">You have successfully created a viewing key. You will now be able to see your active bids or whether there are active bids in an auction you have created.</small>
                 <dl>
                     <dt>Viewing key</dt>
                 </dl>
                 <textarea class="vkey__key" readonly v-model="viewingKey.key"></textarea>
-                <a class="save" href="" @click="saveViewingKey()">Save</a>
+                <a class="save" href="" @click="saveViewingKey()">Store</a>
                 <a class="remove" href="" @click="deleteViewingKey()">Delete</a>
             </div>
         </div>
@@ -68,7 +70,6 @@ export default {
     },
     data() {
         return {
-            isNew: false,
             isViewingKeyVisible: false,
             isInError: false,
             isInProgress: false,
@@ -92,15 +93,15 @@ export default {
     },
     methods: {
         async saveViewingKey() {
-            this.isNew = false;
             this.$vkeys.put(this.account, this.contract, this.viewingKey.key);
         },
         async forgetViewingKey() {
-            this.isNew = false;
             this.$vkeys.delete(this.account, this.contract);
         },
+        hideViewingKey() {
+            this.isViewingKeyVisible = false;
+        },
         deleteViewingKey() {
-            this.isNew = false;
             this.viewingKey = null;
         },
         async createViewingKey() {
@@ -112,7 +113,6 @@ export default {
                 this.viewingKey = { key: await this.$auctions.createViewingKey() };
                 await this.saveViewingKey();
 
-                this.isNew = true;
                 this.isViewingKeyVisible = true;
                 this.isInProgress = false;
                 this.isInError = false;
@@ -134,6 +134,7 @@ export default {
         button {
             width: 100%;
             font-weight: 600;
+            margin-bottom: 0;
 
             &:hover {
                 color: black;
@@ -149,23 +150,14 @@ export default {
             margin-bottom: var(--f-gutter-s);
         }
         &__saved-key {
-            display: flex;
-            flex-flow: row nowrap;
-            justify-content: space-between;
-            align-content: baseline;
-
-            .forget {
-                text-transform: uppercase;
-                text-decoration: none;
-                font-size: 0.8em;
-                color: var(--color-negative);
-            }
+            padding-top: 6px;
+            word-break: break-word;
+            line-height: 1.5em;
         }
         &__tools {
             display: flex;
             flex-flow: row wrap;
             justify-content: space-evenly;
-            margin-bottom: var(--f-gutter);
             row-gap: var(--f-gutter-s);
             column-gap: var(--f-gutter-l);
 
@@ -178,15 +170,22 @@ export default {
             }
     
             a {
-                font-size: 0.9em;
+                font-size: 0.8em;
                 font-weight: 600;
                 text-decoration: none;
+                text-transform: uppercase;
 
+                &.hide {
+                    color: var(--color-white-secondary);
+                }
                 &.save {
                     color: var(--color-positive);
                 }
                 &.remove {
                     color: var(--color-negative);
+                }
+                &.forget {
+                    color: var(--color-blue-secondary);
                 }
             }
         }
