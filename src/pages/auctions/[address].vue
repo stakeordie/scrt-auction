@@ -27,10 +27,6 @@
               </dl>
             </div>
             <div class="flex">
-            <!-- <h3 class="auction__pair">
-              <span class="sell-denom">{{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</span> -> 
-              <span class="bid-denom">{{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</span>
-            </h3> -->
               <dl>
                 <dt>For Sale</dt>
                 <dd>
@@ -70,11 +66,6 @@
       <block v-if="isOwner && !isClosed">
         <div class="stage-panel">
           <h3>Owner: Manage Auction</h3>
-          <!-- <h3 class="auction__pair">
-            <span class="sell-denom">{{ auctionInfo.sell_token.token_info.name }} ({{ auctionInfo.sell_token.token_info.symbol }})</span> -> 
-            <span class="bid-denom">{{ auctionInfo.bid_token.token_info.name }} ({{ auctionInfo.bid_token.token_info.symbol }})</span>
-          </h3> -->
-                  <!-- Change Minimum Bid -->
           <dl v-if="isOwner && !isEnded">
             <dd>
               <button v-show="!changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Update Asking Price</button><br/>
@@ -216,7 +207,7 @@
       <block v-if="!isOwner && isEnded && !isClosed">
         <div class="stage-panel">
           <h3>Close</h3>
-          <p>The auction is past it's "Ends At" time and can be closed by anyone. As long as it hasn't been closed, bids will be accepted</p>
+          <p>The auction is past it's "Target Close" datetime and can be closed by anyone. As long as it hasn't been closed, bids will still be accepted</p>
           <!-- Close Auction for non owners -->
           <dl>
             <loading-icon v-if="closeAuctionSimpleNOSubmit.inProgress">
@@ -301,7 +292,7 @@ export default {
               name: "",
               symbol: "",
               decimals: 6,
-              total_supply: ""
+              total_supply: 0
             }
           },
           bid_token: {
@@ -310,11 +301,11 @@ export default {
               name: "",
               symbol: "",
               decimals: 6,
-              total_supply: ""
+              total_supply: 0
             }
           },
-          sell_amount: "",
-          minimum_bid: "",
+          sell_amount: 0,
+          minimum_bid: 0,
           description: "",
           auction_address: "",
           status: "",
@@ -402,52 +393,29 @@ export default {
       return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
     },
     bidAmount: function() {
-      //if(this.auctionInfo.bid_token.token_info?.decimals || this.auctionInfo.bid_token.token_info?.decimals == 0) {
-        // const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
-        // return rawBidAmount
-        const rawBidAmount = new Decimal(this.placeBidForm.bidPrice) * new Decimal(this.sellAmountFromFractional);
-        return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-      // } else {
-      //   return 0;
-      // }
+        return new Decimal(this.placeBidForm.bidPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
     },
     changeAskingPriceFormMinimumBid: function () {
-      //if(this.auctionInfo.bid_token.token_info?.decimals || this.auctionInfo.bid_token.token_info?.decimals == 0) {
-        // const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
-        // return rawBidAmount
-        const rawBidAmount = new Decimal(this.updateAskingPriceForm.askingPrice) * new Decimal(this.sellAmountFromFractional);
-        return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-      // } else {
-      //   return 0;
-      // }
+        return new Decimal(this.updateAskingPriceForm.askingPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
     },
     closeAuctionFormMinimumBid: function () {
-      //if(this.auctionInfo.bid_token.token_info?.decimals || this.auctionInfo.bid_token.token_info?.decimals == 0) {
-        // const rawBidAmount = new Decimal(new Decimal(1.1) * new Decimal(3000000000));
-        // return rawBidAmount
-        const rawBidAmount = new Decimal(this.closeAuctionForm.askingPrice) * new Decimal(this.sellAmountFromFractional);
-        return rawBidAmount.toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-      // } else {
-      //   return 0;
-      // }
+        return new Decimal(this.closeAuctionForm.askingPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
     },
     sellAmountFromFractional: function () {
-      return new Decimal(this.auctionInfo.sell_amount / Math.pow(10, this.auctionInfo.sell_token.token_info.decimals)).toFixed(this.auctionInfo.sell_token.token_info.decimals).replace(/\.?0+$/,"")
+      //return new Decimal(this.auctionInfo.sell_amount / Math.pow(10, this.auctionInfo.sell_token.token_info.decimals)).toFixed(this.auctionInfo.sell_token.token_info.decimals).replace(/\.?0+$/,"")
+      return new Decimal(this.auctionInfo.sell_amount).dividedBy(Decimal.pow(10,this.auctionInfo.sell_token.token_info.decimals)).toFixed(this.auctionInfo.sell_token.token_info.decimals).replace(/\.?0+$/,"");
     },
     winningBidFromFractional: function () {
-      return this.auctionInfo.winning_bid / Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)
+      return new Decimal(this.auctionInfo.winning_bid).dividedBy(Decimal.pow(10,this.auctionInfo.bid_token.token_info.decimals));
     },
     winningBidPrice: function () {
       return this.winningBidFromFractional / this.sellAmountFromFractional;
     },
     minimumBidFromFractional: function () {
-      return (this.auctionInfo.minimum_bid / Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
+      return new Decimal(this.auctionInfo.minimum_bid).dividedBy(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
     },
-    // minimumBidAmountToFractional: function () {
-    //   return this.auctionInfo.minimum_bid * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)
-    // },
     formBidAmountToFractional: function () {
-      return this.formBidAmount * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)
+      return new Decimal(this.formBidAmount).times(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals))
     },
     askingPrice: function () {
       return this.minimumBidFromFractional / this.sellAmountFromFractional;
@@ -459,7 +427,7 @@ export default {
       return moment(this.closeAuctionForm.endTime).format("YYYY-MM-DD HH:mm:ss");
     },
     bidInfoAmountFromFractional: function() {
-      return (this.bidInfo.amount_bid / Math.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
+      return new Decimal(this.bidInfo.amount_bid).dividedBy(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
     },
     bidInfoPrice: function () {
       return this.bidInfoAmountFromFractional / this.sellAmountFromFractional; 
@@ -480,7 +448,7 @@ export default {
     async placeBid() {
       this.placeBidSubmit.result = null;
       this.placeBidSubmit.inProgress = true;
-      const bidAmountToFractional = this.bidAmount * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
+      const bidAmountToFractional = new Decimal(this.bidAmount).times(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals));
       this.placeBidSubmit.response = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placeBidSubmit.inProgress = false;
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
@@ -505,7 +473,7 @@ export default {
       //console.log(bidRetracted);
     },
     async updateAskingPrice() {
-      const newMinimumBidAmount = this.changeAskingPriceFormMinimumBid * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
+      const newMinimumBidAmount = new Decimal(this.changeAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals));
       this.changeAskingPriceSubmit.result = null;
       this.changeAskingPriceSubmit.inProgress = true;
       this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auctionAddress, new Decimal(newMinimumBidAmount).toFixed(0));
