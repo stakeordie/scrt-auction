@@ -23,7 +23,7 @@
         <p v-if="chainId == 'secret-r'">Create an issue on <g-link to="https://github.com/stakeordie/scrt-auction">Github</g-link> if you have thoughts, notice any issues, or want to see any specific features.</p>
         <div style="float: center;">
           <p>
-            <small>Built with 🛹.js, 🤖🦀 and lots of ❤️ <br>by <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Robato🤖's Secret</g-link> and <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/18B444E801687196D48A075D3622BE1AEE070C11">🛹 Stake or Die! 🐝🐝🐝</g-link></small>
+            <small>Built with 🛹.js, 🤖🦀, and lots of ❤️ <br>by <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Roboto🤖's Secret</g-link> and <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/18B444E801687196D48A075D3622BE1AEE070C11">🛹 Stake or Die! 🐝🐝🐝</g-link></small>
           </p>
         </div>
       </simple-footer>
