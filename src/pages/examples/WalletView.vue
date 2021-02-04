@@ -55,8 +55,8 @@
                 <tr v-for="(key, index2) in wallet[index].keys" :key="key.contractAddress">
                     <td></td>
                     <!--td v-if="key.contractCodeId == 1">{{tokenData.find(token => token.address === key.contractAddress).name + " (" + tokenData.find(token => token.address === key.contractAddress).symbol + ")"}}</td-->
-                    <td >{{ key.contractAddress }}</td>
-                    <td v-if="key.contractCodeId == 1">{{ wallet[index].keys[index2].balance }}</td>
+                    <td >{{ wallet[index].keys[index2].token.name }} ({{wallet[index].keys[index2].token.symbol}})</td>
+                    <td v-if="key.contractCodeId == 1">{{ wallet[index].keys[index2].balance /  Math.pow(10, wallet[index].keys[index2].token.decimals) }}</td>
                     <td v-else>Test</td>
                 </tr>
             </table>
@@ -108,7 +108,10 @@ export default {
     },
     methods: {
         async addViewingKey() {
-            const viewingKey = await this.$auctions.createViewingKey(this.tokenAddress);
+            await this.$keplr.suggestToken(this.tokenAddress);
+            const viewingKey = await this.$keplr.getSecret20ViewingKey(this.tokenAddress);
+            // console.log(viewingKeyMaybe);
+            // const viewingKey = await this.$auctions.createViewingKey(this.tokenAddress);
             await this.$auctions.addUpdateWalletKey(this.tokenAddress, viewingKey);
             this.refreshWallet();
         },
@@ -117,23 +120,30 @@ export default {
             let entryAddress = "";
             let info = {};
             let msg = {};
+            let token = {};
             for(let i=0;i<aWallet.length;i++) {
                 entryAddress = aWallet[i].address;
+                console.log(entryAddress);
                 for(let j=0; j<aWallet[i].keys.length; j++) {
                     switch(aWallet[i].keys[j].contractCodeId) {
                         case 1:
+                        case 10:
+                        case 1084:
                             msg = { "balance": { "address": entryAddress, "key": aWallet[i].keys[j].viewingKey}};
                             break;
                         default: 
+                            aWallet.splice(i)
                             continue;
                     }
                     //console.log(entryAddress + ": " + aWallet[i].keys[j].contractAddress + " | " +aWallet[i].keys[j].viewingKey);
                     info = await this.$scrtjs.queryContract(aWallet[i].keys[j].contractAddress, msg);
+                    console.log(info);
                     if(info.balance?.amount) {
                         aWallet[i].keys[j].balance = info.balance.amount;
                     } else {
                         aWallet[i].keys[j].balance = "Not a SNIP-20"
                     }
+                    aWallet[i].keys[j].token = this.tokenData.find(token => token.address === aWallet[i].keys[j].contractAddress);
                 }
             }
             this.wallet = aWallet

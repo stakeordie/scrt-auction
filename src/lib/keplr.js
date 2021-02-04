@@ -93,6 +93,16 @@ export default class Keplr {
       }
     })
   }
+
+  async getSecret20ViewingKey(contractAddress) {
+    return await this.command(async () => {
+      try {
+        return await window.keplr.getSecret20ViewingKey(this.chainId, contractAddress);
+      } catch(err) {
+        throw err;
+      }
+    })
+  }
   
   getSigner() {
     return window.getOfflineSigner(this.chainId);
