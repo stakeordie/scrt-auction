@@ -62,7 +62,14 @@
 
       <!-- Auctions grid -->
       <div class="auctions-set" :class="auctionsFilter.viewMode">
-        <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
+        <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode">
+              <router-link 
+                class="auction__bid-action button" 
+                v-if="!auction.closed" 
+                :to="'/auctions/' + auction.address"
+                :class="'theme-' + auction.color2"
+              >Bid</router-link>
+        </auction-item>
       </div>
 
       <!-- Auctions empty -->

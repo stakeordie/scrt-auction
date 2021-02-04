@@ -36,9 +36,7 @@
         <token-amount :amount="auction.winning.decimalAmount" :decimals="auction.bid.decimals" :denom="auction.bid.decimalAmount"></token-amount>
       </dd>
     </dl>
-
-    <router-link class="auction__bid-action button" v-if="!auction.closed" :to="'/auctions/' + auction.address"
-      :class="'theme-' + auction.color2">Bid</router-link>
+    <slot></slot>
   </div>
 </template>
 
