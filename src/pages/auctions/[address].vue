@@ -66,7 +66,7 @@
         </div>
       </block>
     </columns>
-    <column :number="(isOwner || isEnded) && !isClosed ? '2' : '1'" number-m="1" number-s="1">
+    <column :number="(isOwner || isEnded ) && !isClosed ? '2' : '1'" number-m="1" number-s="1">
       <block v-if="isOwner && !isClosed">
         <div class="stage-panel">
           <h3>Owner: Manage Auction</h3>
@@ -229,7 +229,9 @@
           </dl>
         </div>
       </block>
-      <block v-show="!hasViewingKey">
+    </column>
+    <column v-show="!hasViewingKey">
+      <block>
           <h3>Viewing Key Missing</h3>
           <vkeys-address v-model="vkViewingKey" :hidden="hasViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress">
             <template v-slot:description>

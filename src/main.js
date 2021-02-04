@@ -62,6 +62,7 @@ export default function(Vue, { router, head, isClient }) {
   if(process.env.GRIDSOME_SECRET_CHAIN_ID == "secret-2") {
     availableTokens = tokensForProduction;
   } else {
+    console.log("testnet");
     availableTokens = tokensForTesting;
   }
 
