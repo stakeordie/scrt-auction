@@ -190,7 +190,9 @@ extend("greater_than", {
 extend("max_decimals", {
   params: ["maxDecimalsAllowed"],
   validate: (value, param) => {
+      console.log(parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals());
     return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
+    
   },
   message: "The max decimals allowed are {maxDecimalsAllowed}",
 });
@@ -202,6 +204,8 @@ export default {
     },
     data() {
         return {
+            errors: [],
+
             stage: "info", // info, allowance, allowance--creating, auction--creating, congrats
             interval: null,
 

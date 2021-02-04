@@ -220,6 +220,9 @@ export class SecretJsClient {
             case /uatom required:/.test(response.message):
               errorMessage = "Keplr tried to pay gas in uatom instead of uscrt. Sometimes this can happen when you select gas-price too fast. Take it a little slower :)"
               break;
+            case /Sell contract and bid contract must be different/.test(response.message):
+              errorMessage = "You cannot have an auction in which you sell and ask for the same token. Please make them different and try again."
+              break;
             case /Could not establish connection. Receiving end does not exist./.test(response.message):
             case /Request failed with status code 502/.test(response.message):
               errorMessage = "Connection Error. Please refresh the page and try again."
