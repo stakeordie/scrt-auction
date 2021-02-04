@@ -21,7 +21,7 @@
       <dt>Asking price</dt>
       <dd class="auction__asking-price">
         <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
-        <span v-if="auction.sell.decimalAmount != 1"> per token </span><br /><span v-if="auction.sell.decimalAmount != 1"><small>({{ auction.bid.decimalMinimum}} {{auction.bid.denom}})</small></span>
+        <span v-if="auction.sell.decimalAmount != 1"> per token </span><br><span v-if="auction.sell.decimalAmount != 1"><small>({{ auction.bid.decimalMinimum}} {{auction.bid.denom}})</small></span>
       </dd>
     </dl>
 
