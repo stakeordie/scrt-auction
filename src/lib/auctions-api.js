@@ -81,14 +81,11 @@ export class AuctionsApi {
         }
     }
     
-    async listUserAuctions() {
+    async listUserAuctions(viewingKey) {
          // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
         const address =  await this.getUserAddress();
-        const viewingKey = await this.getViewingKey(address, this.factoryAddress);
         if(viewingKey) {
             return await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
-        } else {
-            //console.log("No viewingKey Record found")
         }
     }
     
@@ -139,20 +136,7 @@ export class AuctionsApi {
             return response.viewing_key.key;
         }
     }
-    
-    async getWallet() {
-        if(process.isClient) {
-            let wallet = localStorage.getItem('sodWallet');
-            if(wallet == null) {
-                return [];
-            } else {
-                return JSON.parse(wallet);
-            }
-        } else {
-            return [];
-        }
-    }
-    
+        
     async getViewingKey(address, contractAddress) {
         const wallet = await this.getWallet();
         if (wallet === undefined || wallet.length == 0) {

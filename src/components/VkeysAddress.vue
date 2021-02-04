@@ -1,5 +1,5 @@
 <template>
-  <div class="app-vkey">
+  <div class="app-vkey" :class="{ hidden }">
     <div v-if="!account">
         <p>Please log in using your<br>Keplr wallet</p>
     </div>
@@ -58,9 +58,13 @@ export default {
             default: null,
         },
         value: {
-            type: String,
+            type: Object,
             default: null,
         },
+        hidden: {
+            type: Boolean,
+            default: false,
+        }
     },
     data() {
         return {
@@ -80,6 +84,7 @@ export default {
         savedViewingKey() {
             let savedKey = this.$vkeys.get(this.account, this.contract);
             if(savedKey) {
+                this.$emit("input", savedKey);
                 this.viewingKey = Object.assign(savedKey);
             }
             return savedKey;
@@ -89,12 +94,10 @@ export default {
         async saveViewingKey() {
             this.isNew = false;
             this.$vkeys.put(this.account, this.contract, this.viewingKey.key);
-            await this.$auctions.addUpdateWalletKey(this.$auctions.factoryAddress, this.viewingKey.key);
         },
         async forgetViewingKey() {
             this.isNew = false;
             this.$vkeys.delete(this.account, this.contract);
-            await this.$auctions.removeViewingKey(this.$auctions.factoryAddress);
         },
         deleteViewingKey() {
             this.isNew = false;
@@ -124,6 +127,10 @@ export default {
 
 <style lang="scss">
     .app-vkey {
+        &.hidden {
+            display: none;
+        }
+
         button {
             width: 100%;
             font-weight: 600;

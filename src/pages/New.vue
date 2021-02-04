@@ -2,7 +2,7 @@
     <validation-observer v-slot="{ handleSubmit, invalid }">
         <page>
             <column :class="'new-auction__stage-' + stage" mode-l="slim" number="2" number-m="1" number-s="1">
-                <block class="scrt-box">
+                <block>
                     <h1>Create New Auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
                         <div class="auction-form__label">
@@ -216,10 +216,6 @@ export default {
             auctionError: null,
             allowanceError: "",
 
-            // TODO to be removed
-            accountSet: false,
-            // --
-
             auctionForm: {
                 sellAmount: 1,
                 sellToken: "",
@@ -233,23 +229,6 @@ export default {
             newAuctionPath: "",
         }
     },
-    // TODO to be removed
-    watch: {
-        auctionForm: {
-            async handler(newVal, oldVal){
-                if(newVal.account && !this.accountSet) {
-                    this.accountSet = true;
-                    const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-                    if(viewingKey) {
-                        await this.$vkeys.put(this.$store.state.$keplr.selectedAccount?.address,this.$auctions.factoryAddress,viewingKey);
-                    }
-                }
-            // do stuff
-            },
-            deep: true
-        }
-    },
-    // --
     computed: {
         ...mapGetters("$auctions", [
             "availableTokens",
@@ -317,8 +296,6 @@ export default {
                 Math.round(this.auctionForm.endTime.getTime() / 1000)
             );
             // Log status
-            //console.log("Auction:", auction);
-            //console.log("Auction Address", auction.auctionAddress);
             this.newAuctionPath = "/auctions/" + auction.auctionAddress;
             if(!auction.error) {
                 this.stage = "congrats";

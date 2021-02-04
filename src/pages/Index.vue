@@ -5,8 +5,6 @@
       <div class="auctions-header">
         <h1>Active auctions</h1>
         <router-link :to="'/new'" class="button">Create auction</router-link>
-          <!--button @click="createViewingKey()">Create Viewing Key</button-->
-          <!--button @click="listUserAuctions()">ListUserAuctions</button-->
       </div>
       <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
       <!-- Auctions toolbar -->
@@ -65,10 +63,7 @@
         <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode">
               <router-link 
                 class="auction__bid-action button" 
-                v-if="!auction.closed" 
-                :to="'/auctions/' + auction.address"
-                :class="'theme-' + auction.color2"
-              >Bid</router-link>
+                :to="'/auctions/' + auction.address">Bid</router-link>
         </auction-item>
       </div>
 
@@ -78,7 +73,7 @@
         <h2 v-if="auctionsFilter.sellToken || auctionsFilter.bidToken">
           No auctions were found <span v-if="auctionsFilter.sellToken"> selling <span class="sell-token">{{auctionsFilter.sellToken}}</span></span><span> looking for <span class="bid-token">{{auctionsFilter.bidToken}}</span> bidders</span>.
         </h2>
-        <p><router-link :to="'/auctions/new'" class="button">Be the first one</router-link> or <a href="" @click="clearFilters()">clear your filters</a>.</p>
+        <p><router-link :to="'/new'" class="button">Be the first one</router-link> or <a href="" @click="clearFilters()">clear your filters</a>.</p>
       </div>
 
     </column>
@@ -100,16 +95,6 @@ export default {
   data() {
     return {
       keplrAccount: null
-    }
-  },
-  watch: {
-   async keplrAccount(newValue, oldValue) {
-      if(newValue) {
-        const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-        if(viewingKey) {
-          this.$vkeys.put(this.$store.state.$keplr.selectedAccount?.address,this.$auctions.factoryAddress,viewingKey);
-        }
-      }
     }
   },
   computed: {
@@ -167,13 +152,6 @@ export default {
     filterChanged() {
       this.$auctions.updateAuctionsFilter(this.auctionsFilter);
     },
-    async createViewingKey() {
-      const viewingKey = await this.$auctions.createViewingKey(process.env.GRIDSOME_AUCTIONS_FACTORY);
-      await this.$auctions.addUpdateWalletKey(process.env.GRIDSOME_AUCTIONS_FACTORY, viewingKey, "211");
-    },
-    async listUserAuctions() {
-      const userAuctions = await this.$auctions.listUserAuctions();
-    }
   }
 }
 </script>

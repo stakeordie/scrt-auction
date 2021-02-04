@@ -88,6 +88,12 @@ export default {
                   tokenData: [],
               },
               getters: {
+                getAuction: state => {
+                    return (auctionAddress) => {
+                        console.log(state.auctions);
+                        return state.auctions.find(auction => auction.address == auctionAddress);
+                    }
+                },
                 // Since filter and sorting is done in the client, this is performed by a getter instead
                 // of a dispatcher storing a plain list of search results filtered and ordered in the server
                 filteredAuctions: state => {
@@ -141,11 +147,6 @@ export default {
                         return state.tokenData.filter(token => { return token.address == address})[0];
                     };
                 },
-                getAuction: (state) => {
-                    return (address) => {
-                        return state.auctions.filter(auction => { return auction.address == address})[0];
-                    };
-                }
               },
               mutations: {
                 updateAuctions: (state, auctions) => {
@@ -179,9 +180,12 @@ export default {
             }
         });
         
+        Vue.prototype.$store.commit('$auctions/updateAvailableTokens', options.availableTokens);
+        
+        
         Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
 
-        Vue.prototype.$store.commit('$auctions/updateAvailableTokens', options.availableTokens);
+        Vue.prototype.$auctions.getAuction = Vue.prototype.$store.getters['$auctions/getAuction'];
 
         Vue.prototype.$auctions.emojiHash = (label) => {
             return arrayHash(label, emojis);

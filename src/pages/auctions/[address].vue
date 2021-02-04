@@ -4,14 +4,15 @@
       <div class="page-title">
           <h1>Auction Detail</h1>
           <h3>{{ auctionInfo.auction_address }}</h3>
+          <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
           <h4 v-if="auctionInfo.description">{{ auctionInfo.description }}</h4>
       </div>
-      <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
       <block>
         <div class="stage-panel">
             <h3>Details</h3>
             <h4 v-if="isClosed">Auction Status: Closed</h4>
             <h4 v-else>Auction Status: Open</h4>
+            <vkeys-address :hidden="true" v-model="vkViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress"></vkeys-address>
             <div class="flex">
               <dl>
                 <dt>Sale Token</dt>
@@ -243,6 +244,7 @@ import moment from 'moment';
 
 import TokenAmount from '../../components/TokenAmount.vue';
 import LoadingIcon from '../../components/LoadingIcon.vue';
+import VkeysAddress from '../../components/VkeysAddress.vue';
 
 extend("required", {
   ...required,
@@ -266,7 +268,7 @@ extend("min_value", {
 // });
 
 export default {
-  components: {ValidationObserver, ValidationProvider, KeplrAccount, TokenAmount, LoadingIcon},
+  components: {ValidationObserver, ValidationProvider, KeplrAccount, TokenAmount, LoadingIcon, VkeysAddress},
   data() {
     return {
       errors: [],
@@ -280,6 +282,7 @@ export default {
       keplrAccount: null,
       formBidAmount: 1,
       codeHash: "",
+      vkViewingKey: null,
       auctionInfo: {
           sell_token: {
             contract_address: "",
@@ -372,6 +375,12 @@ export default {
   },
   watch: {
     keplrAccount(newValue, oldValue) {
+      if(newValue) {
+        this.refreshAuction();
+      }
+    },
+    vkViewingKey(newValue, oldValue) {
+      console.log(newValue)
       if(newValue) {
         this.refreshAuction();
       }
@@ -579,17 +588,16 @@ export default {
       this.hasViewingKey = false;
 
       this.auctionAddress = this.$route.params.address;
-      const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-      if(viewingKey) {
+      if(this.vkViewingKey) {
+        const viewingKey = this.vkViewingKey.key;
         this.hasViewingKey = true;
-        this.$vkeys.put(this.$store.state.$keplr.selectedAccount?.address,this.$auctions.factoryAddress,viewingKey);
         const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
         if(!bidInfoResponse.viewing_key_error) {
           if(bidInfoResponse?.bid?.status != "Failure") {
             this.bidInfo = bidInfoResponse.bid;
             this.isBidder = true;
           }
-          const userAuctions = await this.$auctions.listUserAuctions();
+          const userAuctions = await this.$auctions.listUserAuctions(viewingKey);
           if(userAuctions?.list_my_auctions?.active?.as_seller) {
             const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
             if(is_owner.length > 0) {
