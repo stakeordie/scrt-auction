@@ -28,6 +28,9 @@ export default {
                 },
             },
             mutations: {
+                load: (state, vkeys) => {
+                    state.vkeys = vkeys;
+                },  
                 updateViewingKey: (state, { userAddress, contractAddress, viewingKey }) => {
                     let userVkeys = state.vkeys.find(vkey => vkey.userAddress == userAddress);
                     if(userVkeys == undefined) {
@@ -68,16 +71,32 @@ export default {
             }
         });
 
+        const vkeys = {
+            loadFromStorage: () => {
+                if (process.isClient) {
+                    Vue.prototype.$store.commit('$vkeys/load', JSON.parse(localStorage.getItem('sodwallet')));
+                }
+            },
+            saveToStorage: () => {
+                if (process.isClient) {
+                    const parsed = JSON.stringify(Vue.prototype.$store.state.$vkeys.vkeys);
+                    localStorage.setItem('sodwallet', parsed);
+                }
+            },
 
-        Vue.prototype.$vkeys = {
             list: Vue.prototype.$store.getters['$vkeys/listViewingKeys'],
             get: Vue.prototype.$store.getters['$vkeys/getViewingKey'],
             delete: (userAddress, contractAddress) => {
                 Vue.prototype.$store.dispatch('$vkeys/deleteViewingKey', { userAddress, contractAddress });
+                vkeys.saveToStorage();
             },
             put: (userAddress, contractAddress, viewingKey) => {
                 Vue.prototype.$store.dispatch('$vkeys/putViewingKey', { userAddress, contractAddress, viewingKey });
+                vkeys.saveToStorage();
             }
         };
+        vkeys.loadFromStorage();
+
+        Vue.prototype.$vkeys = vkeys;
     }
 }

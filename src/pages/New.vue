@@ -248,10 +248,6 @@ export default {
     },
     async created () {
         this.randomizeLabel();
-        const viewingKey = await this.$auctions.getViewingKey(this.$store.state.$keplr.selectedAccount?.address, this.$auctions.factoryAddress);
-        if(viewingKey) {
-            this.hasViewingKey = true;
-        }
     },
     destroyed () {
         clearInterval(this.interval);

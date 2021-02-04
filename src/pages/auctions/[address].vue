@@ -387,9 +387,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters("$auctions", [
-      ""
-    ]),
     auction: function() {
       return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
     },
