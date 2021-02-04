@@ -3,12 +3,7 @@
       <column mode-l="slim" number="2" number-m="1" number-s="1">
           <block>
               <div class="auction-info" v-if="auction">
-                <auction-item :auction="auction" class="grid">
-                    <router-link 
-                    class="auction__bid-action button" 
-                    :to="'/auctions/' + auction.address"
-                    >Bid</router-link>
-                </auction-item>
+                <auction-item :auction="auction" class="grid"></auction-item>
               </div>
           </block>
       </column>
@@ -18,6 +13,8 @@
 <script>
 import AuctionItem from '../../components/AuctionItem.vue'
 export default {
+  watch: {
+  },
   components: { AuctionItem },
   computed: {
     auction() {
