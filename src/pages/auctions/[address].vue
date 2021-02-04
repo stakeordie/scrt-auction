@@ -12,7 +12,6 @@
             <h3>Details</h3>
             <h4 v-if="isClosed">Auction Status: Closed</h4>
             <h4 v-else>Auction Status: Open</h4>
-            <vkeys-address :hidden="true" v-model="vkViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress"></vkeys-address>
             <div class="flex">
               <dl>
                 <dt>Sale Token</dt>
@@ -61,7 +60,9 @@
                     Closed without a winner
                 </dd>
               </dl>
+              
             </div>
+            <router-link v-if="isClosed" :to="'/new'" class="button closed-return">Return to Auctions</router-link>
         </div>
       </block>
     </columns>
@@ -227,6 +228,14 @@
             <dd><button v-show="!isOwner && isEnded" @click="closeAuctionSimpleNO">Close This Auction</button></dd>
           </dl>
         </div>
+      </block>
+      <block v-show="!hasViewingKey">
+          <h3>Viewing Key Missing</h3>
+          <vkeys-address v-model="vkViewingKey" :hidden="hasViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress">
+            <template v-slot:description>
+              <small>You will need a viewing key in order to view non-public auction details.</small>
+            </template>
+          </vkeys-address>
       </block>
     </column>
   </page>
@@ -702,20 +711,21 @@ export default {
 }
 
 .stage-panel {
-  .flex {
-    display: flex;
+    .flex {
+      display: flex;
 
-    &.close-auction-buttons {
-      justify-content: space-between;
-      button {
-        margin-right: 25px;
+      &.close-auction-buttons {
+        justify-content: space-between;
+        button {
+          margin-right: 25px;
+        }
+      }
+
+      dl {
+        margin-right: 100px;
       }
     }
 
-    dl {
-      margin-right: 100px;
-    }
-  }
     background-color: var(--color-black);
     padding: var(--f-gutter);
     border-radius: 10px;
@@ -765,6 +775,11 @@ export default {
           }
         }
       }
+    }
+
+    .closed-return {
+      float: right;
+      margin-top: -34px;
     }
 
 }
