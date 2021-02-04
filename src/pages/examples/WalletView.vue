@@ -116,7 +116,7 @@ export default {
             this.refreshWallet();
         },
         async refreshWallet() {
-            let aWallet = await this.$auctions.getWallet();
+            let aWallet = [];//await this.$auctions.getWallet();
             let entryAddress = "";
             let info = {};
             let msg = {};
