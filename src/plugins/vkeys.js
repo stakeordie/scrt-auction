@@ -74,7 +74,10 @@ export default {
         const vkeys = {
             loadFromStorage: () => {
                 if (process.isClient) {
-                    Vue.prototype.$store.commit('$vkeys/load', JSON.parse(localStorage.getItem('sodwallet')));
+                    const storedVkeys = JSON.parse(localStorage.getItem('sodwallet'));
+                    if(storedVkeys) {
+                        Vue.prototype.$store.commit('$vkeys/load', storedVkeys);
+                    }
                 }
             },
             saveToStorage: () => {
