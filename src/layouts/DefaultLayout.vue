@@ -20,12 +20,14 @@
 
     <template #footer>
       <simple-footer>
-        <p v-if="chainId == 'secret-r'">Create an issue on <g-link to="https://github.com/stakeordie/scrt-auction">Github</g-link> if you have thoughts, notice any issues, or want to see any specific features.</p>
-        <div style="float: center;">
-          <p>
-            <small>Built with 🛹.js, 🤖🦀, and lots of ❤️ <br>by <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Roboto🤖's Secret</g-link> and <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/18B444E801687196D48A075D3622BE1AEE070C11">🛹 Stake or Die! 🐝🐝🐝</g-link></small>
-          </p>
-        </div>
+        <p>Built with <span class="emoji" title="Javascript">&#x1F6F9;</span>, <span class="emoji" title="VueJS">&#x1F41D;</span>, 
+          <span class="emoji">&#x1F916;</span>, <span class="emoji">&#x1F980;</span>, and <span class="emoji">♥️</span> by 
+          <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Roboto <span class="emoji">&#x1F916;</span>'s Secret</g-link>
+           and 
+          <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/18B444E801687196D48A075D3622BE1AEE070C11">
+            <span class="emoji">&#x1F6F9;</span> Stake or Die! <span class="emoji">&#x1F41D;</span><span class="emoji">&#x1F41D;</span><span class="emoji">&#x1F41D;</span>
+          </g-link>
+        </p>
       </simple-footer>
     </template>
 
@@ -71,10 +73,24 @@ query {
 }
 
 .simple-footer {
-  background-color: var(--f-header-background-color);
-  .flex-footer {
-    display: flex;
-    justify-content: space-between;
+  text-align: center;
+  
+  .emoji {
+    font-size: 1.3em;
+    text-decoration: none;
+  }
+
+  a {
+    font-weight: bold;
+    color: var(--color-turquoise-secondary);
+  }
+  
+  a:link {
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: var(--color-purple-secondary);
   }
 }
 </style>
