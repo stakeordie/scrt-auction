@@ -78,6 +78,7 @@ query {
   .emoji {
     font-size: 1.3em;
     text-decoration: none;
+    cursor: pointer;
   }
 
   a {
