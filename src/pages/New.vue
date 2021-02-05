@@ -149,7 +149,7 @@
                         <h4>Extra: Viewing Key</h4>
                         <div class="details" v-if="stage == 'congrats'">
                             <p>Congratulations! Your Secret Auction is ready. Use your viewing key to easily find it and perform operations.</p>
-                            <vkeys-address :contract="$auctions.factoryAddress" :account="auctionForm.account"></vkeys-address>
+                            <vkeys-address class="viewingkey__address" :contract="$auctions.factoryAddress" :account="auctionForm.account"></vkeys-address>
                             <p v-if="newAuctionPath != ''"><g-link class="auction-creation__action-list" :to="newAuctionPath">See your auction</g-link></p>
                             <p><g-link class="auction-creation__action-list" to="/">Go to the auction list</g-link></p>
                         </div>

@@ -164,12 +164,7 @@ export default {
                         return transformAuction(auction, "active");
                     }) || [];
                     
-                    const closedAuctions = (await auctionsApi.listAuctions("closed"))?.map(auction => {
-                        return transformAuction(auction, "closed");
-                    }) || [];
-
-                    // We'll deal with the concurrency later
-                    commit("updateAuctions", [...activeAuctions, ...closedAuctions]);
+                    commit("updateAuctions", activeAuctions);
                 },
                 // If the server was the one doing the filtering and sorting the API call
                 // would be made here and results stored in the state (through a mutation of course)
@@ -197,6 +192,5 @@ export default {
         Vue.prototype.$auctions.updateAuctionsFilter = async (auctionsFilter) => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctionsFilter', auctionsFilter);
         };
-
     }
 }

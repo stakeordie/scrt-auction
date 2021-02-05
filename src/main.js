@@ -16,6 +16,7 @@ import DefaultLayout from "~/layouts/DefaultLayout.vue"
 
 
 import Vuex from 'vuex';
+import statePersist from './plugins/state-persist';
 
 import testnetChain from "./lib/chain/testnet";
 
@@ -35,7 +36,9 @@ export default function(Vue, { router, head, isClient }) {
 
 
   Vue.use(Vuex);
-  Vue.prototype.$store = new Vuex.Store({});
+  Vue.prototype.$store = new Vuex.Store({
+    plugins: [statePersist.plugin],
+  });
 
   Vue.use(VKeys);
   
@@ -71,5 +74,5 @@ export default function(Vue, { router, head, isClient }) {
     availableTokens
   });
   
-
+  statePersist.start(Vue.prototype.$store);
 }
