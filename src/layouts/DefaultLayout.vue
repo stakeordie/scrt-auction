@@ -74,6 +74,10 @@ query {
 
 .simple-footer {
   text-align: center;
+
+  .box {
+    padding: var(--f-gutter-l) 0;
+  }
   
   .emoji {
     font-size: 1.3em;
