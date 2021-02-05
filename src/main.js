@@ -74,5 +74,5 @@ export default function(Vue, { router, head, isClient }) {
     availableTokens
   });
   
-  statePersist.start(Vue.prototype.$store);
+  statePersist.start();
 }

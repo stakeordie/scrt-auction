@@ -1,6 +1,7 @@
 const storageKey = "sod";
 
 const statePersist = {
+  store: null,
   hasStarted: false,
   loadFromStorage: (storageKey) => {
     if (process.isClient) {
@@ -14,14 +15,15 @@ const statePersist = {
   },
 
   plugin: (store) => {
-    store.subscribe((mutation, state) => {
+    statePersist.store = store;
+    statePersist.store.subscribe((mutation, state) => {
       if(statePersist.hasStarted) {
         statePersist.saveToStorage(storageKey, state);
       }
     });
   },
 
-  start: (store) => {
+  start: () => {
     const storedState = statePersist.loadFromStorage(storageKey);
     if (storedState) {
       // This doesn't work... 
@@ -31,8 +33,8 @@ const statePersist = {
       // This doesn't work either...
       //store.replaceStore(storedState);
 
-      store.state.$auctions = storedState.$auctions;
-      store.state.$vkeys.vkeys = storedState.$vkeys.vkeys;
+      statePersist.store.state.$auctions = storedState.$auctions;
+      statePersist.store.state.$vkeys.vkeys = storedState.$vkeys.vkeys;
     }
     statePersist.hasStarted = true;
   },
