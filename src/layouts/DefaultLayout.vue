@@ -20,8 +20,8 @@
 
     <template #footer>
       <simple-footer>
-        <p>Built with <span class="emoji" title="Javascript">&#x1F6F9;</span>, <span class="emoji" title="VueJS">&#x1F41D;</span>, 
-          <span class="emoji">&#x1F916;</span>, <span class="emoji">&#x1F980;</span>, and <span class="emoji">♥️</span> by 
+        <p>Built with <span class="emoji" title="stakeordie.js">&#x1F6F9;.js</span>, 
+          <span class="emoji" title="Mr. Roboto's Secret Rust">&#x1F916;&#x1F980;</span>, and lots of <span class="emoji" title="TLC">♥️</span> by 
           <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Roboto <span class="emoji">&#x1F916;</span>'s Secret</g-link>
            and 
           <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/18B444E801687196D48A075D3622BE1AEE070C11">

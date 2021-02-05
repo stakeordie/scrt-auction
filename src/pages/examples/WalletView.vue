@@ -116,8 +116,10 @@ export default {
             this.refreshWallet();
         },
         async refreshWallet() {
-            let aWallet = [];//await this.$auctions.getWallet();
-            let entryAddress = "";
+            let aWallet = this.$vkeys.list(this.userAddress);
+            console.log(this.userAddress);
+            console.log(aWallet);//await this.$auctions.getWallet();
+            /*let entryAddress = "";
             let info = {};
             let msg = {};
             let token = {};
@@ -146,7 +148,7 @@ export default {
                     aWallet[i].keys[j].token = this.tokenData.find(token => token.address === aWallet[i].keys[j].contractAddress);
                 }
             }
-            this.wallet = aWallet
+            this.wallet = aWallet*/
         }
     }
 };
