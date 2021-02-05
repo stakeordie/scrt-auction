@@ -50,8 +50,6 @@ export class AuctionsApi {
     }
 
     /*
-
-
         Factory Methods:
         `create_auction`,
         `register_auction`,
@@ -81,43 +79,24 @@ export class AuctionsApi {
         }
     }
     
-    async listUserAuctions(viewingKey) {
+    async listUserAuctions(address, viewingKey) {
          // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
-        const address =  await this.getUserAddress();
         if(viewingKey) {
             return await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
         }
-    }
-    
-    async listAllTokens() {
-        const snip20Tokens =  await this.scrtClient.listContracts(1);
-        //console.log(snip20Tokens);
-
-        // How do I do this?
-        // let snip20TokensVerbose = [];
-        // snip20Tokens.forEach(function(token,index) {
-        //     let tokenVerbose = this.scrtClient.queryContract(token.address, {"tokenInfo": {}});
-        //     snip20TokensVerbose.push(tokenVerbose);
-        // });
     }
 
     async getAuctionInfo(auctionAddress) {
         return await this.scrtClient.queryContract(auctionAddress, {"auction_info":{}});
     }
 
-    async getAuctionBidInfo(auctionAddress,viewingKey) {
+    async getAuctionBidInfo(address, auctionAddress, viewingKey) {
         //secretcli q compute query *auction_contract_address* '{"view_bid": {"address":"*address_whose_bid_to_list*","viewing_key":"*viewing_key*"}}'
-        const chainId = await this.scrtClient.getChainId()
-        const offlineSigner = await window.getOfflineSigner(chainId);
-        const address = (await offlineSigner.getAccounts())[0].address;
         return await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }});
     }
 
-    async getAuctionHasBids(auctionAddress,viewingKey) {
+    async getAuctionHasBids(address, auctionAddress, viewingKey) {
         //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
-        const chainId = await this.scrtClient.getChainId()
-        const offlineSigner = await window.getOfflineSigner(chainId);
-        const address = (await offlineSigner.getAccounts())[0].address;
         return await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": address,"viewing_key": viewingKey }});
     }
     
@@ -134,103 +113,6 @@ export class AuctionsApi {
             return response.create_viewing_key.key;
         } else {
             return response.viewing_key.key;
-        }
-    }
-        
-    async getViewingKey(address, contractAddress) {
-        const wallet = await this.getWallet();
-        if (wallet === undefined || wallet.length == 0) {
-            return undefined;
-        }
-        let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
-        if(walletEntryIndex > -1) {
-            let walletEntryKey = await wallet[walletEntryIndex].keys.find(key => key.contractAddress === contractAddress);
-            if(walletEntryKey) {
-                return walletEntryKey.viewingKey;
-            } else {
-                return undefined;
-            }
-        } else {
-            return undefined;
-        }
-    }
-
-    async addUpdateWalletKey(contractAddress, viewingKey) {
-        
-        const contractCodeId = (await this.scrtClient.getContract(contractAddress)).codeId;
-
-        //console.log("auctions-api/addUpdateWalletKey/contractAddress", contractAddress);
-        //console.log("auctions-api/addUpdateWalletKey/viewingKey", viewingKey);
-        //console.log("auctions-api/addUpdateWalletKey/contractCodeId", contractCodeId);
-        // get user address
-        const address = await this.getUserAddress();
-        //console.log("User Address: " +  address);
-
-        // get viewing key store
-        let wallet = await this.getWallet();
-        //console.log(wallet);
-
-        // get the index of the address object
-        let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
-        //console.log(walletEntryIndex);
-
-        // if the user address has a record in the store
-        if(walletEntryIndex > -1) {
-            // check if this contract has a viewing key
-            let walletKeyIndex = wallet[walletEntryIndex].keys.findIndex(key => key.contractAddress === contractAddress);
-
-            // if the walletItem exists, 
-            if(walletKeyIndex > -1) {
-                //update viewingkey Record
-                wallet[walletEntryIndex].keys[walletKeyIndex] = {
-                    contractAddress,
-                    contractCodeId,
-                    viewingKey
-                }
-            } else {
-                //add viewingKey Record
-                wallet[walletEntryIndex].keys.push({
-                    contractAddress,
-                    contractCodeId,
-                    viewingKey
-                });
-            }
-        } else {
-            //add address record, wallet, and viewingKey Record
-            //console.log(typeof(wallet))
-            wallet.push({
-                address,
-                keys: [
-                    {
-                        contractAddress,
-                        contractCodeId,
-                        viewingKey
-                    }
-                ]
-            });
-        }
-        // save the store
-        await this.saveWallet(wallet);
-        //console.log(JSON.stringify(wallet));
-    }
-
-    async removeViewingKey(contractAddress) {
-        const address = await this.getUserAddress();
-        let wallet = await this.getWallet();
-        let walletEntryIndex = await wallet.findIndex(entry => entry.address === address);
-        if(walletEntryIndex > -1) {
-            let walletKeyIndex = wallet[walletEntryIndex].keys.findIndex(key => key.contractAddress === contractAddress);
-            if(walletKeyIndex > -1) {
-                wallet.splice(wallet[walletEntryIndex].keys[walletKeyIndex], 1)
-                this.saveWallet(wallet);
-            }
-        } 
-    }
-
-    async saveWallet(wallet) {
-        if(process.isClient) {
-            const parsed = JSON.stringify(wallet);
-            localStorage.setItem('sodWallet', parsed);
         }
     }
 

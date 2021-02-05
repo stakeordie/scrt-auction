@@ -567,18 +567,18 @@ export default {
       if(this.vkViewingKey) {
         const viewingKey = this.vkViewingKey.key;
         this.hasViewingKey = true;
-        const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.auctionAddress, viewingKey);
+        const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.keplrAccount, this.auctionAddress, viewingKey);
         if(!bidInfoResponse.viewing_key_error) {
           if(bidInfoResponse?.bid?.status != "Failure") {
             this.bidInfo = bidInfoResponse.bid;
             this.isBidder = true;
           }
-          const userAuctions = await this.$auctions.listUserAuctions(viewingKey);
+          const userAuctions = await this.$auctions.listUserAuctions(this.keplrAccount, viewingKey);
           if(userAuctions?.list_my_auctions?.active?.as_seller) {
             const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
             if(is_owner.length > 0) {
               this.isOwner = true;
-              this.hasBids = (await this.$auctions.getAuctionHasBids(this.auctionAddress, viewingKey)).has_bids.has_bids;
+              this.hasBids = (await this.$auctions.getAuctionHasBids(this.keplrAccount, this.auctionAddress, viewingKey)).has_bids.has_bids;
             }
           }
         }
