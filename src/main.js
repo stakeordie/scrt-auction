@@ -60,19 +60,21 @@ export default function(Vue, { router, head, isClient }) {
     wallet: Vue.prototype.$keplr 
   });
 
+  // Available tokens are enabled depending on the chain
   let availableTokens;
-
   if(process.env.GRIDSOME_SECRET_CHAIN_ID == "secret-2") {
     availableTokens = tokensForProduction;
   } else {
     availableTokens = tokensForTesting;
   }
 
+  
   Vue.use(AuctionsApi, { 
     chainClient: Vue.prototype.$scrtjs,
     factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
     availableTokens
   });
   
+  // The state is persisted after the plugins have been loaded
   statePersist.start();
 }

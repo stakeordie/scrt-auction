@@ -63,7 +63,14 @@ export default {
             }
 
             return auction;
-        }
+        };
+
+        // This transforms the auction info object into a compatible auction object to be
+        // blended with the list
+        const transformAuctionInfo = (rawction) => {
+            // TODO
+            return rawction;
+        };
         Vue.use(Vuex);
         Vue.prototype.$store.registerModule('$auctions', {
               namespaced: true,
@@ -166,6 +173,9 @@ export default {
                     
                     commit("updateAuctions", activeAuctions);
                 },
+                updateAuction: async ({ commit }, address) => {
+                    console.log(transformAuctionInfo(await auctionsApi.getAuctionInfo(address)));
+                },  
                 // If the server was the one doing the filtering and sorting the API call
                 // would be made here and results stored in the state (through a mutation of course)
                 updateAuctionsFilter: async({ commit }, auctionsFilter) => {
@@ -187,6 +197,10 @@ export default {
 
         Vue.prototype.$auctions.updateAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctions');
+        };
+
+        Vue.prototype.$auctions.updateAuction = async (address) => {
+            Vue.prototype.$store.dispatch('$auctions/updateAuction', address);
         };
 
         Vue.prototype.$auctions.updateAuctionsFilter = async (auctionsFilter) => {

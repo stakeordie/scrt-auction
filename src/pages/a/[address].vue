@@ -21,6 +21,9 @@ export default {
       return this.$auctions.getAuction(this.$route.params.address);
     }
   },
+  async mounted() {
+    await this.$auctions.updateAuction(this.$route.params.address);
+  }
 }
 </script>
 
