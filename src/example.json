@@ -1,0 +1,28 @@
+{
+    "auction_info": {
+        "sell_token":{
+            "contract_address":"secret1r4z6fh6gzlqdf4gaqx29mr6340w9vastj4jhvv",
+            "token_info":{
+                "name":"Test Secret Dai",
+                "symbol":"TSDAI",
+                "decimals":18,
+                "total_supply":"351000000000000000000000"
+            }
+        },
+        "bid_token":{
+            "contract_address":"secret16v7a5lhuglkp5szdkfdxwhgkg3g2t2hmmy92h4",
+            "token_info":{
+                "name":"Test Secret Uniswap",
+                "symbol":"TSUNI",
+                "decimals":18,
+                "total_supply":"2700000000000000000000"
+            }
+        },
+        "sell_amount":"20000000000000000000",
+        "minimum_bid":"1000000000000000000",
+        "description":"",
+        "auction_address":"secret160da2gxf5cmfngq7nj3pj4dqke94q89zj8vmh5",
+        "ends_at":"2021-02-03 19:20:48 UTC",
+        "status":"Accepting bids: Token(s) to be sold have been consigned to the auction"
+    }
+}

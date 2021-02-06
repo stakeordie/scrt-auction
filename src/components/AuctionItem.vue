@@ -48,7 +48,7 @@ import moment from 'moment'
 
 export default {
   components: { TokenAmount },
-  props: ["auction"],
+  props: ["auction", ""],
   computed: {
     targetClose() {
       return moment(this.auction.endsAt).format("YYYY-MM-DD HH:mm:ss");
@@ -85,7 +85,7 @@ export default {
   &:not(.closed) {
     border: 1px solid transparent;
 
-    &:hover {
+    &:hover, &.selected {
       border: 1px solid var(--theme-washed-color);
       background-color: black;
 
@@ -171,8 +171,14 @@ export default {
   &.list {
     display: grid;
     gap: var(--f-gutter);
-    grid-template-columns: 50px repeat(4, 1fr) 100px;
     align-items: center;
+
+    @include respond-to("<=s") {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @include respond-to(">=m") {
+      grid-template-columns: 50px repeat(4, 1fr) min-content;
+    }
 
     dd {
       margin-bottom: 0;

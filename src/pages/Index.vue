@@ -63,7 +63,7 @@
         <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode">
               <router-link 
                 class="auction__bid-action button" 
-                :to="'/auctions/' + auction.address">Bid</router-link>
+                :to="'/a/' + auction.address">Bid</router-link>
         </auction-item>
       </div>
 

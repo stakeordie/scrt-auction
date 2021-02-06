@@ -1,11 +1,12 @@
 <template>
     <validation-observer v-slot="{ handleSubmit, invalid }">
         <page>
-            <column :class="'new-auction__stage-' + stage" mode-l="slim" number="2" number-m="1" number-s="1">
+            <column :class="'new-auction__stage-' + stage" number="2" number-s="1">
                 <block>
                     <h1>Create New Auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
                         <div class="auction-form__label">
+                            <label for="auction-label">Emoji</label>
                             <a href="" :title="auctionForm.label" @click="randomizeLabel()" class="auction-form__label-emoji no-button">{{ String.fromCodePoint($auctions.emojiHash(auctionForm.label)) }}</a>
                         </div>
 
@@ -315,17 +316,9 @@ export default {
 
 <style lang="scss" scoped>
 
-
-.--flare-columns {
-  --f-columns-normal-width-l:    var(--f-breakpoint-xxl);
-  --f-columns-normal-width-xl:   var(--f-breakpoint-xxl);
-  --f-columns-normal-width-xxl:  var(--f-breakpoint-xxl);
-  --f-columns-normal-width-xxxl: var(--f-breakpoint-xxl);
-}
-
 .auction-form {
     display: grid;
-    grid-template-columns: 70px 1fr 1fr 120px;
+    grid-template-columns: 40px 1fr 1fr 120px;
     column-gap: var(--f-gutter);
     align-items: end;
 
@@ -368,7 +361,7 @@ export default {
     }
 
     &__label {
-        align-self: center;
+        align-self: start;
         justify-self: center;
         &-emoji {
             font-size: 40px;
@@ -557,5 +550,14 @@ export default {
         }
     }
 }
+
+
+.--flare-columns {
+  --f-columns-normal-width-l:    var(--f-columns-normal-width-m);
+  --f-columns-normal-width-xl:   var(--f-columns-normal-width-m);
+  --f-columns-normal-width-xxl:  var(--f-columns-normal-width-m);
+  --f-columns-normal-width-xxxl: var(--f-columns-normal-width-m);
+}
+
 
 </style>

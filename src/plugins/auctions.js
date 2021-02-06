@@ -68,8 +68,35 @@ export default {
         // This transforms the auction info object into a compatible auction object to be
         // blended with the list
         const transformAuctionInfo = (rawction) => {
-            // TODO
-            return rawction;
+            const auction = {
+                address: rawction.auction_info.auction_address,
+                // label: null,    // MIA
+                // pair: null,     // MIA
+                // emoji: null     // MIA
+                // color: null,    // MIA
+                // color2: null,   // MIA
+                description: rawction.auction_info.description,  // NEW
+                sell: {
+                    amount: rawction.auction_info.sell_amount,
+                    decimalAmount: tokens2Decimal(rawction.auction_info.sell_amount, rawction.auction_info.sell_token.token_info.decimals),
+                    decimals: rawction.auction_info.sell_token.token_info.decimals,
+                    denom: rawction.auction_info.sell_token.token_info.symbol,
+                    contract: rawction.auction_info.sell_token.contract_address,  // NEW
+                },
+                bid: {
+                    decimals: rawction.auction_info.bid_token.token_info.decimals,
+                    denom: rawction.auction_info.bid_token.token_info.symbol,
+                    contract: rawction.auction_info.bid_token.contract_address,  // NEW
+                },
+                endsAt: new Date(rawction.auction_info.ends_at),
+            };
+
+            if(rawction.auction_info.minimum_bid) {
+                auction.bid.minimum = rawction.auction_info.minimum_bid;
+                auction.bid.decimalMinimum = tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
+                auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
+            }
+            return auction;
         };
         Vue.use(Vuex);
         Vue.prototype.$store.registerModule('$auctions', {
@@ -155,6 +182,10 @@ export default {
                 },
               },
               mutations: {
+                updateAuction: (state, auction) => {
+                    const currentAuction = state.auctions.find(a => a.address == auction.address );
+                    console.log(auction, currentAuction);
+                },
                 updateAuctions: (state, auctions) => {
                     state.auctions = auctions;
                 },
@@ -166,6 +197,9 @@ export default {
                 },
               },
               actions: {
+                updateAuction: async ({ commit }, address) => {
+                    commit("updateAuction", transformAuctionInfo(await auctionsApi.getAuctionInfo(address)));
+                },  
                 updateAuctions: async ({ commit }) => {
                     const activeAuctions = (await auctionsApi.listAuctions("active"))?.map(auction => {
                         return transformAuction(auction, "active");
@@ -173,9 +207,6 @@ export default {
                     
                     commit("updateAuctions", activeAuctions);
                 },
-                updateAuction: async ({ commit }, address) => {
-                    console.log(transformAuctionInfo(await auctionsApi.getAuctionInfo(address)));
-                },  
                 // If the server was the one doing the filtering and sorting the API call
                 // would be made here and results stored in the state (through a mutation of course)
                 updateAuctionsFilter: async({ commit }, auctionsFilter) => {

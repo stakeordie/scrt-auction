@@ -33,7 +33,9 @@ const statePersist = {
       // This doesn't work either...
       //store.replaceStore(storedState);
 
-      statePersist.store.state.$auctions = storedState.$auctions;
+      // Individual entities have to be restored so reactivity is not
+      // messed up
+      statePersist.store.state.$auctions.auctions = storedState.$auctions.auctions;
       statePersist.store.state.$vkeys.vkeys = storedState.$vkeys.vkeys;
     }
     statePersist.hasStarted = true;
