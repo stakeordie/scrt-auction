@@ -33,6 +33,10 @@ import VkeysAddress from './VkeysAddress.vue';
 export default {
   components: { VkeysAddress, SecretOverlay },
   props: {
+    value: {
+      type: String,
+      default: null,
+    },
     account: {
       type: String,
       default: null
@@ -49,7 +53,9 @@ export default {
   },
   computed: {
       savedViewingKey() {
-          return this.$vkeys.get(this.account, this.contract);
+          const savedViewingKey = this.$vkeys.get(this.account, this.contract);
+          this.$emit("input", savedViewingKey?.key);
+          return savedViewingKey;
       }
   },
 }

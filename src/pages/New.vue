@@ -76,7 +76,7 @@
                         <!-- New auction description -->
                         <validation-provider class="auction-form__description">
                             <label for="auction-description">Description</label>
-                            <textarea name="auction-description" v-model.trim="auctionForm.description" placeholder="This is optional"></textarea>
+                            <textarea name="auction-description" v-model.trim="auctionForm.description" placeholder="Optional markdown"></textarea>
                         </validation-provider>
 
                         <button class="auction-form__info-action" :disabled="invalid || stage != 'info'">Continue</button>
@@ -401,6 +401,10 @@ export default {
     }
 }
 
+.viewingkey__address {
+    margin-bottom: var(--f-gutter);
+}
+
 .stage-panel {
     background-color: var(--color-black);
     padding: var(--f-gutter);
@@ -470,6 +474,7 @@ export default {
         }
         .stage-panel__info {
             .number {
+                color: white;
                 background-color: var(--color-positive);
             }
         }
@@ -492,6 +497,7 @@ export default {
         }
         .stage-panel__info, .stage-panel__confirm {
             .number {
+                color: white;
                 background-color: var(--color-positive);
             }
         }
@@ -514,6 +520,7 @@ export default {
         }
         .stage-panel__info, .stage-panel__confirm, .stage-panel__allowance {
             .number {
+                color: white;
                 background-color: var(--color-positive);
             }
         }
@@ -541,6 +548,7 @@ export default {
         }
         .stage-panel__info, .stage-panel__confirm, .stage-panel__auction, .stage-panel__allowance {
             .number {
+                color: white;
                 background-color: var(--color-positive);
             }
             opacity: 0.5;

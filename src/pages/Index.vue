@@ -53,8 +53,8 @@
           </form>
         </div>
         <div class="auctions-tools__view">
-          <button class="auctions-tools__view-toggle no-button" :class="{ on: auctionsFilter.viewMode == 'grid'}" @click="auctionsFilter.viewMode = 'grid'">Grid</button>
-          <button class="auctions-tools__view-toggle no-button" :class="{ on: auctionsFilter.viewMode == 'list'}" @click="auctionsFilter.viewMode = 'list'">List</button>
+          <button class="auctions-tools__view-toggle no-button" :class="{ on: auctionsFilter.viewMode == 'grid'}" @click="changeViewMode('grid')">Grid</button>
+          <button class="auctions-tools__view-toggle no-button" :class="{ on: auctionsFilter.viewMode == 'list'}" @click="changeViewMode('list')">List</button>
         </div>
       </section>
 
@@ -106,8 +106,8 @@ export default {
       "sellDenoms", "bidDenoms"
     ])
   },
-  async created() {
-    this.$auctions.updateAuctions();
+  async mounted() {
+    this.$auctions.updateActiveAuctions();
   },
   methods: {
     clearFilters() {
@@ -115,6 +115,10 @@ export default {
       this.auctionsFilter.bidToken = "";
       this.auctionsFilter.showActive = true;
       this.auctionsFilter.showClosed = false;
+    },
+    changeViewMode(newViewMode) {
+      this.auctionsFilter.viewMode = newViewMode;
+      this.filterChanged();
     },
     toggleSort(field) {
       if(field == this.auctionsFilter.sort.priority) {
@@ -280,7 +284,10 @@ export default {
       @include respond-to("<=s") {
         grid-template-columns: 1fr;
       }
-      @include respond-to(">s") {
+      @include respond-to("m") {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      @include respond-to(">m") {
         grid-template-columns: repeat(3, 1fr);
       }
     }

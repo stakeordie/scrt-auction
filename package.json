@@ -16,6 +16,7 @@
     "dotenv": "^8.2.0",
     "eslint": "^7.17.0",
     "gridsome": "^0.7.0",
+    "marked": "^1.2.9",
     "moment": "^2.29.1",
     "secretjs": "^0.10.3",
     "vee-validate": "^3.4.5",

@@ -13,7 +13,7 @@
             </loading-icon>
             <div v-if="!isInProgress">
                 <slot name="description">
-                    <small>A viewing key allows to interact with the private state of a contract.</small>
+                    <small>A viewing key allows to interact with the private state of the contract.</small>
                 </slot>
                 <button class="no-button" @click="createViewingKey()">&#x1F511; Create viewing key</button>
             </div>

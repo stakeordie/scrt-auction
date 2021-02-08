@@ -1,26 +1,30 @@
 <template>
   <page>
-    <column class="auction__header">
+    <column class="auction__header" v-if="auction">
       <block>
         <auction-item :auction="auction" class="list selected">
-          <div class="auction__status">ACTIVE</div>
+          <div class="auction__status" :class="{'active': auction.status == 'ACTIVE'}">{{auction.status}}</div>
         </auction-item>
       </block>
     </column>
-    <column class="auction__body" number="2" weight-l="left" number-s="1">
+    <column class="auction__body" v-if="auction" number="2" weight-l="left" number-s="1">
       <block>
         <div class="auction__info">
           <dl>
             <dt>Address</dt>
-            <dd>secret123123123123123</dd>
+            <dd>{{ $route.params.address | abbrv }}</dd>
           </dl>
         </div>
-        <div class="auction__description">
-          <p>This is the description with markdown and emoji support!!!</p>
-        </div>
+        <div class="auction__description" v-html="description"></div>
       </block>
       <block>
         <div class="auction__actions">
+          <keplr-user v-model="account" :hidden="true"></keplr-user>
+          <vkeys-address class="auction__vkeys" :contract="$auctions.factoryAddress" :account="account">
+            <template v-slot:description>
+              <small>You will need a viewing key in order to view non-public auction details.</small>
+            </template>
+          </vkeys-address>
           <button>Test</button>
           <button>Test</button>
           <button>Test</button>
@@ -31,17 +35,28 @@
 </template>
 
 <script>
+import marked from "marked";
 import AuctionItem from "../../components/AuctionItem.vue";
+import VkeysAddress from '../../components/VkeysAddress.vue';
+import KeplrUser from '../../components/KeplrUser.vue';
 export default {
-  watch: {},
-  components: { AuctionItem },
+  data() {
+    return {
+      account: null
+    }
+  },
+  components: { AuctionItem, VkeysAddress, KeplrUser },
   computed: {
     auction() {
       return this.$auctions.getAuction(this.$route.params.address);
     },
+    description() {
+      return marked(this.auction.description || "");
+    },
   },
   async mounted() {
     await this.$auctions.updateAuction(this.$route.params.address);
+    await this.$auctions.updateActiveAuctions();
   },
 };
 </script>
@@ -74,10 +89,22 @@ export default {
     @include respond-to(">=m") {
       padding: 0 var(--f-gutter-xl);
     }
+
+    &.active {
+      color: var(--color-positive);
+    }
   }
 
   &__info, &__description {
     padding: 0 var(--f-gutter);
+  }
+
+  &__description {
+    line-height: 1.5em;
+  }
+
+  &__vkeys {
+    margin-bottom: var(--f-gutter);
   }
 
   &__actions {

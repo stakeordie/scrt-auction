@@ -6,12 +6,12 @@
           <img src="@/assets/secretnetwork-logo-primary-white.svg">
         </g-link>
         <nav>
-          <!--g-link to="/auctions">Auctions</g-link>
-          <g-link to="/faqs">FAQs</g-link-->
+          <!--g-link to="/auctions">Auctions</g-link-->
+          <!--g-link to="/faqs">FAQs</g-link-->
         </nav>
         <div class="actions">
-          <vkeys-wallet :account="keplrAccount" :contract="$auctions.factoryAddress"></vkeys-wallet>
-          <keplr-user v-model="keplrAccount"></keplr-user>
+          <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
+          <keplr-user v-model="userAddress"></keplr-user>
         </div>
       </simple-header>
     </template>
@@ -42,8 +42,19 @@ export default {
   components: { KeplrUser, VkeysWallet },
   data() {
     return {
-      keplrAccount: null,
+      userAddress: null,
+      viewingKey: null,
       chainId: process.env.GRIDSOME_SECRET_CHAIN_ID
+    }
+  },
+  watch: {
+    // Only the viewing key is watched because if 
+    // the account changes the vk will change too
+    viewingKey(newValue, oldValue) {
+      this.$auctions.updateAuctionsViewer({
+        userAddress: this.userAddress, 
+        viewingKey:  this.viewingKey,
+      });
     }
   },
 }

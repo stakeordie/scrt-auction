@@ -32,8 +32,9 @@ export default {
   },
   computed: {
     address() {
-      this.$emit("input", this.$store.state.$keplr.selectedAccount?.address);
-      return shorten(this.$store.state.$keplr.selectedAccount?.address, this.abbreviation) || "No account available";
+      const userAddress = this.$store.state.$keplr.selectedAccount?.address;
+      this.$emit("input", userAddress);
+      return shorten(userAddress, this.abbreviation) || "No account available";
     },
   },
 };

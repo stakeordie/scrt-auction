@@ -35,7 +35,9 @@ const statePersist = {
 
       // Individual entities have to be restored so reactivity is not
       // messed up
+
       statePersist.store.state.$auctions.auctions = storedState.$auctions.auctions;
+      statePersist.store.state.$auctions.auctionsFilter = storedState.$auctions.auctionsFilter;
       statePersist.store.state.$vkeys.vkeys = storedState.$vkeys.vkeys;
     }
     statePersist.hasStarted = true;

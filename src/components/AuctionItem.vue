@@ -1,5 +1,5 @@
 <template>
-  <div class="auction" :class="['theme-' + auction.color, { closed: auction.closed}]">
+  <div class="auction" v-if="auction" :class="['theme-' + auction.color]">
     <div class="auction__emoji">
       {{ String.fromCodePoint(auction.emoji) }}
     </div>
@@ -17,7 +17,7 @@
       </dd>
     </dl>
 
-    <dl class="auction__bid" v-if="!auction.closed">
+    <dl class="auction__bid">
       <dt>Asking price</dt>
       <dd class="auction__asking-price">
         <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
@@ -70,8 +70,10 @@ export default {
   border-radius: 10px;
   position: relative;
   transition: background-color 0.7s;
+  border: 1px solid transparent;
 
   h2, h3 {
+    color: white;
     margin-bottom: 0;
     line-height: 1em;
   }
@@ -82,21 +84,6 @@ export default {
     margin-bottom: 0;
   }
   
-  &:not(.closed) {
-    border: 1px solid transparent;
-
-    &:hover, &.selected {
-      border: 1px solid var(--theme-washed-color);
-      background-color: black;
-
-      .auction {
-        &__bid-action, &__bid, &__closing-time {
-          opacity: 1;
-          transition: opacity 0.5s, background-color 0.5s;
-        }
-      }
-    }
-  }
 
   &__emoji {
     font-size: 40px;
@@ -149,7 +136,6 @@ export default {
   }
 
   // Layout specific
-
   &.grid {
     display: grid;
     gap: var(--f-gutter);
@@ -190,5 +176,21 @@ export default {
       }
     }
   }
+
+
+
+
+  &:hover, &.selected {
+    border: 1px solid var(--theme-washed-color);
+    background-color: black;
+
+    .auction {
+      &__bid-action, &__bid, &__closing-time {
+        opacity: 1;
+        transition: opacity 0.5s, background-color 0.5s;
+      }
+    }
+  }
+
 }
 </style>

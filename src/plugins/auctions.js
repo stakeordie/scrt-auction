@@ -23,9 +23,8 @@ export default {
     install(Vue, options) {
         const auctionsApi = new AuctionsApi(options.chainClient, options.factoryAddress);
 
-        const transformAuction = (rawction, status) => {
+        const transformActiveAuction = (rawction, status) => {
             const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green"];
-
             const auction = {
                 address: rawction.address,
                 label: rawction.label,
@@ -33,34 +32,26 @@ export default {
                 emoji: arrayHash(rawction.label, emojis),
                 color: arrayHash(rawction.pair, colors),
                 color2: arrayHash(rawction.address, colors),
+                description: null,    // MIA
                 sell: {
                     amount: rawction.sell_amount,
                     decimalAmount: tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                     decimals: rawction.sell_decimals,
                     denom: rawction.pair.split("-")[0],
+                    contract: null,    // MIA
                 },
                 bid: {
                     decimals: rawction.bid_decimals,
                     denom: rawction.pair.split("-")[1],
+                    contract: null,    // MIA
                 },
                 endsAt: new Date(rawction.ends_at * 1000),
             };
 
-            if(status == "active") {
-                auction.bid.minimum = rawction.minimum_bid;
-                auction.bid.decimalMinimum = tokens2Decimal(rawction.minimum_bid, rawction.bid_decimals);
-                auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
-                auction.closed = false;
-            }
-            if(status == "closed") {
-                if(auction.winning_bid) {
-                    auction.winning = {
-                        amount: auction.winning_bid,
-                        timestamp: auction.timestamp,
-                    }
-                }
-                auction.closed = true;
-            }
+            auction.bid.minimum = rawction.minimum_bid;
+            auction.bid.decimalMinimum = tokens2Decimal(rawction.minimum_bid, rawction.bid_decimals);
+            auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
+            auction.status = "ACTIVE";
 
             return auction;
         };
@@ -70,11 +61,11 @@ export default {
         const transformAuctionInfo = (rawction) => {
             const auction = {
                 address: rawction.auction_info.auction_address,
-                // label: null,    // MIA
-                // pair: null,     // MIA
-                // emoji: null     // MIA
-                // color: null,    // MIA
-                // color2: null,   // MIA
+                label: null,    // MIA
+                pair: null,     // MIA
+                emoji: 0x1F41D,     // MIA
+                color: "purple",    // MIA
+                color2: "purple",   // MIA
                 description: rawction.auction_info.description,  // NEW
                 sell: {
                     amount: rawction.auction_info.sell_amount,
@@ -89,6 +80,7 @@ export default {
                     contract: rawction.auction_info.bid_token.contract_address,  // NEW
                 },
                 endsAt: new Date(rawction.auction_info.ends_at),
+                status: rawction.auction_info.status.startsWith("Accepting bids") ? "ACTIVE" : "CLOSED",
             };
 
             if(rawction.auction_info.minimum_bid) {
@@ -103,6 +95,10 @@ export default {
               namespaced: true,
               state: {
                   auctions: [],
+                  viewer: {
+                    userAddress: null,
+                    viewingKey: null,
+                  },
                   auctionsFilter: {
                     sellToken: "",
                     bidToken: "",
@@ -182,41 +178,91 @@ export default {
                 },
               },
               mutations: {
+                // Merge from auction with existing auctions
                 updateAuction: (state, auction) => {
                     const currentAuction = state.auctions.find(a => a.address == auction.address );
-                    console.log(auction, currentAuction);
+                    if(!currentAuction) {
+                        state.auctions.push(auction);
+                    } else {
+                        currentAuction.description = auction.description;
+                        currentAuction.sell.contract = auction.sell.contract;
+                        currentAuction.bid.contract = auction.bid.contract;
+                        currentAuction.status = auction.status;
+                    }
+                    //console.log(auction, currentAuction);
                 },
-                updateAuctions: (state, auctions) => {
-                    state.auctions = auctions;
+                // Merge from auctions with existing auctions
+                updateActiveAuctions: (state, auctions) => {
+                    auctions.forEach(a => {
+                        let auction = state.auctions.find(sa => sa.address == a.address);
+                        if(!auction) {
+                            state.auctions.push(a);
+                        } else {
+                            auction.label = a.label;
+                            auction.pair = a.pair;
+                            auction.emoji = a.emoji;
+                            auction.color = a.color;
+                            auction.color2 = a.color2;
+                            auction.status = a.status;
+
+                            auction.endsAt = a.endsAt;
+                        }
+                    });
                 },
+
+
+
+
+
                 updateAuctionsFilter: (state, auctionsFilter) => {
                     state.auctionsFilter = auctionsFilter;
                 },
+
+                updateAuctionsViewer: (state, auctionsViewer) => {
+                    state.viewer = auctionsViewer;
+                },
+
                 updateAvailableTokens(state, tokenData) {
                     state.tokenData = tokenData;
                 },
+                
               },
               actions: {
                 updateAuction: async ({ commit }, address) => {
                     commit("updateAuction", transformAuctionInfo(await auctionsApi.getAuctionInfo(address)));
                 },  
-                updateAuctions: async ({ commit }) => {
+                updateActiveAuctions: async ({ commit }) => {
                     const activeAuctions = (await auctionsApi.listAuctions("active"))?.map(auction => {
-                        return transformAuction(auction, "active");
-                    }) || [];
-                    
-                    commit("updateAuctions", activeAuctions);
+                        return transformActiveAuction(auction);
+                    });
+                    if(activeAuctions) {
+                        commit("updateActiveAuctions", activeAuctions);
+                    }
                 },
                 // If the server was the one doing the filtering and sorting the API call
                 // would be made here and results stored in the state (through a mutation of course)
                 updateAuctionsFilter: async({ commit }, auctionsFilter) => {
                     commit("updateAuctionsFilter", auctionsFilter)
                 },
+
+                updateAuctionsViewer: async({ commit }, auctionsViewer) => {
+                    if(auctionsViewer.viewingKey) {
+                        const viewerAuctions = await auctionsApi.listUserAuctions(auctionsViewer.userAddress, auctionsViewer.viewingKey);
+                        const modifiedAuctions = viewerAuctions.list_my_auctions.active.as_seller.map(rawction => {
+                            const auction = transformActiveAuction(rawction);
+                            auction.isSeller = true;
+                            return auction;
+                        });
+                        console.log(modifiedAuctions);
+                        commit("updateAuctionsViewer", auctionsViewer);
+                    } else {
+                        // TODO delete the viewer
+                    }
+                },
             }
         });
         
         Vue.prototype.$store.commit('$auctions/updateAvailableTokens', options.availableTokens);
-        
         
         Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
 
@@ -226,8 +272,8 @@ export default {
             return arrayHash(label, emojis);
         };
 
-        Vue.prototype.$auctions.updateAuctions = async () => {
-            Vue.prototype.$store.dispatch('$auctions/updateAuctions');
+        Vue.prototype.$auctions.updateActiveAuctions = async () => {
+            Vue.prototype.$store.dispatch('$auctions/updateActiveAuctions');
         };
 
         Vue.prototype.$auctions.updateAuction = async (address) => {
@@ -236,6 +282,10 @@ export default {
 
         Vue.prototype.$auctions.updateAuctionsFilter = async (auctionsFilter) => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctionsFilter', auctionsFilter);
+        };
+
+        Vue.prototype.$auctions.updateAuctionsViewer = async (auctionsViewer) => {
+            Vue.prototype.$store.dispatch('$auctions/updateAuctionsViewer', auctionsViewer);
         };
     }
 }
