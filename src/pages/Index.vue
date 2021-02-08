@@ -44,11 +44,11 @@
             </div>
 
             <!-- Filtering by status -->
-            <!--div class="auctions-tools__filter-toggles"-->
+            <div class="auctions-tools__filter-toggles">
               <!--button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button-->
               <!--button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">Closed</button-->
-              <!--button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.showMine }" @click="toggleStatus('mine')">🔑 Only mine</button-->
-            <!--/div-->
+              <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.onlyMine }" @click="toggleStatus('mine')">🔑 Only mine</button>
+            </div>
 
           </form>
         </div>
@@ -113,8 +113,6 @@ export default {
     clearFilters() {
       this.auctionsFilter.sellToken = "";
       this.auctionsFilter.bidToken = "";
-      this.auctionsFilter.showActive = true;
-      this.auctionsFilter.showClosed = false;
     },
     changeViewMode(newViewMode) {
       this.auctionsFilter.viewMode = newViewMode;
@@ -136,20 +134,8 @@ export default {
     },
     toggleStatus(status) {
       switch(status) {
-        case 'active':
-          this.auctionsFilter.showActive = !this.auctionsFilter.showActive;
-          if(!this.auctionsFilter.showActive  == !this.auctionsFilter.showClosed) {
-            this.auctionsFilter.showClosed = true;
-          }
-          break;
-        case 'closed':
-          this.auctionsFilter.showClosed = !this.auctionsFilter.showClosed;
-          if(!this.auctionsFilter.showClosed  == !this.auctionsFilter.showActive) {
-            this.auctionsFilter.showActive = true;
-          }
-          break;
         case 'mine':
-          this.auctionsFilter.showMine = !this.auctionsFilter.showMine;
+          this.auctionsFilter.onlyMine = !this.auctionsFilter.onlyMine;
           break;
       }
     },
@@ -235,15 +221,17 @@ export default {
         margin-right: var(--f-gutter);
         white-space: nowrap;
         
-        &.show-active {
-          background-color: var(--color-positive);
-        }
-        &.show-closed {
-          background-color: var(--color-negative);
-        }
         &.show-mine {
-          background-color: var(--color-purple-primary);
+          background-color: var(--color-white-primary);
           opacity: 0.3;
+          cursor: pointer;
+          &.on {
+            opacity: 1;
+            &:hover {
+              opacity: 0.7;
+            }
+          }
+
         }
         &.show-active, &.show-closed {
           transition: opacity 0.2s;
@@ -253,12 +241,6 @@ export default {
             opacity: 0.3;
             &:hover {
               opacity: 0.5;
-            }
-          }
-          &.on {
-            opacity: 1;
-            &:hover {
-              opacity: 0.7;
             }
           }
         }

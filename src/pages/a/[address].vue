@@ -19,14 +19,15 @@
       </block>
       <block>
         <div class="auction__actions">
+          <p v-show="auction.viewerIsSeller">You are the seller</p>
+          <p v-show="auction.viewerIsBidder">You are a bidder</p>
+          <h4>Private</h4>
           <keplr-user v-model="account" :hidden="true"></keplr-user>
           <vkeys-address class="auction__vkeys" :contract="$auctions.factoryAddress" :account="account">
             <template v-slot:description>
               <small>You will need a viewing key in order to view non-public auction details.</small>
             </template>
           </vkeys-address>
-          <button>Test</button>
-          <button>Test</button>
           <button>Test</button>
         </div>
       </block>
@@ -56,7 +57,7 @@ export default {
   },
   async mounted() {
     await this.$auctions.updateAuction(this.$route.params.address);
-    await this.$auctions.updateActiveAuctions();
+    //await this.$auctions.updateActiveAuctions();
   },
 };
 </script>
@@ -93,10 +94,6 @@ export default {
     &.active {
       color: var(--color-positive);
     }
-  }
-
-  &__info, &__description {
-    padding: 0 var(--f-gutter);
   }
 
   &__description {

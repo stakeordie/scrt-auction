@@ -95,16 +95,10 @@ export default {
               namespaced: true,
               state: {
                   auctions: [],
-                  viewer: {
-                    userAddress: null,
-                    viewingKey: null,
-                  },
                   auctionsFilter: {
                     sellToken: "",
                     bidToken: "",
-                    showActive: true,
-                    showClosed: false,
-                    showMine: false,
+                    onlyMine: false,
                     viewMode: "grid",
                     sort: {
                         priority: "price",
@@ -133,16 +127,10 @@ export default {
                         if(state.auctionsFilter.bidToken != "" && auction.bid.denom != state.auctionsFilter.bidToken) {
                             return false;
                         }
-
-                        // Checks for active status filter
-                        if(state.auctionsFilter.showActive && !auction.closed) {
-                            return true;
+                        if(state.auctionsFilter.onlyMine && !(auction.viewerIsSeller || auction.viewerIsBidder)) {
+                            return false;
                         }
-                        // Checks for closed status filter
-                        if(state.auctionsFilter.showClosed && auction.closed) {
-                            return true;
-                        }
-                        return false;
+                        return true;
                     }).sort((a, b) => {
                         const priceOrderFactor = state.auctionsFilter.sort.fields.price == "asc" ? -1 : 1;
                         if(state.auctionsFilter.sort.priority == "price") {
@@ -188,8 +176,8 @@ export default {
                         currentAuction.sell.contract = auction.sell.contract;
                         currentAuction.bid.contract = auction.bid.contract;
                         currentAuction.status = auction.status;
+                        auction.endsAt = auction.endsAt;
                     }
-                    //console.log(auction, currentAuction);
                 },
                 // Merge from auctions with existing auctions
                 updateActiveAuctions: (state, auctions) => {
@@ -204,7 +192,6 @@ export default {
                             auction.color = a.color;
                             auction.color2 = a.color2;
                             auction.status = a.status;
-
                             auction.endsAt = a.endsAt;
                         }
                     });
@@ -218,9 +205,20 @@ export default {
                     state.auctionsFilter = auctionsFilter;
                 },
 
-                updateAuctionsViewer: (state, auctionsViewer) => {
-                    state.viewer = auctionsViewer;
+
+                updateAuctionsViewer: (state, { auctionsViewer, sellerAuctions, bidderAuctions }) => {
+                    state.auctions.forEach(auction => {
+                        auction.viewerIsSeller = sellerAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        auction.viewerIsBidder = bidderAuctions?.findIndex(a => a.address == auction.address) > -1;
+                    });
                 },
+                clearAuctionsViewer: (state) => {
+                    state.auctions.forEach(auction => {
+                        auction.viewerIsSeller = false;
+                        auction.viewerIsBidder = false;
+                    });
+                },
+
 
                 updateAvailableTokens(state, tokenData) {
                     state.tokenData = tokenData;
@@ -245,18 +243,26 @@ export default {
                     commit("updateAuctionsFilter", auctionsFilter)
                 },
 
+                // This method uses vuex mutation atomicity in three steps (first two related) so the state is always consistent no matter what
                 updateAuctionsViewer: async({ commit }, auctionsViewer) => {
                     if(auctionsViewer.viewingKey) {
                         const viewerAuctions = await auctionsApi.listUserAuctions(auctionsViewer.userAddress, auctionsViewer.viewingKey);
-                        const modifiedAuctions = viewerAuctions.list_my_auctions.active.as_seller.map(rawction => {
-                            const auction = transformActiveAuction(rawction);
-                            auction.isSeller = true;
-                            return auction;
-                        });
-                        console.log(modifiedAuctions);
-                        commit("updateAuctionsViewer", auctionsViewer);
+
+                        // First we load the new auction information
+                        const sellerAuctions = viewerAuctions.list_my_auctions?.active?.as_seller?.map(rawction => transformActiveAuction(rawction));
+                        if(sellerAuctions) {
+                            commit("updateActiveAuctions", sellerAuctions);
+                        }
+                        const bidderAuctions = viewerAuctions.list_my_auctions?.active?.as_bidder?.map(rawction => transformActiveAuction(rawction));
+                        if(bidderAuctions) {
+                            commit("updateActiveAuctions", bidderAuctions);
+                        }
+
+                        // Then we commit the auctions viewer so the viewer and auction tags "isSeller", and "isBidder" are updated
+                        // always at once
+                        commit("updateAuctionsViewer", { auctionsViewer, sellerAuctions, bidderAuctions });
                     } else {
-                        // TODO delete the viewer
+                        commit("clearAuctionsViewer");
                     }
                 },
             }
