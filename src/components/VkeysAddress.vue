@@ -39,7 +39,7 @@
                 <dl>
                     <dt>Viewing key</dt>
                 </dl>
-                <textarea class="vkey__key" v-model="viewingKey.key"></textarea>
+                <textarea class="vkey__key" v-model.trim="viewingKey.key"></textarea>
                 <a class="save" href="" @click="saveViewingKey()">Save</a>
                 <a class="remove" href="" @click="deleteViewingKey()">Delete</a>
             </div>
