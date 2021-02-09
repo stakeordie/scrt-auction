@@ -25,22 +25,22 @@
                 <!--button class="auctions-tools__filter-sort no-button"
                     :class="[auctionsFilter.sort.fields.sell, { active: auctionsFilter.sort.priority == 'sell'}]" @click="toggleSort('sell')"></button-->
               </div>
+            </div>
 
-              <!-- Filtering by bid -->
-              <div class="auctions-tools__filter-filter">
-                <label class="auctions-tools__filter-label" for="bid-token">paying in</label>
-                <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
-                  <option value=""></option>
-                  <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
-                    {{ bidToken }}
-                  </option>
-                </select>
-              </div>
-              <div class="auctions-tools__filter-filter">
-                <button class="auctions-tools__filter-sort no-button"
-                    :class="[auctionsFilter.sort.fields.price, { active: auctionsFilter.sort.priority == 'price'}]" @click="toggleSort('price')"></button>
-                <label class="auctions-tools__filter-label" for="bid-token">sorting by <strong>asking  price</strong></label>
-              </div>
+            <!-- Filtering by bid -->
+            <div class="auctions-tools__filter-filter">
+              <label class="auctions-tools__filter-label" for="bid-token">paying in</label>
+              <select class="auctions-tools__filter-select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
+                <option value=""></option>
+                <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
+                  {{ bidToken }}
+                </option>
+              </select>
+            </div>
+            <div class="auctions-tools__filter-filter">
+              <button class="auctions-tools__filter-sort no-button"
+                  :class="[auctionsFilter.sort.fields.price, { active: auctionsFilter.sort.priority == 'price'}]" @click="toggleSort('price')"></button>
+              <label class="auctions-tools__filter-label" for="bid-token">sorting by <strong>asking  price</strong></label>
             </div>
 
             <!-- Filtering by status -->
@@ -63,7 +63,7 @@
         <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode">
               <router-link 
                 class="auction__bid-action button" 
-                :to="'/a/' + auction.address">Bid</router-link>
+                :to="'/a/' + auction.address">{{ auction.viewerIsSeller ? 'MANAGE' : 'BID' }}</router-link>
         </auction-item>
       </div>
 

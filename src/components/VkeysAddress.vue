@@ -16,6 +16,7 @@
                     <small>A viewing key allows to interact with the private state of the contract.</small>
                 </slot>
                 <button class="no-button" @click="createViewingKey()">&#x1F511; Create viewing key</button>
+                <button class="no-button" @click="isViewingKeyVisible = true; viewingKey = { key: '' }">&#x1F511; Enter key</button>
             </div>
         </div>
 
@@ -38,8 +39,8 @@
                 <dl>
                     <dt>Viewing key</dt>
                 </dl>
-                <textarea class="vkey__key" readonly v-model="viewingKey.key"></textarea>
-                <a class="save" href="" @click="saveViewingKey()">Store</a>
+                <textarea class="vkey__key" v-model="viewingKey.key"></textarea>
+                <a class="save" href="" @click="saveViewingKey()">Save</a>
                 <a class="remove" href="" @click="deleteViewingKey()">Delete</a>
             </div>
         </div>
@@ -99,6 +100,7 @@ export default {
         },
         async forgetViewingKey() {
             this.$vkeys.delete(this.account, this.contract);
+            this.viewingKey = null;
         },
         hideViewingKey() {
             this.isViewingKeyVisible = false;
@@ -178,16 +180,13 @@ export default {
                 text-transform: uppercase;
 
                 &.hide {
-                    color: var(--color-white-secondary);
+                    color: var(--color-turquoise-secondary);
                 }
                 &.save {
                     color: var(--color-positive);
                 }
-                &.remove {
+                &.remove, &.forget {
                     color: var(--color-negative);
-                }
-                &.forget {
-                    color: var(--color-blue-secondary);
                 }
             }
         }
