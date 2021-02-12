@@ -210,6 +210,8 @@ export default {
                     state.auctions.forEach(auction => {
                         auction.viewerIsSeller = false;
                         auction.viewerIsBidder = false;
+                        auction.viewerWasSeller = false;
+                        auction.viewerIsWinner = false;
                     });
                 },
 
