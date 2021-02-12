@@ -23,39 +23,6 @@ export default {
     install(Vue, options) {
         const auctionsApi = new AuctionsApi(options.chainClient, options.factoryAddress);
 
-        const transformActiveAuction = (rawction, status) => {
-            const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green"];
-            const auction = {
-                address: rawction.address,
-                label: rawction.label,
-                pair: rawction.pair,
-                emoji: arrayHash(rawction.label, emojis),
-                color: arrayHash(rawction.pair, colors),
-                color2: arrayHash(rawction.address, colors),
-                description: null,    // MIA
-                sell: {
-                    amount: rawction.sell_amount,
-                    decimalAmount: tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
-                    decimals: rawction.sell_decimals,
-                    denom: rawction.pair.split("-")[0],
-                    contract: null,    // MIA
-                },
-                bid: {
-                    decimals: rawction.bid_decimals,
-                    denom: rawction.pair.split("-")[1],
-                    contract: null,    // MIA
-                },
-                endsAt: new Date(rawction.ends_at * 1000),
-            };
-
-            auction.bid.minimum = rawction.minimum_bid;
-            auction.bid.decimalMinimum = tokens2Decimal(rawction.minimum_bid, rawction.bid_decimals);
-            auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
-            auction.status = "ACTIVE";
-
-            return auction;
-        };
-
         // This transforms the auction info object into a compatible auction object to be
         // blended with the list
         const transformAuctionInfo = (rawction) => {
@@ -99,6 +66,7 @@ export default {
                     sellToken: "",
                     bidToken: "",
                     onlyMine: false,
+                    showClosed: false,
                     viewMode: "grid",
                     sort: {
                         priority: "price",
@@ -130,6 +98,10 @@ export default {
                         if(state.auctionsFilter.onlyMine && !(auction.viewerIsSeller || auction.viewerIsBidder)) {
                             return false;
                         }
+                        if(!state.auctionsFilter.showClosed && auction.status === 'CLOSED') {
+                            return false;
+                        }
+
                         return true;
                     }).sort((a, b) => {
                         const priceOrderFactor = state.auctionsFilter.sort.fields.price == "asc" ? -1 : 1;
@@ -227,16 +199,21 @@ export default {
               },
               actions: {
                 updateAuction: async ({ commit }, address) => {
-                    commit("updateAuction", transformAuctionInfo(await auctionsApi.getAuctionInfo(address)));
-                },  
+                    const auctionInfo = await auctionsApi.getAuctionInfo(address);
+                    commit("updateAuction", transformAuctionInfo(auctionInfo));
+                },
+
                 updateActiveAuctions: async ({ commit }) => {
-                    const activeAuctions = (await auctionsApi.listAuctions("active"))?.map(auction => {
-                        return transformActiveAuction(auction);
-                    });
-                    if(activeAuctions) {
+                    const activeAuctions = await auctionsApi.listAuctions();
+                    if (activeAuctions) {
                         commit("updateActiveAuctions", activeAuctions);
                     }
+                    const closedAuctions = await auctionsApi.listClosedAuctions();
+                    if (closedAuctions) {
+                        commit("updateActiveAuctions", closedAuctions);
+                    }
                 },
+
                 // If the server was the one doing the filtering and sorting the API call
                 // would be made here and results stored in the state (through a mutation of course)
                 updateAuctionsFilter: async({ commit }, auctionsFilter) => {
@@ -246,15 +223,14 @@ export default {
                 // This method uses vuex mutation atomicity in three steps (first two related) so the state is always consistent no matter what
                 updateAuctionsViewer: async({ commit }, auctionsViewer) => {
                     if(auctionsViewer.viewingKey) {
-                        const viewerAuctions = await auctionsApi.listUserAuctions(auctionsViewer.userAddress, auctionsViewer.viewingKey);
+                        const { sellerAuctions, bidderAuctions } = await auctionsApi.listUserAuctions(auctionsViewer.userAddress, auctionsViewer.viewingKey);
 
                         // First we load the new auction information
-                        const sellerAuctions = viewerAuctions.list_my_auctions?.active?.as_seller?.map(rawction => transformActiveAuction(rawction));
-                        if(sellerAuctions) {
+                        if (sellerAuctions) {
                             commit("updateActiveAuctions", sellerAuctions);
                         }
-                        const bidderAuctions = viewerAuctions.list_my_auctions?.active?.as_bidder?.map(rawction => transformActiveAuction(rawction));
-                        if(bidderAuctions) {
+
+                        if (bidderAuctions) {
                             commit("updateActiveAuctions", bidderAuctions);
                         }
 

@@ -1,3 +1,5 @@
+import emojis from '../lib/emojis.js'
+
 export class AuctionsApi {
     factoryAddress;
     scrtClient;
@@ -70,19 +72,111 @@ export class AuctionsApi {
         return address;
     }
 
-    async listAuctions(auctionState) {
-        // secretcli q compute query *factory_contract_address* '{"list_active_auctions":{}}'
-        if(auctionState == "active") {
-            return (await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})).list_active_auctions.active;
-        } else if(auctionState == "closed") {
-            return (await this.scrtClient.queryContract(this.factoryAddress, {"list_closed_auctions":{}})).list_closed_auctions.closed;
-        }
+    tokens2Decimal(amount, decimals)  {
+        return Number(amount / Math.pow(10, decimals));
     }
-    
+
+    arrayHash(str, array)  {
+        var hash = 0, i, chr;
+        for (i = 0; i < str.length; i++) {
+            chr   = str.charCodeAt(i);
+            hash  = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return array[Math.abs(hash) % array.length];
+    }
+
+    transformActiveAuction(rawction, status) {
+        const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green"];
+        const auction = {
+            address: rawction.address,
+            label: rawction.label,
+            pair: rawction.pair,
+            emoji: this.arrayHash(rawction.label, emojis),
+            color: this.arrayHash(rawction.pair, colors),
+            color2: this.arrayHash(rawction.address, colors),
+            description: null,    // MIA
+            sell: {
+                amount: rawction.sell_amount,
+                decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
+                decimals: rawction.sell_decimals,
+                denom: rawction.pair.split("-")[0],
+                contract: null,    // MIA
+            },
+            bid: {
+                decimals: rawction.bid_decimals,
+                denom: rawction.pair.split("-")[1],
+                contract: null,    // MIA
+            },
+            endsAt: new Date((rawction.ends_at || rawction.timestamp) * 1000),
+        };
+
+        auction.bid.minimum = rawction.minimum_bid;
+        auction.bid.decimalMinimum = this.tokens2Decimal(rawction.minimum_bid || 0, rawction.bid_decimals || 0);
+        auction.price = (auction.bid.decimalMinimum / auction.sell.decimalAmount) || 0;
+        auction.status = status;
+
+        return auction;
+    }
+
+    transformAuctionInfo(rawction) {
+        const auction = {
+            address: rawction.auction_info.auction_address,
+            label: null,    // MIA
+            pair: null,     // MIA
+            emoji: 0x1F41D,     // MIA
+            color: "purple",    // MIA
+            color2: "purple",   // MIA
+            description: rawction.auction_info.description,  // NEW
+            sell: {
+                amount: rawction.auction_info.sell_amount,
+                decimalAmount: this.tokens2Decimal(rawction.auction_info.sell_amount, rawction.auction_info.sell_token.token_info.decimals),
+                decimals: rawction.auction_info.sell_token.token_info.decimals,
+                denom: rawction.auction_info.sell_token.token_info.symbol,
+                contract: rawction.auction_info.sell_token.contract_address,  // NEW
+            },
+            bid: {
+                decimals: rawction.auction_info.bid_token.token_info.decimals,
+                denom: rawction.auction_info.bid_token.token_info.symbol,
+                contract: rawction.auction_info.bid_token.contract_address,  // NEW
+            },
+            endsAt: new Date(rawction.auction_info.ends_at),
+            status: rawction.auction_info.status.startsWith("Accepting bids") ? "ACTIVE" : "CLOSED",
+        };
+
+        if(rawction.auction_info.minimum_bid) {
+            auction.bid.minimum = rawction.auction_info.minimum_bid;
+            auction.bid.decimalMinimum = this.tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
+            auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
+        }
+        return auction;
+    };
+
+    async listAuctions() {
+        const auctions = await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})
+
+        return auctions.list_active_auctions.active.map(auction => {
+            return this.transformActiveAuction(auction, 'ACTIVE');
+        });
+    }
+
+    async listClosedAuctions() {
+        const auctions = await this.scrtClient.queryContract(this.factoryAddress, {"list_closed_auctions":{}})
+
+        return auctions.list_closed_auctions.closed.map(auction => {
+            return this.transformActiveAuction(auction, 'CLOSED');
+        });
+    }
+
     async listUserAuctions(address, viewingKey) {
-         // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
-        if(viewingKey) {
-            return await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
+        // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
+        if (!viewingKey) return;
+        const auctions = await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
+        const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction));
+        const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction));
+        return {
+            sellerAuctions,
+            bidderAuctions
         }
     }
 
@@ -99,7 +193,7 @@ export class AuctionsApi {
         //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
         return await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": address,"viewing_key": viewingKey }});
     }
-    
+
     async createViewingKey() {
         const fees = this.getFees("createViewingKey");
         const msg = {
@@ -125,7 +219,7 @@ export class AuctionsApi {
             }
         };
         const response = await this.scrtClient.executeContract(auctionAddress, msg, fees);
-        return response;
+        return response
     }
 
     async closeAuctionWithOptions(auctionAddress, endDateTime, newMinBid) {
@@ -201,27 +295,29 @@ export class AuctionsApi {
         description,
         endDateTime
     ) {
-            const fees = this.getFees("createAuction");
-            const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
-            const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
-            const msg = {
-                "create_auction": {
-                    "label": label,
-                    "sell_contract": {
-                        "code_hash": sellTokenHash,
-                        "address": sellTokenAddress
-                    },
-                    "bid_contract": {
-                        "code_hash": bidTokenHash,
-                        "address": bidTokenAddress
-                    },
-                    "sell_amount": amount,
-                    "minimum_bid": minBid,
-                    "description": description,
-                    "ends_at": endDateTime
-                }
-            };
-            //console.log("msg in auction-api/createAuction", msg)
-            return await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
+        const fees = this.getFees("createAuction");
+        const sellTokenHash = await this.scrtClient.getContractHash(sellTokenAddress);
+        const bidTokenHash = await this.scrtClient.getContractHash(bidTokenAddress);
+        const msg = {
+            "create_auction": {
+                "label": label,
+                "sell_contract": {
+                    "code_hash": sellTokenHash,
+                    "address": sellTokenAddress
+                },
+                "bid_contract": {
+                    "code_hash": bidTokenHash,
+                    "address": bidTokenAddress
+                },
+                "sell_amount": amount,
+                "minimum_bid": minBid,
+                "description": description,
+                "ends_at": endDateTime
+            }
+        };
+        //console.log("msg in auction-api/createAuction", msg)
+        return await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
     }
+
+
 }

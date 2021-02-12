@@ -46,8 +46,8 @@
             <!-- Filtering by status -->
             <div class="auctions-tools__filter-toggles">
               <!--button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button-->
-              <!--button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">Closed</button-->
               <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.onlyMine }" @click="toggleStatus('mine')">🔑 Only mine</button>
+              <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">Closed</button>
             </div>
 
           </form>
@@ -63,7 +63,9 @@
         <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode">
               <router-link 
                 class="auction__bid-action button" 
-                :to="'/auctions/' + auction.address">{{ auction.viewerIsSeller ? 'MANAGE' : 'BID' }}</router-link>
+                :to="'/auctions/' + auction.address">
+                {{ auction.viewerIsSeller ? 'MANAGE' : 'BID' }}
+              </router-link>
         </auction-item>
       </div>
 
@@ -136,6 +138,9 @@ export default {
       switch(status) {
         case 'mine':
           this.auctionsFilter.onlyMine = !this.auctionsFilter.onlyMine;
+          break;
+        case 'closed':
+          this.auctionsFilter.showClosed = !this.auctionsFilter.showClosed;
           break;
       }
     },
