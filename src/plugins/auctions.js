@@ -258,8 +258,6 @@ export default {
                             commit("updateActiveAuctions", bidderAuctions);
                         }
 
-                        console.log(viewerAuctions.list_my_auctions.closed);
-
                         // Then we commit the auctions viewer so the viewer and auction tags "isSeller", and "isBidder" are updated
                         // always at once
                         commit("updateAuctionsViewer", { auctionsViewer, sellerAuctions, bidderAuctions });

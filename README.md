@@ -17,13 +17,3 @@ cp .env.testnet .env
 yarn run develop
 ````
 
-
-Conversation points
-
-- What pagination tools are required-possible?
-- Closed auctions have pagination active don't
-- The role of the label, hide it from the user, emoji, identicon
-- Application specific viewing keys
-- Transaction management
-- Limit the number of emoji so they won't change after release
-- Decrease allowance takes SCRT

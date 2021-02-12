@@ -19,8 +19,7 @@
       </block>
       <block>
         <div class="auction__actions">
-          <p v-show="auction.viewerIsSeller">You are the seller</p>
-          <p v-show="auction.viewerIsBidder">You are a bidder</p>
+          <h4>Details</h4>
           <h4>Private</h4>
           <keplr-user v-model="account" :hidden="true"></keplr-user>
           <vkeys-address class="auction__vkeys" :contract="$auctions.factoryAddress" :account="account">
@@ -29,6 +28,8 @@
             </template>
           </vkeys-address>
           <button>Test</button>
+          <p v-show="auction.viewerIsSeller">You are the seller</p>
+          <p v-show="auction.viewerIsBidder">You are a bidder</p>
         </div>
       </block>
     </column>
@@ -41,6 +42,11 @@ import AuctionItem from "../../components/AuctionItem.vue";
 import VkeysAddress from '../../components/VkeysAddress.vue';
 import KeplrUser from '../../components/KeplrUser.vue';
 export default {
+  metaInfo() {
+    return {
+      title: this.auction?.pair || 'Loading...',
+    }
+  },
   data() {
     return {
       account: null
@@ -57,7 +63,7 @@ export default {
   },
   async mounted() {
     await this.$auctions.updateAuction(this.$route.params.address);
-    //await this.$auctions.updateActiveAuctions();
+    await this.$auctions.updateActiveAuctions();
   },
 };
 </script>
