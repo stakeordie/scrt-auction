@@ -1,5 +1,5 @@
 <template>
-  <div class="auction" v-if="auction" :class="['theme-' + auction.color]">
+  <div class="auction" v-if="auction" :class="['theme-' + auction.color, 'status-' + auction.status.toLowerCase()]">
     <div class="auction__emoji">
       {{ String.fromCodePoint(auction.emoji) }}
     </div>
@@ -25,7 +25,7 @@
       </dd>
     </dl>
 
-    <dl class="auction__closing-time">
+    <dl v-if="auction.status != 'CLOSED'" class="auction__closing-time">
       <dt>Target Close</dt>
       <dd :class="isEnded ? 'ended': ''">{{ targetClose }}</dd>
     </dl>
@@ -181,8 +181,11 @@ export default {
 
 
   &:hover, &.selected {
-    border: 1px solid var(--theme-washed-color);
-    background-color: black;
+
+    &:not(.status-closed) {
+      border: 1px solid var(--theme-washed-color);
+      background-color: black;
+    }
 
     .auction {
       &__bid-action, &__bid, &__closing-time {

@@ -62,6 +62,7 @@ export default {
               namespaced: true,
               state: {
                   auctions: [],
+                  auctionsViewer: {},
                   auctionsFilter: {
                     sellToken: "",
                     bidToken: "",
@@ -95,7 +96,7 @@ export default {
                         if(state.auctionsFilter.bidToken != "" && auction.bid.denom != state.auctionsFilter.bidToken) {
                             return false;
                         }
-                        if(state.auctionsFilter.onlyMine && !(auction.viewerIsSeller || auction.viewerIsBidder)) {
+                        if(state.auctionsFilter.onlyMine && !(auction.viewerIsSeller || auction.viewerIsBidder || auction.viewerWasSeller || auction.viewerIsWinner)) {
                             return false;
                         }
                         if(!state.auctionsFilter.showClosed && auction.status === 'CLOSED') {
@@ -163,7 +164,25 @@ export default {
                             auction.emoji = a.emoji;
                             auction.color = a.color;
                             auction.color2 = a.color2;
-                            auction.status = a.status;
+                            auction.status = a.status || "ACTIVE";
+                            auction.endsAt = a.endsAt;
+                        }
+                    });
+                },
+
+                // Merge from auctions with existing auctions
+                updateClosedAuctions: (state, auctions) => {
+                    auctions.forEach(a => {
+                        let auction = state.auctions.find(sa => sa.address == a.address);
+                        if(!auction) {
+                            state.auctions.push(a);
+                        } else {
+                            auction.label = a.label;
+                            auction.pair = a.pair;
+                            auction.emoji = a.emoji;
+                            auction.color = a.color;
+                            auction.color2 = a.color2;
+                            auction.status = a.status || "CLOSED";
                             auction.endsAt = a.endsAt;
                         }
                     });
@@ -178,11 +197,14 @@ export default {
                 },
 
 
-                updateAuctionsViewer: (state, { auctionsViewer, sellerAuctions, bidderAuctions }) => {
+                updateAuctionsViewer: (state, { auctionsViewer, sellerAuctions, bidderAuctions, wasSellerAuctions, wonAuctions }) => {
                     state.auctions.forEach(auction => {
                         auction.viewerIsSeller = sellerAuctions?.findIndex(a => a.address == auction.address) > -1;
                         auction.viewerIsBidder = bidderAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        auction.viewerWasSeller = wasSellerAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        auction.viewerIsWinner = wonAuctions?.findIndex(a => a.address == auction.address) > -1;
                     });
+                    state.auctionsViewer = auctionsViewer;
                 },
                 clearAuctionsViewer: (state) => {
                     state.auctions.forEach(auction => {
@@ -208,9 +230,51 @@ export default {
                     if (activeAuctions) {
                         commit("updateActiveAuctions", activeAuctions);
                     }
+                },
+
+                updateClosedAuctions: async ({ commit }) => {
                     const closedAuctions = await auctionsApi.listClosedAuctions();
                     if (closedAuctions) {
                         commit("updateActiveAuctions", closedAuctions);
+                    }
+                },
+                
+                updateAuctionsFromViewer: async ({ commit, state }, auctionsViewer) => {
+                    let viewer;
+                    
+                    if(auctionsViewer != undefined) {
+                        viewer = auctionsViewer;
+                    } else {
+                        viewer = state.auctionsViewer;
+                    }
+                    
+                    if(viewer.viewingKey) {
+                        const userAuctions = await auctionsApi.listUserAuctions(viewer.userAddress, viewer.viewingKey);
+                        // First we load the new auction information
+                        if (userAuctions.sellerAuctions) {
+                            commit("updateActiveAuctions", userAuctions.sellerAuctions);
+                        }
+                        if (userAuctions.bidderAuctions) {
+                            commit("updateActiveAuctions", userAuctions.bidderAuctions);
+                        }
+                        if (userAuctions.wasSellerAuctions) {
+                            commit("updateClosedAuctions", userAuctions.wasSellerAuctions);
+                        }
+                        if (userAuctions.wonAuctions) {
+                            commit("updateClosedAuctions", userAuctions.wonAuctions);
+                        }
+
+                        // Then we commit the auctions viewer so the viewer and auction tags "isSeller", and "isBidder" are updated
+                        // always at once
+                        commit("updateAuctionsViewer", { 
+                            auctionsViewer: viewer, 
+                            sellerAuctions: userAuctions.sellerAuctions, 
+                            bidderAuctions: userAuctions.bidderAuctions,
+                            wasSellerAuctions: userAuctions.wasSellerAuctions,
+                            wonAuctions: userAuctions.wonAuctions,
+                        });
+
+                        return userAuctions;
                     }
                 },
 
@@ -221,22 +285,9 @@ export default {
                 },
 
                 // This method uses vuex mutation atomicity in three steps (first two related) so the state is always consistent no matter what
-                updateAuctionsViewer: async({ commit }, auctionsViewer) => {
+                updateAuctionsViewer: async({ commit, dispatch }, auctionsViewer) => {
                     if(auctionsViewer.viewingKey) {
-                        const { sellerAuctions, bidderAuctions } = await auctionsApi.listUserAuctions(auctionsViewer.userAddress, auctionsViewer.viewingKey);
-
-                        // First we load the new auction information
-                        if (sellerAuctions) {
-                            commit("updateActiveAuctions", sellerAuctions);
-                        }
-
-                        if (bidderAuctions) {
-                            commit("updateActiveAuctions", bidderAuctions);
-                        }
-
-                        // Then we commit the auctions viewer so the viewer and auction tags "isSeller", and "isBidder" are updated
-                        // always at once
-                        commit("updateAuctionsViewer", { auctionsViewer, sellerAuctions, bidderAuctions });
+                        await dispatch("updateAuctionsFromViewer", auctionsViewer);
                     } else {
                         commit("clearAuctionsViewer");
                     }
@@ -254,8 +305,18 @@ export default {
             return arrayHash(label, emojis);
         };
 
+        Vue.prototype.$auctions.updateAuctions = async () => {
+            Vue.prototype.$store.dispatch('$auctions/updateActiveAuctions');
+            Vue.prototype.$store.dispatch('$auctions/updateAuctionsFromViewer');
+            Vue.prototype.$store.dispatch('$auctions/updateClosedAuctions');
+        };
+
         Vue.prototype.$auctions.updateActiveAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateActiveAuctions');
+        };
+
+        Vue.prototype.$auctions.updateClosedAuctions = async () => {
+            Vue.prototype.$store.dispatch('$auctions/updateClosedAuctions');
         };
 
         Vue.prototype.$auctions.updateAuction = async (address) => {

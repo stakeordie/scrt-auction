@@ -47,7 +47,7 @@
             <div class="auctions-tools__filter-toggles">
               <!--button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button-->
               <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.onlyMine }" @click="toggleStatus('mine')">🔑 Only mine</button>
-              <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">Closed</button>
+              <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">&#x1F512; Show closed</button>
             </div>
 
           </form>
@@ -64,7 +64,7 @@
               <router-link 
                 class="auction__bid-action button" 
                 :to="'/auctions/' + auction.address">
-                {{ auction.viewerIsSeller ? 'MANAGE' : 'BID' }}
+                {{ auction.status == "ACTIVE" ? (auction.viewerIsSeller || auction.viewerIsBidder ? 'VIEW' : 'BID') : 'CLOSED' }}
               </router-link>
         </auction-item>
       </div>
@@ -109,7 +109,7 @@ export default {
     ])
   },
   async mounted() {
-    this.$auctions.updateActiveAuctions();
+    this.$auctions.updateAuctions();
   },
   methods: {
     clearFilters() {
