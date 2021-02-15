@@ -25,38 +25,6 @@ export default {
 
         // This transforms the auction info object into a compatible auction object to be
         // blended with the list
-        const transformAuctionInfo = (rawction) => {
-            const auction = {
-                address: rawction.auction_info.auction_address,
-                label: null,    // MIA
-                pair: null,     // MIA
-                emoji: 0x1F41D,     // MIA
-                color: "purple",    // MIA
-                color2: "purple",   // MIA
-                description: rawction.auction_info.description,  // NEW
-                sell: {
-                    amount: rawction.auction_info.sell_amount,
-                    decimalAmount: tokens2Decimal(rawction.auction_info.sell_amount, rawction.auction_info.sell_token.token_info.decimals),
-                    decimals: rawction.auction_info.sell_token.token_info.decimals,
-                    denom: rawction.auction_info.sell_token.token_info.symbol,
-                    contract: rawction.auction_info.sell_token.contract_address,  // NEW
-                },
-                bid: {
-                    decimals: rawction.auction_info.bid_token.token_info.decimals,
-                    denom: rawction.auction_info.bid_token.token_info.symbol,
-                    contract: rawction.auction_info.bid_token.contract_address,  // NEW
-                },
-                endsAt: new Date(rawction.auction_info.ends_at),
-                status: rawction.auction_info.status.startsWith("Accepting bids") ? "ACTIVE" : "CLOSED",
-            };
-
-            if(rawction.auction_info.minimum_bid) {
-                auction.bid.minimum = rawction.auction_info.minimum_bid;
-                auction.bid.decimalMinimum = tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
-                auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
-            }
-            return auction;
-        };
         Vue.use(Vuex);
         Vue.prototype.$store.registerModule('$auctions', {
               namespaced: true,
@@ -117,12 +85,12 @@ export default {
                     });
                 },
                 sellDenoms: state => {
-                    return [...new Set(state.auctions.map(auction => {
+                    return [...new Set(state.auctions.filter(auction => auction.sell).map(auction => {
                         return auction.sell.denom;
                     }))];
                 },
                 bidDenoms: state => {
-                    return [...new Set(state.auctions.map(auction => {
+                    return [...new Set(state.auctions.filter(auction => auction.bid).map(auction => {
                         return auction.bid.denom;
                     }))];
                 },
@@ -148,24 +116,25 @@ export default {
                         currentAuction.description = auction.description;
                         currentAuction.sell.contract = auction.sell.contract;
                         currentAuction.bid.contract = auction.bid.contract;
-                        currentAuction.status = auction.status;
-                        auction.endsAt = auction.endsAt;
+
+                        currentAuction.endsAt = auction.endsAt;
                     }
                 },
                 // Merge from auctions with existing auctions
                 updateActiveAuctions: (state, auctions) => {
                     auctions.forEach(a => {
-                        let auction = state.auctions.find(sa => sa.address == a.address);
-                        if(!auction) {
+                        let currentAuction = state.auctions.find(sa => sa.address == a.address);
+                        if(!currentAuction) {
+                            console.log(a.sell);
                             state.auctions.push(a);
                         } else {
-                            auction.label = a.label;
-                            auction.pair = a.pair;
-                            auction.emoji = a.emoji;
-                            auction.color = a.color;
-                            auction.color2 = a.color2;
-                            auction.status = a.status || "ACTIVE";
-                            auction.endsAt = a.endsAt;
+                            currentAuction.label = a.label;
+                            currentAuction.pair = a.pair;
+                            currentAuction.emoji = a.emoji;
+                            currentAuction.color = a.color;
+                            currentAuction.color2 = a.color2;
+                            currentAuction.status = a.status;
+                            currentAuction.endsAt = a.endsAt;
                         }
                     });
                 },
@@ -182,8 +151,8 @@ export default {
                             auction.emoji = a.emoji;
                             auction.color = a.color;
                             auction.color2 = a.color2;
-                            auction.status = a.status || "CLOSED";
-                            auction.endsAt = a.endsAt;
+                            auction.status = a.status;
+                            auction.closedAt = a.closedAt;
                         }
                     });
                 },
@@ -199,10 +168,10 @@ export default {
 
                 updateAuctionsViewer: (state, { auctionsViewer, sellerAuctions, bidderAuctions, wasSellerAuctions, wonAuctions }) => {
                     state.auctions.forEach(auction => {
-                        auction.viewerIsSeller = sellerAuctions?.findIndex(a => a.address == auction.address) > -1;
-                        auction.viewerIsBidder = bidderAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        auction.viewerIsSeller  = sellerAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        auction.viewerIsBidder  = bidderAuctions?.findIndex(a => a.address == auction.address) > -1;
                         auction.viewerWasSeller = wasSellerAuctions?.findIndex(a => a.address == auction.address) > -1;
-                        auction.viewerIsWinner = wonAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        auction.viewerIsWinner  = wonAuctions?.findIndex(a => a.address == auction.address) > -1;
                     });
                     state.auctionsViewer = auctionsViewer;
                 },
@@ -213,6 +182,7 @@ export default {
                         auction.viewerWasSeller = false;
                         auction.viewerIsWinner = false;
                     });
+                    state.auctionsViewer = null;
                 },
 
 
@@ -224,7 +194,7 @@ export default {
               actions: {
                 updateAuction: async ({ commit }, address) => {
                     const auctionInfo = await auctionsApi.getAuctionInfo(address);
-                    commit("updateAuction", transformAuctionInfo(auctionInfo));
+                    commit("updateAuction", auctionInfo);
                 },
 
                 updateActiveAuctions: async ({ commit }) => {
@@ -237,7 +207,7 @@ export default {
                 updateClosedAuctions: async ({ commit }) => {
                     const closedAuctions = await auctionsApi.listClosedAuctions();
                     if (closedAuctions) {
-                        commit("updateActiveAuctions", closedAuctions);
+                        commit("updateClosedAuctions", closedAuctions);
                     }
                 },
                 
@@ -250,7 +220,7 @@ export default {
                         viewer = state.auctionsViewer;
                     }
                     
-                    if(viewer.viewingKey) {
+                    if(viewer?.viewingKey) {
                         const userAuctions = await auctionsApi.listUserAuctions(viewer.userAddress, viewer.viewingKey);
                         // First we load the new auction information
                         if (userAuctions.sellerAuctions) {
@@ -265,7 +235,6 @@ export default {
                         if (userAuctions.wonAuctions) {
                             commit("updateClosedAuctions", userAuctions.wonAuctions);
                         }
-
                         // Then we commit the auctions viewer so the viewer and auction tags "isSeller", and "isBidder" are updated
                         // always at once
                         commit("updateAuctionsViewer", { 

@@ -87,7 +87,7 @@ export class AuctionsApi {
     }
 
     transformActiveAuction(rawction, status) {
-        const colors = ["purple", "orange", "cream", "blue", "yellow", "red", "green"];
+        const colors = ["purple", "orange", "cream", "blue", "yellow", "green"];
         const auction = {
             address: rawction.address,
             label: rawction.label,
@@ -114,18 +114,51 @@ export class AuctionsApi {
         auction.bid.minimum = rawction.minimum_bid;
         auction.bid.decimalMinimum = this.tokens2Decimal(rawction.minimum_bid || 0, rawction.bid_decimals || 0);
         auction.price = (auction.bid.decimalMinimum / auction.sell.decimalAmount) || 0;
-        auction.status = status;
+
+        auction.status = "ACTIVE";
 
         return auction;
     }
 
+    // {
+    //     "address":"secret1zqcjemap88q4mkryglpl8rxr3xmey6yytkacxd",
+    //     "label":"auction-2898281",
+    //     "pair":"TSUNI-TSUSDT",
+    //     "sell_amount":"1000000000000000000",
+    //     "sell_decimals":18,
+    //     "timestamp":1612626275
+    // }
     transformClosedAuction(rawction) {
         const auction = {
-
-        };
+            address: rawction.address,
+            pair: rawction.pair,
+            label: rawction.label,
+            emoji: this.arrayHash(rawction.label, emojis),
+            color: "red",
+            color2: "red",
+            sell: {
+                amount: rawction.sell_amount,
+                decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
+                decimals: rawction.sell_decimals,
+                denom: rawction.pair.split("-")[0],
+                contract: null,    // MIA
+            },
+            closedAt: new Date(rawction.timestamp * 1000),
+            status: "CLOSED",
+        }
 
         return auction;
     }
+
+    // address: "secret1c23rzyy8kdx936e854fchjze95fkxdwd8mcsyz"
+    // label: "auction-497183"
+    // pair: "TSDAI-TSUSDT"
+    // sell_amount: "100000000000000000"
+    // sell_decimals: 18
+    // timestamp: 1613100794
+    //
+    // winning_bid: "10000"
+    // bid_decimals: 6
 
     transformAuctionInfo(rawction) {
         const auction = {
@@ -138,7 +171,7 @@ export class AuctionsApi {
             description: rawction.auction_info.description,  // NEW
             sell: {
                 amount: rawction.auction_info.sell_amount,
-                decimalAmount: this.tokens2Decimal(rawction.auction_info.sell_amount, rawction.auction_info.sell_token.token_info.decimals),
+                decimalAmount: tokens2Decimal(rawction.auction_info.sell_amount, rawction.auction_info.sell_token.token_info.decimals),
                 decimals: rawction.auction_info.sell_token.token_info.decimals,
                 denom: rawction.auction_info.sell_token.token_info.symbol,
                 contract: rawction.auction_info.sell_token.contract_address,  // NEW
@@ -149,12 +182,11 @@ export class AuctionsApi {
                 contract: rawction.auction_info.bid_token.contract_address,  // NEW
             },
             endsAt: new Date(rawction.auction_info.ends_at),
-            status: rawction.auction_info.status.startsWith("Accepting bids") ? "ACTIVE" : "CLOSED",
         };
 
         if(rawction.auction_info.minimum_bid) {
             auction.bid.minimum = rawction.auction_info.minimum_bid;
-            auction.bid.decimalMinimum = this.tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
+            auction.bid.decimalMinimum = tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
             auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
         }
         return auction;
@@ -164,15 +196,14 @@ export class AuctionsApi {
         const auctions = await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})
 
         return auctions.list_active_auctions.active.map(auction => {
-            return this.transformActiveAuction(auction, 'ACTIVE');
+            return this.transformActiveAuction(auction);
         });
     }
 
     async listClosedAuctions() {
         const auctions = await this.scrtClient.queryContract(this.factoryAddress, {"list_closed_auctions":{}})
-
         return auctions.list_closed_auctions.closed.map(auction => {
-            return this.transformActiveAuction(auction, 'CLOSED');
+            return this.transformClosedAuction(auction);
         });
     }
 
@@ -180,17 +211,18 @@ export class AuctionsApi {
         // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
         if (viewingKey) {
             const auctions = await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
-            console.log(auctions);
+
             const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction));
             const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction));
 
-            const closedSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformActiveAuction(rawction));
-            const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformActiveAuction(rawction));
+            console.log(auctions.list_my_auctions?.closed?.won);
+            const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction));
+            const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformClosedAuction(rawction));
 
             return {
                 sellerAuctions,
                 bidderAuctions,
-                closedSellerAuctions,
+                wasSellerAuctions,
                 wonAuctions,
             }
         }
@@ -202,7 +234,7 @@ export class AuctionsApi {
 
     async getAuctionBidInfo(address, auctionAddress, viewingKey) {
         //secretcli q compute query *auction_contract_address* '{"view_bid": {"address":"*address_whose_bid_to_list*","viewing_key":"*viewing_key*"}}'
-        return await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }});
+        return this.transformAuctionInfo(await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }}));
     }
 
     async getAuctionHasBids(address, auctionAddress, viewingKey) {

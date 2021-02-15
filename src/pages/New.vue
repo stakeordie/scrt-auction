@@ -214,8 +214,6 @@ export default {
             endTimeAmount: 1,
             endTimeUnit: "60",
 
-            viewingKey: null,
-
             statusLog: [],
 
             auctionError: null,

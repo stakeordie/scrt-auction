@@ -5,19 +5,21 @@
     </div>
 
     <h3 class="auction__pair">
-      <span class="sell-denom">{{ auction.sell.denom }}</span> /
-      <span class="bid-denom">{{ auction.bid.denom }}</span>
+      <span class="sell-denom">{{ auction.sell.denom }}</span>
+      <span v-if="auction.bid">
+        /
+        <span class="bid-denom">{{ auction.bid.denom }}</span>
+      </span>
     </h3>
 
     <dl class="auction__sell">
-      
       <dt>For Sale</dt>
       <dd>
         <token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals" :denom="auction.sell.denom"></token-amount>
       </dd>
     </dl>
 
-    <dl class="auction__bid">
+    <dl class="auction__bid" v-if="auction.bid">
       <dt>Asking price</dt>
       <dd class="auction__asking-price">
         <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
@@ -25,12 +27,16 @@
       </dd>
     </dl>
 
-    <dl v-if="auction.status != 'CLOSED'" class="auction__closing-time">
-      <dt>Target Close</dt>
-      <dd :class="isEnded ? 'ended': ''">{{ targetClose }}</dd>
+    <dl v-if="auction.endsAt">
+      <dt>Target close</dt>
+      <dd :class="isEnded ? 'ended': ''">{{ endsAt }}</dd>
     </dl>
 
-    
+    <dl v-if="auction.closedAt">
+      <dt>Closed at</dt>
+      <dd>{{ closedAt }}</dd>
+    </dl>
+
     <dl class="auction__winner" v-if="auction.winning">
       <dt>Winning Bid</dt>
       <dd>
@@ -50,8 +56,11 @@ export default {
   components: { TokenAmount },
   props: ["auction", ""],
   computed: {
-    targetClose() {
+    endsAt() {
       return moment(this.auction.endsAt).format("YYYY-MM-DD HH:mm:ss");
+    },
+    closedAt() {
+      return moment(this.auction.closedAt).format("YYYY-MM-DD HH:mm:ss");
     },
     isEnded() {
       return moment(this.auction.endsAt).isBefore();
