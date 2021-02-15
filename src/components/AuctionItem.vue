@@ -1,5 +1,5 @@
 <template>
-  <div class="auction" v-if="auction" :class="['theme-' + auction.color, 'status-' + auction.status.toLowerCase()]">
+  <g-link :to="to" class="auction" v-if="auction" :class="['theme-' + auction.color, 'status-' + auction.status.toLowerCase()]">
     <div class="auction__emoji">
       {{ String.fromCodePoint(auction.emoji) }}
     </div>
@@ -38,14 +38,21 @@
     </dl>
 
     <dl v-if="auction.bid && auction.bid.winner">
-      <dt>Winner</dt>
+      <dt>Winning bid</dt>
       <dd class="auction__winner">
         <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
       </dd>
     </dl>
 
-    <slot></slot>
-  </div>
+    <div class="auction__status">
+      <div class="auction__status--status" :class="['auction__status--' + auction.status.toLowerCase()]">{{ auction.status}}</div>
+      <div class="auction__status--user-status auction__status--user-seller" v-if="auction.viewerIsSeller">You are the seller</div>
+      <div class="auction__status--user-status auction__status--user-bid" v-if="auction.viewerIsBidder">You placed a bid</div>
+      <div class="auction__status--user-status auction__status--user-sold" v-if="auction.viewerWasSeller">You sold tokens</div>
+      <div class="auction__status--user-status auction__status--user-won" v-if="auction.viewerIsWinner">You are the winner</div>
+    </div>
+
+  </g-link>
 </template>
 
 <script>
@@ -55,7 +62,7 @@ import moment from 'moment'
 
 export default {
   components: { TokenAmount },
-  props: ["auction", ""],
+  props: ["auction", "to"],
   computed: {
     endsAt() {
       return moment(this.auction.endsAt).format("YYYY-MM-DD HH:mm:ss");
@@ -76,11 +83,14 @@ export default {
 
 .auction {
   background-color: var(--color-black);
+  &:not(.status-closed) {
+    border: 1px solid transparent;
+  }
+  text-decoration: none;
   padding: var(--f-gutter);
   border-radius: 10px;
   position: relative;
   transition: background-color 0.7s;
-  border: 1px solid transparent;
 
   h2, h3 {
     color: white;
@@ -101,20 +111,6 @@ export default {
 
   &__asking-price {
     font-size: 0.9em;
-  }
-
-  &__bid-action {
-    cursor: pointer;
-
-    color: var(--theme-anti-color);
-    background-color: var(--theme-color);
-
-    padding-left: var(--f-gutter-l);
-    padding-right: var(--f-gutter-l);
-
-    transition: opacity 2s;
-
-    margin-bottom: 0;
   }
 
   &__pair {
@@ -142,6 +138,22 @@ export default {
     font-size: 22px;
   }
 
+  &__status {
+    &--status {
+      font-weight: bold;
+    }
+    &--user-status {
+      color: var(--color-user-status);
+      font-size: 0.9em;
+    }
+    &--active {
+      color: var(--color-positive);
+    }
+    &--closed {
+      color: var(--color-negative);
+    }
+  }
+
   // Layout specific
   &.grid {
     display: grid;
@@ -152,25 +164,20 @@ export default {
       top: var(--f-gutter-l);
       right: var(--f-gutter-l);
     }
-
-    .auction__bid-action {
-      opacity: 0.1;
-      position: absolute;
-      bottom: var(--f-gutter);
-      right: var(--f-gutter);
-    }
   }
 
   &.list {
-    display: grid;
     gap: var(--f-gutter);
     align-items: center;
 
     @include respond-to("<=s") {
+      display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
     @include respond-to(">=m") {
-      grid-template-columns: 50px repeat(4, 1fr) min-content;
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-between;
     }
 
     dd {
@@ -180,6 +187,10 @@ export default {
     .auction {
       &__bid-action {
         opacity: 0.3;
+      }
+
+      &__status--status {
+        text-align: right;
       }
     }
   }

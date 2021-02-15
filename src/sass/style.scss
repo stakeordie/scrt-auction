@@ -3,6 +3,13 @@
 
 
 :root {
+
+    // Theme color variables section
+    --color-user-status: var(--color-light-gray);
+
+
+
+
     --f-default-text-font: "Montserrat";
 
     --f-header-text-color: white;
@@ -47,7 +54,6 @@
     --default-error-color: var(--color-negative);
 
     --gutter: var(--f-gutter);
-
 
     // Animation variables
     --animate-duration: 0.4s;

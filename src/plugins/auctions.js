@@ -73,12 +73,17 @@ export default {
 
                         return true;
                     }).sort((a, b) => {
-                        const priceOrderFactor = state.auctionsFilter.sort.fields.price == "asc" ? -1 : 1;
-                        if(state.auctionsFilter.sort.priority == "price") {
-                            if(a.price > b.price) {
-                                return priceOrderFactor * -1;
-                            } else {
-                                return priceOrderFactor;
+                        // First we show the active ones by default
+                        if (a.status != b.status) {
+                            return a.status == "ACTIVE" ? -1 : 1;
+                        } else {
+                            const priceOrderFactor = state.auctionsFilter.sort.fields.price == "asc" ? -1 : 1;
+                            if(state.auctionsFilter.sort.priority == "price") {
+                                if(a.price > b.price) {
+                                    return priceOrderFactor * -1;
+                                } else {
+                                    return priceOrderFactor;
+                                }
                             }
                         }
 

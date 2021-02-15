@@ -60,13 +60,7 @@
 
       <!-- Auctions grid -->
       <div class="auctions-set" :class="auctionsFilter.viewMode">
-        <auction-item v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode">
-              <router-link 
-                class="auction__bid-action button" 
-                :to="'/auctions/' + auction.address">
-                {{ auction.status == "ACTIVE" ? (auction.viewerIsSeller || auction.viewerIsBidder ? 'VIEW' : 'BID') : 'CLOSED' }}
-              </router-link>
-        </auction-item>
+        <auction-item :to="'/auctions/' + auction.address" v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
       </div>
 
       <!-- Auctions empty -->
