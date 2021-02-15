@@ -49,7 +49,7 @@
       <div class="auction__status--user-status auction__status--user-seller" v-if="auction.viewerIsSeller">You are the seller</div>
       <div class="auction__status--user-status auction__status--user-bid" v-if="auction.viewerIsBidder">You placed a bid</div>
       <div class="auction__status--user-status auction__status--user-sold" v-if="auction.viewerWasSeller">You sold tokens</div>
-      <div class="auction__status--user-status auction__status--user-won" v-if="auction.viewerIsWinner">You are the winner</div>
+      <div class="auction__status--user-status auction__status--user-won" v-if="auction.viewerIsWinner">You won the auction</div>
     </div>
 
   </g-link>
@@ -189,7 +189,7 @@ export default {
         opacity: 0.3;
       }
 
-      &__status--status {
+      &__status {
         text-align: right;
       }
     }
