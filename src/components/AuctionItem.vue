@@ -19,7 +19,7 @@
       </dd>
     </dl>
 
-    <dl class="auction__bid" v-if="auction.bid">
+    <dl class="auction__bid" v-if="auction.bid && auction.price">
       <dt>Asking price</dt>
       <dd class="auction__asking-price">
         <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
@@ -37,12 +37,13 @@
       <dd>{{ closedAt }}</dd>
     </dl>
 
-    <dl class="auction__winner" v-if="auction.winning">
-      <dt>Winning Bid</dt>
-      <dd>
-        <token-amount :amount="auction.winning.decimalAmount" :decimals="auction.bid.decimals" :denom="auction.bid.decimalAmount"></token-amount>
+    <dl v-if="auction.bid && auction.bid.winner">
+      <dt>Winner</dt>
+      <dd class="auction__winner">
+        <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
       </dd>
     </dl>
+
     <slot></slot>
   </div>
 </template>
@@ -132,13 +133,10 @@ export default {
       color: var(--theme-washed-color);
     }
   }
-
-  &__closing-time {
-    opacity: 0.3;
+    
     .ended {
       color: var(--color-negative);
     }
-  }
 
   &__sell {
     font-size: 22px;

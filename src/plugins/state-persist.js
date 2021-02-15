@@ -1,4 +1,4 @@
-const storageKey = "sod2020021221501";
+const storageKey = "sod202002141654";
 
 const statePersist = {
   store: null,

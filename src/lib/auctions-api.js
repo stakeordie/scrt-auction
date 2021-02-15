@@ -151,6 +151,43 @@ export class AuctionsApi {
     }
 
     // address: "secret1c23rzyy8kdx936e854fchjze95fkxdwd8mcsyz"
+    // bid_decimals: 6
+    // label: "auction-497183"
+    // pair: "TSDAI-TSUSDT"
+    // sell_amount: "100000000000000000"
+    // sell_decimals: 18
+    // timestamp: 1613100794
+    // winning_bid: "10000"
+    transformWonAuction(rawction) {
+        const auction = {
+            address: rawction.address,
+            pair: rawction.pair,
+            label: rawction.label,
+            emoji: this.arrayHash(rawction.label, emojis),
+            color: "red",
+            color2: "red",
+            sell: {
+                amount: rawction.sell_amount,
+                decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
+                decimals: rawction.sell_decimals,
+                denom: rawction.pair.split("-")[0],
+                contract: null,    // MIA
+            },
+            bid: {
+                winner: rawction.winning_bid,
+                decimalWinner: this.tokens2Decimal(rawction.winning_bid, rawction.bid_decimals),
+                decimals: rawction.bid_decimals,
+                denom: rawction.pair.split("-")[1],
+                contract: null,    // MIA
+            },
+            closedAt: new Date(rawction.timestamp * 1000),
+            status: "CLOSED",
+        }
+
+        return auction;
+    }
+
+    // address: "secret1c23rzyy8kdx936e854fchjze95fkxdwd8mcsyz"
     // label: "auction-497183"
     // pair: "TSDAI-TSUSDT"
     // sell_amount: "100000000000000000"
@@ -215,9 +252,8 @@ export class AuctionsApi {
             const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction));
             const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction));
 
-            console.log(auctions.list_my_auctions?.closed?.won);
             const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction));
-            const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformClosedAuction(rawction));
+            const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformWonAuction(rawction));
 
             return {
                 sellerAuctions,
@@ -234,7 +270,7 @@ export class AuctionsApi {
 
     async getAuctionBidInfo(address, auctionAddress, viewingKey) {
         //secretcli q compute query *auction_contract_address* '{"view_bid": {"address":"*address_whose_bid_to_list*","viewing_key":"*viewing_key*"}}'
-        return this.transformAuctionInfo(await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }}));
+        return await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }});
     }
 
     async getAuctionHasBids(address, auctionAddress, viewingKey) {

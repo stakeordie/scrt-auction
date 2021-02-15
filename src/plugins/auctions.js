@@ -114,52 +114,20 @@ export default {
                         state.auctions.push(auction);
                     } else {
                         currentAuction.description = auction.description;
-                        currentAuction.sell.contract = auction.sell.contract;
-                        currentAuction.bid.contract = auction.bid.contract;
-
                         currentAuction.endsAt = auction.endsAt;
                     }
                 },
                 // Merge from auctions with existing auctions
-                updateActiveAuctions: (state, auctions) => {
-                    auctions.forEach(a => {
-                        let currentAuction = state.auctions.find(sa => sa.address == a.address);
+                updateAuctions: (state, auctions) => {
+                    auctions.forEach(auction => {
+                        let currentAuction = state.auctions.find(sa => sa.address == auction.address);
                         if(!currentAuction) {
-                            console.log(a.sell);
-                            state.auctions.push(a);
+                            state.auctions.push(auction);
                         } else {
-                            currentAuction.label = a.label;
-                            currentAuction.pair = a.pair;
-                            currentAuction.emoji = a.emoji;
-                            currentAuction.color = a.color;
-                            currentAuction.color2 = a.color2;
-                            currentAuction.status = a.status;
-                            currentAuction.endsAt = a.endsAt;
+                            Object.assign(currentAuction, auction);
                         }
                     });
                 },
-
-                // Merge from auctions with existing auctions
-                updateClosedAuctions: (state, auctions) => {
-                    auctions.forEach(a => {
-                        let auction = state.auctions.find(sa => sa.address == a.address);
-                        if(!auction) {
-                            state.auctions.push(a);
-                        } else {
-                            auction.label = a.label;
-                            auction.pair = a.pair;
-                            auction.emoji = a.emoji;
-                            auction.color = a.color;
-                            auction.color2 = a.color2;
-                            auction.status = a.status;
-                            auction.closedAt = a.closedAt;
-                        }
-                    });
-                },
-
-
-
-
 
                 updateAuctionsFilter: (state, auctionsFilter) => {
                     state.auctionsFilter = auctionsFilter;
@@ -200,14 +168,14 @@ export default {
                 updateActiveAuctions: async ({ commit }) => {
                     const activeAuctions = await auctionsApi.listAuctions();
                     if (activeAuctions) {
-                        commit("updateActiveAuctions", activeAuctions);
+                        commit("updateAuctions", activeAuctions);
                     }
                 },
 
                 updateClosedAuctions: async ({ commit }) => {
                     const closedAuctions = await auctionsApi.listClosedAuctions();
                     if (closedAuctions) {
-                        commit("updateClosedAuctions", closedAuctions);
+                        commit("updateAuctions", closedAuctions);
                     }
                 },
                 
@@ -224,16 +192,16 @@ export default {
                         const userAuctions = await auctionsApi.listUserAuctions(viewer.userAddress, viewer.viewingKey);
                         // First we load the new auction information
                         if (userAuctions.sellerAuctions) {
-                            commit("updateActiveAuctions", userAuctions.sellerAuctions);
+                            commit("updateAuctions", userAuctions.sellerAuctions);
                         }
                         if (userAuctions.bidderAuctions) {
-                            commit("updateActiveAuctions", userAuctions.bidderAuctions);
+                            commit("updateAuctions", userAuctions.bidderAuctions);
                         }
                         if (userAuctions.wasSellerAuctions) {
-                            commit("updateClosedAuctions", userAuctions.wasSellerAuctions);
+                            commit("updateAuctions", userAuctions.wasSellerAuctions);
                         }
                         if (userAuctions.wonAuctions) {
-                            commit("updateClosedAuctions", userAuctions.wonAuctions);
+                            commit("updateAuctions", userAuctions.wonAuctions);
                         }
                         // Then we commit the auctions viewer so the viewer and auction tags "isSeller", and "isBidder" are updated
                         // always at once
@@ -279,14 +247,6 @@ export default {
         Vue.prototype.$auctions.updateAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateActiveAuctions');
             Vue.prototype.$store.dispatch('$auctions/updateAuctionsFromViewer');
-            Vue.prototype.$store.dispatch('$auctions/updateClosedAuctions');
-        };
-
-        Vue.prototype.$auctions.updateActiveAuctions = async () => {
-            Vue.prototype.$store.dispatch('$auctions/updateActiveAuctions');
-        };
-
-        Vue.prototype.$auctions.updateClosedAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateClosedAuctions');
         };
 
