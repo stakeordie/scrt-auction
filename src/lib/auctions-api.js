@@ -146,6 +146,21 @@ export class AuctionsApi {
             closedAt: new Date(rawction.timestamp * 1000),
             status: "CLOSED",
         }
+        if(rawction.winning_bid) {
+            auction.bid = {
+                winner: rawction.winning_bid,
+                decimalWinner: this.tokens2Decimal(rawction.winning_bid, rawction.bid_decimals),
+                decimals: rawction.bid_decimals,
+                denom: rawction.pair.split("-")[1],
+                contract: null,    // MIA
+            }
+        } else {
+            auction.bid = {
+                decimals: rawction.bid_decimals,
+                denom: rawction.pair.split("-")[1],
+                contract: null,    // MIA
+            }
+        }
 
         return auction;
     }

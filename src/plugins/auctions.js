@@ -70,6 +70,12 @@ export default {
                         if(!state.auctionsFilter.showClosed && auction.status === 'CLOSED') {
                             return false;
                         }
+                        if(state.auctionsFilter.showClosed && auction.status === 'ACTIVE') {
+                            return false;
+                        }
+                        if(state.auctionsFilter.showClosed && auction.status === 'CLOSED' && !auction.bid.winner) {
+                            return false;
+                        }
 
                         return true;
                     }).sort((a, b) => {
