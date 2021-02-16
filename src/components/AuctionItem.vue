@@ -50,7 +50,8 @@
       <div class="auction__status--user-status auction__status--user-bid" v-if="auction.viewerIsBidder && auction.viewerIsSeller">and you've placed a bid.</div>
       <div class="auction__status--user-status auction__status--user-bid" v-else-if="auction.viewerIsBidder">You've placed a bid.</div>
       <div class="auction__status--user-status auction__status--user-sold" v-if="auction.viewerWasSeller">You were the auction owner</div>
-      <div class="auction__status--user-status auction__status--user-won" v-if="auction.viewerIsWinner">You won the auction</div>
+      <div class="auction__status--user-status auction__status--user-won" v-if="auction.viewerIsWinner && auction.viewerWasSeller">and you won it.</div>     
+      <div class="auction__status--user-status auction__status--user-won" v-else-if="auction.viewerIsWinner">You won the auction</div>
     </div>
 
   </g-link>
