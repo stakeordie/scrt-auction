@@ -223,7 +223,7 @@ export class AuctionsApi {
             description: rawction.auction_info.description,  // NEW
             sell: {
                 amount: rawction.auction_info.sell_amount,
-                decimalAmount: tokens2Decimal(rawction.auction_info.sell_amount, rawction.auction_info.sell_token.token_info.decimals),
+                decimalAmount: this.tokens2Decimal(rawction.auction_info.sell_amount, rawction.auction_info.sell_token.token_info.decimals),
                 decimals: rawction.auction_info.sell_token.token_info.decimals,
                 denom: rawction.auction_info.sell_token.token_info.symbol,
                 contract: rawction.auction_info.sell_token.contract_address,  // NEW
@@ -238,7 +238,7 @@ export class AuctionsApi {
 
         if(rawction.auction_info.minimum_bid) {
             auction.bid.minimum = rawction.auction_info.minimum_bid;
-            auction.bid.decimalMinimum = tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
+            auction.bid.decimalMinimum = this.tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
             auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
         }
         return auction;
@@ -279,8 +279,17 @@ export class AuctionsApi {
         }
     }
 
+    //replaces getAuctionInfo
+    async getAuction(auctionAddress) {
+        const auction = await this.scrtClient.queryContract(auctionAddress, {"auction_info":{}});
+        return this.transformAuctionInfo(auction);
+    }
+
+    //replaced by getAuction
     async getAuctionInfo(auctionAddress) {
-        return await this.scrtClient.queryContract(auctionAddress, {"auction_info":{}});
+        const auctionInfo = await this.scrtClient.queryContract(auctionAddress, {"auction_info":{}});
+        //console.log("auctionInfo",auctionInfo);
+        return auctionInfo;
     }
 
     async getAuctionBidInfo(address, auctionAddress, viewingKey) {

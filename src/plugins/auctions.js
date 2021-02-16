@@ -172,8 +172,12 @@ export default {
               },
               actions: {
                 updateAuction: async ({ commit }, address) => {
-                    const auctionInfo = await auctionsApi.getAuctionInfo(address);
-                    commit("updateAuction", auctionInfo);
+                    //replacement
+                    const auction = await auctionsApi.getAuction(address);
+                    //replaced
+                    //const auctionInfo = await auctionsApi.getAuctionInfo(address);
+
+                    commit("updateAuction", auction);
                 },
 
                 updateActiveAuctions: async ({ commit }) => {

@@ -62,8 +62,8 @@ export default {
     },
   },
   async mounted() {
+    await this.$auctions.updateAuctions();
     await this.$auctions.updateAuction(this.$route.params.address);
-    await this.$auctions.updateActiveAuctions();
   },
 };
 </script>
