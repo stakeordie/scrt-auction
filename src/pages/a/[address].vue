@@ -93,9 +93,11 @@ export default {
   },
   methods: {
     placedBid(auction) {
+      // Totally optional
       console.log("Placed bid for ", auction);
     },
     retractedBid(auction) {
+      // Totally optional
       console.log("Retracted bid for ", auction);
     },
   },
