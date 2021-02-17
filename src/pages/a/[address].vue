@@ -137,7 +137,7 @@ export default {
         this.retractBidSubmit.result = "error"
       } else {
         this.retractBidSubmit.result = "success"
-        this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.account,this.viewingKey);
+        this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.account,this.viewingKey.key);
       }
     }
   }
