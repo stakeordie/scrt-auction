@@ -47,7 +47,7 @@
             <div class="auctions-tools__filter-toggles">
               <!--button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button-->
               <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.onlyMine }" @click="toggleStatus('mine')">🔑 Only mine</button>
-              <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">&#x1F512; Show closed</button>
+              <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">&#x1F512; Only closed</button>
             </div>
 
           </form>
@@ -60,7 +60,7 @@
 
       <!-- Auctions grid -->
       <div class="auctions-set" :class="auctionsFilter.viewMode">
-        <auction-item :to="'/auctions/' + auction.address" v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
+        <auction-item :to="'/a/' + auction.address" v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
       </div>
 
       <!-- Auctions empty -->
