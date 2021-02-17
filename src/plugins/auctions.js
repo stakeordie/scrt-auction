@@ -124,14 +124,14 @@ export default {
                     if(!currentAuction) {
                         state.auctions.push(auction);
                     } else {
-                        currentAuction.description = auction.description;
-                        currentAuction.endsAt = auction.endsAt;
+                        Object.assign(currentAuction, auction);
                     }
                 },
+
                 // Merge from auctions with existing auctions
                 updateAuctions: (state, auctions) => {
                     auctions.forEach(auction => {
-                        let currentAuction = state.auctions.find(sa => sa.address == auction.address);
+                        const currentAuction = state.auctions.find(sa => sa.address == auction.address);
                         if(!currentAuction) {
                             state.auctions.push(auction);
                         } else {
@@ -144,7 +144,6 @@ export default {
                     state.auctionsFilter = auctionsFilter;
                 },
 
-
                 updateAuctionsViewer: (state, { auctionsViewer, sellerAuctions, bidderAuctions, wasSellerAuctions, wonAuctions }) => {
                     state.auctions.forEach(auction => {
                         auction.viewerIsSeller  = sellerAuctions?.findIndex(a => a.address == auction.address) > -1;
@@ -154,12 +153,15 @@ export default {
                     });
                     state.auctionsViewer = auctionsViewer;
                 },
+
                 clearAuctionsViewer: (state) => {
                     state.auctions.forEach(auction => {
                         auction.viewerIsSeller = false;
                         auction.viewerIsBidder = false;
                         auction.viewerWasSeller = false;
                         auction.viewerIsWinner = false;
+                        // auction.hasBids = null,
+                        // auction.bidsPlaced = null
                     });
                     state.auctionsViewer = null;
                 },
@@ -178,6 +180,27 @@ export default {
                     //const auctionInfo = await auctionsApi.getAuctionInfo(address);
 
                     commit("updateAuction", auction);
+                },
+
+                updateAuctionBidDetails: async ({ commit }, {address, userAddress, viewingKey}) => {
+                    //reset BidDetails
+                    commit("updateAuction", {
+                        address,
+                        hasBids: false,
+                        currentBid: false
+                    });
+                    let newAuction;
+                    const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey); //get userAuctions
+                    
+                    if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am bidder
+                        newAuction = await auctionsApi.getAuctionBid(address, userAddress, viewingKey);
+                        newAuction.hasBids = true;
+                        commit("updateAuction", newAuction);
+                    } else if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am seller
+                        newAuction = await auctionsApi.getAuctionHasBidsInfo(address, userAddress, viewingKey);
+                        console.log(newAuction);
+                        commit("updateAuction", newAuction);
+                    }
                 },
 
                 updateActiveAuctions: async ({ commit }) => {
@@ -267,6 +290,10 @@ export default {
 
         Vue.prototype.$auctions.updateAuction = async (address) => {
             Vue.prototype.$store.dispatch('$auctions/updateAuction', address);
+        };
+
+        Vue.prototype.$auctions.updateAuctionBidDetails = async (address, userAddress, viewingKey) => {
+            Vue.prototype.$store.dispatch('$auctions/updateAuctionBidDetails', {address, userAddress, viewingKey});
         };
 
         Vue.prototype.$auctions.updateAuctionsFilter = async (auctionsFilter) => {

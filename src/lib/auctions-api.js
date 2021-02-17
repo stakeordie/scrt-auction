@@ -1,4 +1,5 @@
 import emojis from '../lib/emojis.js'
+import statePersist from '../plugins/state-persist.js';
 
 export class AuctionsApi {
     factoryAddress;
@@ -95,18 +96,15 @@ export class AuctionsApi {
             emoji: this.arrayHash(rawction.label, emojis),
             color: this.arrayHash(rawction.pair, colors),
             color2: this.arrayHash(rawction.address, colors),
-            description: null,    // MIA
             sell: {
                 amount: rawction.sell_amount,
                 decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                 decimals: rawction.sell_decimals,
                 denom: rawction.pair.split("-")[0],
-                contract: null,    // MIA
             },
             bid: {
                 decimals: rawction.bid_decimals,
                 denom: rawction.pair.split("-")[1],
-                contract: null,    // MIA
             },
             endsAt: new Date((rawction.ends_at || rawction.timestamp) * 1000),
         };
@@ -141,7 +139,6 @@ export class AuctionsApi {
                 decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                 decimals: rawction.sell_decimals,
                 denom: rawction.pair.split("-")[0],
-                contract: null,    // MIA
             },
             closedAt: new Date(rawction.timestamp * 1000),
             status: "CLOSED",
@@ -152,13 +149,11 @@ export class AuctionsApi {
                 decimalWinner: this.tokens2Decimal(rawction.winning_bid, rawction.bid_decimals),
                 decimals: rawction.bid_decimals,
                 denom: rawction.pair.split("-")[1],
-                contract: null,    // MIA
             }
         } else {
             auction.bid = {
                 decimals: rawction.bid_decimals,
                 denom: rawction.pair.split("-")[1],
-                contract: null,    // MIA
             }
         }
 
@@ -186,14 +181,12 @@ export class AuctionsApi {
                 decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                 decimals: rawction.sell_decimals,
                 denom: rawction.pair.split("-")[0],
-                contract: null,    // MIA
             },
             bid: {
                 winner: rawction.winning_bid,
                 decimalWinner: this.tokens2Decimal(rawction.winning_bid, rawction.bid_decimals),
                 decimals: rawction.bid_decimals,
                 denom: rawction.pair.split("-")[1],
-                contract: null,    // MIA
             },
             closedAt: new Date(rawction.timestamp * 1000),
             status: "CLOSED",
@@ -215,11 +208,6 @@ export class AuctionsApi {
     transformAuctionInfo(rawction) {
         const auction = {
             address: rawction.auction_info.auction_address,
-            label: null,    // MIA
-            pair: null,     // MIA
-            emoji: 0x1F41D,     // MIA
-            color: "purple",    // MIA
-            color2: "purple",   // MIA
             description: rawction.auction_info.description,  // NEW
             sell: {
                 amount: rawction.auction_info.sell_amount,
@@ -243,6 +231,21 @@ export class AuctionsApi {
         }
         return auction;
     };
+
+    transformAuctionBidInfo(auctionAddress, bidInfo) {
+        const auction = {
+            address: auctionAddress,
+            currentBid: {
+                amount: bidInfo.bid.amount_bid,
+                decimalAmount: this.tokens2Decimal(bidInfo.bid.amount_bid, bidInfo.bid.bid_decimals),
+                decimals: bidInfo.bid.bid_decimals,
+                message: bidInfo.bid.message,
+            }
+        }
+        return auction;
+    }
+
+    // TODO transformAuctionHasBids
 
     async listAuctions() {
         const auctions = await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})
@@ -292,11 +295,39 @@ export class AuctionsApi {
         return auctionInfo;
     }
 
-    async getAuctionBidInfo(address, auctionAddress, viewingKey) {
-        //secretcli q compute query *auction_contract_address* '{"view_bid": {"address":"*address_whose_bid_to_list*","viewing_key":"*viewing_key*"}}'
-        return await this.scrtClient.queryContract(auctionAddress, { "view_bid": { "address": address,"viewing_key": viewingKey }});
+    //replaces getAuctionBidInfo
+    async getAuctionBid(auctionAddress, userAddress, viewingKey) {
+        const bidInfo = await this.scrtClient.queryContract(auctionAddress, {"view_bid": { "address": userAddress, "viewing_key": viewingKey}});
+        if(!bidInfo.viewing_key_error) {
+            if(bidInfo?.bid?.status != "Failure"){
+                return this.transformAuctionBidInfo(auctionAddress, bidInfo);
+            } 
+        }
+        return {
+            address: auctionAddress,
+            currentBid: false
+        };
     }
 
+    //If you have a viewing Key then:
+    async getAuctionBidInfo(address, auctionAddress, viewingKey) {
+        //secretcli q compute query *auction_contract_address* '{"view_bid": {"address":"*address_whose_bid_to_list*","viewing_key":"*viewing_key*"}}'
+        return await this.scrtClient.queryContract(auctionAddress, {"view_bid": { "address": address, "viewing_key": viewingKey}});
+
+    }
+
+    //replaces getAuctionHasBids
+    async getAuctionHasBidsInfo(auctionAddress, userAddress, viewingKey) {
+        //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
+        const response = await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": userAddress, "viewing_key": viewingKey }});
+        
+        return {
+            address: auctionAddress,
+            hasBids: response.has_bids.has_bids
+        }
+    }
+
+    //If you have a viewing Key and are the seller then:
     async getAuctionHasBids(address, auctionAddress, viewingKey) {
         //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
         return await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": address,"viewing_key": viewingKey }});
