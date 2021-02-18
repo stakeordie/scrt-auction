@@ -9,5 +9,6 @@ dist
 
 .vscode/
 vetur.config.js
+jsconfig.json
 
 metals.*
