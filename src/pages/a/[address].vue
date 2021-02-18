@@ -40,7 +40,7 @@
 
         </div>
       </block>
-        
+
     </column>
   </page>
 </template>
