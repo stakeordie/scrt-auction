@@ -49,7 +49,7 @@
     </div>
 
     <div class="auction__status">
-      <div class="auction__status--status" :class="['auction__status--' + auction.status.toLowerCase()]">{{ auction.status}}</div>
+      <div class="auction__status--status" :class="['auction__status--' + auction.status.toLowerCase()]">{{ auction.status }}</div>
       <div class="auction__status--user-status auction__status--user-seller" v-if="auction.viewerIsSeller">You are the auction owner</div>
       <div class="auction__status--user-status auction__status--user-bid" v-if="auction.viewerIsBidder && auction.viewerIsSeller">and you've placed a bid.</div>
       <div class="auction__status--user-status auction__status--user-bid" v-else-if="auction.viewerIsBidder">You've placed a bid.</div>

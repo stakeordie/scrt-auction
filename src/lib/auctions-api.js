@@ -229,6 +229,10 @@ export class AuctionsApi {
             auction.bid.decimalMinimum = this.tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
             auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
         }
+        if(rawction.auction_info.winning_bid) {
+            auction.bid.winner = rawction.auction_info.winning_bid;
+            auction.bid.decimalWinner = this.tokens2Decimal(auction.bid.winner, auction.bid.decimals);
+        } 
         return auction;
     };
 

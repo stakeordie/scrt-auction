@@ -1,11 +1,14 @@
 <template>
   <page>
-    <columns>
+    <column class="auction__header" v-if="auction">
       <div class="page-title">
           <h1>Auction Detail</h1>
           <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
       </div>
       <block>
+        <auction-item :auction="auction" class="list selected"></auction-item>
+      </block>
+      <!-- <block>
         <div class="stage-panel">
             <h3>Details</h3>
             <h4 v-if="isClosed">Auction Status: Closed</h4>
@@ -65,8 +68,8 @@
             <router-link v-if="isClosed" :to="'/'" class="button closed-return">Return to Auctions</router-link>
             <div v-if="auctionInfo.description">{{ auctionInfo.description }}</div>
         </div>
-      </block>
-    </columns>
+      </block> -->
+    </column>
     <column :number="(isOwner || isEnded ) && !isClosed ? '2' : '1'" number-m="1" number-s="1">
       <block v-if="isOwner && !isClosed">
         <div class="stage-panel">
@@ -165,7 +168,7 @@
       </block>
       <block v-if="!isClosed">
         <h2>Place a Bid</h2>
-        <div class="stage-panel" v-if="bidInfo.amount_bid > 0">
+        <div class="stage-panel" v-if="this.isBidder">
           <div>
             <h5>Current Bid</h5>
             <dl>
@@ -249,6 +252,7 @@ import KeplrAccount from '../../components/KeplrAccount.vue';
 import { Decimal } from 'decimal.js';
 import moment from 'moment';
 
+import AuctionItem from "../../components/AuctionItem.vue";
 import TokenAmount from '../../components/TokenAmount.vue';
 import LoadingIcon from '../../components/LoadingIcon.vue';
 import VkeysAddress from '../../components/VkeysAddress.vue';
@@ -275,9 +279,10 @@ extend("min_value", {
 // });
 
 export default {
-  components: {ValidationObserver, ValidationProvider, KeplrAccount, TokenAmount, LoadingIcon, VkeysAddress},
+  components: {ValidationObserver, ValidationProvider, KeplrAccount, TokenAmount, LoadingIcon, VkeysAddress, AuctionItem},
   data() {
     return {
+      logCount: 0,
       errors: [],
       auctionAddress: "",
       hasViewingKey: false,
@@ -381,15 +386,17 @@ export default {
     };
   },
   watch: {
-    keplrAccount(newValue, oldValue) {
-      if(newValue) {
-        this.refreshAuction();
-      }
-    },
-    vkViewingKey(newValue, oldValue) {
+    // keplrAccount(newValue, oldValue) {
+    //   if(newValue) {
+    //     this.refreshAuction();
+    //   }
+    // },
+    async vkViewingKey(newValue, oldValue) {
       //console.log(newValue)
       if(newValue) {
         this.refreshAuction();
+        //this.$auctions.updateAuction(this.$route.params.address);
+        //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.account,newValue.key);
       }
     }
   },
@@ -398,13 +405,13 @@ export default {
       return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
     },
     bidAmount: function() {
-        return new Decimal(this.placeBidForm.bidPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
+      return new Decimal(this.placeBidForm.bidPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
     },
     changeAskingPriceFormMinimumBid: function () {
-        return new Decimal(this.updateAskingPriceForm.askingPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
+      return new Decimal(this.updateAskingPriceForm.askingPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
     },
     closeAuctionFormMinimumBid: function () {
-        return new Decimal(this.closeAuctionForm.askingPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
+      return new Decimal(this.closeAuctionForm.askingPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
     },
     sellAmountFromFractional: function () {
       //return new Decimal(this.auctionInfo.sell_amount / Math.pow(10, this.auctionInfo.sell_token.token_info.decimals)).toFixed(this.auctionInfo.sell_token.token_info.decimals).replace(/\.?0+$/,"")
@@ -537,8 +544,11 @@ export default {
       }
     },
     async getAuction() {
-      this.isClosed = false;
-      this.isEnded = false;
+      console.log(this.auction)
+      this.isClosed = this.auction.status != 'ACTIVE';
+      this.isEnded = moment(new Date(this.auction.endsAt)).isBefore();
+      this.isOwner = this.auction.viewerIsSeller;
+      this.isBidder = this.auction.viewerIsBidder;
       this.auctionAddress = this.$route.params.address;
       this.auctionInfo = (await this.$auctions.getAuctionInfo(this.auctionAddress)).auction_info;
       if(this.auctionInfo) {
@@ -548,45 +558,36 @@ export default {
         this.updateAskingPriceForm.askingPrice = this.placeBidForm.bidPrice;
         this.closeAuctionForm.askingPrice = this.placeBidForm.bidPrice;
         this.updateAskingPriceForm.minimumBidAmount = this.minimumBidFromFractional;
-        if(this.auctionInfo.status == "Closed") {
-          this.isClosed = true;
-        }
-        // if ends_at is in the past
-        this.isEnded = moment(new Date(this.auctionInfo.ends_at)).isBefore();
       }
     },
     async refreshAuction() {
-      this.getAuction();
+      //this.getAuction();
       //reset bidder / owner
+      console.log(this.auction)
+      this.isBidder = this.auction.viewerIsBidder;
+      this.isClosed = this.auction.status != 'ACTIVE';
+      this.hasViewingKey = false;
       this.bidInfo = {
         "message": "",
         "status": "",
         "amount_bid": 0
       }
-      this.isBidder = false;
-      this.isOwner = false;
       this.hasBids = false;
-      this.hasViewingKey = false;
-
       this.auctionAddress = this.$route.params.address;
+      console.log(this.vkViewingKey);
       if(this.vkViewingKey) {
-        const viewingKey = this.vkViewingKey.key;
         this.hasViewingKey = true;
-        const bidInfoResponse = await this.$auctions.getAuctionBidInfo(this.keplrAccount, this.auctionAddress, viewingKey);
-        if(!bidInfoResponse.viewing_key_error) {
-          if(bidInfoResponse?.bid?.status != "Failure") {
-            this.bidInfo = bidInfoResponse.bid;
-            this.isBidder = true;
+        const viewingKey = this.vkViewingKey.key;
+        this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,viewingKey);
+        this.hasBids = this.auction.hasBids;
+        if(this.auction.currentBid) {
+          this.bidInfo = {
+            "message": this.auction.currentBid.message,
+            "status": "Success",
+            "bid_decimals": this.auction.currentBid.decimals,
+            "amount_bid": this.auction.currentBid.amount
           }
-          const userAuctions = await this.$auctions.listUserAuctions(this.keplrAccount, viewingKey);
-          if(userAuctions?.list_my_auctions?.active?.as_seller) {
-            const is_owner = userAuctions.list_my_auctions.active.as_seller.filter(auction => auction.address == this.auctionAddress)
-            if(is_owner.length > 0) {
-              this.isOwner = true;
-              this.hasBids = (await this.$auctions.getAuctionHasBids(this.keplrAccount, this.auctionAddress, viewingKey)).has_bids.has_bids;
-            }
-          }
-        }
+        } 
       }
     },
     updateEndTime() {
