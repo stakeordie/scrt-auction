@@ -183,24 +183,23 @@ export default {
                 },
 
                 updateAuctionBidDetails: async ({ commit }, {address, userAddress, viewingKey}) => {
-                    //reset BidDetails
-                    commit("updateAuction", {
+                    let auction = {
                         address,
                         hasBids: false,
                         currentBid: false
-                    });
-                    let newAuction;
+                    }
+                
                     const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey); //get userAuctions
                     
                     if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am bidder
-                        newAuction = await auctionsApi.getAuctionBid(address, userAddress, viewingKey);
-                        newAuction.hasBids = true;
-                        commit("updateAuction", newAuction);
+                        auction.currentBid = await auctionsApi.getCurrentBid(address, userAddress, viewingKey);
+                        auction.hasBids = true;
                     } else if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am seller
-                        newAuction = await auctionsApi.getAuctionHasBidsInfo(address, userAddress, viewingKey);
-                        console.log(newAuction);
-                        commit("updateAuction", newAuction);
+                        auction.hasBids = await auctionsApi.getAuctionHasBidsInfo(address, userAddress, viewingKey);
+                        
                     }
+                    
+                    commit("updateAuction", auction);
                 },
 
                 updateActiveAuctions: async ({ commit }) => {

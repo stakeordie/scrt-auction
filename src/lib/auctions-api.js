@@ -233,16 +233,12 @@ export class AuctionsApi {
     };
 
     transformAuctionBidInfo(auctionAddress, bidInfo) {
-        const auction = {
-            address: auctionAddress,
-            currentBid: {
-                amount: bidInfo.bid.amount_bid,
-                decimalAmount: this.tokens2Decimal(bidInfo.bid.amount_bid, bidInfo.bid.bid_decimals),
-                decimals: bidInfo.bid.bid_decimals,
-                message: bidInfo.bid.message,
-            }
+        return {
+            amount: bidInfo.bid.amount_bid,
+            decimalAmount: this.tokens2Decimal(bidInfo.bid.amount_bid, bidInfo.bid.bid_decimals),
+            decimals: bidInfo.bid.bid_decimals,
+            message: bidInfo.bid.message
         }
-        return auction;
     }
 
     // TODO transformAuctionHasBids
@@ -296,17 +292,15 @@ export class AuctionsApi {
     }
 
     //replaces getAuctionBidInfo
-    async getAuctionBid(auctionAddress, userAddress, viewingKey) {
+    async getCurrentBid(auctionAddress, userAddress, viewingKey) {
+        let currentBid = false;
         const bidInfo = await this.scrtClient.queryContract(auctionAddress, {"view_bid": { "address": userAddress, "viewing_key": viewingKey}});
         if(!bidInfo.viewing_key_error) {
             if(bidInfo?.bid?.status != "Failure"){
-                return this.transformAuctionBidInfo(auctionAddress, bidInfo);
+                currentBid = this.transformAuctionBidInfo(auctionAddress, bidInfo);
             } 
         }
-        return {
-            address: auctionAddress,
-            currentBid: false
-        };
+        return currentBid;
     }
 
     //If you have a viewing Key then:
@@ -321,10 +315,7 @@ export class AuctionsApi {
         //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
         const response = await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": userAddress, "viewing_key": viewingKey }});
         
-        return {
-            address: auctionAddress,
-            hasBids: response.has_bids.has_bids
-        }
+        return response.has_bids.has_bids // TODO what if error e.g. not owner
     }
 
     //If you have a viewing Key and are the seller then:
