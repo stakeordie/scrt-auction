@@ -1,16 +1,16 @@
 <template>
   <page>
-    <column>
-      <!-- Auctions header -->
-      <div class="auctions-header">
-        <h1>Active auctions</h1>
-        <router-link :to="'/new'" class="button">Create auction</router-link>
-      </div>
+    <column class="auctions-header">
       <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
       <!-- Auctions toolbar -->
       <section class="auctions-tools">
         <div class="auctions-tools__filter">
           <form class="auctions-tools__filter-controls" @submit.prevent="filterChanged()">
+
+            <!-- Filtering by status -->
+            <div class="auctions-tools__filter-toggles">
+              <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.onlyMine }" @click="toggleStatus('mine')"><span class="emoji">🔑</span> Only mine</button>
+            </div>
 
             <div class="auctions-tools__filter-filters">
               <!-- Filtering by sell -->
@@ -46,7 +46,6 @@
             <!-- Filtering by status -->
             <div class="auctions-tools__filter-toggles">
               <!--button class="auctions-tools__filter-toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button-->
-              <button class="auctions-tools__filter-toggle show-mine" :class="{ on: auctionsFilter.onlyMine }" @click="toggleStatus('mine')">🔑 Only mine</button>
               <button class="auctions-tools__filter-toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">&#x1F512; Only closed</button>
             </div>
 
@@ -57,12 +56,15 @@
           <button class="auctions-tools__view-toggle no-button" :class="{ on: auctionsFilter.viewMode == 'list'}" @click="changeViewMode('list')">List</button>
         </div>
       </section>
+    </column>
 
+
+    <column>
       <!-- Auctions grid -->
       <div class="auctions-set" :class="auctionsFilter.viewMode">
         <auction-item :to="'/a/' + auction.address" v-for="auction in filteredAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
       </div>
-
+      
       <!-- Auctions empty -->
       <!-- Use v-show because currently flare doesn't deal well with conditional (v-if) autorenderred elements in the blocks -->
       <div class="auctions-empty" v-show="filteredAuctions.length == 0">
@@ -148,10 +150,20 @@ export default {
 <style lang="scss" scoped>
   @import "@lkmx/flare/src/functions/respond-to";
 
+  .auction-new {
+    border: 2px solid black;
+  }
+
   .auctions-header {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-between;
+    background-color: rgba(0,0,0, 0.85);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+
+    button, select {
+      margin-bottom: 0;
+    }
   }
 
   .auctions-tools {
@@ -180,6 +192,9 @@ export default {
       }
 
       &-filter {
+        label {
+              text-shadow: 0px 1px 2px rgba(0, 0, 0, 1);
+        }
         select {
           min-width: 120px;
         }
@@ -221,14 +236,14 @@ export default {
         white-space: nowrap;
         
         &.show-mine {
-          background-color: var(--color-white-primary);
-          opacity: 0.3;
+          background-color: black;
+          color: white;
           cursor: pointer;
           &.on {
+            background-color: var(--color-cream-primary);
+            color: black;
             opacity: 1;
-            &:hover {
-              opacity: 0.7;
-            }
+
           }
 
         }
@@ -259,7 +274,7 @@ export default {
   .auctions-set {
     display: grid;
     grid-gap: var(--f-gutter);
-    margin-bottom: var(--f-gutter); 
+    margin: var(--f-gutter-xl) 0; 
 
     &.grid {
       @include respond-to("<=s") {

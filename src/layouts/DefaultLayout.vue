@@ -6,8 +6,8 @@
           <img src="@/assets/secretnetwork-logo-primary-white.svg">
         </g-link>
         <nav>
-          <!--g-link to="/auctions">Auctions</g-link-->
-          <!--g-link to="/faqs">FAQs</g-link-->
+          <g-link to="/">Auctions list</g-link>
+          <g-link to="/new">Create an auction</g-link>
         </nav>
         <div class="actions">
           <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
@@ -77,6 +77,7 @@ query {
     //padding: var(--f-gutter-s) 0; // var(--f-gutter);
   }
 }
+
 .actions {
   display: flex;
   flex-flow: row nowrap;
