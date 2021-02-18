@@ -3,9 +3,7 @@
     <columns>
       <div class="page-title">
           <h1>Auction Detail</h1>
-          <h3>{{ auctionInfo.auction_address }}</h3>
           <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
-          <h4 v-if="auctionInfo.description">{{ auctionInfo.description }}</h4>
       </div>
       <block>
         <div class="stage-panel">
@@ -19,6 +17,12 @@
                   {{ auctionInfo.sell_token.token_info.symbol }}
                 </dd>
               </dl>
+
+              <dl>
+                <dt>Address</dt>
+                <dd>{{ auctionInfo.auction_address }}</dd>
+              </dl>
+
               <dl>
                 <dt>Bid Token</dt>
                 <dd>
@@ -59,6 +63,7 @@
               
             </div>
             <router-link v-if="isClosed" :to="'/new'" class="button closed-return">Return to Auctions</router-link>
+            <div v-if="auctionInfo.description">{{ auctionInfo.description }}</div>
         </div>
       </block>
     </columns>

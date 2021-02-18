@@ -19,30 +19,34 @@
       </dd>
     </dl>
 
-    <dl class="auction__bid" v-if="auction.bid && auction.price">
-      <dt>Asking price</dt>
-      <dd class="auction__asking-price">
-        <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
-        <span v-if="auction.sell.decimalAmount != 1"> per token </span><br><span v-if="auction.sell.decimalAmount != 1"><small>({{ auction.bid.decimalMinimum}} {{auction.bid.denom}})</small></span>
-      </dd>
-    </dl>
+    <div class="auction__bid-price">
+      <dl class="auction__bid" v-if="auction.bid && auction.price">
+        <dt>Asking price</dt>
+        <dd class="auction__asking-price">
+          <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
+          <span v-if="auction.sell.decimalAmount != 1"> per token </span><br><span v-if="auction.sell.decimalAmount != 1"><small>({{ auction.bid.decimalMinimum}} {{auction.bid.denom}})</small></span>
+        </dd>
+      </dl>
+    </div>
 
-    <dl v-if="auction.endsAt">
+    <dl v-if="auction.endsAt && !auction.closedAt">
       <dt>Target close</dt>
       <dd :class="isEnded ? 'ended': ''">{{ endsAt }}</dd>
     </dl>
 
-    <dl v-if="auction.closedAt">
-      <dt>Closed at</dt>
-      <dd>{{ closedAt }}</dd>
-    </dl>
+    <div v-if="auction.closedAt">
+      <dl>
+        <dt>Closed at</dt>
+        <dd>{{ closedAt }}</dd>
+      </dl>
 
-    <dl v-if="auction.bid && auction.bid.winner">
-      <dt>Winning bid</dt>
-      <dd class="auction__winner">
-        <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
-      </dd>
-    </dl>
+      <dl v-if="auction.bid && auction.bid.winner">
+        <dt>Winning bid</dt>
+        <dd class="auction__winner">
+          <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
+        </dd>
+      </dl>
+    </div>
 
     <div class="auction__status">
       <div class="auction__status--status" :class="['auction__status--' + auction.status.toLowerCase()]">{{ auction.status}}</div>
@@ -85,9 +89,21 @@ export default {
 
 .auction {
   background-color: var(--color-black);
-  &:not(.status-closed) {
-    border: 1px solid transparent;
+
+  &:hover {
+    .auction {
+      &__bid-action, &__bid, &__closing-time {
+        opacity: 1;
+        transition: opacity 0.5s, background-color 0.5s;
+      }
+    }
   }
+
+  &:not(.status-closed) {
+    border: 1px solid rgba(255, 255, 255, 0.77);
+    background-color: black;
+  }
+
   text-decoration: none;
   padding: var(--f-gutter);
   border-radius: 10px;
@@ -169,17 +185,15 @@ export default {
   }
 
   &.list {
+    display: grid;
     gap: var(--f-gutter);
     align-items: center;
 
     @include respond-to("<=s") {
-      display: grid;
       grid-template-columns: repeat(2, 1fr);
     }
     @include respond-to(">=m") {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: space-between;
+      grid-template-columns: 40px repeat(5, 1fr);
     }
 
     dd {
@@ -193,24 +207,6 @@ export default {
 
       &__status {
         text-align: right;
-      }
-    }
-  }
-
-
-
-
-  &:hover, &.selected {
-
-    &:not(.status-closed) {
-      border: 1px solid var(--theme-washed-color);
-      background-color: black;
-    }
-
-    .auction {
-      &__bid-action, &__bid, &__closing-time {
-        opacity: 1;
-        transition: opacity 0.5s, background-color 0.5s;
       }
     }
   }

@@ -5,7 +5,7 @@
         <g-link to="/" class="header__logo">
           <img src="@/assets/secretnetwork-logo-primary-white.svg">
         </g-link>
-        <nav>
+        <nav class="auctions-nav">
           <g-link to="/">Auctions list</g-link>
           <g-link to="/new">Create an auction</g-link>
         </nav>
@@ -75,6 +75,17 @@ query {
       height: 50px;
     }
     //padding: var(--f-gutter-s) 0; // var(--f-gutter);
+  }
+}
+
+nav {
+  a {
+    text-decoration: none;
+    font-weight: bold;
+
+    &.active--exact {
+      color: var(--color-purple-secondary);
+    }
   }
 }
 

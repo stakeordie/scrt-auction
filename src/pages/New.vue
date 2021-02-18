@@ -453,7 +453,7 @@ export default {
     &__stage-info {
         
         .stage-panel__info {
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.85);
             .number {
                 color: black;
                 background-color: var(--color-yellow-primary);
@@ -479,7 +479,7 @@ export default {
             }
         }
         .stage-panel__confirm {
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.85);
             .number {
                 background-color: var(--color-yellow-primary);
                 color: black;
@@ -502,7 +502,7 @@ export default {
             }
         }
         .stage-panel__allowance {
-            border: 1px solid rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.85);
             .number {
                 background-color: var(--color-yellow-primary);
                 color: black;
@@ -529,7 +529,7 @@ export default {
                 border: 1px solid var(--color-negative);
             }
             &:not(.error) {
-                border: 1px solid rgba(255,255,255,0.5);
+                border: 1px solid rgba(255,255,255,0.85);
             }
             .number {
                 background-color: var(--color-yellow-primary);

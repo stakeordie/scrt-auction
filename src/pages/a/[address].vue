@@ -73,7 +73,7 @@ export default {
   },
   components: { AuctionItem, VkeysAddress, KeplrUser, LoadingIcon, AuctionRetractBid, AuctionPlaceBid },
   watch: {
-    AuctionBidviewingKey(newValue, oldValue) {
+    viewingKey(newValue, oldValue) {
       if(newValue) {
         this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.account,newValue.key);
       }
