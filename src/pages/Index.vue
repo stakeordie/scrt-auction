@@ -19,29 +19,30 @@
             <!--button class="auctions-tools__sort no-button"
                 :class="[auctionsFilter.sort.fields.sell, { active: auctionsFilter.sort.priority == 'sell'}]" @click="toggleSort('sell')"></button-->
           </div>
-        </div>
 
-        <!-- Filtering by bid -->
-        <div class="auctions-tools__filter">
-          <label class="auctions-tools__label" for="bid-token">paying in</label>
-          <select class="auctions-tools__select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
-            <option value=""></option>
-            <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
-              {{ bidToken }}
-            </option>
-          </select>
-        </div>
-        <div class="auctions-tools__filter">
-          <button class="auctions-tools__sort no-button"
-              :class="[auctionsFilter.sort.fields.price, { active: auctionsFilter.sort.priority == 'price'}]" @click="toggleSort('price')"></button>
-          <label class="auctions-tools__label" for="bid-token">sorting by <strong>asking  price</strong></label>
+          <!-- Filtering by bid -->
+          <div class="auctions-tools__filter">
+            <label class="auctions-tools__label" for="bid-token">paying in</label>
+            <select class="auctions-tools__select" name="bid-token" v-model="auctionsFilter.bidToken" @change="filterChanged()">
+              <option value=""></option>
+              <option v-for="bidToken in bidDenoms" :key="bidToken" v-bind:value="bidToken">
+                {{ bidToken }}
+              </option>
+            </select>
+          </div>
+
+          <div class="auctions-tools__filter">
+            <button class="auctions-tools__sort no-button"
+                :class="[auctionsFilter.sort.fields.price, { active: auctionsFilter.sort.priority == 'price'}]" @click="toggleSort('price')"></button>
+            <label class="auctions-tools__label" for="bid-token">sorting by <strong>asking  price</strong></label>
+          </div>
         </div>
 
         <!-- Filtering by status -->
         <div class="auctions-tools__toggles">
           <!--button class="auctions-tools__toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button-->
           <button class="auctions-tools__toggle show-mine" :class="{ on: auctionsFilter.onlyMine }" @click="toggleStatus('mine')"><span class="emoji">🔑</span> Only mine</button>
-          <button class="auctions-tools__toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">&#x1F512; Only closed</button>
+          <button class="auctions-tools__toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">&#x1F512; Showing {{auctionsFilter.showClosed ? "closed" : "active" }}</button>
         </div>
 
 
@@ -162,7 +163,7 @@ export default {
 
     &__filters {
       display: flex;
-      flex-flow: row nowrap;
+      flex-flow: row wrap;
       column-gap: var(--f-gutter);
     }
 
@@ -229,14 +230,19 @@ export default {
         }
 
       }
-      &.show-active, &.show-closed {
+      &.show-closed {
         transition: opacity 0.2s;
+        background-color: var(--color-positive);
         color: black;
+        cursor: pointer;
+
+        &.on {
+          background-color: var(--color-negative);
+          color: white;
+        }
         
         &:not(.on) {
-          opacity: 0.3;
           &:hover {
-            opacity: 0.5;
           }
         }
       }

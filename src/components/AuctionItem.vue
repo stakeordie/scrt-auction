@@ -91,12 +91,11 @@ export default {
   background-color: var(--color-black);
 
   &:hover {
-    .auction {
-      &__bid-action, &__bid, &__closing-time {
-        opacity: 1;
-        transition: opacity 0.5s, background-color 0.5s;
-      }
+
+    &:not(.status-closed) {
+      border-color: var(--theme-washed-color);
     }
+
   }
 
   &:not(.status-closed) {
