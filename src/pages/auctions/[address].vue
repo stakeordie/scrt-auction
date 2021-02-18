@@ -62,7 +62,7 @@
               </dl>
               
             </div>
-            <router-link v-if="isClosed" :to="'/new'" class="button closed-return">Return to Auctions</router-link>
+            <router-link v-if="isClosed" :to="'/'" class="button closed-return">Return to Auctions</router-link>
             <div v-if="auctionInfo.description">{{ auctionInfo.description }}</div>
         </div>
       </block>
