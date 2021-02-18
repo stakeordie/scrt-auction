@@ -1,9 +1,9 @@
 <template>
     <validation-observer v-slot="{ handleSubmit, invalid }">
         <page>
-            <column :class="'new-auction__stage-' + stage" number="2" number-s="1">
+            <column :class="['new-auction', 'new-auction__stage-' + stage]" number="2" number-s="1">
                 <block>
-                    <h1>Create New Auction</h1>
+                    <h1>New Auction</h1>
                     <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
                         <div class="auction-form__label">
                             <label for="auction-label">Emoji</label>
@@ -446,6 +446,8 @@ export default {
 
 // All the stage fun comes here...
 .new-auction {
+
+    margin: var(--f-gutter-xl) 0;
 
     // Info stage
     &__stage-info {

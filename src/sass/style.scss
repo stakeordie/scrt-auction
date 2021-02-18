@@ -19,13 +19,13 @@
 
     --f-default-headers-font: "Hind";
     --f-default-headers-weight: 600;
-    --f-default-headers-color: var(--color-blue-secondary);
+    --f-default-headers-color: white;
     --f-h1-text-size: 32px;
     --f-h2-text-size: 26px;
     --f-h3-text-size: 22px;
     
     
-    --f-primary-action-color: var(--color-blue-primary);
+    --f-primary-action-color: var(--color-cream-primary);
     --f-primary-action-anticolor: black;
     --f-primary-action-color--hover: var(--color-turquoise-secondary);
     --f-primary-action-anticolor--hover: black;
@@ -64,6 +64,13 @@
 
 html {
     background-color: var(--default-background-color);
+}
+
+body {
+    background-image: url(../assets/scrt-swirl.svg);
+    background-size: contain;
+    background-position: center -420px;
+    background-repeat: no-repeat;
 }
 
 strong {
