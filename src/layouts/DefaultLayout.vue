@@ -1,7 +1,7 @@
 <template>
   <simple-layout>
     <template #header>
-      <simple-header>
+      <simple-header mode="full">
         <g-link to="/" class="header__logo">
           <img src="@/assets/secretnetwork-logo-primary-white.svg">
         </g-link>
