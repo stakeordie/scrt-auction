@@ -11,7 +11,7 @@
     </column>
     <column>
       <block>
-        <div style="display: flex">
+        <div class="forms-wrapper">
           <div class="stage-panel" v-if="this.auction.viewerIsSeller && !isClosed">
             <h3>Owner: Manage Auction</h3>
             <dl v-if="this.auction.viewerIsSeller && !isPastEndTime">
@@ -41,7 +41,7 @@
             <!-- Bid Status -->
             <dl>
               <dt>Bid Status</dt>
-              <dd v-if="hasBids">
+              <dd v-if="auction.hasBids">
                 At Least 1 Bid
               </dd>
               <dd v-else>
@@ -170,12 +170,14 @@
     </column>
     <column v-show="!vkViewingKey">
       <block>
+        <div class="stage-panel full-width">
           <h3>Viewing Key Missing</h3>
           <vkeys-address v-model="vkViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress">
             <template v-slot:description>
               <small>You will need a viewing key in order to view non-public auction details.</small>
             </template>
           </vkeys-address>
+        </div>
       </block>
     </column>
   </page>
@@ -234,34 +236,6 @@ export default {
       formBidAmount: 1,
       codeHash: "",
       vkViewingKey: null,
-      auctionInfo: {
-          sell_token: {
-            contract_address: "",
-            token_info: {
-              name: "",
-              symbol: "",
-              decimals: 6,
-              total_supply: 0
-            }
-          },
-          bid_token: {
-            contract_address: "",
-            token_info: {
-              name: "",
-              symbol: "",
-              decimals: 6,
-              total_supply: 0
-            }
-          },
-          sell_amount: 0,
-          minimum_bid: 0,
-          description: "",
-          auction_address: "",
-          status: "",
-          ends_at: "",
-          winning_bid: ""
-      },
-      validationRules: "",
 
       placeBidForm: { 
         bidPrice: 1,
@@ -280,8 +254,6 @@ export default {
       showUpdateAskingPriceForm: false,
       closeAuctionRequested: false,
       closeAuctionWithOptionsRequested: false,
-      
-      hasBids: false,
 
       placeBidSubmit: {
         inProgress: false,
@@ -405,7 +377,7 @@ export default {
       //console.log(bidRetracted);
     },
     async updateAskingPrice() {
-      const newMinimumBidAmount = new Decimal(this.changeAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals));
+      const newMinimumBidAmount = new Decimal(this.changeAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auction.bid.decimals));
       this.changeAskingPriceSubmit.result = null;
       this.changeAskingPriceSubmit.inProgress = true;
       this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auctionAddress, new Decimal(newMinimumBidAmount).toFixed(0));
@@ -445,7 +417,7 @@ export default {
     async closeAuctionWithOptions() {
       this.closeAuctionWithOptionsSubmit.result = null;
       this.closeAuctionWithOptionsSubmit.inProgress = true;
-      const newMinimumBidAmount = this.closeAuctionFormMinimumBid * Math.pow(10, this.auctionInfo.bid_token.token_info.decimals);
+      const newMinimumBidAmount = this.closeAuctionFormMinimumBid * Math.pow(10, this.auction.bid.decimals);
       const endTime = Math.round(this.closeAuctionForm.endTime.getTime() / 1000)
       this.closeAuctionWithOptionsSubmit.response = await this.$auctions.closeAuctionWithOptions(this.auctionAddress,endTime,new Decimal(newMinimumBidAmount).toFixed(0))
       this.closeAuctionWithOptionsSubmit.inProgress = false;
@@ -475,6 +447,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.forms-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
 
 .auction-form {
   display: grid;
@@ -561,8 +542,12 @@ export default {
 }
 
 .stage-panel {
-  width: 50%;
-  margin: 10px;
+  width: 48%;
+  border: 1px solid white;
+
+  &.full-width {
+    width: 100%
+  }
     .flex {
       display: flex;
 
