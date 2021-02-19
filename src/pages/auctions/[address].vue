@@ -8,67 +8,6 @@
       <block>
         <auction-item :auction="auction" class="list selected"></auction-item>
       </block>
-      <block>
-        <div class="stage-panel">
-            <h3>Details</h3>
-            <h4 v-if="isClosed">Auction Status: Closed</h4>
-            <h4 v-else>Auction Status: Open</h4>
-            <div class="flex">
-              <dl>
-                <dt>Sale Token</dt>
-                <dd>
-                  {{ auctionInfo.sell_token.token_info.symbol }}
-                </dd>
-              </dl>
-
-              <dl>
-                <dt>Address</dt>
-                <dd>{{ auctionInfo.auction_address }}</dd>
-              </dl>
-
-              <dl>
-                <dt>Bid Token</dt>
-                <dd>
-                  {{ auctionInfo.bid_token.token_info.symbol }}
-                </dd>
-              </dl>
-            </div>
-            <div class="flex">
-              <dl>
-                <dt>For Sale</dt>
-                <dd>
-                  {{ sellAmountFromFractional }} {{ auctionInfo.sell_token.token_info.symbol }}
-                </dd>
-              </dl>
-              <dl :title="askingPriceTitle">
-                <dt>Asking Price</dt>
-                <dd>
-                  {{ askingPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="sellAmountFromFractional != 1">(Total: {{ this.minimumBidFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
-                </dd>
-              </dl>
-              <dl title="Auction owner can close auction at any time. After the target close passes, anyone can close the auction." v-if="!isClosed">
-                <dt>
-                  Target Close
-                </dt>
-                <dd>
-                  {{ endTimeString }}
-                </dd>
-              </dl>
-              <dl v-if="isClosed">
-                <dt>Winning Bid</dt>
-                <dd v-if="auctionInfo.winning_bid">
-                  {{ winningBidPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="winningBidFromFractional != 1">({{ this.winningBidFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
-                </dd>
-                <dd v-else>
-                    Closed without a winner
-                </dd>
-              </dl>
-              
-            </div>
-            <router-link v-if="isClosed" :to="'/'" class="button closed-return">Return to Auctions</router-link>
-            <div v-if="auctionInfo.description">{{ auctionInfo.description }}</div>
-        </div>
-      </block>
     </column>
     <column :number="(this.auction.viewerIsSeller || isPastEndTime ) && !isClosed ? '2' : '1'" number-m="1" number-s="1">
       <block>
