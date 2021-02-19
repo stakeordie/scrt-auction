@@ -124,10 +124,10 @@ export default {
                     if(!currentAuction) {
                         state.auctions.push(auction);
                     } else {
-                        currentAuction.description = auction.description;
-                        currentAuction.endsAt = auction.endsAt;
-                        currentAuction.bid.contract = auction.bid.contract;
-                        currentAuction.sell.contract = auction.sell.contract;
+                        Vue.set(currentAuction,"description",auction.description);
+                        Vue.set(currentAuction,"endsAt",auction.endsAt);
+                        Vue.set(currentAuction.bid,"contract",auction.bid.contract);
+                        Vue.set(currentAuction.sell,"contract",auction.sell.contract);
                     }
                 },
 
