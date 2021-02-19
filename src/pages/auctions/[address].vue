@@ -110,12 +110,12 @@
       <block>
         <div v-if="!isClosed">
           <h2>Place a Bid</h2>
-          <div class="stage-panel" v-if="this.auction.viewerIsBidder">
+          <div class="stage-panel" v-if="auction.viewerIsBidder">
             <div>
               <h5>Current Bid</h5>
               <dl>
                 <dd>
-                  {{ bidInfoPrice }} {{ auctionInfo.bid_token.token_info.symbol }} <span style="font-size: 13px" v-if="sellAmountFromFractional != 1">({{ bidInfoAmountFromFractional }} {{ auctionInfo.bid_token.token_info.symbol }})</span>
+                  {{ bidPrice }} {{ auction.bid.denom }} <span style="font-size: 13px" v-if="auction.sell.decimalAmount != 1">({{ auction.currentBid.decimalAmount }} {{ auction.bid.denom }})</span>
                 </dd>
               </dl>
               <loading-icon v-if="retractBidSubmit.inProgress">
@@ -174,10 +174,10 @@
         </div>
       </block>
     </column>
-    <column v-show="!hasViewingKey">
+    <column v-show="!vkViewingKey">
       <block>
           <h3>Viewing Key Missing</h3>
-          <vkeys-address v-model="vkViewingKey" :hidden="hasViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress">
+          <vkeys-address v-model="vkViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress">
             <template v-slot:description>
               <small>You will need a viewing key in order to view non-public auction details.</small>
             </template>
@@ -385,8 +385,8 @@ export default {
     bidInfoAmountFromFractional: function() {
       return new Decimal(this.auction.currentBid?.amount).dividedBy(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
     },
-    bidInfoPrice: function () {
-      return this.bidInfoAmountFromFractional / this.sellAmountFromFractional; 
+    bidPrice: function () {
+      return this.auction.currentBid?.decimalAmount / this.auction.sell.decimalAmount; 
     },
     askingPriceTitle: function () {
       return "The price in " + this.auctionInfo.bid_token.token_info.symbol + " per " + this.auctionInfo.sell_token.token_info.symbol;
@@ -409,7 +409,6 @@ export default {
         this.placeBidSubmit.result = "error"
       } else {
         this.placeBidSubmit.result = "success"
-        this.refreshAuction();
       }
       
     },
@@ -422,7 +421,6 @@ export default {
         this.retractBidSubmit.result = "error"
       } else {
         this.retractBidSubmit.result = "success"
-        this.refreshAuction();
       }
       //console.log(bidRetracted);
     },
@@ -439,7 +437,6 @@ export default {
         this.changeMinimumBidRequested = false;
         this.closeAuctionWithOptionsRequested = false;
         this.closeAuctionRequested = false;
-        this.refreshAuction();
       }
       this.refreshAuction();
       //console.log(bidRetracted);
@@ -453,7 +450,6 @@ export default {
         this.closeAuctionSimpleNOSubmit.result = "error"
       } else {
         this.closeAuctionSimpleNOSubmit.result = "success"
-        this.refreshAuction();
       }
     },
     async closeAuctionSimple() {
@@ -465,7 +461,6 @@ export default {
         this.closeAuctionSimpleSubmit.result = "error"
       } else {
         this.closeAuctionSimpleSubmit.result = "success"
-        this.refreshAuction();
       }
     },
     async closeAuctionWithOptions() {
@@ -482,7 +477,6 @@ export default {
         this.changeMinimumBidRequested = false;
         this.closeAuctionWithOptionsRequested = false;
         this.closeAuctionRequested = false;
-        this.refreshAuction();
       }
     },
     async getAuction() {
