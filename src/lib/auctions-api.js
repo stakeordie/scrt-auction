@@ -206,6 +206,7 @@ export class AuctionsApi {
     // bid_decimals: 6
 
     transformAuctionInfo(rawction) {
+        console.log(rawction);
         const auction = {
             address: rawction.auction_info.auction_address,
             description: rawction.auction_info.description,  // NEW

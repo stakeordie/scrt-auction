@@ -120,12 +120,14 @@ export default {
               mutations: {
                 // Merge from auction with existing auctions
                 updateAuction: (state, auction) => {
-                    const currentAuction = state.auctions.find(a => a.address == auction.address );
+                    let currentAuction = state.auctions.find(a => a.address == auction.address );
                     if(!currentAuction) {
                         state.auctions.push(auction);
                     } else {
                         currentAuction.description = auction.description;
                         currentAuction.endsAt = auction.endsAt;
+                        currentAuction.bid.contract = auction.bid.contract;
+                        currentAuction.sell.contract = auction.sell.contract;
                     }
                 },
 

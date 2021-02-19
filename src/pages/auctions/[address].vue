@@ -16,14 +16,14 @@
             <h3>Owner: Manage Auction</h3>
             <dl v-if="this.auction.viewerIsSeller && !isPastEndTime">
               <dd>
-                <button v-show="!changeMinimumBidRequested" @click="changeMinimumBidRequested = !changeMinimumBidRequested">Update Asking Price</button><br/>
-                <validation-observer v-show="changeMinimumBidRequested" v-slot="{ handleSubmit, invalid }">
+                <button v-show="!showUpdateAskingPriceForm" @click="showUpdateAskingPriceForm = !showUpdateAskingPriceForm">Update Asking Price</button><br/>
+                <validation-observer v-show="showUpdateAskingPriceForm" v-slot="{ handleSubmit, invalid }">
                   <form @submit.prevent="handleSubmit(updateAskingPrice)">
                     <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
                       <label for="asking-price-form">New Asking Price</label>
                       <span class="error">{{ errors[0] }}</span>
                       <input name="asking-price-form" type="text" v-model.trim="updateAskingPriceForm.askingPrice" />
-                      <div class="bid-price-conversion">New Minimum Bid = {{ changeAskingPriceFormMinimumBid }} {{auctionInfo.bid_token.token_info.symbol}}</div>
+                      <div class="bid-price-conversion">New Minimum Bid = {{ changeAskingPriceFormMinimumBid }} {{auction.bid.denom}}</div>
                     </validation-provider>
                     <loading-icon v-if="changeAskingPriceSubmit.inProgress">
                       <p>Updating Asking Price</p>
@@ -76,7 +76,7 @@
                         <label for="asking-price-form">New Asking Price</label>
                         <span class="error">{{ errors[0] }}</span>
                         <input name="asking-price-form" type="text" v-model.trim="closeAuctionForm.askingPrice" />
-                        <div class="bid-price-conversion">New Asking Bid = {{ closeAuctionFormMinimumBid }} {{auctionInfo.bid_token.token_info.symbol}}</div>
+                        <div class="bid-price-conversion">New Asking Bid = {{ closeAuctionFormMinimumBid }} {{this.auction.bid.denom}}</div>
                       </validation-provider>
                       <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
                           <label for="auction-end-time">End time</label>
@@ -137,12 +137,12 @@
                 <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
               </ul>
               <div class="form__frame">
-                <validation-provider :rules="validationRules" v-slot="{ errors }">
+                <validation-provider :rules="`required|min_value:${askingPrice}`" v-slot="{ errors }">
                   <label for="payment-amount">Bid Price Per Token</label>
                   <span class="error">{{ errors[0] }}</span>
                   <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
                 </validation-provider>
-                <div class="bid-price-conversion">Total Bid Amount = {{ bidAmount }} {{auctionInfo.bid_token.token_info.symbol}}</div>
+                <div class="bid-price-conversion">Total Bid Amount = {{ bidAmount }} {{auction.bid.denom}}</div>
                 <loading-icon v-if="placeBidSubmit.inProgress">
                   <p>Placing Bid</p>
                 </loading-icon>
@@ -283,7 +283,7 @@ export default {
         newEndTime: new Date(),
       },
       
-      changeMinimumBidRequested: false,
+      showUpdateAskingPriceForm: false,
       closeAuctionRequested: false,
       closeAuctionWithOptionsRequested: false,
       
@@ -336,6 +336,7 @@ export default {
   async mounted () {
     await this.$auctions.updateAuction(this.$route.params.address);
     await this.$auctions.updateAuctions();
+    this.getAuction();
     this.updateEndTime();
     this.interval = setInterval(this.updateEndTime, 1000);
   },
@@ -344,52 +345,37 @@ export default {
   },
   computed: {
     auction: function() {
-      const auction = this.$auctions.getAuction(this.$route.params.address);
-      console.log("computed",auction);
-      return auction;
+      return this.$auctions.getAuction(this.$route.params.address);
     },
     bidAmount: function() {
-      return new Decimal(this.placeBidForm.bidPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-    },
-    changeAskingPriceFormMinimumBid: function () {
-      return new Decimal(this.updateAskingPriceForm.askingPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-    },
-    closeAuctionFormMinimumBid: function () {
-      return new Decimal(this.closeAuctionForm.askingPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
-    },
-    sellAmountFromFractional: function () {
-      //return new Decimal(this.auctionInfo.sell_amount / Math.pow(10, this.auctionInfo.sell_token.token_info.decimals)).toFixed(this.auctionInfo.sell_token.token_info.decimals).replace(/\.?0+$/,"")
-      return new Decimal(this.auctionInfo.sell_amount).dividedBy(Decimal.pow(10,this.auctionInfo.sell_token.token_info.decimals)).toFixed(this.auctionInfo.sell_token.token_info.decimals).replace(/\.?0+$/,"");
-    },
-    winningBidFromFractional: function () {
-      return new Decimal(this.auctionInfo.winning_bid).dividedBy(Decimal.pow(10,this.auctionInfo.bid_token.token_info.decimals));
-    },
-    winningBidPrice: function () {
-      return this.winningBidFromFractional / this.sellAmountFromFractional;
-    },
-    minimumBidFromFractional: function () {
-      return new Decimal(this.auctionInfo.minimum_bid).dividedBy(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
-    },
-    formBidAmountToFractional: function () {
-      return new Decimal(this.formBidAmount).times(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals))
+      return new Decimal(this.placeBidForm.bidPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
     },
     askingPrice: function () {
-      return this.minimumBidFromFractional / this.sellAmountFromFractional;
+      return this.auction.bid.decimalMinimum / this.auction.sell.decimalAmount;
     },
-    endTimeString: function () {
-      return moment(new Date(this.auctionInfo.ends_at)).format("YYYY-MM-DD HH:mm:ss");
+    changeAskingPriceFormMinimumBid: function () {
+      return new Decimal(this.updateAskingPriceForm.askingPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
+    },
+    closeAuctionFormMinimumBid: function () {
+      return new Decimal(this.closeAuctionForm.askingPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
+    },
+    winningBidPrice: function () {
+      return this.auction.bid.decimalWinner / this.auction.sell.decimalAmount;
+    },
+    formBidAmountToFractional: function () {
+      return new Decimal(this.formBidAmount).times(Decimal.pow(10, this.auction.bid.decimals))
     },
     closedAuctionFromEndTimeString: function() {
       return moment(this.closeAuctionForm.endTime).format("YYYY-MM-DD HH:mm:ss");
     },
     bidInfoAmountFromFractional: function() {
-      return new Decimal(this.auction.currentBid?.amount).dividedBy(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals)).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"")
+      return new Decimal(this.auction.currentBid?.amount).dividedBy(Decimal.pow(10, this.auction.bid.decimals)).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"")
     },
     bidPrice: function () {
       return this.auction.currentBid?.decimalAmount / this.auction.sell.decimalAmount; 
     },
-    askingPriceTitle: function () {
-      return "The price in " + this.auctionInfo.bid_token.token_info.symbol + " per " + this.auctionInfo.sell_token.token_info.symbol;
+    endTimeString: function () {
+      return moment(new Date(this.auction.endsAt)).format("YYYY-MM-DD HH:mm:ss");
     },
     isPastEndTime: function () {
       return moment(new Date(this.auction.endsAt)).isBefore()
@@ -402,8 +388,8 @@ export default {
     async placeBid() {
       this.placeBidSubmit.result = null;
       this.placeBidSubmit.inProgress = true;
-      const bidAmountToFractional = new Decimal(this.bidAmount).times(Decimal.pow(10, this.auctionInfo.bid_token.token_info.decimals));
-      this.placeBidSubmit.response = await this.$auctions.placeBid(this.auctionInfo.bid_token.contract_address, this.auctionAddress, (new Decimal(bidAmountToFractional).toFixed(0)));
+      const bidAmountToFractional = new Decimal(this.bidAmount).times(Decimal.pow(10, this.auction.bid.decimals));
+      this.placeBidSubmit.response = await this.$auctions.placeBid(this.auction.bid.contract, this.auction.address, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placeBidSubmit.inProgress = false;
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
         this.placeBidSubmit.result = "error"
@@ -434,11 +420,10 @@ export default {
         this.changeAskingPriceSubmit.result = "error"
       } else {
         this.changeAskingPriceSubmit.result = "success"
-        this.changeMinimumBidRequested = false;
+        this.showUpdateAskingPriceForm = false;
         this.closeAuctionWithOptionsRequested = false;
         this.closeAuctionRequested = false;
       }
-      this.refreshAuction();
       //console.log(bidRetracted);
     },
     async closeAuctionSimpleNO() {
@@ -474,39 +459,16 @@ export default {
         this.closeAuctionWithOptionsSubmit.result = "error"
       } else {
         this.closeAuctionWithOptionsSubmit.result = "success"
-        this.changeMinimumBidRequested = false;
+        this.showUpdateAskingPriceForm = false;
         this.closeAuctionWithOptionsRequested = false;
         this.closeAuctionRequested = false;
       }
     },
     async getAuction() {
-
-      this.auctionAddress = this.$route.params.address;
-      //
-        this.auctionInfo = (await this.$auctions.getAuctionInfo(this.auctionAddress)).auction_info;
-        if(this.auctionInfo) {
-          this.codeHash = await this.$scrtjs.getContractHash(this.auctionAddress);
-          this.validationRules = "required|min_value:" + this.askingPrice /*+ "|max_decimals:" + this.auctionInfo.bid_token.token_info.decimals*/;
-          this.placeBidForm.bidPrice = this.askingPrice;
-          this.updateAskingPriceForm.askingPrice = this.placeBidForm.bidPrice;
-          this.closeAuctionForm.askingPrice = this.placeBidForm.bidPrice;
-          this.updateAskingPriceForm.minimumBidAmount = this.minimumBidFromFractional;
-        }
-      //
-    },
-    async refreshAuction() {
-      //this.getAuction();
-      //reset bidder / owner
-      //await this.$auctions.updateAuctions();
-      await this.getAuction()
-      this.hasViewingKey = false;
-      this.hasBids = false;
-      this.auctionAddress = this.$route.params.address;
-      if(this.vkViewingKey) {
-        this.hasViewingKey = true;
-        const viewingKey = this.vkViewingKey.key;
-        this.hasBids = this.auction.hasBids;
-      }
+      this.placeBidForm.bidPrice = this.askingPrice;
+      this.updateAskingPriceForm.askingPrice = this.placeBidForm.bidPrice;
+      this.closeAuctionForm.askingPrice = this.placeBidForm.bidPrice;
+      this.updateAskingPriceForm.minimumBidAmount = this.auction.bid.decimalMinimum;
     },
     updateEndTime() {
         this.closeAuctionForm.endTime = new Date((new Date()).getTime() + (Number(this.closeAuctionForm.endTimeAmount || 1) * Number(this.closeAuctionForm.endTimeUnit) * 60000));
