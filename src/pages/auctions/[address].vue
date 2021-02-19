@@ -9,10 +9,10 @@
         <auction-item :auction="auction" class="list selected"></auction-item>
       </block>
     </column>
-    <column :number="(this.auction.viewerIsSeller || isPastEndTime ) && !isClosed ? '2' : '1'" number-m="1" number-s="1">
+    <column>
       <block>
-        <div v-if="this.auction.viewerIsSeller && !isClosed">
-          <div class="stage-panel">
+        <div style="display: flex">
+          <div class="stage-panel" v-if="this.auction.viewerIsSeller && !isClosed">
             <h3>Owner: Manage Auction</h3>
             <dl v-if="this.auction.viewerIsSeller && !isPastEndTime">
               <dd>
@@ -104,14 +104,10 @@
                 </div>
               </dd>
             </dl>
-          </div>
-        </div>
-      </block>
-      <block>
-        <div v-if="!isClosed">
-          <h2>Place a Bid</h2>
-          <div class="stage-panel" v-if="auction.viewerIsBidder">
-            <div>
+          </div>     
+          <div class="stage-panel" v-if="!isClosed">
+            <h2>Place a Bid</h2>
+            <div v-if="auction.viewerIsBidder">
               <h5>Current Bid</h5>
               <dl>
                 <dd>
@@ -130,34 +126,32 @@
                 </dd>
               </dl>
             </div>
-          </div>
-          <validation-observer v-slot="{ handleSubmit, invalid }">
-            <form class="form" @submit.prevent="handleSubmit(placeBid)">
-              <ul>
-                <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
-              </ul>
-              <div class="form__frame">
-                <validation-provider :rules="`required|min_value:${askingPrice}`" v-slot="{ errors }">
-                  <label for="payment-amount">Bid Price Per Token</label>
-                  <span class="error">{{ errors[0] }}</span>
-                  <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
-                </validation-provider>
-                <div class="bid-price-conversion">Total Bid Amount = {{ bidAmount }} {{auction.bid.denom}}</div>
-                <loading-icon v-if="placeBidSubmit.inProgress">
-                  <p>Placing Bid</p>
-                </loading-icon>
-                <div class="result-failed" v-if="placeBidSubmit.result == 'error'">
-                  <p>{{ placeBidSubmit.response.error }}</p>
+          
+            <validation-observer v-slot="{ handleSubmit, invalid }">
+              <form class="form" @submit.prevent="handleSubmit(placeBid)">
+                <ul>
+                  <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
+                </ul>
+                <div class="form__frame">
+                  <validation-provider :rules="`required|min_value:${askingPrice}`" v-slot="{ errors }">
+                    <label for="payment-amount">Bid Price Per Token</label>
+                    <span class="error">{{ errors[0] }}</span>
+                    <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
+                  </validation-provider>
+                  <div class="bid-price-conversion">Total Bid Amount = {{ bidAmount }} {{auction.bid.denom}}</div>
+                  <loading-icon v-if="placeBidSubmit.inProgress">
+                    <p>Placing Bid</p>
+                  </loading-icon>
+                  <div class="result-failed" v-if="placeBidSubmit.result == 'error'">
+                    <p>{{ placeBidSubmit.response.error }}</p>
+                  </div>
+                  <button :disabled="invalid">Place Bid</button>
                 </div>
-                <button :disabled="invalid">Place Bid</button>
-              </div>
-            </form>
-          </validation-observer>
-        </div>
-      </block>
-      <block>
-        <div v-if="!this.auction.viewerIsSeller && isPastEndTime && !isClosed">
-          <div class="stage-panel">
+              </form>
+            </validation-observer>
+          </div>
+
+          <div class="stage-panel" v-if="!this.auction.viewerIsSeller && isPastEndTime && !isClosed">
             <h3>Close</h3>
             <p>The auction is past it's "Target Close" datetime and can be closed by anyone. As long as it hasn't been closed, bids will still be accepted</p>
             <!-- Close Auction for non owners -->
@@ -483,75 +477,75 @@ export default {
 <style lang="scss" scoped>
 
 .auction-form {
-    display: grid;
-    grid-template-columns: 70px 1fr 100px;
-    column-gap: var(--f-gutter);
-    align-items: end;
+  display: grid;
+  grid-template-columns: 70px 1fr 100px;
+  column-gap: var(--f-gutter);
+  align-items: end;
 
-    select, textarea, input {
-        width: 100%;
-    }
+  select, textarea, input {
+      width: 100%;
+  }
 
-    input:read-only {
-        color: var(--f-default-text-color);
-        background-color: var(--color-black);
-        border: 1px solid var(--color-black);
-        font-weight: 600;
-    }
+  input:read-only {
+      color: var(--f-default-text-color);
+      background-color: var(--color-black);
+      border: 1px solid var(--color-black);
+      font-weight: 600;
+  }
 
-    label {
-        margin-bottom: var(--f-gutter-xxs);
-    }
+  label {
+      margin-bottom: var(--f-gutter-xxs);
+  }
 
-    &__account {
-        grid-column: 2 / 4;
-    }
-    &__sell-amount {
-        grid-column: 1 / 3;
-    }
-    &__bid-amount {
-        grid-column: 2 / 3;
-    }
-    &__bid-price {
-        grid-column: 1 / 2;
-    }
-    &__bid-sell, &__bid-denom {
-        grid-column: 3 / 4;
-    }
-    &__info-action, &__end-time, &__description {
-        grid-column: 1 / 4;
-    }
+  &__account {
+      grid-column: 2 / 4;
+  }
+  &__sell-amount {
+      grid-column: 1 / 3;
+  }
+  &__bid-amount {
+      grid-column: 2 / 3;
+  }
+  &__bid-price {
+      grid-column: 1 / 2;
+  }
+  &__bid-sell, &__bid-denom {
+      grid-column: 3 / 4;
+  }
+  &__info-action, &__end-time, &__description {
+      grid-column: 1 / 4;
+  }
 
-    .keplr__account {
-        font-size: 21px;
-    }
+  .keplr__account {
+      font-size: 21px;
+  }
 
-    &__label {
-        align-self: center;
-        &-emoji {
-            font-size: 40px;
-            text-decoration: none;
-        }
-        &-change {
-            font-size: 13px;
-        }
-    }
+  &__label {
+      align-self: center;
+      &-emoji {
+          font-size: 40px;
+          text-decoration: none;
+      }
+      &-change {
+          font-size: 13px;
+      }
+  }
 
-    &__description textarea {
-        min-height: 70px;
-    }
+  &__description textarea {
+      min-height: 70px;
+  }
 
-    &__end-time {
-        &__amount {
-            display: inline;
-            max-width: 4ch;
-            margin: 0 1ch;
-        }
-        select {
-            display: inline;
-            width: min-content;
-        }
-    }
+  &__end-time {
+      &__amount {
+          display: inline;
+          max-width: 4ch;
+          margin: 0 1ch;
+      }
+      select {
+          display: inline;
+          width: min-content;
+      }
+  }
 }
 
 .allowance-form {
@@ -567,6 +561,8 @@ export default {
 }
 
 .stage-panel {
+  width: 50%;
+  margin: 10px;
     .flex {
       display: flex;
 
