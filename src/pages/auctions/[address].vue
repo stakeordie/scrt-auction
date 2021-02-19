@@ -106,7 +106,7 @@
             </dl>
           </div>     
           <div class="stage-panel" v-if="!isClosed">
-            <h2>Place a Bid</h2>
+            <h2>Bid</h2>
             <div v-if="auction.viewerIsBidder">
               <h5>Current Bid</h5>
               <dl>
@@ -295,7 +295,7 @@ export default {
   watch: {
     async vkViewingKey(newValue, oldValue) {
       if(newValue) {
-        this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,newValue.key);
+        this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
       }
     }
   },
@@ -355,6 +355,8 @@ export default {
       this.placeBidSubmit.result = null;
       this.placeBidSubmit.inProgress = true;
       const bidAmountToFractional = new Decimal(this.bidAmount).times(Decimal.pow(10, this.auction.bid.decimals));
+      console.log("placeBid",this.auction);
+      console.log(this.auction.bid.contract, this.auction.address, new Decimal(bidAmountToFractional).toFixed(0));
       this.placeBidSubmit.response = await this.$auctions.placeBid(this.auction.bid.contract, this.auction.address, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placeBidSubmit.inProgress = false;
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
@@ -362,25 +364,25 @@ export default {
       } else {
         this.placeBidSubmit.result = "success"
       }
-      
+      this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
     },
     async retractBid() {
       this.retractBidSubmit.result = null;
       this.retractBidSubmit.inProgress = true;
-      this.retractBidSubmit.response = await this.$auctions.retractBid(this.auctionAddress);
+      this.retractBidSubmit.response = await this.$auctions.retractBid(this.auction.address);
       this.retractBidSubmit.inProgress = false;
       if(this.retractBidSubmit.response.retractBid?.status == 'Failure' || this.retractBidSubmit.response.error) {
         this.retractBidSubmit.result = "error"
       } else {
         this.retractBidSubmit.result = "success"
       }
-      //console.log(bidRetracted);
+      this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
     },
     async updateAskingPrice() {
       const newMinimumBidAmount = new Decimal(this.changeAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auction.bid.decimals));
       this.changeAskingPriceSubmit.result = null;
       this.changeAskingPriceSubmit.inProgress = true;
-      this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auctionAddress, new Decimal(newMinimumBidAmount).toFixed(0));
+      this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auction.address, new Decimal(newMinimumBidAmount).toFixed(0));
       this.changeAskingPriceSubmit.inProgress = false;
       if(this.changeAskingPriceSubmit.response.retractBid?.status == 'Failure' || this.changeAskingPriceSubmit.response.error) {
         this.changeAskingPriceSubmit.result = "error"
@@ -395,7 +397,7 @@ export default {
     async closeAuctionSimpleNO() {
       this.closeAuctionSimpleNOSubmit.result = null;
       this.closeAuctionSimpleNOSubmit.inProgress = true;
-      this.closeAuctionSimpleNOSubmit.response = await this.$auctions.closeAuction(this.auctionAddress)
+      this.closeAuctionSimpleNOSubmit.response = await this.$auctions.closeAuction(this.auction.address)
       this.closeAuctionSimpleNOSubmit.inProgress = false;
       if(this.closeAuctionSimpleNOSubmit.response.retractBid?.status == 'Failure' || this.closeAuctionSimpleNOSubmit.response.error) {
         this.closeAuctionSimpleNOSubmit.result = "error"
@@ -406,7 +408,7 @@ export default {
     async closeAuctionSimple() {
       this.closeAuctionSimpleSubmit.result = null;
       this.closeAuctionSimpleSubmit.inProgress = true;
-      this.closeAuctionSimpleSubmit.response = await this.$auctions.closeAuction(this.auctionAddress)
+      this.closeAuctionSimpleSubmit.response = await this.$auctions.closeAuction(this.auction.address)
       this.closeAuctionSimpleSubmit.inProgress = false;
       if(this.closeAuctionSimpleSubmit.response.error) {
         this.closeAuctionSimpleSubmit.result = "error"
@@ -419,7 +421,7 @@ export default {
       this.closeAuctionWithOptionsSubmit.inProgress = true;
       const newMinimumBidAmount = this.closeAuctionFormMinimumBid * Math.pow(10, this.auction.bid.decimals);
       const endTime = Math.round(this.closeAuctionForm.endTime.getTime() / 1000)
-      this.closeAuctionWithOptionsSubmit.response = await this.$auctions.closeAuctionWithOptions(this.auctionAddress,endTime,new Decimal(newMinimumBidAmount).toFixed(0))
+      this.closeAuctionWithOptionsSubmit.response = await this.$auctions.closeAuctionWithOptions(this.auction.address,endTime,new Decimal(newMinimumBidAmount).toFixed(0))
       this.closeAuctionWithOptionsSubmit.inProgress = false;
       if(this.closeAuctionWithOptionsSubmit.response.error) {
         this.closeAuctionWithOptionsSubmit.result = "error"

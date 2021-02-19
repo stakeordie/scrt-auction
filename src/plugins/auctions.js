@@ -126,12 +126,6 @@ export default {
                     } else {
                         Vue.set(currentAuction,"description",auction.description);
                         Vue.set(currentAuction,"endsAt",auction.endsAt);
-                        if(auction.bid){
-                            Vue.set(currentAuction,"bid",auction.bid);
-                        }
-                        if(auction.sell){
-                            Vue.set(currentAuction,"sell",auction.sell);
-                        }
                     }
                 },
 
@@ -200,28 +194,27 @@ export default {
                     commit("updateAuction", auction);
                 },
 
-                updateAuctionBidDetails: async ({ commit }, {address, userAddress, viewingKey}) => {
+                updateAuctionBidDetails: async ({ commit, state }, {address, userAddress, viewingKey}) => {
                     let auction = {
                         address,
                         hasBids: false,
                         currentBid: false
                     }
                 
-                    const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey); //get userAuctions
+                    const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey, state.tokenData); //get userAuctions
                     
                     if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am bidder
                         auction.currentBid = await auctionsApi.getCurrentBid(address, userAddress, viewingKey);
                         auction.hasBids = true;
                     } else if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am seller
                         auction.hasBids = await auctionsApi.getAuctionHasBidsInfo(address, userAddress, viewingKey);
-                        
                     }
                     
                     commit("updateAuctionBidDetails", auction);
                 },
 
-                updateActiveAuctions: async ({ commit }) => {
-                    const activeAuctions = await auctionsApi.listAuctions();
+                updateActiveAuctions: async ({ commit, state }) => {
+                    const activeAuctions = await auctionsApi.listAuctions(state.tokenData);
                     if (activeAuctions) {
                         commit("updateAuctions", activeAuctions);
                     }
@@ -244,7 +237,7 @@ export default {
                     }
                     
                     if(viewer?.viewingKey) {
-                        const userAuctions = await auctionsApi.listUserAuctions(viewer.userAddress, viewer.viewingKey);
+                        const userAuctions = await auctionsApi.listUserAuctions(viewer.userAddress, viewer.viewingKey, state.tokenData);
                         // First we load the new auction information
                         if (userAuctions.sellerAuctions) {
                             commit("updateAuctions", userAuctions.sellerAuctions);

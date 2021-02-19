@@ -73,7 +73,7 @@ export class AuctionsApi {
         return address;
     }
 
-    tokens2Decimal(amount, decimals)  {
+    tokens2Decimal(amount, decimals) {
         return Number(amount / Math.pow(10, decimals));
     }
 
@@ -87,7 +87,7 @@ export class AuctionsApi {
         return array[Math.abs(hash) % array.length];
     }
 
-    transformActiveAuction(rawction, status) {
+    transformActiveAuction(rawction, tokenData) {
         const colors = ["purple", "orange", "cream", "blue", "yellow", "green"];
         const auction = {
             address: rawction.address,
@@ -97,12 +97,14 @@ export class AuctionsApi {
             color: this.arrayHash(rawction.pair, colors),
             color2: this.arrayHash(rawction.address, colors),
             sell: {
+                contract: tokenData.find(token => token.symbol === rawction.pair.split("-")[0])?.address,
                 amount: rawction.sell_amount,
                 decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                 decimals: rawction.sell_decimals,
                 denom: rawction.pair.split("-")[0],
             },
             bid: {
+                contract: tokenData.find(token => token.symbol === rawction.pair.split("-")[1])?.address,
                 decimals: rawction.bid_decimals,
                 denom: rawction.pair.split("-")[1],
             },
@@ -236,7 +238,7 @@ export class AuctionsApi {
         return auction;
     };
 
-    transformAuctionBidInfo(auctionAddress, bidInfo) {
+    transformAuctionBidInfo(bidInfo) {
         return {
             amount: bidInfo.bid.amount_bid,
             decimalAmount: this.tokens2Decimal(bidInfo.bid.amount_bid, bidInfo.bid.bid_decimals),
@@ -247,11 +249,11 @@ export class AuctionsApi {
 
     // TODO transformAuctionHasBids
 
-    async listAuctions() {
+    async listAuctions(tokenData) {
         const auctions = await this.scrtClient.queryContract(this.factoryAddress, {"list_active_auctions":{}})
 
         return auctions.list_active_auctions.active.map(auction => {
-            return this.transformActiveAuction(auction);
+            return this.transformActiveAuction(auction, tokenData);
         });
     }
 
@@ -262,13 +264,13 @@ export class AuctionsApi {
         });
     }
 
-    async listUserAuctions(address, viewingKey) {
+    async listUserAuctions(address, viewingKey, tokenData) {
         // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
         if (viewingKey) {
             const auctions = await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
 
-            const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction));
-            const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction));
+            const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction, tokenData));
+            const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction, tokenData));
 
             const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction));
             const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformWonAuction(rawction));
@@ -301,7 +303,7 @@ export class AuctionsApi {
         const bidInfo = await this.scrtClient.queryContract(auctionAddress, {"view_bid": { "address": userAddress, "viewing_key": viewingKey}});
         if(!bidInfo.viewing_key_error) {
             if(bidInfo?.bid?.status != "Failure"){
-                currentBid = this.transformAuctionBidInfo(auctionAddress, bidInfo);
+                currentBid = this.transformAuctionBidInfo(bidInfo);
             } 
         }
         return currentBid;

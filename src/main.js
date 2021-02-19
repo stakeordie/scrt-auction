@@ -10,7 +10,7 @@ import Flare from "@lkmx/flare"
 import VKeys from "./plugins/vkeys"
 import Keplr from "./plugins/keplr"
 import ScrtJs from "./plugins/scrt"
-import AuctionsApi from "./plugins/auctions"
+import Auctions from "./plugins/auctions"
 
 import DefaultLayout from "~/layouts/DefaultLayout.vue"
 
@@ -36,7 +36,7 @@ export default function(Vue, { router, head, isClient }) {
   Vue.filter("abbrv", (str, abbrv) => {
     const half = (abbrv / 2) || 8;
     return str.substring(0, half) + "..." + str.substring(str.length - half, str.length);
-});
+  });
 
   Vue.use(Flare);
 
@@ -72,9 +72,8 @@ export default function(Vue, { router, head, isClient }) {
   } else {
     availableTokens = tokensForTesting;
   }
-
   
-  Vue.use(AuctionsApi, { 
+  Vue.use(Auctions, { 
     chainClient: Vue.prototype.$scrtjs,
     factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
     availableTokens
