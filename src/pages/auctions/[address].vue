@@ -394,7 +394,7 @@ export default {
     async vkViewingKey(newValue, oldValue) {
       //console.log(newValue)
       if(newValue) {
-        this.refreshAuction();
+        await this.refreshAuction();
         //this.$auctions.updateAuction(this.$route.params.address);
         //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.account,newValue.key);
       }
@@ -402,7 +402,9 @@ export default {
   },
   computed: {
     auction: function() {
-      return this.$store.getters[`$auctions/getAuction`](this.$route.params.address)
+      const auction = this.$auctions.getAuction(this.$route.params.address);
+      console.log("computed",auction);
+      return auction;
     },
     bidAmount: function() {
       return new Decimal(this.placeBidForm.bidPrice).times(this.sellAmountFromFractional).toFixed(this.auctionInfo.bid_token.token_info.decimals).replace(/\.?0+$/,"");
@@ -448,8 +450,10 @@ export default {
       return "The price in " + this.auctionInfo.bid_token.token_info.symbol + " per " + this.auctionInfo.sell_token.token_info.symbol;
     }
   },
-  mounted () {
-    this.getAuction()
+  async mounted () {
+    await this.$auctions.updateAuction(this.$route.params.address);
+    await this.$auctions.updateAuctions();
+    await this.getAuction();
     this.updateEndTime();
     this.interval = setInterval(this.updateEndTime, 1000);
   },
@@ -544,11 +548,20 @@ export default {
       }
     },
     async getAuction() {
-      console.log(this.auction)
-      this.isClosed = this.auction.status != 'ACTIVE';
-      this.isEnded = moment(new Date(this.auction.endsAt)).isBefore();
-      this.isOwner = this.auction.viewerIsSeller;
-      this.isBidder = this.auction.viewerIsBidder;
+      if(this.vkViewingKey) {
+        await this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
+      }
+      const auction = this.auction;
+      this.isClosed = auction.status != 'ACTIVE';
+      this.isEnded = moment(new Date(auction.endsAt)).isBefore();
+      console.log("getAuction.auction.viewerIsSeller",auction.viewerIsSeller);
+      console.log("getAuction.this.auction.viewerIsSeller",this.auction.viewerIsSeller);
+      console.log("getAuction.auction.viewerIsSeller",auction.address);
+      console.log("getAuction.auction.viewerIsSeller",auction.viewerIsSeller);
+      console.log("getAuction.auction.viewerIsSeller",auction.address);
+      console.log("getAuction.auction.viewerIsSeller",auction.viewerIsSeller);
+      this.isOwner = auction.viewerIsSeller;
+      this.isBidder = auction.viewerIsBidder;
       this.auctionAddress = this.$route.params.address;
       this.auctionInfo = (await this.$auctions.getAuctionInfo(this.auctionAddress)).auction_info;
       if(this.auctionInfo) {
@@ -563,9 +576,8 @@ export default {
     async refreshAuction() {
       //this.getAuction();
       //reset bidder / owner
-      console.log(this.auction)
-      this.isBidder = this.auction.viewerIsBidder;
-      this.isClosed = this.auction.status != 'ACTIVE';
+      //await this.$auctions.updateAuctions();
+      await this.getAuction()
       this.hasViewingKey = false;
       this.bidInfo = {
         "message": "",
@@ -574,11 +586,9 @@ export default {
       }
       this.hasBids = false;
       this.auctionAddress = this.$route.params.address;
-      console.log(this.vkViewingKey);
       if(this.vkViewingKey) {
         this.hasViewingKey = true;
         const viewingKey = this.vkViewingKey.key;
-        this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,viewingKey);
         this.hasBids = this.auction.hasBids;
         if(this.auction.currentBid) {
           this.bidInfo = {

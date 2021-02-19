@@ -124,14 +124,16 @@ export default {
                     if(!currentAuction) {
                         state.auctions.push(auction);
                     } else {
-                        Object.assign(currentAuction, auction);
+                        currentAuction.description = auction.description;
+                        currentAuction.endsAt = auction.endsAt;
                     }
                 },
 
                 // Merge from auctions with existing auctions
                 updateAuctions: (state, auctions) => {
+                    let currentAuction;
                     auctions.forEach(auction => {
-                        const currentAuction = state.auctions.find(sa => sa.address == auction.address);
+                        currentAuction = state.auctions.find(sa => sa.address == auction.address);
                         if(!currentAuction) {
                             state.auctions.push(auction);
                         } else {
