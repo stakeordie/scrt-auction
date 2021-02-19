@@ -76,7 +76,7 @@
                         <label for="asking-price-form">New Asking Price</label>
                         <span class="error">{{ errors[0] }}</span>
                         <input name="asking-price-form" type="text" v-model.trim="closeAuctionForm.askingPrice" />
-                        <div class="bid-price-conversion">New Asking Bid = {{ closeAuctionFormMinimumBid }} {{this.auction.bid.denom}}</div>
+                        <div class="bid-price-conversion">New Asking Bid = {{ closeAuctionFormMinimumBid }} {{auction.bid.denom}}</div>
                       </validation-provider>
                       <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
                           <label for="auction-end-time">End time</label>
@@ -336,7 +336,7 @@ export default {
   async mounted () {
     await this.$auctions.updateAuction(this.$route.params.address);
     await this.$auctions.updateAuctions();
-    this.getAuction();
+    this.getAuction()
     this.updateEndTime();
     this.interval = setInterval(this.updateEndTime, 1000);
   },
@@ -381,7 +381,7 @@ export default {
       return moment(new Date(this.auction.endsAt)).isBefore()
     },
     isClosed: function () {
-      this.auction.status != 'ACTIVE';
+      return this.auction.status != 'ACTIVE';
     }
   },
   methods: {

@@ -126,8 +126,22 @@ export default {
                     } else {
                         Vue.set(currentAuction,"description",auction.description);
                         Vue.set(currentAuction,"endsAt",auction.endsAt);
-                        Vue.set(currentAuction.bid,"contract",auction.bid.contract);
-                        Vue.set(currentAuction.sell,"contract",auction.sell.contract);
+                        if(auction.bid){
+                            Vue.set(currentAuction,"bid",auction.bid);
+                        }
+                        if(auction.sell){
+                            Vue.set(currentAuction,"sell",auction.sell);
+                        }
+                    }
+                },
+
+                updateAuctionBidDetails: (state, auction) => {
+                    let currentAuction = state.auctions.find(a => a.address == auction.address );
+                    if(!currentAuction) {
+                        state.auctions.push(auction);
+                    } else {
+                        Vue.set(currentAuction,"currentBid",auction.currentBid);
+                        Vue.set(currentAuction,"hasBids",auction.hasBids);
                     }
                 },
 
@@ -203,7 +217,7 @@ export default {
                         
                     }
                     
-                    commit("updateAuction", auction);
+                    commit("updateAuctionBidDetails", auction);
                 },
 
                 updateActiveAuctions: async ({ commit }) => {

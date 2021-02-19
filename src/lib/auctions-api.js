@@ -206,7 +206,6 @@ export class AuctionsApi {
     // bid_decimals: 6
 
     transformAuctionInfo(rawction) {
-        console.log(rawction);
         const auction = {
             address: rawction.auction_info.auction_address,
             description: rawction.auction_info.description,  // NEW
@@ -228,7 +227,7 @@ export class AuctionsApi {
         if(rawction.auction_info.minimum_bid) {
             auction.bid.minimum = rawction.auction_info.minimum_bid;
             auction.bid.decimalMinimum = this.tokens2Decimal(rawction.auction_info.minimum_bid, auction.bid.decimals);
-            auction.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
+            auction.bid.price = auction.bid.decimalMinimum / auction.sell.decimalAmount;
         }
         if(rawction.auction_info.winning_bid) {
             auction.bid.winner = rawction.auction_info.winning_bid;
