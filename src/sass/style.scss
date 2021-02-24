@@ -68,8 +68,8 @@ html {
 
 body {
     background-image: url(../assets/scrt-swirl.svg);
-    background-size: contain;
-    // background-attachment: fixed;
+    background-size: 100% auto;
+    background-position: center top;
     background-repeat: no-repeat;
 }
 
