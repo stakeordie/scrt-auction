@@ -12,7 +12,7 @@
     <column>
       <block>
         <div class="forms-wrapper">
-          <div class="stage-panel" v-if="this.auction.viewerIsSeller && !isClosed">
+          <div class="stage-panel" v-if="this.auction && this.auction.viewerIsSeller && !isClosed">
             <h3>Owner: Manage Auction</h3>
             <dl v-if="this.auction.viewerIsSeller && !isPastEndTime">
               <dd>
@@ -151,7 +151,7 @@
             </validation-observer>
           </div>
 
-          <div class="stage-panel" v-if="!this.auction.viewerIsSeller && isPastEndTime && !isClosed">
+          <div class="stage-panel" v-if="this.auction && !this.auction.viewerIsSeller && isPastEndTime && !isClosed">
             <h3>Close</h3>
             <p>The auction is past it's "Target Close" datetime and can be closed by anyone. As long as it hasn't been closed, bids will still be accepted</p>
             <!-- Close Auction for non owners -->
@@ -162,7 +162,7 @@
               <div class="result-failed" v-if="closeAuctionSimpleNOSubmit.result == 'error'">
                 <p>{{ closeAuctionSimpleNOSubmit.response.error }}</p>
               </div>
-              <dd><button v-show="!this.auction.viewerIsSeller && isPastEndTime" @click="closeAuctionSimpleNO">Close This Auction</button></dd>
+              <dd><button v-show="this.auction && !this.auction.viewerIsSeller && isPastEndTime" @click="closeAuctionSimpleNO">Close This Auction</button></dd>
             </dl>
           </div>
         </div>
@@ -347,7 +347,7 @@ export default {
       return moment(new Date(this.auction.endsAt)).isBefore()
     },
     isClosed: function () {
-      return this.auction.status != 'ACTIVE';
+      return this.auction?.status != 'ACTIVE';
     }
   },
   methods: {
@@ -544,7 +544,8 @@ export default {
 
 .stage-panel {
   width: 48%;
-  border: 1px solid white;
+    border: 1px solid #2E323C;
+    background-color: #0D1017;
 
   &.full-width {
     width: 100%
