@@ -398,8 +398,7 @@ export class AuctionsApi {
     async retractBid(auctionAddress) {
         //secretcli tx compute execute *auction_contract_address* '{"retract_bid": {}}' --from *your_key_alias_or_addr* --gas 300000 -y
         const fees = this.getFees("retractBid");
-        const response = await this.scrtClient.executeContract(auctionAddress, {"retract_bid": {}}, fees);
-        return response;
+        return await this.scrtClient.executeContract(auctionAddress, {"retract_bid": {}}, fees);
     }
 
     async consignAllowance(sellTokenAddress, sellAmount) {

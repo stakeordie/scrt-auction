@@ -122,10 +122,10 @@ export class SecretJsClient {
       );
       const response = await this.signingClient.execute(address, handleMsg);
       //console.log(response);
-      return this.handleResponse(response);
+      return this.handleResponse(response); //THIS SHOULD BE REFACTORED EVENTUALLY
     } catch (err) {
       //console.log("ERROR")
-      return this.handleResponse(err);
+      return this.handleResponse(err); //THIS SHOULD BE REFACTORED EVENTUALLY
       //throw err;
     }
   }

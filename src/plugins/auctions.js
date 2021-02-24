@@ -182,7 +182,19 @@ export default {
                 updateAvailableTokens(state, tokenData) {
                     state.tokenData = tokenData;
                 },
-                
+
+                retractBid(state, {address}) {
+                    const auction = state.auctions.find(auction => auction.address === address);
+                    auction.viewerIsBidder = false;
+                    auction.currentBid = false;
+                },
+
+                placeBid(state, { auctionAddress, currentBid }) {
+                    const auction = state.auctions.find(auction => auction.address === auctionAddress);
+                    auction.viewerIsBidder = true;
+                    auction.currentBid = currentBid;
+                }
+
               },
               actions: {
                 updateAuction: async ({ commit }, address) => {
@@ -279,12 +291,37 @@ export default {
                         commit("clearAuctionsViewer");
                     }
                 },
+
+                retractBid: async({ commit }, address) => {
+                    const response = await auctionsApi.retractBid(address);
+                    if(response.retractBid?.status == 'Success') {
+                        commit("retractBid", { address });
+                    }
+                    return response; 
+                },
+
+                placeBid: async({ commit },{ bidTokenAddress, auctionAddress, bidAmount }) => {
+                    const response = await auctionsApi.placeBid(bidTokenAddress, auctionAddress, bidAmount);
+                    console.log(response);
+                    if(response.bid?.status == 'Success') {
+                        const currentBid = {
+                            contract: "",//token Contract address,
+                            amount: bidAmount,
+                            decimalAmount: this.tokens2Decimal(bidInfo.bid.amount_bid, bidInfo.bid.bid_decimals),
+                            decimals: bid.bid_decimals,
+                            message: "accepted" //add message to that matches
+                        }
+                        commit("placeBid", { auctionAddress, currentBid });
+                    }
+                    return response; 
+                }
             }
         });
         
         Vue.prototype.$store.commit('$auctions/updateAvailableTokens', options.availableTokens);
         
-        Vue.prototype.$auctions =  new AuctionsApi(options.chainClient, options.factoryAddress);
+        Vue.prototype.$auctions = new AuctionsApi(options.chainClient, options.factoryAddress);
+
 
         Vue.prototype.$auctions.getAuction = Vue.prototype.$store.getters['$auctions/getAuction'];
 
@@ -312,6 +349,17 @@ export default {
 
         Vue.prototype.$auctions.updateAuctionsViewer = async (auctionsViewer) => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctionsViewer', auctionsViewer);
+        };
+
+        //txs
+
+        Vue.prototype.$auctions.retractBid = async (address) => {
+           return Vue.prototype.$store.dispatch('$auctions/retractBid', address);
+        };
+
+        Vue.prototype.$auctions.placeBid = async (bidTokenAddress, auctionAddress, bidAmount) => {
+            console.log(bidTokenAddress, auctionAddress, bidAmount)
+            return Vue.prototype.$store.dispatch('$auctions/placeBid', { bidTokenAddress, auctionAddress, bidAmount });
         };
     }
 }

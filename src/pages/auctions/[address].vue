@@ -355,8 +355,6 @@ export default {
       this.placeBidSubmit.result = null;
       this.placeBidSubmit.inProgress = true;
       const bidAmountToFractional = new Decimal(this.bidAmount).times(Decimal.pow(10, this.auction.bid.decimals));
-      console.log("placeBid",this.auction);
-      console.log(this.auction.bid.contract, this.auction.address, new Decimal(bidAmountToFractional).toFixed(0));
       this.placeBidSubmit.response = await this.$auctions.placeBid(this.auction.bid.contract, this.auction.address, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placeBidSubmit.inProgress = false;
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
@@ -370,13 +368,14 @@ export default {
       this.retractBidSubmit.result = null;
       this.retractBidSubmit.inProgress = true;
       this.retractBidSubmit.response = await this.$auctions.retractBid(this.auction.address);
+      console.log("retractBidReturned ->", this.retractBidSubmit.response);
       this.retractBidSubmit.inProgress = false;
       if(this.retractBidSubmit.response.retractBid?.status == 'Failure' || this.retractBidSubmit.response.error) {
         this.retractBidSubmit.result = "error"
       } else {
         this.retractBidSubmit.result = "success"
       }
-      this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
+      //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
     },
     async updateAskingPrice() {
       const newMinimumBidAmount = new Decimal(this.changeAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auction.bid.decimals));
