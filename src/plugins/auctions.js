@@ -1,5 +1,6 @@
 import { AuctionsApi } from '../lib/auctions-api.js'
 import emojis from '../lib/emojis.js'
+import moment from 'moment'
 
 import Vuex from 'vuex';
 
@@ -294,7 +295,7 @@ export default {
 
                 retractBid: async({ commit }, address) => {
                     const response = await auctionsApi.retractBid(address);
-                    if(response.retractBid?.status == 'Success') {
+                    if(response.retract_bid?.status == 'Success') {
                         commit("retractBid", { address });
                     }
                     return response; 
@@ -302,14 +303,13 @@ export default {
 
                 placeBid: async({ commit },{ bidTokenAddress, auctionAddress, bidAmount }) => {
                     const response = await auctionsApi.placeBid(bidTokenAddress, auctionAddress, bidAmount);
-                    console.log(response);
                     if(response.bid?.status == 'Success') {
                         const currentBid = {
-                            contract: "",//token Contract address,
-                            amount: bidAmount,
-                            decimalAmount: this.tokens2Decimal(bidInfo.bid.amount_bid, bidInfo.bid.bid_decimals),
-                            decimals: bid.bid_decimals,
-                            message: "accepted" //add message to that matches
+                            contract: bidTokenAddress,//token Contract address,
+                            amount: response.bid.amount_bid,
+                            decimalAmount: auctionsApi.tokens2Decimal(response.bid.amount_bid, response.bid.bid_decimals),
+                            decimals: response.bid.bid_decimals,
+                            message: "Bid placed " + moment().utc().format("YYYY-MM-DD HH:mm:ss") + " UTC"
                         }
                         commit("placeBid", { auctionAddress, currentBid });
                     }
@@ -358,7 +358,6 @@ export default {
         };
 
         Vue.prototype.$auctions.placeBid = async (bidTokenAddress, auctionAddress, bidAmount) => {
-            console.log(bidTokenAddress, auctionAddress, bidAmount)
             return Vue.prototype.$store.dispatch('$auctions/placeBid', { bidTokenAddress, auctionAddress, bidAmount });
         };
     }

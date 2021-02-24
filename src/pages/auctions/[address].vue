@@ -362,13 +362,12 @@ export default {
       } else {
         this.placeBidSubmit.result = "success"
       }
-      this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
+      //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key); // can I remove this? reactivity issue?
     },
     async retractBid() {
       this.retractBidSubmit.result = null;
       this.retractBidSubmit.inProgress = true;
       this.retractBidSubmit.response = await this.$auctions.retractBid(this.auction.address);
-      console.log("retractBidReturned ->", this.retractBidSubmit.response);
       this.retractBidSubmit.inProgress = false;
       if(this.retractBidSubmit.response.retractBid?.status == 'Failure' || this.retractBidSubmit.response.error) {
         this.retractBidSubmit.result = "error"
