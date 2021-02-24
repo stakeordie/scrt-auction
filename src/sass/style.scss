@@ -13,7 +13,7 @@
     --f-default-text-font: "Montserrat";
 
     --f-header-text-color: white;
-    --f-header-background-color: var(--color-black);
+    --f-header-background-color: #151A20;
 
     --f-default-text-color: white;
 
@@ -49,7 +49,7 @@
     // some of them are pulled from flare but use
     // a different name to prevent an unnecessary 
     // dependency, i.e. KeplrUser badge, etc.
-    --default-background-color: var(--color-dark-gray);
+    --default-background-color: var(--color-black);
     --default-success-color: var(--color-positive);
     --default-error-color: var(--color-negative);
 
@@ -69,7 +69,7 @@ html {
 body {
     background-image: url(../assets/scrt-swirl.svg);
     background-size: contain;
-    background-position: center -420px;
+    // background-attachment: fixed;
     background-repeat: no-repeat;
 }
 

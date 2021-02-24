@@ -72,7 +72,7 @@ query {
 .header {
   &__logo {
     img {
-      height: 50px;
+      height: 40px;
     }
     //padding: var(--f-gutter-s) 0; // var(--f-gutter);
   }
@@ -93,6 +93,8 @@ nav {
   display: flex;
   flex-flow: row nowrap;
   gap: var(--f-gutter);
+  position: relative;
+  top: 6px;
 }
 
 .simple-footer {

@@ -99,8 +99,8 @@ export default {
   }
 
   &:not(.status-closed) {
-    border: 1px solid rgba(255, 255, 255, 0.77);
-    background-color: black;
+    border: 1px solid #2E323C;
+    background-color: #0D1017;
   }
 
   text-decoration: none;
