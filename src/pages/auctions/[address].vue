@@ -377,7 +377,7 @@ export default {
       const newMinimumBidAmount = new Decimal(this.updateAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auction.bid.decimals));
       this.changeAskingPriceSubmit.result = null;
       this.changeAskingPriceSubmit.inProgress = true;
-      this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auction.address, newMinimumBidAmount, this.auction.sell.decimalAmount);
+      this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auction.address, newMinimumBidAmount);
       this.changeAskingPriceSubmit.inProgress = false;
       if(this.changeAskingPriceSubmit.response.retractBid?.status == 'Failure' || this.changeAskingPriceSubmit.response.error) {
         this.changeAskingPriceSubmit.result = "error"
@@ -416,7 +416,7 @@ export default {
       this.closeAuctionWithOptionsSubmit.inProgress = true;
       const newMinimumBidAmount = this.closeAuctionFormMinimumBid * Math.pow(10, this.auction.bid.decimals);
       const endTime = Math.round(this.closeAuctionForm.endTime.getTime() / 1000)
-      this.closeAuctionWithOptionsSubmit.response = await this.$auctions.closeAuctionWithOptions(this.auction.address,endTime,new Decimal(newMinimumBidAmount).toFixed(0))
+      this.closeAuctionWithOptionsSubmit.response = await this.$auctions.closeAuctionWithOptions(this.auction.address, endTime, new Decimal(newMinimumBidAmount).toFixed(0))
       this.closeAuctionWithOptionsSubmit.inProgress = false;
       if(this.closeAuctionWithOptionsSubmit.response.error) {
         this.closeAuctionWithOptionsSubmit.result = "error"

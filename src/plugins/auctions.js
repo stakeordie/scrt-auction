@@ -199,11 +199,14 @@ export default {
                     }
                 },
 
-                changeMinimumBid(state, {auctionAddress, minimum, decimalMinimum, price}) {
+                changeMinimumBid(state, {auctionAddress, minimum, decimalMinimum, endsAt}) {
                     const auction = state.auctions.find(auction => auction.address === auctionAddress);
                     auction.bid.minimum = minimum;
                     auction.bid.decimalMinimum = decimalMinimum;
-                    auction.price = price;
+                    auction.price = decimalMinimum / auction.sell.gitdecimalAmount;
+                    if(endsAt) {
+                        auction.endsAt = new Date(endsAt * 1000)
+                    }
                 },
 
                 closeAuction(state, {auctionAddress, params}) { 
@@ -338,19 +341,22 @@ export default {
                     return response; 
                 },
 
-                changeMinimumBid: async({ commit }, {auctionAddress, newMinimumBidAmount, sellDecimalPrice}) => {
+                changeMinimumBid: async({ commit }, {auctionAddress, newMinimumBidAmount}) => {
+                    console.log(endsAt)
                     const response = await auctionsApi.changeMinimumBid(auctionAddress, newMinimumBidAmount);
                     if(response.change_minimum_bid?.status == 'Success') {
                         const minimumBid = response.change_minimum_bid.minimum_bid;
                         const decimalMinimum = auctionsApi.tokens2Decimal(response.change_minimum_bid.minimum_bid, response.change_minimum_bid.bid_decimals);
-                        const price = decimalMinimum / sellDecimalPrice
-                        commit("changeMinimumBid", { auctionAddress, minimumBid, decimalMinimum, price });
+                        commit("changeMinimumBid", { auctionAddress, minimumBid, decimalMinimum});
                     }
                     return response; 
                 },
 
-                closeAuction: async({commit}, {auctionAddress}) => {
-                    const response = await auctionsApi.closeAuction(auctionAddress);
+                closeAuction: async({commit}, {auctionAddress, response}) => {
+                    console.log("closeAuction response param",response, auctionAddress);
+                    if(!response) {
+                        response = await auctionsApi.closeAuction(auctionAddress);
+                    }
                     console.log("closeAuction response",response);
                     if(response.close_auction?.status == 'Success') {
                         const params = {
@@ -365,7 +371,27 @@ export default {
                         commit("closeAuction", { auctionAddress, params});
                     }
                     return response;
+                },
+
+                closeAuctionWithOptions: async({ state, commit, dispatch }, {auctionAddress, newEndsAt, newMinimumBidAmount}) => {
+                    const response = await auctionsApi.closeAuctionWithOptions(auctionAddress, newEndsAt, newMinimumBidAmount);
+                    console.log("With Options Response", response);
+                    if(response.close_auction?.status == "Success") {
+                        dispatch('closeAuction', { auctionAddress, response});
+                    } else {
+                        if(response.close_auction.message == 'There were no active bids.  The closing time and minimum bid has been updated') {
+                            const auction = state.auctions.find(auction => auction.address === auctionAddress);
+                            commit('changeMinimumBid', {
+                                auctionAddress,
+                                minimum: newMinimumBidAmount,
+                                decimalMinimum: auctionsApi.tokens2Decimal(newMinimumBidAmount, auction.bid.decimals),
+                                endsAt: newEndsAt
+                            });
+                        }
+                    }
+                    return response; 
                 }
+
             }
         });
         
@@ -412,12 +438,18 @@ export default {
             return Vue.prototype.$store.dispatch('$auctions/placeBid', { bidTokenAddress, auctionAddress, bidAmount });
         };
 
-        Vue.prototype.$auctions.changeMinimumBid = async (auctionAddress, newMinimumBidAmount, sellDecimalPrice) => {
-            return Vue.prototype.$store.dispatch('$auctions/changeMinimumBid', {auctionAddress, newMinimumBidAmount, sellDecimalPrice});
+        Vue.prototype.$auctions.changeMinimumBid = async (auctionAddress, newMinimumBidAmount) => {
+            return Vue.prototype.$store.dispatch('$auctions/changeMinimumBid', {auctionAddress, newMinimumBidAmount});
         };
 
         Vue.prototype.$auctions.closeAuction = async (auctionAddress) => {
             return Vue.prototype.$store.dispatch('$auctions/closeAuction', {auctionAddress});
         };
+
+        Vue.prototype.$auctions.closeAuctionWithOptions = async (auctionAddress, newEndsAt, newMinimumBidAmount) => {
+            return Vue.prototype.$store.dispatch('$auctions/closeAuctionWithOptions', {auctionAddress, newEndsAt, newMinimumBidAmount});
+        };
+
+        
     }
 }
