@@ -151,7 +151,7 @@
             </validation-observer>
           </div>
 
-          <div class="stage-panel" v-if="!auction.viewerIsSeller && isPastEndTime && !isClosed">
+          <div class="stage-panel" v-if="auction && !auction.viewerIsSeller && isPastEndTime && !isClosed">
             <h3>Close</h3>
             <p>The auction is past it's "Target Close" datetime and can be closed by anyone. As long as it hasn't been closed, bids will still be accepted</p>
             <!-- Close Auction for non owners -->
