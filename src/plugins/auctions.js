@@ -305,12 +305,12 @@ export default {
 
                 // If the server was the one doing the filtering and sorting the API call
                 // would be made here and results stored in the state (through a mutation of course)
-                updateAuctionsFilter: async({ commit }, auctionsFilter) => {
+                updateAuctionsFilter: async({commit}, auctionsFilter) => {
                     commit("updateAuctionsFilter", auctionsFilter)
                 },
 
                 // This method uses vuex mutation atomicity in three steps (first two related) so the state is always consistent no matter what
-                updateAuctionsViewer: async({ commit, dispatch }, auctionsViewer) => {
+                updateAuctionsViewer: async({commit, dispatch}, auctionsViewer) => {
                     if(auctionsViewer.viewingKey) {
                         await dispatch("updateAuctionsFromViewer", auctionsViewer);
                     } else {
@@ -318,7 +318,7 @@ export default {
                     }
                 },
 
-                retractBid: async({ commit }, auctionAddress) => {
+                retractBid: async({commit}, auctionAddress) => {
                     const response = await auctionsApi.retractBid(auctionAddress);
                     if(response.retract_bid?.status == 'Success') {
                         commit("retractBid", { auctionAddress });
@@ -326,7 +326,7 @@ export default {
                     return response; 
                 },
 
-                placeBid: async({ commit },{ bidTokenAddress, auctionAddress, bidAmount }) => {
+                placeBid: async({commit},{bidTokenAddress, auctionAddress, bidAmount}) => {
                     const response = await auctionsApi.placeBid(bidTokenAddress, auctionAddress, bidAmount);
                     if(response.bid?.status == 'Success') {
                         const currentBid = {
@@ -341,8 +341,7 @@ export default {
                     return response; 
                 },
 
-                changeMinimumBid: async({ commit }, {auctionAddress, newMinimumBidAmount}) => {
-                    console.log(endsAt)
+                changeMinimumBid: async({commit}, {auctionAddress, newMinimumBidAmount}) => {
                     const response = await auctionsApi.changeMinimumBid(auctionAddress, newMinimumBidAmount);
                     if(response.change_minimum_bid?.status == 'Success') {
                         const minimumBid = response.change_minimum_bid.minimum_bid;
@@ -353,11 +352,9 @@ export default {
                 },
 
                 closeAuction: async({commit}, {auctionAddress, response}) => {
-                    console.log("closeAuction response param",response, auctionAddress);
                     if(!response) {
                         response = await auctionsApi.closeAuction(auctionAddress);
                     }
-                    console.log("closeAuction response",response);
                     if(response.close_auction?.status == 'Success') {
                         const params = {
                             isWinner: false,
@@ -373,11 +370,10 @@ export default {
                     return response;
                 },
 
-                closeAuctionWithOptions: async({ state, commit, dispatch }, {auctionAddress, newEndsAt, newMinimumBidAmount}) => {
+                closeAuctionWithOptions: async({state, commit, dispatch}, {auctionAddress, newEndsAt, newMinimumBidAmount}) => {
                     const response = await auctionsApi.closeAuctionWithOptions(auctionAddress, newEndsAt, newMinimumBidAmount);
-                    console.log("With Options Response", response);
                     if(response.close_auction?.status == "Success") {
-                        dispatch('closeAuction', { auctionAddress, response});
+                        dispatch('closeAuction', {auctionAddress, response});
                     } else {
                         if(response.close_auction.message == 'There were no active bids.  The closing time and minimum bid has been updated') {
                             const auction = state.auctions.find(auction => auction.address === auctionAddress);
