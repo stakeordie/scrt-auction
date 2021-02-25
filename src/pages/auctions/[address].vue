@@ -12,18 +12,18 @@
     <column>
       <block>
         <div class="forms-wrapper">
-          <div class="stage-panel" v-if="this.auction && this.auction.viewerIsSeller && !isClosed">
+          <div class="stage-panel" v-if="auction && auction.viewerIsSeller && !isClosed">
             <h3>Owner: Manage Auction</h3>
-            <dl v-if="this.auction.viewerIsSeller && !isPastEndTime">
+            <dl v-if="!isPastEndTime">
               <dd>
-                <button v-show="!showUpdateAskingPriceForm" @click="showUpdateAskingPriceForm = !showUpdateAskingPriceForm">Update Asking Price</button><br/>
-                <validation-observer v-show="showUpdateAskingPriceForm" v-slot="{ handleSubmit, invalid }">
+                <button v-show="manageAuctionFormState != 'updateAsking'" @click="manageAuctionFormState = 'updateAsking'">Update Asking Price</button><br/>
+                <validation-observer v-show="manageAuctionFormState == 'updateAsking'" v-slot="{ handleSubmit, invalid }">
                   <form @submit.prevent="handleSubmit(updateAskingPrice)">
                     <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
                       <label for="asking-price-form">New Asking Price</label>
                       <span class="error">{{ errors[0] }}</span>
                       <input name="asking-price-form" type="text" v-model.trim="updateAskingPriceForm.askingPrice" />
-                      <div class="bid-price-conversion">New Minimum Bid = {{ changeAskingPriceFormMinimumBid }} {{auction.bid.denom}}</div>
+                      <div class="bid-price-conversion">New Minimum Bid = {{ updateAskingPriceFormMinimumBid }} {{auction.bid.denom}}</div>
                     </validation-provider>
                     <loading-icon v-if="changeAskingPriceSubmit.inProgress">
                       <p>Updating Asking Price</p>
@@ -52,8 +52,8 @@
             <!-- -->
             <dl>
               <dd>
-                <button v-show="this.auction.viewerIsSeller && !closeAuctionRequested" @click="closeAuctionRequested = !closeAuctionRequested" class="orange-btn">Close Auction</button>
-                <div v-show="closeAuctionRequested" class="stage-panel stage-panel__info">
+                <button v-show="manageAuctionFormState != 'closeAuction' && manageAuctionFormState != 'closeAuctionWithOptions'" @click="manageAuctionFormState = 'closeAuction'" class="orange-btn">Close Auction</button>
+                <div v-show="manageAuctionFormState == 'closeAuction' || manageAuctionFormState == 'closeAuctionWithOptions'" class="stage-panel full-width">
                   <h3>Close Auction</h3>
                   <div class="details">
                       <p>As the owner of this auction you have two ways to close an Auction.</p>
@@ -66,11 +66,11 @@
                         <p>{{ closeAuctionSimpleSubmit.response.error }}</p>
                       </div>
                       <div class="flex close-auction-buttons">
-                        <button @click="closeAuctionWithOptionsRequested = true;">Extend Auction if No Bids</button>
-                        <button @click="closeAuctionSimple">Close Auction No Matter What</button>
+                        <button @click="manageAuctionFormState = 'closeAuctionWithOptions'">Extend Auction if No Bids</button>
+                        <button @click="manageAuctionFormState = 'closeAuction'">Close Auction No Matter What</button>
                       </div>
                   </div>
-                  <validation-observer v-show="closeAuctionWithOptionsRequested" v-slot="{ handleSubmit, invalid }">
+                  <validation-observer v-show="manageAuctionFormState == 'closeAuctionWithOptions'" v-slot="{ handleSubmit, invalid }">
                     <form @submit.prevent="handleSubmit(closeAuctionWithOptions)">
                       <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
                         <label for="asking-price-form">New Asking Price</label>
@@ -111,7 +111,7 @@
               <h5>Current Bid</h5>
               <dl>
                 <dd>
-                  {{ bidPrice }} {{ auction.bid.denom }} <span style="font-size: 13px" v-if="auction.sell.decimalAmount != 1">({{ auction.currentBid.decimalAmount }} {{ auction.bid.denom }})</span>
+                  {{ currentBidPrice }} {{ auction.bid.denom }} <span style="font-size: 13px" v-if="auction.sell.decimalAmount != 1">({{ auction.currentBid.decimalAmount }} {{ auction.bid.denom }})</span>
                 </dd>
               </dl>
               <loading-icon v-if="retractBidSubmit.inProgress">
@@ -133,7 +133,7 @@
                   <li v-for="(error, i) in errors" :key="i" class="error">{{ error }}</li>
                 </ul>
                 <div class="form__frame">
-                  <validation-provider :rules="`required|min_value:${askingPrice}`" v-slot="{ errors }">
+                  <validation-provider :rules="`required|min_value:${auction.price}`" v-slot="{ errors }">
                     <label for="payment-amount">Bid Price Per Token</label>
                     <span class="error">{{ errors[0] }}</span>
                     <input name="payment-amount" type="text" v-model.trim="placeBidForm.bidPrice" />
@@ -151,7 +151,7 @@
             </validation-observer>
           </div>
 
-          <div class="stage-panel" v-if="this.auction && !this.auction.viewerIsSeller && isPastEndTime && !isClosed">
+          <div class="stage-panel" v-if="!auction.viewerIsSeller && isPastEndTime && !isClosed">
             <h3>Close</h3>
             <p>The auction is past it's "Target Close" datetime and can be closed by anyone. As long as it hasn't been closed, bids will still be accepted</p>
             <!-- Close Auction for non owners -->
@@ -162,7 +162,7 @@
               <div class="result-failed" v-if="closeAuctionSimpleNOSubmit.result == 'error'">
                 <p>{{ closeAuctionSimpleNOSubmit.response.error }}</p>
               </div>
-              <dd><button v-show="this.auction && !this.auction.viewerIsSeller && isPastEndTime" @click="closeAuctionSimpleNO">Close This Auction</button></dd>
+              <dd><button @click="closeAuctionSimpleNO">Close This Auction</button></dd>
             </dl>
           </div>
         </div>
@@ -250,10 +250,8 @@ export default {
         endTimeUnit: "60",
         newEndTime: new Date(),
       },
-      
-      showUpdateAskingPriceForm: false,
-      closeAuctionRequested: false,
-      closeAuctionWithOptionsRequested: false,
+
+      manageAuctionFormState: null,
 
       placeBidSubmit: {
         inProgress: false,
@@ -316,10 +314,7 @@ export default {
     bidAmount: function() {
       return new Decimal(this.placeBidForm.bidPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
     },
-    askingPrice: function () {
-      return this.auction.bid.decimalMinimum / this.auction.sell.decimalAmount;
-    },
-    changeAskingPriceFormMinimumBid: function () {
+    updateAskingPriceFormMinimumBid: function () {
       return new Decimal(this.updateAskingPriceForm.askingPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
     },
     closeAuctionFormMinimumBid: function () {
@@ -337,7 +332,7 @@ export default {
     bidInfoAmountFromFractional: function() {
       return new Decimal(this.auction.currentBid?.amount).dividedBy(Decimal.pow(10, this.auction.bid.decimals)).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"")
     },
-    bidPrice: function () {
+    currentBidPrice: function () {
       return this.auction.currentBid?.decimalAmount / this.auction.sell.decimalAmount; 
     },
     endTimeString: function () {
@@ -352,6 +347,7 @@ export default {
   },
   methods: {
     async placeBid() {
+      this.manageAuctionFormState = null;
       this.placeBidSubmit.result = null;
       this.placeBidSubmit.inProgress = true;
       const bidAmountToFractional = new Decimal(this.bidAmount).times(Decimal.pow(10, this.auction.bid.decimals));
@@ -365,6 +361,7 @@ export default {
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key); // can I remove this? reactivity issue?
     },
     async retractBid() {
+      this.manageAuctionFormState = null;
       this.retractBidSubmit.result = null;
       this.retractBidSubmit.inProgress = true;
       this.retractBidSubmit.response = await this.$auctions.retractBid(this.auction.address);
@@ -377,20 +374,18 @@ export default {
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
     },
     async updateAskingPrice() {
-      const newMinimumBidAmount = new Decimal(this.changeAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auction.bid.decimals));
+      const newMinimumBidAmount = new Decimal(this.updateAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auction.bid.decimals));
+      console.log("newMinBid", newMinimumBidAmount.toString());
       this.changeAskingPriceSubmit.result = null;
       this.changeAskingPriceSubmit.inProgress = true;
-      this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auction.address, new Decimal(newMinimumBidAmount).toFixed(0));
+      this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auction.address, newMinimumBidAmount, this.auction.sell.decimalAmount);
       this.changeAskingPriceSubmit.inProgress = false;
       if(this.changeAskingPriceSubmit.response.retractBid?.status == 'Failure' || this.changeAskingPriceSubmit.response.error) {
         this.changeAskingPriceSubmit.result = "error"
       } else {
         this.changeAskingPriceSubmit.result = "success"
-        this.showUpdateAskingPriceForm = false;
-        this.closeAuctionWithOptionsRequested = false;
-        this.closeAuctionRequested = false;
+        this.manageAuctionFormState = null;
       }
-      //console.log(bidRetracted);
     },
     async closeAuctionSimpleNO() {
       this.closeAuctionSimpleNOSubmit.result = null;
@@ -401,6 +396,7 @@ export default {
         this.closeAuctionSimpleNOSubmit.result = "error"
       } else {
         this.closeAuctionSimpleNOSubmit.result = "success"
+        this.manageAuctionFormState = null;
       }
     },
     async closeAuctionSimple() {
@@ -412,6 +408,7 @@ export default {
         this.closeAuctionSimpleSubmit.result = "error"
       } else {
         this.closeAuctionSimpleSubmit.result = "success"
+        this.manageAuctionFormState = null;
       }
     },
     async closeAuctionWithOptions() {
@@ -425,22 +422,17 @@ export default {
         this.closeAuctionWithOptionsSubmit.result = "error"
       } else {
         this.closeAuctionWithOptionsSubmit.result = "success"
-        this.showUpdateAskingPriceForm = false;
-        this.closeAuctionWithOptionsRequested = false;
-        this.closeAuctionRequested = false;
+        this.manageAuctionFormState = null;
       }
     },
     async getAuction() {
-      this.placeBidForm.bidPrice = this.askingPrice;
-      this.updateAskingPriceForm.askingPrice = this.placeBidForm.bidPrice;
-      this.closeAuctionForm.askingPrice = this.placeBidForm.bidPrice;
+      this.placeBidForm.bidPrice = this.auction.price;
+      this.updateAskingPriceForm.askingPrice = this.auction.price;
+      this.closeAuctionForm.askingPrice = this.auction.price;
       this.updateAskingPriceForm.minimumBidAmount = this.auction.bid.decimalMinimum;
     },
     updateEndTime() {
         this.closeAuctionForm.endTime = new Date((new Date()).getTime() + (Number(this.closeAuctionForm.endTimeAmount || 1) * Number(this.closeAuctionForm.endTimeUnit) * 60000));
-    },
-    endsAtModal() {
-
     }
   }
 };

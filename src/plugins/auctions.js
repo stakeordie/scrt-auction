@@ -184,8 +184,8 @@ export default {
                     state.tokenData = tokenData;
                 },
 
-                retractBid(state, {address}) {
-                    const auction = state.auctions.find(auction => auction.address === address);
+                retractBid(state, {auctionAddress}) {
+                    const auction = state.auctions.find(auction => auction.address === auctionAddress);
                     auction.viewerIsBidder = false;
                     auction.currentBid = false;
                 },
@@ -194,6 +194,13 @@ export default {
                     const auction = state.auctions.find(auction => auction.address === auctionAddress);
                     auction.viewerIsBidder = true;
                     auction.currentBid = currentBid;
+                },
+
+                changeMinimumBid(state, {auctionAddress, minimum, decimalMinimum, price}) {
+                    const auction = state.auctions.find(auction => auction.address === auctionAddress);
+                    auction.bid.minimum = minimum;
+                    auction.bid.decimalMinimum = decimalMinimum;
+                    auction.price = price;
                 }
 
               },
@@ -293,10 +300,10 @@ export default {
                     }
                 },
 
-                retractBid: async({ commit }, address) => {
-                    const response = await auctionsApi.retractBid(address);
+                retractBid: async({ commit }, auctionAddress) => {
+                    const response = await auctionsApi.retractBid(auctionAddress);
                     if(response.retract_bid?.status == 'Success') {
-                        commit("retractBid", { address });
+                        commit("retractBid", { auctionAddress });
                     }
                     return response; 
                 },
@@ -312,6 +319,19 @@ export default {
                             message: "Bid placed " + moment().utc().format("YYYY-MM-DD HH:mm:ss") + " UTC"
                         }
                         commit("placeBid", { auctionAddress, currentBid });
+                    }
+                    return response; 
+                },
+
+                changeMinimumBid: async({ commit }, {auctionAddress, newMinimumBidAmount, sellDecimalPrice}) => {
+                    const response = await auctionsApi.changeMinimumBid(auctionAddress, newMinimumBidAmount);
+                    console.log("Change Bid Response", response);
+                    if(response.change_minimum_bid?.status == 'Success') {
+                        
+                        const minimumBid = response.change_minimum_bid.minimum_bid;
+                        const decimalMinimum = auctionsApi.tokens2Decimal(response.change_minimum_bid.minimum_bid, response.change_minimum_bid.bid_decimals);
+                        const price = decimalMinimum / sellDecimalPrice
+                        commit("changeMinimumBid", { auctionAddress, minimumBid, decimalMinimum, price });
                     }
                     return response; 
                 }
@@ -353,12 +373,16 @@ export default {
 
         //txs
 
-        Vue.prototype.$auctions.retractBid = async (address) => {
-           return Vue.prototype.$store.dispatch('$auctions/retractBid', address);
+        Vue.prototype.$auctions.retractBid = async (auctionAddress) => {
+           return Vue.prototype.$store.dispatch('$auctions/retractBid', auctionAddress);
         };
 
         Vue.prototype.$auctions.placeBid = async (bidTokenAddress, auctionAddress, bidAmount) => {
             return Vue.prototype.$store.dispatch('$auctions/placeBid', { bidTokenAddress, auctionAddress, bidAmount });
+        };
+
+        Vue.prototype.$auctions.changeMinimumBid = async (auctionAddress, newMinimumBidAmount, sellDecimalPrice) => {
+            return Vue.prototype.$store.dispatch('$auctions/changeMinimumBid', {auctionAddress, newMinimumBidAmount, sellDecimalPrice});
         };
     }
 }
