@@ -67,7 +67,7 @@
                       </div>
                       <div class="flex close-auction-buttons">
                         <button @click="manageAuctionFormState = 'closeAuctionWithOptions'">Extend Auction if No Bids</button>
-                        <button @click="manageAuctionFormState = 'closeAuction'">Close Auction No Matter What</button>
+                        <button @click="closeAuctionSimple">Close Auction No Matter What</button>
                       </div>
                   </div>
                   <validation-observer v-show="manageAuctionFormState == 'closeAuctionWithOptions'" v-slot="{ handleSubmit, invalid }">
@@ -375,7 +375,6 @@ export default {
     },
     async updateAskingPrice() {
       const newMinimumBidAmount = new Decimal(this.updateAskingPriceFormMinimumBid).times(Decimal.pow(10, this.auction.bid.decimals));
-      console.log("newMinBid", newMinimumBidAmount.toString());
       this.changeAskingPriceSubmit.result = null;
       this.changeAskingPriceSubmit.inProgress = true;
       this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auction.address, newMinimumBidAmount, this.auction.sell.decimalAmount);
@@ -392,7 +391,7 @@ export default {
       this.closeAuctionSimpleNOSubmit.inProgress = true;
       this.closeAuctionSimpleNOSubmit.response = await this.$auctions.closeAuction(this.auction.address)
       this.closeAuctionSimpleNOSubmit.inProgress = false;
-      if(this.closeAuctionSimpleNOSubmit.response.retractBid?.status == 'Failure' || this.closeAuctionSimpleNOSubmit.response.error) {
+      if(this.closeAuctionSimpleNOSubmit.response.close_auction?.status == 'Failure' || this.closeAuctionSimpleNOSubmit.response.error) {
         this.closeAuctionSimpleNOSubmit.result = "error"
       } else {
         this.closeAuctionSimpleNOSubmit.result = "success"
@@ -400,6 +399,7 @@ export default {
       }
     },
     async closeAuctionSimple() {
+      this.manageAuctionFormState = 'closeAuction'
       this.closeAuctionSimpleSubmit.result = null;
       this.closeAuctionSimpleSubmit.inProgress = true;
       this.closeAuctionSimpleSubmit.response = await this.$auctions.closeAuction(this.auction.address)
