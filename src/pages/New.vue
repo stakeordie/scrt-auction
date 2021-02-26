@@ -447,7 +447,7 @@ export default {
 }
 
 
-// All the stage fun comes here...
+// All the stage fun comes here, refactor one day to a proper CSS state machine...
 .new-auction {
 
     margin: var(--f-gutter-xl) 0;
@@ -456,7 +456,8 @@ export default {
     &__stage-info {
         
         .stage-panel__info {
-            border: 1px solid rgba(255,255,255,0.85);
+            border: 1px solid #2E323C;
+            background-color: #0D1017;
             .number {
                 color: black;
                 background-color: var(--color-yellow-primary);
@@ -482,7 +483,8 @@ export default {
             }
         }
         .stage-panel__confirm {
-            border: 1px solid rgba(255,255,255,0.85);
+            border: 1px solid #2E323C;
+            background-color: #0D1017;
             .number {
                 background-color: var(--color-yellow-primary);
                 color: black;
@@ -505,7 +507,8 @@ export default {
             }
         }
         .stage-panel__allowance {
-            border: 1px solid rgba(255,255,255,0.85);
+            border: 1px solid #2E323C;
+            background-color: #0D1017;
             .number {
                 background-color: var(--color-yellow-primary);
                 color: black;
@@ -532,7 +535,8 @@ export default {
                 border: 1px solid var(--color-negative);
             }
             &:not(.error) {
-                border: 1px solid rgba(255,255,255,0.85);
+                border: 1px solid #2E323C;
+                background-color: #0D1017;
             }
             .number {
                 background-color: var(--color-yellow-primary);
@@ -557,7 +561,8 @@ export default {
             opacity: 0.5;
         }
         .stage-panel__congrats {
-            border: 1px solid var(--color-positive);
+            border: 1px solid #2E323C;
+            background-color: #0D1017;
         }
     }
 }

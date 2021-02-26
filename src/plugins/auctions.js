@@ -397,6 +397,8 @@ export default {
 
 
         Vue.prototype.$auctions.getAuction = Vue.prototype.$store.getters['$auctions/getAuction'];
+        Vue.prototype.$auctions.sellDenoms = Vue.prototype.$store.getters['$auctions/sellDenoms'];
+        Vue.prototype.$auctions.bidDenoms  = Vue.prototype.$store.getters['$auctions/bidDenoms'];
 
         Vue.prototype.$auctions.emojiHash = (label) => {
             return arrayHash(label, emojis);
