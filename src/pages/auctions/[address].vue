@@ -1,10 +1,12 @@
 <template>
   <page>
     <column class="auction__header" v-if="auction">
-      <div class="page-title">
-          <h1>Auction Detail</h1>
-          <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
-      </div>
+      <block>
+        <div class="page-title">
+            <h1>Auction Detail</h1>
+            <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
+        </div>
+      </block>
       <block>
         <auction-item :auction="auction" class="list selected"></auction-item>
       </block>
