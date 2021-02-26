@@ -212,12 +212,12 @@ export default {
                 closeAuction(state, {auctionAddress, params}) { 
                     const auction = state.auctions.find(auction => auction.address === auctionAddress);
                     auction.status = "CLOSED";
-                    auction.viewerWasSeller = auction.viewerIsSeller
+                    auction.viewerWasSeller = auction.viewerIsSeller;
                     auction.closedAt = params.closedAt;
-                    auction.viewerIsWinner = params.isWinner
+                    auction.viewerIsWinner = params.isWinner;
                     if(params.isWinner) {
-                        auction.bid.winner = params.winningBid
-                        auction.bid.decimalWinner = params.decimalWinningBid
+                        auction.bid.winner = params.winningBid;
+                        auction.bid.decimalWinner = params.decimalWinningBid;
                     }
                 }
 

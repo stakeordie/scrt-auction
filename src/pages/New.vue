@@ -294,10 +294,13 @@ export default {
                 // Converts from millis to a second-based UNIX friendly epoch time
                 Math.round(this.auctionForm.endTime.getTime() / 1000)
             );
+
+            await this.$auctions.updateAuctions();
             // Log status
             this.newAuctionPath = "/auctions/" + auction.auctionAddress;
             if(!auction.error) {
                 this.stage = "congrats";
+
             } else {
                 this.stage = "auction";
                 this.auctionError = auction.error;
