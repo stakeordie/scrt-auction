@@ -117,8 +117,8 @@ export default {
         },
         async refreshWallet() {
             let aWallet = this.$vkeys.list(this.userAddress);
-            console.log(this.userAddress);
-            console.log(aWallet);//await this.$auctions.getWallet();
+            //console.log(this.userAddress);
+            //console.log(aWallet);//await this.$auctions.getWallet();
             /*let entryAddress = "";
             let info = {};
             let msg = {};

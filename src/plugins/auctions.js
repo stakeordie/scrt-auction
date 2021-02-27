@@ -238,7 +238,6 @@ export default {
                         hasBids: false,
                         currentBid: false
                     }
-                    console.log("updateAuctionBidDetails.params",{address, userAddress, viewingKey});
                     const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey, state.tokenData); //get userAuctions
                     
                     
