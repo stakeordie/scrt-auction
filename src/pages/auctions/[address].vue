@@ -357,6 +357,7 @@ export default {
       const bidAmountToFractional = new Decimal(this.bidAmount).times(Decimal.pow(10, this.auction.bid.decimals));
       this.placeBidSubmit.response = await this.$auctions.placeBid(this.auction.bid.contract, this.auction.address, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placeBidSubmit.inProgress = false;
+      //console.log("placeBid", this.placeBidSubmit.response)
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
         this.placeBidSubmit.result = "error"
       } else {

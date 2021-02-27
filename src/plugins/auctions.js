@@ -250,8 +250,8 @@ export default {
                         hasBids: false,
                         currentBid: false
                     }
-                
                     const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey, state.tokenData); //get userAuctions
+                    
                     
                     if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am bidder
                         auction.currentBid = await auctionsApi.getCurrentBid(address, userAddress, viewingKey);

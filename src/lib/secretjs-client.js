@@ -190,6 +190,15 @@ export class SecretJsClient {
       if(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("auction_address") > -1)) {
         result.auctionAddress = response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf("auction_address") > -1).value.replace(/\s/g, "")
       }
+      for (const prop in result) {
+        //console.log(prop);
+        if(result[prop].status == "Failure") {
+          response = {};
+          //console.log(result[prop].message);
+          response.message = result[prop].message;
+          throw new SyntaxError("");
+        }
+      }
       //console.log(secretjs-client/handleResponseA,result);
       // if(logKey) {
       //   result[logKey] = JSON.parse(response.logs[0].events.find(event => event.type === "wasm").attributes.find(attribute => attribute.key.indexOf(logKey) > -1).value.replace(/\\/g, ""));
@@ -199,6 +208,7 @@ export class SecretJsClient {
             //console.log("secretjs-client/handleResponseB", JSON.parse(new TextDecoder("utf-8").decode(response.data)));
             result = JSON.parse(new TextDecoder("utf-8").decode(response.data));
         } catch (e) {
+          //console.log("handleResponse.response",response.message);
           let errorMessage = "";
           switch(true) {
             case /unknown variant/.test(response.message):
@@ -222,6 +232,9 @@ export class SecretJsClient {
               break;
             case /Sell contract and bid contract must be different/.test(response.message):
               errorMessage = "You cannot have an auction in which you sell and ask for the same token. Please make them different and try again."
+              break;
+            case /New bid is the same as previous bid/.test(response.message):
+              errorMessage = "You already have a bid for this amount."
               break;
             case /Could not establish connection. Receiving end does not exist./.test(response.message):
             case /Request failed with status code 502/.test(response.message):
