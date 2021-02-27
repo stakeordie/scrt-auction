@@ -298,7 +298,7 @@ export default {
                 Math.round(this.auctionForm.endTime.getTime() / 1000)
             );
 
-            await this.$auctions.updateAuctions();
+            await this.$auctions.updateAllAuctions();
             // Log status
             this.newAuctionPath = "/auctions/" + auction.auctionAddress;
             if(!auction.error) {

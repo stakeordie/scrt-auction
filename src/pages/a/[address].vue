@@ -89,7 +89,7 @@ export default {
   },
   async mounted() {
     await this.$auctions.updateAuction(this.$route.params.address);
-    await this.$auctions.updateAuctions();
+    await this.$auctions.updateAllAuctions();
   },
   methods: {
     placedBid(auction) {

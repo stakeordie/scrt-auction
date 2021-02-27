@@ -95,7 +95,7 @@ export default {
     },
     created() {
         this.refreshWallet();
-        this.$auctions.updateAuctions();
+        this.$auctions.updateAllAuctions();
     },
     computed: {
         auctionsFilter() {
