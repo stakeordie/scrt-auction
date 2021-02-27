@@ -188,8 +188,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required, min_value/*, max_decimals */} from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
@@ -302,7 +300,6 @@ export default {
     }
   },
   async mounted () {
-    console.log("TEST");
     await this.$auctions.updateAuction(this.$route.params.address);
     await this.$auctions.updateAllAuctions();
     this.getAuction()
