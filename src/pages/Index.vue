@@ -34,8 +34,8 @@ export default {
       "activeAuctions",
     ])
   },
-  async mounted() {
-    this.$auctions.updateAuctions();
+  mounted() {
+    this.$auctions.updateActiveAuctions();
   },
   // methods: {
   //   clearFilters() {

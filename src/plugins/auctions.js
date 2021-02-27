@@ -416,11 +416,25 @@ export default {
             return arrayHash(label, emojis);
         };
 
-        Vue.prototype.$auctions.updateAuctions = async () => {
+        Vue.prototype.$auctions.updateAllAuctions = async () => {
             Vue.prototype.$store.dispatch('$auctions/updateActiveAuctions');
             Vue.prototype.$store.dispatch('$auctions/updateAuctionsFromViewer');
             Vue.prototype.$store.dispatch('$auctions/updateClosedAuctions');
         };
+
+        Vue.prototype.$auctions.updateActiveAuctions = async () => {
+            Vue.prototype.$store.dispatch('$auctions/updateActiveAuctions');
+        };
+
+        Vue.prototype.$auctions.updateUserAuctions = async () => {
+            Vue.prototype.$store.dispatch('$auctions/updateAuctionsFromViewer');
+        };
+
+        Vue.prototype.$auctions.updateClosedAuctions = async () => {
+            Vue.prototype.$store.dispatch('$auctions/updateClosedAuctions');
+        };
+
+
 
         Vue.prototype.$auctions.updateAuction = async (address) => {
             Vue.prototype.$store.dispatch('$auctions/updateAuction', address);

@@ -25,8 +25,8 @@ export default {
       "userAuctions",
     ])
   },
-  async mounted() {
-    this.$auctions.updateAuctions();
+  mounted() {
+    this.$auctions.updateUserAuctions();
   },
 }
 </script>
