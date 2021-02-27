@@ -46,7 +46,7 @@ export default function(Vue, { router, head, isClient }) {
   });
 
   Vue.use(VKeys);
-  console.log("TEST");
+  
   Vue.use(Keplr, { 
     chainId: process.env.GRIDSOME_SECRET_CHAIN_ID,
     chainName: process.env.GRIDSOME_SECRET_CHAIN_NAME,
@@ -59,12 +59,12 @@ export default function(Vue, { router, head, isClient }) {
       }
     }
   });
-  console.log("TEST2");
+
   Vue.use(ScrtJs, { 
     restUrl: process.env.GRIDSOME_SECRET_REST_URL, 
     wallet: Vue.prototype.$keplr 
   });
-  console.log("TEST3");
+
   // Available tokens are enabled depending on the chain
   let availableTokens;
   if(process.env.GRIDSOME_SECRET_CHAIN_ID == "secret-2") {
@@ -72,14 +72,13 @@ export default function(Vue, { router, head, isClient }) {
   } else {
     availableTokens = tokensForTesting;
   }
-  console.log("TEST4");
+  
   Vue.use(Auctions, { 
     chainClient: Vue.prototype.$scrtjs,
     factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
     availableTokens
   });
-  console.log("TEST5");
+  
   // The state is persisted after the plugins have been loaded
   statePersist.start();
-  console.log("TEST6");
 }
