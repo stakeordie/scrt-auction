@@ -302,6 +302,7 @@ export default {
     }
   },
   async mounted () {
+    console.log("TEST");
     await this.$auctions.updateAuction(this.$route.params.address);
     await this.$auctions.updateAuctions();
     this.getAuction()

@@ -23,8 +23,6 @@ import testnetChain from "./lib/chain/testnet";
 import tokensForTesting from "./lib/tokens/testnet"
 import tokensForProduction from "./lib/tokens/mainnet"
 
-console.log("main.js", "TEST");
-
 Number.prototype.countDecimals = function () {
   if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
   return this.toString().split(".")[1].length || 0; 
