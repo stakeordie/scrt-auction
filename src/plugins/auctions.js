@@ -18,6 +18,47 @@ const arrayHash = (str, array) => {
     return array[Math.abs(hash) % array.length];
 }
 
+
+const filterAndSortAuctions = (auctions, filter) => {
+    return auctions.filter(auction => {
+        if(filter.sellToken != "" && auction.sell.denom != filter.sellToken) {
+            return false;
+        }
+        // if(filter.bidToken != "" && auction.bid.denom != filter.bidToken) {
+        //     return false;
+        // }
+        // if(filter.onlyMine && !(auction.viewerIsSeller || auction.viewerIsBidder || auction.viewerWasSeller || auction.viewerIsWinner)) {
+        //     return false;
+        // }
+        // if(!filter.showClosed && auction.status === 'CLOSED') {
+        //     return false;
+        // }
+        // if(filter.showClosed && auction.status === 'ACTIVE') {
+        //     return false;
+        // }
+        // if(filter.showClosed && auction.status === 'CLOSED' && !auction.bid.winner) {
+        //     return false;
+        // }
+
+        return true;
+    }).sort((a, b) => {
+        // First we show the active ones by default
+        if (a.status != b.status) {
+            return a.status == "ACTIVE" ? -1 : 1;
+        } else {
+            const priceOrderFactor = filter.sort.fields.price == "asc" ? -1 : 1;
+            if(filter.sort.priority == "price") {
+                if(a.price > b.price) {
+                    return priceOrderFactor * -1;
+                } else {
+                    return priceOrderFactor;
+                }
+            }
+        }
+
+    });
+}
+
 // This plugin is the abstraction layer in charge of picking up the domain from the API client, 
 // and convert it into a model usable by the UI
 export default {
@@ -57,44 +98,15 @@ export default {
                 },
                 // Since filter and sorting is done in the client, this is performed by a getter instead
                 // of a dispatcher storing a plain list of search results filtered and ordered in the server
-                filteredAuctions: state => {
-                    return state.auctions.filter(auction => {
-                        if(state.auctionsFilter.sellToken != "" && auction.sell.denom != state.auctionsFilter.sellToken) {
-                            return false;
-                        }
-                        if(state.auctionsFilter.bidToken != "" && auction.bid.denom != state.auctionsFilter.bidToken) {
-                            return false;
-                        }
-                        if(state.auctionsFilter.onlyMine && !(auction.viewerIsSeller || auction.viewerIsBidder || auction.viewerWasSeller || auction.viewerIsWinner)) {
-                            return false;
-                        }
-                        if(!state.auctionsFilter.showClosed && auction.status === 'CLOSED') {
-                            return false;
-                        }
-                        if(state.auctionsFilter.showClosed && auction.status === 'ACTIVE') {
-                            return false;
-                        }
-                        if(state.auctionsFilter.showClosed && auction.status === 'CLOSED' && !auction.bid.winner) {
-                            return false;
-                        }
 
-                        return true;
-                    }).sort((a, b) => {
-                        // First we show the active ones by default
-                        if (a.status != b.status) {
-                            return a.status == "ACTIVE" ? -1 : 1;
-                        } else {
-                            const priceOrderFactor = state.auctionsFilter.sort.fields.price == "asc" ? -1 : 1;
-                            if(state.auctionsFilter.sort.priority == "price") {
-                                if(a.price > b.price) {
-                                    return priceOrderFactor * -1;
-                                } else {
-                                    return priceOrderFactor;
-                                }
-                            }
-                        }
-
-                    });
+                activeAuctions: state => {
+                    return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => a.status == 'ACTIVE');
+                },
+                userAuctions: state => {
+                    return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => (a.viewerIsSeller || a.viewerIsBidder || a.viewerWasSeller || a.viewerIsWinner));
+                },
+                closedAuctions: state => {
+                    return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => a.status == 'CLOSED');
                 },
                 sellDenoms: state => {
                     return [...new Set(state.auctions.filter(auction => auction.sell).map(auction => {

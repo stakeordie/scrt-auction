@@ -1,164 +1,166 @@
 <template>
-    <validation-observer v-slot="{ handleSubmit, invalid }">
-        <page>
-            <column :class="['new-auction', 'new-auction__stage-' + stage]" number="2" number-s="1">
-                <block>
-                    <h1>New Auction</h1>
-                    <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
-                        <div class="auction-form__label">
-                            <label for="auction-label">Emoji</label>
-                            <a href="" :title="auctionForm.label" @click="randomizeLabel()" class="auction-form__label-emoji no-button">{{ String.fromCodePoint($auctions.emojiHash(auctionForm.label)) }}</a>
-                        </div>
+    <default-layout>
+        <validation-observer v-slot="{ handleSubmit, invalid }">
+            <page>
+                <column :class="['new-auction', 'new-auction__stage-' + stage]" number="2" number-s="1">
+                    <block>
+                        <h1>New Auction</h1>
+                        <form class="auction-form" @submit.prevent="handleSubmit(submitInfo)">
+                            <div class="auction-form__label">
+                                <label for="auction-label">Emoji</label>
+                                <a href="" :title="auctionForm.label" @click="randomizeLabel()" class="auction-form__label-emoji no-button">{{ String.fromCodePoint($auctions.emojiHash(auctionForm.label)) }}</a>
+                            </div>
 
-                        <!-- Using keplr to get the account -->
-                        <validation-provider class="auction-form__account" rules="required" v-slot="{ errors }">
-                            <label for="auction-account">Account</label>
-                            <span class="error" v-show="errors.length > 0">Authenticate using Keplr</span>
-                            <keplr-account v-model="auctionForm.account" :abbreviation="16"></keplr-account>
-                        </validation-provider>
+                            <!-- Using keplr to get the account -->
+                            <validation-provider class="auction-form__account" rules="required" v-slot="{ errors }">
+                                <label for="auction-account">Account</label>
+                                <span class="error" v-show="errors.length > 0">Authenticate using Keplr</span>
+                                <keplr-account v-model="auctionForm.account" :abbreviation="16"></keplr-account>
+                            </validation-provider>
 
-                        <!-- Sell token -->
-                        <validation-provider class="auction-form__sell-amount" :rules="`required|max_decimals:${auctionForm.sellToken ? auctionForm.sellToken.decimals : 18}`" v-slot="{ errors }">
-                            <label for="sell-amount">Selling</label>
-                            <span class="error">{{ errors[0] }}</span>
-                            <input name="sell-amount" type="text" v-model.trim="auctionForm.sellAmount" />
-                        </validation-provider>
+                            <!-- Sell token -->
+                            <validation-provider class="auction-form__sell-amount" :rules="`required|max_decimals:${auctionForm.sellToken ? auctionForm.sellToken.decimals : 18}`" v-slot="{ errors }">
+                                <label for="sell-amount">Selling</label>
+                                <span class="error">{{ errors[0] }}</span>
+                                <input name="sell-amount" type="text" v-model.trim="auctionForm.sellAmount" />
+                            </validation-provider>
 
-                        <validation-provider class="auction-form__sell-denom" rules="required" v-slot="{ errors }">
-                            <span class="error">{{ errors[0] }}</span>
-                            <select name="sell-denom" v-model="auctionForm.sellToken">
-                                <option value="" disabled selected hidden>Sell Token</option>
-                                <option v-for="sellToken in availableTokens" :key="sellToken.address" v-bind:value="sellToken">
-                                    {{ sellToken.symbol }}
-                                </option>
-                            </select>
-                        </validation-provider>
-
-                        <!-- Bid token -->
-                        <validation-provider class="auction-form__bid-price" rules="required" v-slot="{ errors }">
-                            <label for="minimum-bid-price">Asking Price</label>
-                            <span class="error">{{ errors[0] }}</span>
-                            <input name="minimum-bid-price" type="text" v-model.trim="auctionForm.bidPrice" />
-                        </validation-provider>
-
-                        <validation-provider class="auction-form__min-bid-amount" :rules="`required|greater_than:0|max_decimals:${auctionForm.bidToken ? auctionForm.bidToken.decimals : 18}`" v-slot="{ errors }">
-                            <label for="minimum-bid-amount">Minimum bid</label>
-                            <span class="error">{{ errors[0] }}</span>
-                            <input name="minimum-bid-amount" readonly type="text" v-model="minBidAmount" />
-                        </validation-provider>
-
-                        <validation-provider class="auction-form__bid-denom" rules="required" v-slot="{ errors }">
-                            <span class="error">{{ errors[0] }}</span>
-                            <select name="bid-denom" v-model="auctionForm.bidToken" required>
-                                <option value="" disabled selected hidden>Bid Token</option>
-                                <option v-for="bidToken in availableTokens" :key="bidToken.address" v-bind:value="bidToken">
-                                    {{ bidToken.symbol }}
-                                </option>
-                            </select>
-                        </validation-provider>
-
-                        <!-- New auction date time -->
-                        <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
-
-                            <label for="auction-end-time">Target Close</label>
-                            <span class="error">{{ errors[0] }}</span>
-                            <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
-
-                            <p>Can be closed after 
-                                <input class="auction-form__end-time__amount" type="number" min="1" max="60" placeholder="1" @change="updateEndTime()" v-model="endTimeAmount">
-                                <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
-                                    <option value="1">minute<span v-if="endTimeAmount != 1">s</span></option>
-                                    <option value="60">hour<span v-if="endTimeAmount != 1">s</span></option>
+                            <validation-provider class="auction-form__sell-denom" rules="required" v-slot="{ errors }">
+                                <span class="error">{{ errors[0] }}</span>
+                                <select name="sell-denom" v-model="auctionForm.sellToken">
+                                    <option value="" disabled selected hidden>Sell Token</option>
+                                    <option v-for="sellToken in availableTokens" :key="sellToken.address" v-bind:value="sellToken">
+                                        {{ sellToken.symbol }}
+                                    </option>
                                 </select>
-                            </p>
-                        </validation-provider>
+                            </validation-provider>
 
-                        <!-- New auction description -->
-                        <validation-provider class="auction-form__description">
-                            <label for="auction-description">Description</label>
-                            <textarea name="auction-description" v-model.trim="auctionForm.description" placeholder="Optional markdown"></textarea>
-                        </validation-provider>
+                            <!-- Bid token -->
+                            <validation-provider class="auction-form__bid-price" rules="required" v-slot="{ errors }">
+                                <label for="minimum-bid-price">Asking Price</label>
+                                <span class="error">{{ errors[0] }}</span>
+                                <input name="minimum-bid-price" type="text" v-model.trim="auctionForm.bidPrice" />
+                            </validation-provider>
 
-                        <button class="auction-form__info-action" :disabled="invalid || stage != 'info'">Continue</button>
-                    </form>
-                </block>
+                            <validation-provider class="auction-form__min-bid-amount" :rules="`required|greater_than:0|max_decimals:${auctionForm.bidToken ? auctionForm.bidToken.decimals : 18}`" v-slot="{ errors }">
+                                <label for="minimum-bid-amount">Minimum bid</label>
+                                <span class="error">{{ errors[0] }}</span>
+                                <input name="minimum-bid-amount" readonly type="text" v-model="minBidAmount" />
+                            </validation-provider>
+
+                            <validation-provider class="auction-form__bid-denom" rules="required" v-slot="{ errors }">
+                                <span class="error">{{ errors[0] }}</span>
+                                <select name="bid-denom" v-model="auctionForm.bidToken" required>
+                                    <option value="" disabled selected hidden>Bid Token</option>
+                                    <option v-for="bidToken in availableTokens" :key="bidToken.address" v-bind:value="bidToken">
+                                        {{ bidToken.symbol }}
+                                    </option>
+                                </select>
+                            </validation-provider>
+
+                            <!-- New auction date time -->
+                            <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
+
+                                <label for="auction-end-time">Target Close</label>
+                                <span class="error">{{ errors[0] }}</span>
+                                <input class="auction-form__end-time__time" readonly name="auction-end-time" type="text" v-model="endTimeString" />
+
+                                <p>Can be closed after 
+                                    <input class="auction-form__end-time__amount" type="number" min="1" max="60" placeholder="1" @change="updateEndTime()" v-model="endTimeAmount">
+                                    <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="endTimeUnit">
+                                        <option value="1">minute<span v-if="endTimeAmount != 1">s</span></option>
+                                        <option value="60">hour<span v-if="endTimeAmount != 1">s</span></option>
+                                    </select>
+                                </p>
+                            </validation-provider>
+
+                            <!-- New auction description -->
+                            <validation-provider class="auction-form__description">
+                                <label for="auction-description">Description</label>
+                                <textarea name="auction-description" v-model.trim="auctionForm.description" placeholder="Optional markdown"></textarea>
+                            </validation-provider>
+
+                            <button class="auction-form__info-action" :disabled="invalid || stage != 'info'">Continue</button>
+                        </form>
+                    </block>
 
 
-                <block>
-                    <!-- Form panel -->
-                    <div class="stage-panel stage-panel__info">
-                        <h4><span class="number" :class="{ valid: !invalid }">1</span> Fill auction details</h4>
-                        <div class="details" v-if="stage == 'info'">
-                            <p>Fill up the form with the auction details.</p>
-                            <p>Click <strong>"Continue"</strong> when you are ready.</p>
+                    <block>
+                        <!-- Form panel -->
+                        <div class="stage-panel stage-panel__info">
+                            <h4><span class="number" :class="{ valid: !invalid }">1</span> Fill auction details</h4>
+                            <div class="details" v-if="stage == 'info'">
+                                <p>Fill up the form with the auction details.</p>
+                                <p>Click <strong>"Continue"</strong> when you are ready.</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="stage-panel stage-panel__confirm">
-                        <h4><span class="number">2</span> Confirm details</h4>
-                        <div class="details" v-if="stage == 'confirm'">
-                            <ul>
-                                <li>You are creating an auction to sell <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong>. The tokens will be consigned to the auction contract when it is executed at step 4.</li>
-                                <li>The asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
-                                <li>Bids will start at a minimum of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
-                            </ul>
-                            <p>Please make sure that the terms are acceptable and that you have <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong> available to consign.</p>
-                            <button class="allowance-form__action" @click="increaseAllowance()">Confirm</button>
-                            <p><a href="" @click="stage = 'info'">Back</a></p>
-                        </div>
-                    </div>
-
-                    <!-- Allowance panel -->
-                    <div class="stage-panel stage-panel__allowance" :class="{ error: allowanceError }">
-                        <h4><span class="number">3</span> Set Allowance</h4>
-                        <div class="details" v-if="stage == 'allowance' || stage == 'allowance--creating'">
-                            <p>Before creating the auction you have to allow the auction contract to access your tokens. By setting allowance, you will enable the application to automate transactions for you.</p>
-                            <div class="allowance-action" v-if="stage == 'allowance'">
-                                <div v-if="allowanceError != ''">
-                                    <p class="error">Error: {{ allowanceError }}</p>
-                                </div>
-                                <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Try again' }}</button>
+                        <div class="stage-panel stage-panel__confirm">
+                            <h4><span class="number">2</span> Confirm details</h4>
+                            <div class="details" v-if="stage == 'confirm'">
+                                <ul>
+                                    <li>You are creating an auction to sell <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong>. The tokens will be consigned to the auction contract when it is executed at step 4.</li>
+                                    <li>The asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
+                                    <li>Bids will start at a minimum of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
+                                </ul>
+                                <p>Please make sure that the terms are acceptable and that you have <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong> available to consign.</p>
+                                <button class="allowance-form__action" @click="increaseAllowance()">Confirm</button>
                                 <p><a href="" @click="stage = 'info'">Back</a></p>
                             </div>
-                            <loading-icon v-if="stage == 'allowance--creating'">
-                                <p>Setting allowance</p>
-                            </loading-icon>
                         </div>
-                    </div>
 
-                    <!-- Auction panel -->
-                    <div class="stage-panel stage-panel__auction" :class="{ error: auctionError }">
-                        <h4><span class="number">4</span> Create auction</h4>
-                        <div class="details" v-if="stage == 'auction--creating' || stage == 'auction'">
-                            <p>After completion <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong> will be consigned to the new auction contract from your account.</p>
-                            <div v-if="stage == 'auction--creating'">
-                                <loading-icon v-if="stage == 'auction--creating'">
-                                    <p>Executing the contract</p>
+                        <!-- Allowance panel -->
+                        <div class="stage-panel stage-panel__allowance" :class="{ error: allowanceError }">
+                            <h4><span class="number">3</span> Set Allowance</h4>
+                            <div class="details" v-if="stage == 'allowance' || stage == 'allowance--creating'">
+                                <p>Before creating the auction you have to allow the auction contract to access your tokens. By setting allowance, you will enable the application to automate transactions for you.</p>
+                                <div class="allowance-action" v-if="stage == 'allowance'">
+                                    <div v-if="allowanceError != ''">
+                                        <p class="error">Error: {{ allowanceError }}</p>
+                                    </div>
+                                    <button class="allowance-form__action" :disabled="stage != 'allowance'" @click="increaseAllowance()">{{ stage == 'allowance--creating' ? 'Increasing allowance' : 'Try again' }}</button>
+                                    <p><a href="" @click="stage = 'info'">Back</a></p>
+                                </div>
+                                <loading-icon v-if="stage == 'allowance--creating'">
+                                    <p>Setting allowance</p>
                                 </loading-icon>
                             </div>
-                            <div v-if="stage == 'auction'">
-                                <p>It seems the transaction failed or was cancelled.</p>
-                                <p class="error">{{ auctionError }}</p>
-                                <button @click="createAuction()">Try again</button>
-                                <p><a href="" @click="stage = 'info'; auctionError = null;">Back</a></p>
+                        </div>
+
+                        <!-- Auction panel -->
+                        <div class="stage-panel stage-panel__auction" :class="{ error: auctionError }">
+                            <h4><span class="number">4</span> Create auction</h4>
+                            <div class="details" v-if="stage == 'auction--creating' || stage == 'auction'">
+                                <p>After completion <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong> will be consigned to the new auction contract from your account.</p>
+                                <div v-if="stage == 'auction--creating'">
+                                    <loading-icon v-if="stage == 'auction--creating'">
+                                        <p>Executing the contract</p>
+                                    </loading-icon>
+                                </div>
+                                <div v-if="stage == 'auction'">
+                                    <p>It seems the transaction failed or was cancelled.</p>
+                                    <p class="error">{{ auctionError }}</p>
+                                    <button @click="createAuction()">Try again</button>
+                                    <p><a href="" @click="stage = 'info'; auctionError = null;">Back</a></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Viewing keys panel -->
-                    <div class="stage-panel stage-panel__congrats">
-                        <h4>Extra: Viewing Key</h4>
-                        <div class="details" v-if="stage == 'congrats'">
-                            <p>Congratulations! Your Secret Auction is ready. Use your viewing key to easily find it and perform operations.</p>
-                            <vkeys-address class="viewingkey__address" :contract="$auctions.factoryAddress" :account="auctionForm.account"></vkeys-address>
-                            <p v-if="newAuctionPath != ''"><g-link class="auction-creation__action-list" :to="newAuctionPath">See your auction</g-link></p>
-                            <p><g-link class="auction-creation__action-list" to="/">Go to the auction list</g-link></p>
+                        <!-- Viewing keys panel -->
+                        <div class="stage-panel stage-panel__congrats">
+                            <h4>Extra: Viewing Key</h4>
+                            <div class="details" v-if="stage == 'congrats'">
+                                <p>Congratulations! Your Secret Auction is ready. Use your viewing key to easily find it and perform operations.</p>
+                                <vkeys-address class="viewingkey__address" :contract="$auctions.factoryAddress" :account="auctionForm.account"></vkeys-address>
+                                <p v-if="newAuctionPath != ''"><g-link class="auction-creation__action-list" :to="newAuctionPath">See your auction</g-link></p>
+                                <p><g-link class="auction-creation__action-list" to="/">Go to the auction list</g-link></p>
+                            </div>
                         </div>
-                    </div>
-                </block>
-            </column>
-        </page>
-    </validation-observer>
+                    </block>
+                </column>
+            </page>
+        </validation-observer>
+    </default-layout>
 </template>
 
 <script>
@@ -173,6 +175,7 @@ import moment from 'moment';
 
 import LoadingIcon from '../components/LoadingIcon';
 import VkeysAddress from '../components/VkeysAddress.vue'
+import DefaultLayout from '../layouts/DefaultLayout.vue';
 
 
 extend("required", {
@@ -566,14 +569,5 @@ export default {
         }
     }
 }
-
-
-.--flare-columns {
-  --f-columns-normal-width-l:    var(--f-columns-normal-width-m);
-  --f-columns-normal-width-xl:   var(--f-columns-normal-width-m);
-  --f-columns-normal-width-xxl:  var(--f-columns-normal-width-m);
-  --f-columns-normal-width-xxxl: var(--f-columns-normal-width-m);
-}
-
 
 </style>

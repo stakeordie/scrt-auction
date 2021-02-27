@@ -1,5 +1,3 @@
 <template>
-  <default-layout>
-    <router-view />
-  </default-layout>
+  <router-view />
 </template>

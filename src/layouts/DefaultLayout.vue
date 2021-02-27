@@ -1,37 +1,52 @@
 <template>
-  <simple-layout>
-    <template #header>
-      <simple-header mode="full">
-        <g-link to="/" class="header__logo">
-          <img src="@/assets/secretnetwork-logo-primary-white.svg">
-        </g-link>
-        <nav class="auctions-nav">
-          <g-link to="/">Auctions list</g-link>
-          <g-link to="/new">Create an auction</g-link>
-        </nav>
-        <div class="actions">
-          <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
-          <keplr-user v-model="userAddress"></keplr-user>
-        </div>
-      </simple-header>
-    </template>
+  <div class="layout">
+    <div class="layout-sidemenu">
+      <g-link to="/" class="header__logo">
+        <img src="@/assets/secretnetwork-logo-primary-white.svg">
+      </g-link>
 
-    <slot></slot>
+      <ul class="app-menu">
+        <li><g-link to="/">Auctions
+          <ul class="sub-menu">
+            <li><g-link to="/new">Create auction</g-link></li>
+          </ul>
+        </g-link></li>
+        <li><g-link to="/user">My auctions</g-link></li>
+        <li><g-link to="/past">Past auctions</g-link></li>
+      </ul>
+    </div>
 
-    <template #footer>
-      <simple-footer>
-        <p>Built with <span class="emoji" title="stakeordie.js">&#x1F6F9;.js</span>, 
-          <span class="emoji" title="Mr. Roboto's Secret Rust">&#x1F916;&#x1F980;</span>, and lots of <span class="emoji" title="TLC">♥️</span> by 
-          <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Roboto <span class="emoji">&#x1F916;</span>'s Secret</g-link>
-           and 
-          <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/18B444E801687196D48A075D3622BE1AEE070C11">
-            <span class="emoji">&#x1F6F9;</span> Stake or Die! <span class="emoji">&#x1F41D;</span><span class="emoji">&#x1F41D;</span><span class="emoji">&#x1F41D;</span>
-          </g-link>
-        </p>
-      </simple-footer>
-    </template>
+    <div class="layout-content">
 
-  </simple-layout>
+      <div class="layout-header">
+        <simple-header mode="full">
+          <nav class="auctions-nav"></nav>
+          <div class="actions">
+            <a class="button" href="/new">Create auction</a>
+            <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
+            <keplr-user v-model="userAddress"></keplr-user>
+          </div>
+        </simple-header>
+      </div>
+
+      <slot></slot>
+
+      <div class="layout-footer">
+        <simple-footer>
+          <p>Built with <span class="emoji" title="stakeordie.js">&#x1F6F9;.js</span>, 
+            <span class="emoji" title="Mr. Roboto's Secret Rust">&#x1F916;&#x1F980;</span>, and lots of <span class="emoji" title="TLC">♥️</span> by 
+            <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Roboto <span class="emoji">&#x1F916;</span>'s Secret</g-link>
+            and 
+            <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/18B444E801687196D48A075D3622BE1AEE070C11">
+              <span class="emoji">&#x1F6F9;</span> Stake or Die! <span class="emoji">&#x1F41D;</span><span class="emoji">&#x1F41D;</span><span class="emoji">&#x1F41D;</span>
+            </g-link>
+          </p>
+        </simple-footer>
+      </div>
+
+    </div>
+
+  </div>
 </template>
 
 <script>
@@ -69,22 +84,78 @@ query {
 </static-query>
 
 <style lang="scss">
-.header {
-  &__logo {
-    img {
-      height: 40px;
+
+  @import "@lkmx/flare/src/functions/respond-to";
+
+.layout {
+  --sidemenu-width: 250px;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: var(--sidemenu-width) 1fr;
+
+  @include respond-to("s") {
+  }
+
+  &-sidemenu {
+    position: sticky;
+    top: 0;
+    background-color: #0D1017;
+    padding: var(--f-gutter);
+  }
+
+  &-content {
+    height: 100vh;
+    background-image: url(../assets/scrt-swirl.svg);
+    background-size: 100% auto;
+    background-position: center top;
+    background-repeat: no-repeat;
+
+    .--flare-columns {
+      --f-columns-normal-width-m:    calc(var(--f-breakpoint-m) - var(--sidemenu-width));
+      --f-columns-normal-width-l:    calc(var(--f-breakpoint-l) - var(--sidemenu-width));
+      --f-columns-normal-width-xl:   calc(var(--f-breakpoint-xl) - var(--sidemenu-width));
+      --f-columns-normal-width-xxl:  calc(var(--f-breakpoint-xl) - var(--sidemenu-width));
+      --f-columns-normal-width-xxxl: calc(var(--f-breakpoint-xxl) - var(--sidemenu-width));
     }
-    //padding: var(--f-gutter-s) 0; // var(--f-gutter);
   }
 }
 
-nav {
+.app-menu {
+  padding: var(--f-gutter-xl) var(--f-gutter);
+  li {
+    margin-bottom: var(--f-gutter-xs);
+  }
+}
+
+.sub-menu {
+  padding: 0;
+  li {
+    padding-left: var(--f-gutter);
+    margin-bottom: var(--f-gutter-xs);
+  }
   a {
+    font-size: 15px;
+  }
+}
+
+.app-menu, .sub-menu {
+
+  li, a {
+    color: var(--color-light-gray);
     text-decoration: none;
-    font-weight: bold;
 
     &.active--exact {
+      font-weight: bold;
       color: var(--color-purple-secondary);
+    }
+  }
+}
+
+
+.header {
+  &__logo {
+    img {
+      height: 48px;
     }
   }
 }

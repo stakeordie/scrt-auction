@@ -5,7 +5,7 @@
     <div class="auctions-tools__filters">
         <!-- Filtering by sell -->
         <div class="auctions-tools__filter">
-        <label class="auctions-tools__label" for="sell-token">I want to buy</label>
+        <label class="auctions-tools__label" for="sell-token">Filter buying</label>
         <select class="auctions-tools__select" name="sell-token" v-model="auctionsFilter.sellToken" @change="filterChanged()">
             <option value=""></option>
             <option v-for="sellToken in sellDenoms" :key="sellToken" v-bind:value="sellToken">
@@ -34,12 +34,6 @@
         </div>
     </div>
 
-    <!-- Filtering by status -->
-    <div class="auctions-tools__toggles">
-        <!--button class="auctions-tools__toggle show-active" :class="{ on: auctionsFilter.showActive }" @click="toggleStatus('active')">Active</button-->
-        <button class="auctions-tools__toggle show-mine" :class="{ on: auctionsFilter.onlyMine }" @click="toggleStatus('mine')"><span class="emoji">🔑</span> Only mine</button>
-        <button class="auctions-tools__toggle show-closed" :class="{ on: auctionsFilter.showClosed }" @click="toggleStatus('closed')">&#x1F512; Showing {{auctionsFilter.showClosed ? "closed" : "active" }}</button>
-    </div>
 
 
     <div class="auctions-tools__view">
@@ -85,16 +79,6 @@ export default {
         }
         this.auctionsFilter.sort.priority = field;
         },
-        toggleStatus(status) {
-        switch(status) {
-            case 'mine':
-            this.auctionsFilter.onlyMine = !this.auctionsFilter.onlyMine;
-            break;
-            case 'closed':
-            this.auctionsFilter.showClosed = !this.auctionsFilter.showClosed;
-            break;
-        }
-        },
         filterChanged() {
         this.$auctions.updateAuctionsFilter(this.auctionsFilter);
         },
@@ -107,7 +91,7 @@ export default {
     display: flex;
     column-gap: var(--f-gutter-xl);
     flex-flow: row nowrap;
-    justify-content: space-evenly;
+    justify-content: space-between;
 
     button, select {
       margin-bottom: 0;
@@ -158,41 +142,6 @@ export default {
       white-space: nowrap;
     }
 
-    &__toggle {
-      padding: var(--f-gutter-xxs) var(--f-gutter-s);
-      font-size: 12px;
-      margin-right: var(--f-gutter);
-      white-space: nowrap;
-      
-      &.show-mine {
-        background-color: black;
-        color: white;
-        cursor: pointer;
-        &.on {
-          background-color: var(--color-cream-primary);
-          color: black;
-          opacity: 1;
-
-        }
-
-      }
-      &.show-closed {
-        transition: opacity 0.2s;
-        background-color: var(--color-positive);
-        color: black;
-        cursor: pointer;
-
-        &.on {
-          background-color: var(--color-negative);
-          color: white;
-        }
-        
-        &:not(.on) {
-          &:hover {
-          }
-        }
-      }
-    }
 
     &__view {
       display: flex;

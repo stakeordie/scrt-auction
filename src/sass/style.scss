@@ -12,7 +12,7 @@
 
     --f-default-text-font: "Montserrat";
 
-    --f-header-text-color: white;
+    --f-header-text-color: black;
     --f-header-background-color: #151A20;
 
     --f-default-text-color: white;
@@ -25,12 +25,12 @@
     --f-h3-text-size: 22px;
     
     
-    --f-primary-action-color: var(--color-cream-primary);
+    --f-primary-action-color: var(--color-blue-primary);
     --f-primary-action-anticolor: black;
     --f-primary-action-color--hover: var(--color-turquoise-secondary);
     --f-primary-action-anticolor--hover: black;
 
-    --f-secondary-action-color: var(--color-cream-primary);
+    --f-secondary-action-color: var(--color-turquoise-primary);
     --f-secondary-action-anticolor: black;
 
     
@@ -67,10 +67,7 @@ html {
 }
 
 body {
-    background-image: url(../assets/scrt-swirl.svg);
-    background-size: 100% auto;
-    background-position: center top;
-    background-repeat: no-repeat;
+
 }
 
 strong {
