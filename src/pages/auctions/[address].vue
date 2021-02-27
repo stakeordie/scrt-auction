@@ -304,7 +304,7 @@ export default {
   async mounted () {
     console.log("TEST");
     await this.$auctions.updateAuction(this.$route.params.address);
-    await this.$auctions.updateAuctions();
+    await this.$auctions.updateAllAuctions();
     this.getAuction()
     this.updateEndTime();
     this.interval = setInterval(this.updateEndTime, 1000);
