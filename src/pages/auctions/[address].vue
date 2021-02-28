@@ -14,6 +14,7 @@
       </column>
       <column>
         <block>
+          <ClientOnly>
           <div class="forms-wrapper">
             <div class="stage-panel" v-if="auction && auction.viewerIsSeller && !isClosed">
               <h3>Owner: Manage Auction</h3>
@@ -169,6 +170,7 @@
               </dl>
             </div>
           </div>
+          </ClientOnly>
         </block>
       </column>
       <column>
