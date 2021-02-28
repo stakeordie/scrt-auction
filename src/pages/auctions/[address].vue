@@ -1,7 +1,7 @@
 <template>
   <default-layout>
     <page>
-      <column class="auction__header" v-if="auction">
+      <column class="auction__header">
         <block>
           <div class="page-title">
               <h1>Auction Detail</h1>
@@ -9,7 +9,7 @@
           </div>
         </block>
         <block>
-          <auction-item :auction="auction" class="list selected"></auction-item>
+          <auction-item v-if="auction" :auction="auction" class="list selected"></auction-item>
         </block>
       </column>
       <column>

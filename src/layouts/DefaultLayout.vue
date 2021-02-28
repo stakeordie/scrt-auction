@@ -91,9 +91,12 @@ query {
   --sidemenu-width: 250px;
   height: 100vh;
   display: grid;
-  grid-template-columns: var(--sidemenu-width) 1fr;
 
-  @include respond-to("s") {
+  @include respond-to("<s") {
+    grid-template-rows: min-content 1fr;
+  }
+  @include respond-to(">=m") {
+    grid-template-columns: var(--sidemenu-width) 1fr;
   }
 
   &-sidemenu {
@@ -121,7 +124,13 @@ query {
 }
 
 .app-menu {
-  padding: var(--f-gutter-xl) var(--f-gutter);
+  @include respond-to("<s") {
+    padding: var(--f-gutter);
+  }
+  @include respond-to(">=m") {
+    padding: var(--f-gutter-xl) var(--f-gutter);
+  }
+  margin-bottom: 0;
   li {
     margin-bottom: var(--f-gutter-xs);
   }
