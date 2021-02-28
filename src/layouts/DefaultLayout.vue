@@ -6,11 +6,11 @@
       </g-link>
 
       <ul class="app-menu">
-        <li><g-link to="/">Auctions
+        <li><g-link to="/">Auctions</g-link>
           <ul class="sub-menu">
             <li><g-link to="/new">Create auction</g-link></li>
           </ul>
-        </g-link></li>
+        </li>
         <li><g-link to="/past">Past auctions</g-link></li>
         <li><g-link to="/user">My auctions</g-link></li>
       </ul>
