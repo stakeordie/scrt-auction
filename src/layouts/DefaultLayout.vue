@@ -6,13 +6,14 @@
       </g-link>
 
       <ul class="app-menu">
-        <li><g-link to="/">Auctions</g-link>
+        <li><h3>Auctions</h3>
           <ul class="sub-menu">
-            <li><g-link to="/new">Create auction</g-link></li>
+            <li><g-link to="/">Current Auctions</g-link>
+            <li><g-link to="/past">Past Auctions</g-link></li>
+            <li><g-link to="/user">My Auctions</g-link></li>
+            <li><g-link to="/new">Create an Auction</g-link></li>
           </ul>
         </li>
-        <li><g-link to="/past">Past auctions</g-link></li>
-        <li><g-link to="/user">My auctions</g-link></li>
       </ul>
     </div>
 
