@@ -36,17 +36,25 @@
                             </validation-provider>
 
                             <!-- Bid token -->
-                            <validation-provider class="auction-form__bid-price" rules="required" v-slot="{ errors }">
-                                <label for="minimum-bid-price">Asking Price</label>
-                                <span class="error">{{ errors[0] }}</span>
-                                <input name="minimum-bid-price" type="text" v-model.trim="auctionForm.bidPrice" />
-                            </validation-provider>
+                            
+                            
+                            <div  class="auction-form__bid-price">
+                                <input type="radio" id="bidPriceSelected" :value="true" v-model="auctionForm.bidPriceControlSelected">
+                                <validation-provider rules="required" v-slot="{ errors }">
+                                    <label for="minimum-bid-price">Asking Price</label>
+                                    <span class="error">{{ errors[0] }}</span>
+                                    <input name="minimum-bid-price" :readonly="!auctionForm.bidPriceControlSelected" type="text" v-model.trim="auctionForm.bidPrice" />
+                                </validation-provider>
+                            </div>
 
-                            <validation-provider class="auction-form__min-bid-amount" :rules="`required|greater_than:0|max_decimals:${auctionForm.bidToken ? auctionForm.bidToken.decimals : 18}`" v-slot="{ errors }">
-                                <label for="minimum-bid-amount">Minimum bid</label>
-                                <span class="error">{{ errors[0] }}</span>
-                                <input name="minimum-bid-amount" readonly type="text" v-model="minBidAmount" />
-                            </validation-provider>
+                            <div class="auction-form__min-bid-amount">
+                                <input type="radio" id="minBidAmountSelected" :value="false" v-model="auctionForm.bidPriceControlSelected">
+                                <validation-provider  :rules="`required|greater_than:0|max_decimals:${auctionForm.bidToken ? auctionForm.bidToken.decimals : 18}`" v-slot="{ errors }">
+                                    <label for="minimum-bid-amount">Minimum bid</label>
+                                    <span class="error">{{ errors[0] }}</span>
+                                    <input name="minimum-bid-amount" :readonly="auctionForm.bidPriceControlSelected" type="text" v-model.trim="auctionForm.minBidAmount" />
+                                </validation-provider>
+                            </div>
 
                             <validation-provider class="auction-form__bid-denom" rules="required" v-slot="{ errors }">
                                 <span class="error">{{ errors[0] }}</span>
@@ -194,7 +202,6 @@ extend("greater_than", {
 extend("max_decimals", {
   params: ["maxDecimalsAllowed"],
   validate: (value, param) => {
-      //console.log(parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals());
     return parseInt(param.maxDecimalsAllowed) >= parseFloat(value).countDecimals();
     
   },
@@ -223,10 +230,12 @@ export default {
             allowanceError: "",
 
             auctionForm: {
+                bidPriceControlSelected: true,
                 sellAmount: 1,
                 sellToken: "",
                 bidPrice: 1,
                 bidToken: "",
+                minBidAmount: 1,
                 label: null,
                 description: "",
                 endTime: new Date(),
@@ -240,9 +249,12 @@ export default {
             "availableTokens",
             "getToken"
         ]),
-        minBidAmount() {
-            const rawBidAmount = new Decimal("0" + this.auctionForm.bidPrice || 0).times(this.auctionForm.sellAmount || 0);
-            return rawBidAmount.toString();
+        // minBidAmount() {
+        //     const rawBidAmount = new Decimal("0" + this.auctionForm.bidPrice || 0).times(this.auctionForm.sellAmount || 0);
+        //     return rawBidAmount.toString();
+        // },
+        watchTrigger () { 
+            return `${this.auctionForm.bidPrice}|${this.auctionForm.minBidAmount}|${this.auctionForm.sellAmount}|${this.auctionForm.bidToken.decimals}`
         },
         endTimeString() {
             return moment(this.auctionForm.endTime).format("YYYY-MM-DD HH:mm:ss");
@@ -257,6 +269,19 @@ export default {
     },
     destroyed () {
         clearInterval(this.interval);
+    },
+    watch: {
+        watchTrigger(newValue, oldValue) {
+            if(newValue) {
+                if(this.auctionForm.bidPriceControlSelected) {
+                    const minBidAmount = new Decimal("0" + this.auctionForm.bidPrice || 0).times(this.auctionForm.sellAmount || 0);
+                    this.auctionForm.minBidAmount = minBidAmount.toString();
+                } else {
+                    const bidPrice = new Decimal("0" + this.auctionForm.minBidAmount || 0).dividedBy(this.auctionForm.sellAmount || 0).toFixed(this.auctionForm.bidToken.decimals || 18).replace(/\.?0+$/,"");
+                    this.auctionForm.bidPrice = bidPrice.toString();
+                }
+            }
+        }
     },
     methods: {
         submitInfo() {
@@ -284,10 +309,11 @@ export default {
             this.auctionError = null;
 
             const sellAmountToFractional = new Decimal(10).toPower(this.auctionForm.sellToken.decimals).times(this.auctionForm.sellAmount).toFixed(0);
-            const bidAmountToFractional  = new Decimal(10).toPower(this.auctionForm.bidToken.decimals).times(this.minBidAmount).toFixed(0);
+            const bidAmountToFractional  = new Decimal(10).toPower(this.auctionForm.bidToken.decimals).times(this.auctionForm.minBidAmount).toFixed(0);
 
             //Create auction
-            const auction = await this.$auctions.createAuction(this.auctionForm.label,
+            const auction = await this.$auctions.createAuction(
+                this.auctionForm.label,
                 this.auctionForm.sellToken.address,
                 this.auctionForm.bidToken.address,
                 new Decimal(sellAmountToFractional).toFixed(0),
