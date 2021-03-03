@@ -36,7 +36,7 @@
                         <p>{{ changeAskingPriceSubmit.response.error }}</p>
                       </div>
                       <div style="display: flex; justify-content: flex-end;">
-                        <button :disabled="invalid">Enter</button>
+                        <button :disabled="invalid">Update Asking Price</button>
                       </div>
                     </form>
                   </validation-observer>
