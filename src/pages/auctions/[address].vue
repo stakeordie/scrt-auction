@@ -91,8 +91,6 @@
                                 <select class="auction-form__end-time__unit" @change="updateEndTime()" v-model="closeAuctionForm.endTimeUnit">
                                     <option value="1">minute<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
                                     <option value="60">hour<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
-                                    <option value="1440">day<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
-                                    <option value="10080">week<span v-if="closeAuctionForm.endTimeAmount > 1">s</span></option>
                                 </select>
                             </p>
                         </validation-provider>
