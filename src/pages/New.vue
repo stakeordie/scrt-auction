@@ -36,23 +36,22 @@
                             </validation-provider>
 
                             <!-- Bid token -->
-                            
-                            
+                            <div class="auction-form__label-only">
+                                <label>Enter either a price or a minimum bid</label>
+                            </div>
                             <div  class="auction-form__bid-price">
-                                <input type="radio" id="bidPriceSelected" :value="true" v-model="auctionForm.bidPriceControlSelected">
                                 <validation-provider rules="required" v-slot="{ errors }">
                                     <label for="minimum-bid-price">Asking Price</label>
                                     <span class="error">{{ errors[0] }}</span>
-                                    <input name="minimum-bid-price" :readonly="!auctionForm.bidPriceControlSelected" type="text" v-model.trim="auctionForm.bidPrice" />
+                                    <input name="minimum-bid-price" @click="auctionForm.bidPriceControlSelected = true" :readonly="!auctionForm.bidPriceControlSelected" type="text" v-model.trim="auctionForm.bidPrice" />
                                 </validation-provider>
                             </div>
 
                             <div class="auction-form__min-bid-amount">
-                                <input type="radio" id="minBidAmountSelected" :value="false" v-model="auctionForm.bidPriceControlSelected">
                                 <validation-provider  :rules="`required|greater_than:0|max_decimals:${auctionForm.bidToken ? auctionForm.bidToken.decimals : 18}`" v-slot="{ errors }">
                                     <label for="minimum-bid-amount">Minimum bid</label>
                                     <span class="error">{{ errors[0] }}</span>
-                                    <input name="minimum-bid-amount" :readonly="auctionForm.bidPriceControlSelected" type="text" v-model.trim="auctionForm.minBidAmount" />
+                                    <input name="minimum-bid-amount" @click="auctionForm.bidPriceControlSelected = false" :readonly="auctionForm.bidPriceControlSelected" type="text" v-model.trim="auctionForm.minBidAmount" />
                                 </validation-provider>
                             </div>
 
@@ -375,6 +374,11 @@ export default {
     }
     &__bid-amount {
         grid-column: 3 / 4;
+    }
+    &__label-only {
+        font-style: italic;
+        grid-column: 1 / 4;
+        padding-bottom: var(--f-gutter-s);
     }
     &__bid-price {
         grid-column: 1 / 3;
