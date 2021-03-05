@@ -21,12 +21,12 @@
               <dl v-if="!isPastEndTime">
                 <dd>
                   <button v-show="manageAuctionFormState != 'updateAsking'" @click="manageAuctionFormState = 'updateAsking'">Update Asking Price</button><br/>
-                  <validation-observer v-show="manageAuctionFormState == 'updateAsking'" v-slot="{ handleSubmit, invalid }">
+                  <validation-observer v-show="manageAuctionFormState == 'updateAsking'" v-slot="{handleSubmit, invalid}">
                     <form @submit.prevent="handleSubmit(updateAskingPrice)">
-                      <validation-provider class="auction-form__bid-amount" :rules="`required`" v-slot="{ errors }">
+                      <validation-provider class="auction-form__bid-amount" :rules="`required|is_not:${auction.price}`" v-slot="{ errors }">
                         <label for="asking-price-form">New Asking Price</label>
                         <span class="error">{{ errors[0] }}</span>
-                        <input name="asking-price-form" type="text" v-model.trim="updateAskingPriceForm.askingPrice" />
+                        <input name="asking-price-form" type="text" v-model.trim="updateAskingPriceForm.askingPrice" :placeholder="auction.price"/>
                         <div class="bid-price-conversion">New Minimum Bid = {{ updateAskingPriceFormMinimumBid }} {{auction.bid.denom}}</div>
                       </validation-provider>
                       <loading-icon v-if="changeAskingPriceSubmit.inProgress">
@@ -189,7 +189,7 @@
 
 <script>
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
-import { required, min_value/*, max_decimals */} from "vee-validate/dist/rules";
+import { required, is_not /* min_value/*, max_decimals */} from "vee-validate/dist/rules";
 import KeplrAccount from '../../components/KeplrAccount.vue';
 
 import { Decimal } from 'decimal.js';
@@ -203,6 +203,11 @@ import VkeysAddress from '../../components/VkeysAddress.vue';
 extend("required", {
   ...required,
   message: "This field is required",
+});
+
+extend('is_not', {
+  ...is_not,
+  message: "The price must be different than the current one.",
 });
 
 extend("min_value", {
@@ -243,7 +248,6 @@ export default {
         bidPrice: 1,
       },
       updateAskingPriceForm: {
-        askingPrice: 0,
       },
       closeAuctionForm: {
         askingPrice: 0,
@@ -317,7 +321,11 @@ export default {
       return new Decimal(this.placeBidForm.bidPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
     },
     updateAskingPriceFormMinimumBid: function () {
-      return new Decimal(this.updateAskingPriceForm.askingPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
+      if(this.updateAskingPriceForm.askingPrice) {
+        return new Decimal(this.updateAskingPriceForm.askingPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
+      } else {
+        return new Decimal(this.auction.price).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
+      }
     },
     closeAuctionFormMinimumBid: function () {
       return new Decimal(this.closeAuctionForm.askingPrice).times(this.auction.sell.decimalAmount).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"");
@@ -430,9 +438,7 @@ export default {
     },
     async getAuction() {
       this.placeBidForm.bidPrice = this.auction.price;
-      this.updateAskingPriceForm.askingPrice = this.auction.price;
       this.closeAuctionForm.askingPrice = this.auction.price;
-      this.updateAskingPriceForm.minimumBidAmount = this.auction.bid.decimalMinimum;
     },
     updateEndTime() {
         this.closeAuctionForm.endTime = new Date((new Date()).getTime() + (Number(this.closeAuctionForm.endTimeAmount || 1) * Number(this.closeAuctionForm.endTimeUnit) * 60000));

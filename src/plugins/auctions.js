@@ -387,7 +387,7 @@ export default {
                     if(response.close_auction?.status == "Success") {
                         dispatch('closeAuction', {auctionAddress, response});
                     } else {
-                        if(response.close_auction.message == 'There were no active bids.  The closing time and minimum bid has been updated') {
+                        if(response.close_auction?.message == 'There were no active bids.  The closing time and minimum bid has been updated') {
                             const auction = state.auctions.find(auction => auction.address === auctionAddress);
                             commit('changeMinimumBid', {
                                 auctionAddress,
