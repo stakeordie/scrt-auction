@@ -106,6 +106,7 @@ export default {
                     return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => (a.viewerIsSeller || a.viewerIsBidder || a.viewerWasSeller || a.viewerIsWinner));
                 },
                 closedAuctions: state => {
+                    console.log("2) auctions.js -> Getters -> closedAuctions -> state.auctionsFilter", state.auctionsFilter);
                     return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => (a.status == 'CLOSED' && a.bid.winner));
                 },
                 sellDenoms: state => {

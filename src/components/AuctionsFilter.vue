@@ -60,7 +60,8 @@ export default {
     },
     methods: {
         filterChanged() {
-            this.$auctions.updateAuctionsFilter(this.auctionsFilter);
+          console.log("1) AucttionsFiltered.vue -> filterChanged() -> this.auctionsFilter", this.auctionsFilter);
+          this.$auctions.updateAuctionsFilter(this.auctionsFilter);
         },
         changeViewMode(newViewMode) {
             this.auctionsFilter.viewMode = newViewMode;
