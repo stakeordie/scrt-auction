@@ -79,9 +79,9 @@ export default {
         }
         this.auctionsFilter.sort.priority = field;
         },
-        filterChanged() {
-        this.$auctions.updateAuctionsFilter(this.auctionsFilter);
-        },
+        // filterChanged() {
+        // this.$auctions.updateAuctionsFilter(this.auctionsFilter);
+        // },
     },
 }
 </script>
