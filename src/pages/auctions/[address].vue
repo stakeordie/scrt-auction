@@ -100,7 +100,9 @@
                         <div class="result-failed" v-if="closeAuctionWithOptionsSubmit.result == 'error'">
                           <p>{{ closeAuctionWithOptionsSubmit.response.error }}</p>
                         </div>
-                        <button :disabled="invalid">Close with options</button>
+                        <div style="display: flex; justify-content: flex-end;">
+                          <button :disabled="invalid">Close with options</button>
+                        </div>
                       </form>
                     </validation-observer>
                   </div>
@@ -147,25 +149,28 @@
                     <div class="result-failed" v-if="placeBidSubmit.result == 'error'">
                       <p>{{ placeBidSubmit.response.error }}</p>
                     </div>
-                    <button :disabled="invalid">Place Bid</button>
+                    <div style="display: flex; justify-content: flex-end;">
+                      <button :disabled="invalid">Place Bid</button>
+                    </div>
                   </div>
                 </form>
               </validation-observer>
             </div>
 
             <div class="stage-panel" v-if="auction && !auction.viewerIsSeller && isPastEndTime && !isClosed">
-              <h3>Close</h3>
-              <p>The auction is past it's "Target Close" datetime and can be closed by anyone. As long as it hasn't been closed, bids will still be accepted</p>
-              <!-- Close Auction for non owners -->
-              <dl>
-                <loading-icon v-if="closeAuctionSimpleNOSubmit.inProgress">
-                  <p>Closing Auction</p>
-                </loading-icon>
-                <div class="result-failed" v-if="closeAuctionSimpleNOSubmit.result == 'error'">
-                  <p>{{ closeAuctionSimpleNOSubmit.response.error }}</p>
-                </div>
-                <dd><button @click="closeAuctionSimpleNO">Close This Auction</button></dd>
-              </dl>
+              <h2>Close</h2>
+              <div class="details">
+                <p>The auction is past it's "Target Close" datetime and can be closed by anyone. As long as it hasn't been closed, bids will still be accepted</p>
+              
+                <!-- Close Auction for non owners -->
+                  <loading-icon v-if="closeAuctionSimpleNOSubmit.inProgress">
+                    <p>Closing Auction</p>
+                  </loading-icon>
+                  <div class="result-failed" v-if="closeAuctionSimpleNOSubmit.result == 'error'">
+                    <p>{{ closeAuctionSimpleNOSubmit.response.error }}</p>
+                  </div>
+                  <div style="display: flex; justify-content: flex-end;"><button @click="closeAuctionSimpleNO">Close This Auction</button></div>
+              </div>
             </div>
           </div>
           </ClientOnly>
@@ -394,6 +399,9 @@ export default {
         this.changeAskingPriceSubmit.result = "error"
       } else {
         this.changeAskingPriceSubmit.result = "success"
+        if(this.placeBidForm.bidPrice < this.updateAskingPriceForm.askingPrice) {
+          this.placeBidForm.bidPrice = this.updateAskingPriceForm.askingPrice
+        }
         this.manageAuctionFormState = null;
       }
     },

@@ -215,7 +215,7 @@ export default {
                     const auction = state.auctions.find(auction => auction.address === auctionAddress);
                     auction.bid.minimum = minimum;
                     auction.bid.decimalMinimum = decimalMinimum;
-                    auction.price = decimalMinimum / auction.sell.gitdecimalAmount;
+                    auction.price = decimalMinimum / auction.sell.decimalAmount;
                     if(endsAt) {
                         auction.endsAt = new Date(endsAt * 1000)
                     }
@@ -398,8 +398,28 @@ export default {
                         }
                     }
                     return response; 
-                }
+                },
 
+                createAuction: async({ commit }, {
+                        label,
+                        sellTokenAddress,
+                        bidTokenAddress,
+                        amount,
+                        minBid,
+                        description,
+                        endDateTime
+                    }) => {
+                    const response = await auctionsApi.createAuction(
+                        label,
+                        sellTokenAddress,
+                        bidTokenAddress,
+                        amount,
+                        minBid,
+                        description,
+                        endDateTime
+                    );
+                    return response;
+                },
             }
         });
         
@@ -450,10 +470,6 @@ export default {
             Vue.prototype.$store.dispatch('$auctions/updateAuctionsViewer', auctionsViewer);
         };
 
-        Vue.prototype.$auctions.createAuction = async (auctionsViewer) => {
-            Vue.prototype.$store.dispatch('$auctions/createAuction', auctionsViewer);
-        };
-
         //txs
 
         Vue.prototype.$auctions.retractBid = async (auctionAddress) => {
@@ -474,6 +490,19 @@ export default {
 
         Vue.prototype.$auctions.closeAuctionWithOptions = async (auctionAddress, newEndsAt, newMinimumBidAmount) => {
             return Vue.prototype.$store.dispatch('$auctions/closeAuctionWithOptions', {auctionAddress, newEndsAt, newMinimumBidAmount});
+        };
+
+        Vue.prototype.$auctions.createAuction = async (label, sellTokenAddress, bidTokenAddress, amount, minBid, description, endDateTime) => {
+            return Vue.prototype.$store.dispatch('$auctions/createAuction', 
+            {
+                label,
+                sellTokenAddress,
+                bidTokenAddress,
+                amount,
+                minBid,
+                description,
+                endDateTime
+            });
         };
         
     }

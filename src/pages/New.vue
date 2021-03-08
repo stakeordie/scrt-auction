@@ -108,7 +108,7 @@
                                 <ul>
                                     <li>You are creating an auction to sell <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong>. The tokens will be consigned to the auction contract when it is executed at step 4.</li>
                                     <li>The asking price is <strong>{{ auctionForm.bidPrice }} {{ auctionForm.bidToken.symbol }}</strong> per <strong>{{ auctionForm.sellToken.symbol }}</strong>.</li>
-                                    <li>Bids will start at a minimum of <strong>{{ minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
+                                    <li>Bids will start at a minimum of <strong>{{ auctionForm.minBidAmount }} {{ auctionForm.bidToken.symbol }}</strong>.</li>
                                 </ul>
                                 <p>Please make sure that the terms are acceptable and that you have <strong>{{ auctionForm.sellAmount }} {{ auctionForm.sellToken.symbol }}</strong> available to consign.</p>
                                 <button class="allowance-form__action" @click="increaseAllowance()">Confirm</button>
@@ -311,7 +311,7 @@ export default {
             const bidAmountToFractional  = new Decimal(10).toPower(this.auctionForm.bidToken.decimals).times(this.auctionForm.minBidAmount).toFixed(0);
 
             //Create auction
-            const auction = await this.$auctions.createAuction(
+            const createdAuction = await this.$auctions.createAuction(
                 this.auctionForm.label,
                 this.auctionForm.sellToken.address,
                 this.auctionForm.bidToken.address,
@@ -325,13 +325,13 @@ export default {
 
             await this.$auctions.updateAllAuctions();
             // Log status
-            this.newAuctionPath = "/auctions/" + auction.auctionAddress;
-            if(!auction.error) {
+            this.newAuctionPath = "/auctions/" + createdAuction.auctionAddress;
+            console.log(this.newAuctionPath);
+            if(!createdAuction.error) {
                 this.stage = "congrats";
-
             } else {
                 this.stage = "auction";
-                this.auctionError = auction.error;
+                this.auctionError = createdAuction.error;
             }
         },
         updateEndTime() {
