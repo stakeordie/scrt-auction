@@ -106,7 +106,7 @@ export default {
                     return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => (a.viewerIsSeller || a.viewerIsBidder || a.viewerWasSeller || a.viewerIsWinner));
                 },
                 closedAuctions: state => {
-                    return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => a.status == 'CLOSED');
+                    return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => (a.status == 'CLOSED' && a.bid.winner));
                 },
                 sellDenoms: state => {
                     return [...new Set(state.auctions.filter(auction => auction.sell).map(auction => {
