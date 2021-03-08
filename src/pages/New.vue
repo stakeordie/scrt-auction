@@ -326,7 +326,6 @@ export default {
             await this.$auctions.updateAllAuctions();
             // Log status
             this.newAuctionPath = "/auctions/" + createdAuction.auctionAddress;
-            console.log(this.newAuctionPath);
             if(!createdAuction.error) {
                 this.stage = "congrats";
             } else {

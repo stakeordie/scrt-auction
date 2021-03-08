@@ -60,7 +60,6 @@ export default {
     },
     methods: {
         filterChanged() {
-          console.log("1) AucttionsFiltered.vue -> filterChanged() -> this.auctionsFilter", this.auctionsFilter);
           this.$auctions.updateAuctionsFilter(this.auctionsFilter);
         },
         changeViewMode(newViewMode) {
@@ -80,9 +79,6 @@ export default {
         }
         this.auctionsFilter.sort.priority = field;
         },
-        // filterChanged() {
-        // this.$auctions.updateAuctionsFilter(this.auctionsFilter);
-        // },
     },
 }
 </script>
