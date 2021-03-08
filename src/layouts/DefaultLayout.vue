@@ -6,14 +6,10 @@
       </g-link>
 
       <ul class="app-menu">
-        <li><h3>Auctions</h3>
-          <ul class="sub-menu">
-            <li><g-link to="/">Current Auctions</g-link>
-            <li><g-link to="/past">Past Auctions</g-link></li>
-            <li><g-link to="/user">My Auctions</g-link></li>
-            <li><g-link to="/new">Create an Auction</g-link></li>
-          </ul>
-        </li>
+        <li><g-link to="/">Current Auctions</g-link>
+        <li><g-link to="/past">Past Auctions</g-link></li>
+        <li><g-link to="/user">My Auctions</g-link></li>
+        <li><g-link to="/new">Create an Auction</g-link></li>
       </ul>
     </div>
 
@@ -133,7 +129,8 @@ query {
   }
   margin-bottom: 0;
   li {
-    margin-bottom: var(--f-gutter-xs);
+    font-weight: bold;
+    margin-bottom: var(--f-gutter-l);
   }
 }
 
@@ -157,6 +154,7 @@ query {
     &.active--exact {
       font-weight: bold;
       color: var(--color-purple-secondary);
+      font-size: 18px;
     }
   }
 }
