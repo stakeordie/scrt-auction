@@ -434,8 +434,6 @@ export default {
             Vue.prototype.$store.dispatch('$auctions/updateClosedAuctions');
         };
 
-
-
         Vue.prototype.$auctions.updateAuction = async (address) => {
             Vue.prototype.$store.dispatch('$auctions/updateAuction', address);
         };
@@ -450,6 +448,10 @@ export default {
 
         Vue.prototype.$auctions.updateAuctionsViewer = async (auctionsViewer) => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctionsViewer', auctionsViewer);
+        };
+
+        Vue.prototype.$auctions.createAuction = async (auctionsViewer) => {
+            Vue.prototype.$store.dispatch('$auctions/createAuction', auctionsViewer);
         };
 
         //txs
@@ -473,7 +475,6 @@ export default {
         Vue.prototype.$auctions.closeAuctionWithOptions = async (auctionAddress, newEndsAt, newMinimumBidAmount) => {
             return Vue.prototype.$store.dispatch('$auctions/closeAuctionWithOptions', {auctionAddress, newEndsAt, newMinimumBidAmount});
         };
-
         
     }
 }
