@@ -1,6 +1,6 @@
 <template>
   <list-layout>
-            <simple-table :data="userAuctions" :config="tableConf"></simple-table>
+            <!-- <simple-table :data="userAuctions" :config="tableConf"></simple-table> -->
 
     <!-- Auctions grid -->
     
