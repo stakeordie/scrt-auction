@@ -2,7 +2,7 @@
   <div class="layout">
     <div class="layout-sidemenu">
       <g-link to="/" class="header__logo">
-        <img src="@/assets/secretnetwork-logo-primary-white.svg">
+        <img src="@/assets/secret_auctions_logo.svg">
       </g-link>
 
       <ul class="app-menu">
@@ -89,7 +89,7 @@ query {
   height: 100vh;
   display: grid;
 
-  @include respond-to("<s") {
+  @include respond-to("<=s") {
     grid-template-rows: min-content 1fr;
   }
   @include respond-to(">=m") {
@@ -101,6 +101,10 @@ query {
     top: 0;
     background-color: #0D1017;
     padding: var(--f-gutter);
+
+    .header__logo img {
+      padding-left: 10px;
+    }
   }
 
   &-content {
@@ -121,8 +125,8 @@ query {
 }
 
 .app-menu {
-  @include respond-to("<s") {
-    padding: var(--f-gutter);
+  @include respond-to("<=s") {
+    padding: var(--f-gutter-l) var(--f-gutter);
   }
   @include respond-to(">=m") {
     padding: var(--f-gutter-xl) var(--f-gutter);
