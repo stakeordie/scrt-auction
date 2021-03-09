@@ -9,7 +9,6 @@
 export default {
   methods: {
       async queryLatestBlocks() {
-          //console.log(await this.$scrtjs.getLatestBlocks());
       }
   },
 
