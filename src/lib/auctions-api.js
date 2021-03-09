@@ -129,7 +129,6 @@ export class AuctionsApi {
     //     "timestamp":1612626275
     // }
     transformClosedAuction(rawction, tokenData) {
-        console.log(tokenData);
         const auction = {
             address: rawction.address,
             pair: rawction.pair,

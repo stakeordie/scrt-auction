@@ -110,22 +110,18 @@ export default {
         async addViewingKey() {
             await this.$keplr.suggestToken(this.tokenAddress);
             const viewingKey = await this.$keplr.getSecret20ViewingKey(this.tokenAddress);
-            // console.log(viewingKeyMaybe);
             // const viewingKey = await this.$auctions.createViewingKey(this.tokenAddress);
             await this.$auctions.addUpdateWalletKey(this.tokenAddress, viewingKey);
             this.refreshWallet();
         },
         async refreshWallet() {
             let aWallet = this.$vkeys.list(this.userAddress);
-            //console.log(this.userAddress);
-            //console.log(aWallet);//await this.$auctions.getWallet();
             /*let entryAddress = "";
             let info = {};
             let msg = {};
             let token = {};
             for(let i=0;i<aWallet.length;i++) {
                 entryAddress = aWallet[i].address;
-                //console.log(entryAddress);
                 for(let j=0; j<aWallet[i].keys.length; j++) {
                     switch(aWallet[i].keys[j].contractCodeId) {
                         case 1:
@@ -137,9 +133,7 @@ export default {
                             aWallet.splice(i)
                             continue;
                     }
-                    //console.log(entryAddress + ": " + aWallet[i].keys[j].contractAddress + " | " +aWallet[i].keys[j].viewingKey);
                     info = await this.$scrtjs.queryContract(aWallet[i].keys[j].contractAddress, msg);
-                    //console.log(info);
                     if(info.balance?.amount) {
                         aWallet[i].keys[j].balance = info.balance.amount;
                     } else {

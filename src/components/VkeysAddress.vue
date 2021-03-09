@@ -110,8 +110,6 @@ export default {
         },
         async createViewingKey() {
             try {
-                //console.log(this.$vkeys.get('x', 'x'));
-                //console.log(this.$vkeys.get(this.auctionForm.account));
                 this.isInProgress = true;
 
                 this.viewingKey = { key: await this.$auctions.createViewingKey() };

@@ -56,7 +56,6 @@ export default {
       try {
         this.errors = [];
         this.block = await this.$scrtjs.getBlock(this.heightForm);
-        //console.log(this.block);
       } catch(err) {
         this.block = null;
         this.errors.push(err.message);
