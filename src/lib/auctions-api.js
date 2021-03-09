@@ -98,6 +98,7 @@ export class AuctionsApi {
             color2: this.arrayHash(rawction.address, colors),
             sell: {
                 contract: tokenData.find(token => token.symbol === rawction.pair.split("-")[0])?.address,
+                iconImg: tokenData.find(token => token.symbol === rawction.pair.split("-")[0])?.iconImg,
                 amount: rawction.sell_amount,
                 decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                 decimals: rawction.sell_decimals,
@@ -105,6 +106,7 @@ export class AuctionsApi {
             },
             bid: {
                 contract: tokenData.find(token => token.symbol === rawction.pair.split("-")[1])?.address,
+                iconImg: tokenData.find(token => token.symbol === rawction.pair.split("-")[1])?.iconImg,
                 decimals: rawction.bid_decimals,
                 denom: rawction.pair.split("-")[1],
             },
@@ -138,11 +140,13 @@ export class AuctionsApi {
             color2: "red",
             bid: {
                 contract: tokenData.find(token => token.symbol === rawction.pair.split("-")[1])?.address,
+                iconImg: tokenData.find(token => token.symbol === rawction.pair.split("-")[1])?.iconImg,
                 decimals: tokenData.find(token => token.symbol === rawction.pair.split("-")[1])?.decimals,
                 denom: rawction.pair.split("-")[1],
             },
             sell: {
                 contract: tokenData.find(token => token.symbol === rawction.pair.split("-")[0])?.address,
+                iconImg: tokenData.find(token => token.symbol === rawction.pair.split("-")[0])?.iconImg,
                 amount: rawction.sell_amount,
                 decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                 decimals: rawction.sell_decimals,

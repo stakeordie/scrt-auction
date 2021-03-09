@@ -7,7 +7,7 @@ export default [
     name: "ETH",
     label: "20:09:20",
     decimals: 6,
-    iconImg: "secret-icon.png"
+    iconImg: "ethereum-eth-logo.svg"
   },
   {
       codeId: 1,
@@ -16,7 +16,7 @@ export default [
       name: "Test Secret Uniswap",
       label: "tsUNI",
       decimals: 18,
-      iconImg: "secret-icon.png"
+      iconImg: "uniswap-uni-logo.svg"
   },
   {
       codeId: 1,
@@ -25,7 +25,7 @@ export default [
       name: "Test Secret Dai",
       label: "tsDAI",
       decimals: 18,
-      iconImg: "secret-icon.png"
+      iconImg: "multi-collateral-dai-dai-logo.svg"
   },
   {
       codeId: 1,
@@ -34,7 +34,7 @@ export default [
       name: "Test Secret Tether",
       label: "tsUSDT",
       decimals: 6,
-      iconImg: "secret-icon.png"
+      iconImg: "tether-usdt-logo.svg"
   },
   {
       codeId: 1,
@@ -43,7 +43,7 @@ export default [
       name: "Test Secret Wrapped Bitcoin",
       label: "tsWBTC",
       decimals: 8,
-      iconImg: "secret-icon.png"
+      iconImg: "wrapped-bitcoin-wbtc-logo.svg"
   },
   {
       codeId: 1,
@@ -52,7 +52,7 @@ export default [
       name: "Test Secret Chainlink",
       label: "tsLINK",
       decimals: 18,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,

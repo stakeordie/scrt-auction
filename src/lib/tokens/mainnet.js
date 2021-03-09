@@ -6,7 +6,7 @@ export default [
       name: "ssecret",
       label: "sscrt",
       decimals: 6,
-      iconImg: "sscrt.png"
+      iconImg: "secret-scrt-logo.svg"
     },
     {
       codeId: 10,
@@ -15,7 +15,7 @@ export default [
       name: "Secret Ethereum",
       label: "secret-eth",
       decimals: 18,
-      iconImg: "seth.svg"
+      iconImg: "ethereum-eth-logo.svg"
     },
     {
       codeId: 10,
@@ -24,7 +24,7 @@ export default [
       name: "Secret Tether",
       label: "secret-usdt",
       decimals: 6,
-      iconImg: "susdt.png"
+      iconImg: "tether-usdt-logo.svg"
     },
     {
       codeId: 10,
@@ -33,7 +33,7 @@ export default [
       name: "Secret Dai Stablecoin",
       label: "secret-dai",
       decimals: 18,
-      iconImg: "sdai.png"
+      iconImg: "multi-collateral-dai-dai-logo.svg"
     },
     {
       codeId: 10,
@@ -42,7 +42,7 @@ export default [
       name: "Secret Compound",
       label: "secret-comp",
       decimals: 18,
-      iconImg: "scomp.png"
+      iconImg: "compound-comp-logo.svg"
     },
     {
       codeId: 10,
@@ -51,7 +51,7 @@ export default [
       name: "Secret Uniswap",
       label: "secret-uni",
       decimals: 18,
-      iconImg: "suni.png"
+      iconImg: "uniswap-uni-logo.svg"
     },
     {
       codeId: 10,
@@ -60,7 +60,7 @@ export default [
       name: "Secret yearn.finance",
       label: "secret-yfi",
       decimals: 18,
-      iconImg: "syfi.png"
+      iconImg: "yearn-finance-yfi-logo.svg"
     },
     {
       codeId: 10,
@@ -69,7 +69,7 @@ export default [
       name: "Secret TrueUSD",
       label: "secret-tusd",
       decimals: 18,
-      iconImg: "stusd.png"
+      iconImg: "trueusd-tusd-logo.svg"
     },
     {
       codeId: 10,
@@ -78,7 +78,7 @@ export default [
       name: "Secret Ocean Token",
       label: "secret-ocean",
       decimals: 18,
-      iconImg: "socean.png"
+      iconImg: "ocean-protocol-ocean-logo.svg"
     },
     {
       codeId: 10,
@@ -87,7 +87,7 @@ export default [
       name: "Secret ChainLink Token",
       label: "secret-link",
       decimals: 18,
-      iconImg: "slink.png"
+      iconImg: "chainlink-link-logo.svg"
     },
     {
       codeId: 10,
@@ -96,7 +96,7 @@ export default [
       name: "Secret Maker",
       label: "secret-maker",
       decimals: 18,
-      iconImg: "smkr.png"
+      iconImg: "maker-mkr-logo.svg"
     },
     {
       codeId: 10,
@@ -105,7 +105,7 @@ export default [
       name: "Secret Synthetix Network",
       label: "secret-snx",
       decimals: 18,
-      iconImg: "ssnx.png"
+      iconImg: "synthetix-network-token-snx-logo.svg"
     },
     {
       codeId: 10,
@@ -114,7 +114,7 @@ export default [
       name: "Secret Aave Token",
       label: "secret-aave",
       decimals: 18,
-      iconImg: "saave.png"
+      iconImg: "aave-aave-logo.svg"
     },
     {
       codeId: 10,
@@ -123,7 +123,7 @@ export default [
       name: "Secret BandToken",
       label: "secret-band",
       decimals: 18,
-      iconImg: "sband.png"
+      iconImg: "band-protocol-band-logo.svg"
     },
     {
       codeId: 10,
@@ -132,7 +132,7 @@ export default [
       name: "Secret KyberNetwork",
       label: "secret-knc",
       decimals: 18,
-      iconImg: "sknc.png"
+      iconImg: "kyber-network-knc-logo.svg"
     },
     {
       codeId: 10,
@@ -141,7 +141,7 @@ export default [
       name: "Secret Wrapped BTC",
       label: "secret-wbtc",
       decimals: 8,
-      iconImg: "swbtc.png"
+      iconImg: "wrapped-bitcoin-wbtc-logo.svg"
     },
     {
       codeId: 10,
@@ -150,7 +150,7 @@ export default [
       name: "Secret Basis Cash",
       label: "secret-bac",
       decimals: 18,
-      iconImg: "sbac.png"
+      iconImg: "basis-cash.jpeg"
     },
     {
       codeId: 10,
@@ -159,7 +159,7 @@ export default [
       name: "Secret Sushi",
       label: "secret-sushi",
       decimals: 18,
-      iconImg: "ssushi.png"
+      iconImg: "sushiswap-sushi-logo.svg"
     },
     {
       codeId: 10,
@@ -168,7 +168,7 @@ export default [
       name: "Secret ReserveRights",
       label: "secret-rsr",
       decimals: 18,
-      iconImg: "srsr.png"
+      iconImg: "reserve-rights-rsr-logo.svg"
     },
     {
       codeId: 10,
@@ -177,7 +177,7 @@ export default [
       name: "Secret USDC",
       label: "secret-usdc",
       decimals: 6,
-      iconImg: "susdc.png"
+      iconImg: "usd-coin-usdc-logo.svg"
     },
     {
       codeId: 10,
@@ -186,7 +186,7 @@ export default [
       name: "Secret DefiPulseIndex",
       label: "secret-dpi",
       decimals: 18,
-      iconImg: "sdpi.png"
+      iconImg: "defipulse-logo.jpg"
     },
     {
       codeId: 6,

@@ -1,7 +1,8 @@
 <template>
   <g-link :to="to" class="auction" v-if="auction" :class="['theme-' + auction.color, 'status-' + auction.status.toLowerCase()]">
     <div class="auction__emoji">
-      {{ String.fromCodePoint(auction.emoji) }}
+      <g-image :immediate="true" :src="require(`!!assets-loader!@/assets/token-icons/${auction.sell.iconImg}`)"></g-image>
+      <!-- {{ String.fromCodePoint(auction.emoji) }} -->
     </div>
 
     <h3 class="auction__pair">

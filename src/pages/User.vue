@@ -125,6 +125,7 @@ export default {
   },
   mounted() {
     this.$auctions.updateUserAuctions();
+    console.log(this.userAuctions);
   },
 }
 </script>
