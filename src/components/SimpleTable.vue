@@ -9,7 +9,7 @@
         <tbody>
             <tr v-for="(row, index) in slicedData" :key="index">
             <td v-for="column in sortedColumns" :key="column.position">
-                <slot :name="column.name" :row="row">{{ valueOf(row, column) }}</slot>
+                <slot :name="column.name" :row="row">{{ valueOf(row, column) }}{{ suffixOf(row, column) }}</slot>
             </td>
             </tr>
         </tbody>
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 export default {
   props: {
     config: {
@@ -46,10 +48,15 @@ export default {
   },
   methods: {
     valueOf(row, column) {
-      if (!row[column.name]) return ''
+      if (!_.get(row, column.name)) return ''
       const formatter = column['formatter']
-      if (!formatter) return row[column.name]
-      return formatter(row[column.name])
+      if (!formatter) return _.get(row, column.name)
+      return formatter(_.get(row, column.name))
+    },
+    suffixOf(row, column) {
+      if (!_.get(row, column.suffix) || !_.get(row, column.name)) return ''
+      const formatter = column['formatter']
+      return " " + _.get(row, column.suffix);
     },
     setPage(page) {
       if (page < 0 || page > this.totalPages - 1) return

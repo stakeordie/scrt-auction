@@ -27,6 +27,12 @@
           <span v-if="auction.sell.decimalAmount != 1"> per token </span><br><span v-if="auction.sell.decimalAmount != 1"><small>({{ auction.bid.decimalMinimum}} {{auction.bid.denom}})</small></span>
         </dd>
       </dl>
+      <dl v-if="auction.bid && auction.bid.winner">
+        <dt>Winning bid</dt>
+        <dd class="auction__winner">
+          <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
+        </dd>
+      </dl>
     </div>
 
     <dl v-if="auction.endsAt && !auction.closedAt">
@@ -38,13 +44,6 @@
       <dl>
         <dt>Closed at</dt>
         <dd>{{ closedAt }}</dd>
-      </dl>
-
-      <dl v-if="auction.bid && auction.bid.winner">
-        <dt>Winning bid</dt>
-        <dd class="auction__winner">
-          <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom"></token-amount>
-        </dd>
       </dl>
     </div>
 
