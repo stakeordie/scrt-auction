@@ -9,7 +9,7 @@
 
         <column>
             <block>
-                <div class="auctions-set" :class="auctionsFilter.viewMode">
+                <div class="auctions-set" :class="viewMode">
                     <slot></slot>
                 </div>
             </block>
@@ -27,6 +27,12 @@ import AuctionsFilter from '../components/AuctionsFilter.vue';
 import KeplrAccount from '../components/KeplrAccount.vue';
 
 export default {
+  props: {
+    only: {
+      type: String,
+      default: null
+    }
+  },
   components: { AuctionItem, KeplrAccount, AuctionsFilter }, 
   metaInfo: {
     title: 'Secret Auctions',
@@ -37,6 +43,13 @@ export default {
     }
   },
   computed: {
+    viewMode() {
+      if(!this.only) {
+        return this.auctionsFilter.viewMode;
+      } else {
+        return this.only
+      }
+    },
     auctionsFilter() {
       return this.$store.state.$auctions.auctionsFilter;
     },

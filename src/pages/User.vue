@@ -1,5 +1,5 @@
 <template>
-  <list-layout>
+  <list-layout only="list">
     <!-- Control Area -->
     <div class="control-area">
       <div class="bidderSellerSwitch">
@@ -15,11 +15,11 @@
       <div class="bidderInfo" v-if="showBidderInfo">
         <div class="tableTitle">Active</div>
         <div class="infoTable">
-          <auction-item :to="'/auctions/' + auction.address" v-for="auction in openBidderUserAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
+          <auction-item :to="'/auctions/' + auction.address" v-for="auction in openBidderUserAuctions" :key="auction.address" :auction="auction" class="list"></auction-item>
         </div>
         <div class="tableTitle">Complete</div>
         <div class="infoTable">
-          <auction-item :to="'/auctions/' + auction.address" v-for="auction in closedBidderUserAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
+          <auction-item :to="'/auctions/' + auction.address" v-for="auction in closedBidderUserAuctions" :key="auction.address" :auction="auction" class="list"></auction-item>
         </div>
       </div>
       <!-- Seller -->
@@ -27,11 +27,11 @@
       <div class="sellerInfo" v-if="!showBidderInfo">
         <div class="tableTitle">Active</div>
         <div class="infoTable">
-          <auction-item :to="'/auctions/' + auction.address" v-for="auction in openSellerUserAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
+          <auction-item :to="'/auctions/' + auction.address" v-for="auction in openSellerUserAuctions" :key="auction.address" :auction="auction" class="list"></auction-item>
         </div>
         <div class="tableTitle">Complete</div>
         <div class="infoTable">
-          <auction-item :to="'/auctions/' + auction.address" v-for="auction in closedSellerUserAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
+          <auction-item :to="'/auctions/' + auction.address" v-for="auction in closedSellerUserAuctions" :key="auction.address" :auction="auction" class="list"></auction-item>
         </div>
       </div>
     </div>
