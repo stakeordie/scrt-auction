@@ -1,0 +1,13 @@
+@import "~@lkmx/flare/src/flare";
+
+:root { 
+  --table-cell-border: 1px solid lightgrey;
+  --table-cell-padding: --f-gutter --f-gutter;
+  --table-cell-heading-color: lightgrey;
+  --table-row-hover-background-color: #f7f7f7;
+
+  --table-pagination-items-gap: --f-gutter;
+  --table-pagination-margin-top: --f-gutter;
+  --table-pagination-justify: start;
+  --table-pagination-item-selected-color: blue;
+}
