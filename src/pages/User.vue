@@ -3,8 +3,8 @@
     <!-- Control Area -->
     <div class="control-area">
       <div class="bidderSellerSwitch">
-        <div class="showBidderInfo" @click="showBidderInfo = true">BIDDER</div>
-        <div class="showSellerInfo" @click="showBidderInfo = false">SELLER</div>
+        <div class="switch" :class="showBidderInfo ? 'selected' : ''" @click="showBidderInfo = true">BIDDER</div>
+        <div class="switch" :class="!showBidderInfo ? 'selected' : ''" @click="showBidderInfo = false">SELLER</div>
       </div>
     </div>
     <!-- Aggregate Area -->
@@ -86,35 +86,45 @@ export default {
     ...mapGetters("$auctions", [
       "userAuctions"
     ]),
-    allUserAuctions() {
-      return this.userAuctions.filter( (auction) => {
-        if(auction.status == "ACTIVE") {
+    openBidderUserAuctions() {
+      return this.userAuctions.filter((auction) => {
+        if(auction.status == "ACTIVE" && auction.viewerIsBidder){
           return true;
         } else {
-          if(auction.bid.winner) {
-            return true;
-          } else {
-            return false;
-          }
+          return false;
         }
       })
     },
-    openBidderUserAuctions() {
-      return this.userAuctions.filter(auction => auction.status == "ACTIVE")
-    },
     closedBidderUserAuctions() {
-      return this.userAuctions.filter(auction => auction.status == "ACTIVE")
+      return this.userAuctions.filter((auction) => {
+        if(auction.status == "CLOSED" && auction.viewerIsWinner){
+          return true;
+        } else {
+          return false;
+        }
+      })
     },
     openSellerUserAuctions() {
-      return this.userAuctions.filter(auction => auction.status == "ACTIVE")
+      return this.userAuctions.filter((auction) => {
+        if(auction.status == "ACTIVE" && auction.viewerIsSeller){
+          return true;
+        } else {
+          return false;
+        }
+      })
     },
     closedSellerUserAuctions() {
-      return this.userAuctions.filter(auction => auction.status == "CLOSED")
+      return this.userAuctions.filter((auction) => {
+        if(auction.status == "CLOSED" && auction.viewerWasSeller && auction.bid.winner){
+          return true;
+        } else {
+          return false;
+        }
+      })
     },
   },
   mounted() {
     this.$auctions.updateUserAuctions();
-    console.log(this.userAuctions);
   },
 }
 </script>
@@ -126,9 +136,22 @@ export default {
       justify-content: center;
     .bidderSellerSwitch {
       cursor: pointer;
-      width: 200px;
+      
       display: flex;
       justify-content: space-between;
+      
+      
+      border: 2px solid white;
+      .switch {
+        width: 100px;
+        background: black;
+        text-align: center;
+        padding: 5px 20px;
+        &.selected {
+          background: white;
+          color:black;
+        }
+      }
     }
   }
 

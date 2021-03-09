@@ -128,7 +128,8 @@ export class AuctionsApi {
     //     "sell_decimals":18,
     //     "timestamp":1612626275
     // }
-    transformClosedAuction(rawction) {
+    transformClosedAuction(rawction, tokenData) {
+        console.log(tokenData);
         const auction = {
             address: rawction.address,
             pair: rawction.pair,
@@ -136,7 +137,13 @@ export class AuctionsApi {
             emoji: this.arrayHash(rawction.label, emojis),
             color: "red",
             color2: "red",
+            bid: {
+                contract: tokenData.find(token => token.symbol === rawction.pair.split("-")[1])?.address,
+                decimals: tokenData.find(token => token.symbol === rawction.pair.split("-")[1])?.decimals,
+                denom: rawction.pair.split("-")[1],
+            },
             sell: {
+                contract: tokenData.find(token => token.symbol === rawction.pair.split("-")[0])?.address,
                 amount: rawction.sell_amount,
                 decimalAmount: this.tokens2Decimal(rawction.sell_amount, rawction.sell_decimals),
                 decimals: rawction.sell_decimals,
@@ -146,17 +153,12 @@ export class AuctionsApi {
             status: "CLOSED",
         }
         if(rawction.winning_bid) {
-            auction.bid = {
+            Object.assign(auction.bid, {
                 winner: rawction.winning_bid,
                 decimalWinner: this.tokens2Decimal(rawction.winning_bid, rawction.bid_decimals),
                 decimals: rawction.bid_decimals,
                 denom: rawction.pair.split("-")[1],
-            }
-        } else {
-            auction.bid = {
-                decimals: rawction.bid_decimals,
-                denom: rawction.pair.split("-")[1],
-            }
+            })
         }
 
         return auction;
@@ -257,10 +259,10 @@ export class AuctionsApi {
         });
     }
 
-    async listClosedAuctions() {
+    async listClosedAuctions(tokenData) {
         const auctions = await this.scrtClient.queryContract(this.factoryAddress, {"list_closed_auctions":{}})
         return auctions.list_closed_auctions.closed.map(auction => {
-            return this.transformClosedAuction(auction);
+            return this.transformClosedAuction(auction, tokenData);
         });
     }
 
@@ -271,7 +273,7 @@ export class AuctionsApi {
             const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction, tokenData));
             const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction, tokenData));
 
-            const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction));
+            const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction, tokenData));
             const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformWonAuction(rawction));
 
             return {

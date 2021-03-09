@@ -271,8 +271,9 @@ export default {
                     }
                 },
 
-                updateClosedAuctions: async ({ commit }) => {
-                    const closedAuctions = await auctionsApi.listClosedAuctions();
+                updateClosedAuctions: async ({ commit, state }) => {
+                    console.log(state.tokenData);
+                    const closedAuctions = await auctionsApi.listClosedAuctions(state.tokenData);
                     if (closedAuctions) {
                         commit("updateAuctions", closedAuctions);
                     }
