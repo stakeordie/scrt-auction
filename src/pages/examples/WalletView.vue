@@ -125,7 +125,7 @@ export default {
             let token = {};
             for(let i=0;i<aWallet.length;i++) {
                 entryAddress = aWallet[i].address;
-                console.log(entryAddress);
+                //console.log(entryAddress);
                 for(let j=0; j<aWallet[i].keys.length; j++) {
                     switch(aWallet[i].keys[j].contractCodeId) {
                         case 1:
