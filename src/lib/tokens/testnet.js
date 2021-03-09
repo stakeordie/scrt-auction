@@ -2,9 +2,9 @@ export default [
 
   {
     codeId: 1084,
-    symbol: "sETH",
+    symbol: "ETH",
     address: "secret1j50u6hvume8pkq2c7lcmktrzd7lrymxhujrnax",
-    name: "test",
+    name: "ETH",
     label: "20:09:20",
     decimals: 6,
     iconImg: "secret-icon.png"

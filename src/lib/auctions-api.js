@@ -391,6 +391,8 @@ export class AuctionsApi {
                 "padding": "*".repeat((40 - bidAmount.toString().length))
             }
         };
+        console.log(msg);
+        console.log(fees);
         return await this.scrtClient.executeContract(bidTokenAddress, msg, fees);
     }
 

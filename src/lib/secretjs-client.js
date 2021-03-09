@@ -107,6 +107,8 @@ export class SecretJsClient {
     try {
       await window.keplr.enable(chainId);
 
+      console.log("3) wallet.getSeed()", this.wallet.getSeed());
+
       this.signingClient = new SigningCosmWasmClient(
         this.secretRestUrl,
         this.wallet.address,
@@ -114,6 +116,7 @@ export class SecretJsClient {
         this.wallet.getSeed(),
         fees
       );
+      console.log("4) execute params", address, handleMsg);
       const response = await this.signingClient.execute(address, handleMsg);
       return this.handleResponse(response); //THIS SHOULD BE REFACTORED EVENTUALLY
     } catch (err) {
