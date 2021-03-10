@@ -5,7 +5,7 @@
         <img src="@/assets/secret_auctions_logo.svg">
       </g-link>
 
-      <ul class="app-menu" :style="{ display: menuMobileVisible ? 'block' : 'none'}">
+      <ul class="app-menu" :class="{'mobile-hidden': !menuMobileVisible }">
         <li><g-link to="/">Current Auctions</g-link>
         <li><g-link to="/past">Past Auctions</g-link></li>
         <li><g-link to="/user">My Auctions</g-link></li>
@@ -132,6 +132,9 @@ query {
 .app-menu {
   @include respond-to("<=s") {
     padding: var(--f-gutter) var(--f-gutter);
+    &.mobile-hidden {
+      display: none;
+    }
   }
   @include respond-to(">=m") {
     padding: var(--f-gutter-xl) var(--f-gutter);
