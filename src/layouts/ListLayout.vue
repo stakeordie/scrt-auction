@@ -45,6 +45,7 @@ export default {
   computed: {
     viewMode() {
       if(!this.only) {
+        console.log(this.auctionsFilter.viewMode)
         return this.auctionsFilter.viewMode;
       } else {
         return this.only
