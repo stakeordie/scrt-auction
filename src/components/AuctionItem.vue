@@ -1,7 +1,7 @@
 <template>
   <g-link :to="to" class="auction" v-if="auction" :class="['theme-' + auction.color, 'status-' + auction.status.toLowerCase()]">
     <div class="auction__emoji">
-      <g-image :immediate="true" :src="require(`!!assets-loader?width=40&height=40!@/assets/token-icons/${auction.sell.iconImg ? auction.sell.iconImg : 'secret-scrt-logo.svg' }`)"></g-image>
+      <g-image :immediate="true" :src="require(`!!assets-loader?width=40&height=40!@/assets/token-icons/${auction.sell.iconImg}`)"></g-image>
       <!-- {{ String.fromCodePoint(auction.emoji) }} -->
     </div>
 
@@ -78,6 +78,11 @@ export default {
     },
     isEnded() {
       return moment(this.auction.endsAt).isBefore();
+    }
+  },
+  mounted() {
+    if(!this.auction.sell.iconImg) {
+      console.log(this.auction);
     }
   }
 };
