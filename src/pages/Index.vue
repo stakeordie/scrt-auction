@@ -36,6 +36,7 @@ export default {
   },
   mounted() {
     this.$auctions.updateActiveAuctions();
+    console.log(this.auctionsFilter.viewMode);
   },
   // methods: {
   //   clearFilters() {
