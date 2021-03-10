@@ -14,6 +14,6 @@ Copy .env.testnet example to .env then run the app using the script provided
 
 ````bash
 cp .env.testnet .env
-yarn run develop
+yarn dev
 ````
 
