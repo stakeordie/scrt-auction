@@ -1,5 +1,5 @@
 <template>
-<list-layout >
+<list-layout-alt >
     <!-- Auctions grid -->
   <auction-item :to="'/auctions/' + auction.address" v-for="auction in activeAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
     
@@ -11,7 +11,7 @@
       </h2>
       <p><router-link :to="'/new'" class="button">Be the first one</router-link> or <a href="" @click="clearFilters()">clear your filters</a>.</p>
     </div> -->
-</list-layout>
+</list-layout-alt>
 </template>
 
 <script>
@@ -19,10 +19,10 @@
 import { mapGetters } from 'vuex'
 
 import AuctionItem from '../components/AuctionItem.vue'
-import ListLayout from '../layouts/ListLayout.vue';
+import ListLayoutAlt from '../layouts/ListLayoutAlt.vue';
 
 export default {
-  components: { AuctionItem, ListLayout }, 
+  components: { AuctionItem, ListLayoutAlt }, 
   metaInfo: {
     title: 'Secret Auctions',
   },
