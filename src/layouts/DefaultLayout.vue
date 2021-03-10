@@ -5,13 +5,18 @@
         <img src="@/assets/secret_auctions_logo.svg">
       </g-link>
 
-      <ul class="app-menu">
+      <ul class="app-menu" :style="{ display: menuMobileVisible ? 'block' : 'none'}">
         <li><g-link to="/">Current Auctions</g-link>
         <li><g-link to="/past">Past Auctions</g-link></li>
         <li><g-link to="/user">My Auctions</g-link></li>
         <li><g-link to="/new">Create an Auction</g-link></li>
       </ul>
+
+      <div class="mobile-menu">
+        <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
+      </div>
     </div>
+    
 
     <div class="layout-content">
 
@@ -56,7 +61,9 @@ export default {
     return {
       userAddress: null,
       viewingKey: null,
-      chainId: process.env.GRIDSOME_SECRET_CHAIN_ID
+      chainId: process.env.GRIDSOME_SECRET_CHAIN_ID,
+
+      menuMobileVisible: false,
     }
   },
   watch: {
@@ -97,8 +104,6 @@ query {
   }
 
   &-sidemenu {
-    position: sticky;
-    top: 0;
     background-color: #0D1017;
     padding: var(--f-gutter);
 
@@ -126,7 +131,7 @@ query {
 
 .app-menu {
   @include respond-to("<=s") {
-    padding: var(--f-gutter-l) var(--f-gutter);
+    padding: var(--f-gutter) var(--f-gutter);
   }
   @include respond-to(">=m") {
     padding: var(--f-gutter-xl) var(--f-gutter);
@@ -134,7 +139,31 @@ query {
   margin-bottom: 0;
   li {
     font-weight: bold;
-    margin-bottom: var(--f-gutter-l);
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.mobile-menu {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+
+  @include respond-to("<=s") {
+    position: absolute;
+    top: var(--f-gutter);
+    right: var(--f-gutter);
+  }
+  @include respond-to(">=m") {
+    display: none;
   }
 }
 

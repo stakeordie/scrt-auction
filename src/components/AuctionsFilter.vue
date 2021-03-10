@@ -97,7 +97,7 @@ export default {
     &__filters {
       display: flex;
       flex-flow: row wrap;
-      column-gap: var(--f-gutter);
+      gap: var(--f-gutter);
     }
 
 
@@ -137,6 +137,7 @@ export default {
     &__label {
       margin-right: var(--f-gutter);
       white-space: nowrap;
+      min-width: 100px;
     }
 
 

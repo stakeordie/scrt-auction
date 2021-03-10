@@ -1,6 +1,17 @@
 import emojis from '../lib/emojis.js'
 import statePersist from '../plugins/state-persist.js';
 
+function aRandomStringForEntropy(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
+ 
+
 export class AuctionsApi {
     factoryAddress;
     scrtClient;
@@ -337,8 +348,8 @@ export class AuctionsApi {
         const fees = this.getFees("createViewingKey");
         const msg = {
             "create_viewing_key":{
-                "entropy": "A Random String for Entropy",
-                "padding": "*".repeat((40 - "A Random String for Entropy".length))
+                "entropy": aRandomStringForEntropy(27),
+                "padding": "*".repeat(13)
             }
         }
         const response = await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
