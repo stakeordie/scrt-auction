@@ -1,5 +1,5 @@
 <template>
-<list-layout>
+<list-layout :only="auctionsFilter.viewMode">
     <!-- Auctions grid -->
   <auction-item :to="'/auctions/' + auction.address" v-for="auction in activeAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
     
