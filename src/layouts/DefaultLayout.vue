@@ -1,27 +1,10 @@
 <template>
-  <div class="layout">
-    <div class="layout-sidemenu">
-      <g-link to="/" class="header__logo">
-        <img src="@/assets/secret_auctions_logo.svg">
-      </g-link>
-
-      <ul class="app-menu" :class="{'mobile-hidden': !menuMobileVisible }">
-        <li><g-link to="/">Current Auctions</g-link>
-        <li><g-link to="/past">Past Auctions</g-link></li>
-        <li><g-link to="/user">My Auctions</g-link></li>
-        <li><g-link to="/new">Create an Auction</g-link></li>
-      </ul>
-
-      <div class="mobile-menu">
-        <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
-      </div>
-    </div>
-    
-
-    <div class="layout-content">
-
-      <div class="layout-header">
+  <div class="layout">    
+    <div class="layout-header">
         <simple-header mode="full">
+          <g-link to="/" class="header__logo">
+            <img src="@/assets/secret_auctions_logo.svg">
+          </g-link>
           <nav class="auctions-nav"></nav>
           <div class="actions">
             <a class="button" href="/new">Create auction</a>
@@ -29,6 +12,23 @@
             <keplr-user v-model="userAddress"></keplr-user>
           </div>
         </simple-header>
+      </div>
+    
+
+    <div class="layout-content">
+
+      <div class="layout-sidemenu">
+
+        <ul class="app-menu" :class="{'mobile-hidden': !menuMobileVisible }">
+          <li><g-link to="/">Current Auctions</g-link>
+          <li><g-link to="/past">Past Auctions</g-link></li>
+          <li><g-link to="/user">My Auctions</g-link></li>
+          <li><g-link to="/new">Create an Auction</g-link></li>
+        </ul>
+
+        <!-- <div class="mobile-menu">
+          <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
+        </div> -->
       </div>
 
       <slot></slot>
@@ -99,11 +99,17 @@ query {
   @include respond-to("<=s") {
     grid-template-rows: min-content 1fr;
   }
+
   @include respond-to(">=m") {
-    grid-template-columns: var(--sidemenu-width) 1fr;
+    grid-template-rows: min-content 1fr;
   }
 
   &-sidemenu {
+
+    @include respond-to(">=m") {
+      grid-row: 1 / 3;
+    }
+
     background-color: #0D1017;
     padding: var(--f-gutter);
 
@@ -113,7 +119,11 @@ query {
   }
 
   &-content {
+
+    display: grid;
     height: 100vh;
+    grid-template-columns: var(--sidemenu-width) 1fr;
+
     background-image: url(../assets/scrt-swirl.svg);
     background-size: 100% auto;
     background-position: center top;
@@ -126,6 +136,11 @@ query {
       --f-columns-normal-width-xxl:  calc(var(--f-breakpoint-xl) - var(--sidemenu-width));
       --f-columns-normal-width-xxxl: calc(var(--f-breakpoint-xxl) - var(--sidemenu-width));
     }
+  }
+
+  &-footer {
+      grid-column: 2;
+  
   }
 }
 
