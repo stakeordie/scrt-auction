@@ -61,7 +61,7 @@ export default [
       name: "Test Secret Sandy",
       label: "tsSNDY",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,
@@ -70,7 +70,7 @@ export default [
       name: "Test Secret Victor",
       label: "tsVCTR",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,
@@ -79,7 +79,7 @@ export default [
       name: "Test Secret Can",
       label: "tsCAN",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,
@@ -88,7 +88,7 @@ export default [
       name: "Test Secret Tor",
       label: "tsTOR",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,
@@ -97,7 +97,7 @@ export default [
       name: "Test Secret Jordan",
       label: "tsJRDN",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,
@@ -106,7 +106,7 @@ export default [
       name: "Test Secret Carter",
       label: "tsCRTR",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,
@@ -115,7 +115,7 @@ export default [
       name: "Test Secret Brendan",
       label: "tsBRDN",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,
@@ -124,7 +124,7 @@ export default [
       name: "Test Secret Baedrik",
       label: "tsBDRK",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
       codeId: 1,
@@ -133,7 +133,7 @@ export default [
       name: "Test Secret Laura",
       label: "tsLORA",
       decimals: 2,
-      iconImg: "secret-icon.png"
+      iconImg: "chainlink-link-logo.svg"
   },
   {
     codeId: 1,
@@ -142,6 +142,11 @@ export default [
     name: "Test Secret Kidney",
     label: "tsKidney",
     decimals: 0,
-    iconImg: "secret-icon.png"
+    iconImg: "chainlink-link-logo.svg"
+  },
+  {
+    codeId: 1,
+    symbol: "THIRD",
+    iconImg: "chainlink-link-logo.svg"
   }
 ];
