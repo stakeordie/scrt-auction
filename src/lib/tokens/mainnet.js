@@ -195,7 +195,7 @@ export default [
       name: "fatsecret",
       label: "fatsecret",
       decimals: 3,
-      iconImg: "sdpi.png"
+      iconImg: "secret-scrt-logo.svg"
     },
     {
       codeId: 8,
@@ -204,7 +204,7 @@ export default [
       name: "Secret Alt",
       label: "sALT",
       decimals: 6,
-      iconImg: "sdpi.png"
+      iconImg: "secret-scrt-logo.svg"
     },
     {
       codeId: 10,
@@ -213,7 +213,7 @@ export default [
       name: "Secret Kidney",
       label: "secret-kidney-type-0",
       decimals: 0,
-      iconImg: "sdpi.png"
+      iconImg: "secret-scrt-logo.svg"
     },
     {
       codeId: 6,
@@ -222,7 +222,7 @@ export default [
       name: "ScrtMoon",
       label: "ScrtMoon",
       decimals: 6,
-      iconImg: "sdpi.png"
+      iconImg: "secret-scrt-logo.svg"
     },
     {
       codeId: 10,
@@ -231,6 +231,6 @@ export default [
       name: "Stake or Die! Token",
       label: "stake-or-die-token",
       decimals: 2,
-      iconImg: "sdpi.png"
+      iconImg: "secret-scrt-logo.svg"
     }
   ];
