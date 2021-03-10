@@ -20,8 +20,6 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
-
 import AuctionItem from '../components/AuctionItem.vue'
 import AuctionsFilter from '../components/AuctionsFilter.vue';
 import KeplrAccount from '../components/KeplrAccount.vue';
@@ -48,15 +46,13 @@ export default {
         console.log(this.auctionsFilter.viewMode)
         return this.auctionsFilter.viewMode;
       } else {
-        return this.only
+        //this.$auctions.updateAuctionsFilter(this.only);
+        return this.only;
       }
     },
     auctionsFilter() {
       return this.$store.state.$auctions.auctionsFilter;
-    },
-    ...mapGetters("$auctions", [
-      "filteredAuctions", 
-    ])
+    }
   },
   methods: {
     clearFilters() {

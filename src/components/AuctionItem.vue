@@ -79,11 +79,6 @@ export default {
     isEnded() {
       return moment(this.auction.endsAt).isBefore();
     }
-  },
-  mounted() {
-    if(!this.auction.sell.iconImg) {
-      console.log(this.auction)
-    }
   }
 };
 </script>

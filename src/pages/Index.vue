@@ -1,5 +1,5 @@
 <template>
-<list-layout :only="auctionsFilter.viewMode">
+<list-layout >
     <!-- Auctions grid -->
   <auction-item :to="'/auctions/' + auction.address" v-for="auction in activeAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
     
@@ -36,7 +36,6 @@ export default {
   },
   mounted() {
     this.$auctions.updateActiveAuctions();
-    console.log(this.auctionsFilter.viewMode);
   },
   // methods: {
   //   clearFilters() {
