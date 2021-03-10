@@ -25,18 +25,14 @@ import AuctionsFilter from '../components/AuctionsFilter.vue';
 import KeplrAccount from '../components/KeplrAccount.vue';
 
 export default {
-  components: { AuctionItem, KeplrAccount, AuctionsFilter }, 
+  components: { AuctionItem, KeplrAccount, AuctionsFilter },
+  props: [ "auctionsFilter" ],
   metaInfo: {
     title: 'Secret Auctions',
   },
   data() {
     return {
       keplrAccount: null
-    }
-  },
-  computed: {
-    auctionsFilter() {
-      return this.$store.state.$auctions.auctionsFilter;
     }
   },
   methods: {
