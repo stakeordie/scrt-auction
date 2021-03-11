@@ -1,7 +1,7 @@
 <template>
   <default-layout>
     <page>
-        <column class="auctions-filter" mode="full">
+        <column class="auctions-filter">
             <block>
                 <auctions-filter></auctions-filter>
             </block>
