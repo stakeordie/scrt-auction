@@ -171,6 +171,10 @@ export default {
     }
   }
 
+  &:not(.grid):not(.list) {
+    display: none;
+  }
+
   // Layout specific
   &.grid {
     display: grid;
