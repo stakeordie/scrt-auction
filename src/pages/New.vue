@@ -32,7 +32,6 @@
                                     <option v-for="sellToken in availableTokens" :key="sellToken.address" v-bind:value="sellToken">
                                         {{ sellToken.symbol }}
                                     </option>
-                                    <option value="customSellToken">Add Custom Token</option>
                                 </select>
                             </validation-provider>
 
@@ -63,7 +62,6 @@
                                     <option v-for="bidToken in availableTokens" :key="bidToken.address" v-bind:value="bidToken">
                                         {{ bidToken.symbol }}
                                     </option>
-                                    <option value="customBidToken">Add Custom Token</option>
                                 </select>
                             </validation-provider>
 
