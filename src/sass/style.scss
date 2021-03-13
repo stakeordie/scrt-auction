@@ -1,51 +1,35 @@
 @import "~@lkmx/flare/src/flare";
 @import "color";
 @import "table";
-
-
 :root {
-
     // Theme color variables section
     --color-user-status: var(--color-light-gray);
-
-
-
-
     --f-default-text-font: "Montserrat";
-
     --f-header-text-color: black;
     --f-header-background-color: #151A20;
-
     --f-default-text-color: white;
-
     --f-default-headers-font: "Hind";
     --f-default-headers-weight: 600;
     --f-default-headers-color: white;
     --f-h1-text-size: 32px;
     --f-h2-text-size: 26px;
     --f-h3-text-size: 22px;
-    
-    
+    --f-h4-text-size: 22px;
+    --f-h6-text-size: 16px;
     --f-primary-action-color: var(--color-blue-primary);
     --f-primary-action-anticolor: black;
     --f-primary-action-color--hover: var(--color-turquoise-secondary);
     --f-primary-action-anticolor--hover: black;
-
     --f-secondary-action-color: var(--color-turquoise-primary);
     --f-secondary-action-anticolor: black;
-
-    
     --f-links-text-color: var(--color-yellow-primary);
     --f-links-text-hover-color: var(--color-blue-primary);
     --f-links-text-visited-color: var(--color-blue-primary);
     --f-links-text-active-color: var(--color-yellow-primary);
-    
     --f-forms-button-text-size: 13px;
     --f-forms-input-text-size: 14px;
-
     --f-forms-button-radius: 4px;
     --f-forms-input-radius: 4px;
-
     // Application specific variables
     // some of them are pulled from flare but use
     // a different name to prevent an unnecessary 
@@ -53,23 +37,17 @@
     --default-background-color: var(--color-black);
     --default-success-color: var(--color-positive);
     --default-error-color: var(--color-negative);
-
     --gutter: var(--f-gutter);
-
     // Animation variables
     --animate-duration: 0.4s;
-
     --f-text-selection-color: var(--color-purple-secondary);
 }
-
 
 html {
     background-color: var(--default-background-color);
 }
 
-body {
-
-}
+body {}
 
 strong {
     font-weight: 600;
@@ -87,6 +65,7 @@ dt {
     font-size: 12px;
     margin-bottom: var(--f-gutter-xxs);
 }
+
 dd {
     font-weight: 600;
 }
@@ -96,23 +75,26 @@ label {
     font-size: 13px;
 }
 
+
 /* Chrome, Safari, Edge, Opera */
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
+
 
 /* Firefox */
+
 input[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
-button, .button {
+button,
+.button {
     font-weight: 600;
 }
-
-
 
 // Common visual assets
 .modal {
@@ -124,20 +106,18 @@ button, .button {
     z-index: 11000;
     padding: var(--f-gutter-l);
     border-radius: 4px;
-    box-shadow: 0px 0px 16px -6px rgba(0,0,0,1);
+    box-shadow: 0px 0px 16px -6px rgba(0, 0, 0, 1);
     display: block;
-
     h3 {
         display: inline-block;
     }
-
     .close {
-      position: absolute;
-      text-decoration: none;
-      top: var(--f-gutter);
-      right: var(--f-gutter-l);
-      line-height: 20px;
-      font-size: 0.8em;
-      color: var(--color-yellow-primary)
+        position: absolute;
+        text-decoration: none;
+        top: var(--f-gutter);
+        right: var(--f-gutter-l);
+        line-height: 20px;
+        font-size: 0.8em;
+        color: var(--color-yellow-primary)
     }
 }
