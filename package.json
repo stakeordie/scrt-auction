@@ -7,6 +7,8 @@
     "explore": "gridsome explore"
   },
   "dependencies": {
+    "@chainapsis/cosmosjs": "^v0.0.3-alpha.3",
+    "@cosmostation/cosmosjs": "^0.9.5",
     "@fontsource/hind": "^4.1.0",
     "@fontsource/montserrat": "^4.1.0",
     "@gridsome/vue-remark": "^0.2.6",

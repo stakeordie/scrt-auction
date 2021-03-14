@@ -32,39 +32,63 @@
                                     <option v-for="sellToken in availableTokens" :key="sellToken.address" v-bind:value="sellToken">
                                         {{ sellToken.symbol }}
                                     </option>
-                                    <option value="customSellToken">Add Custom Token</option>
+                                    <option :value="{ isCustom: true }">Add Custom Token</option>
                                 </select>
                             </validation-provider>
 
                             <!-- START - Custom Sell Token Section -->
-                                <div class="custom-token" v-if="auctionForm.sellToken == 'customSellToken'">
+                            <!-- customSellTokenForm: {
+                                    selected: false,
+                                    labelSearch: "",
+                                    address: "",
+                                    token: {}
+                                },
+                                customBidTokenForm: {
+                                    selected: false,
+                                    address: "",
+                                    token: {}
+                                },
+                                auctionForm: {
+                                    bidPriceControlSelected: true,
+                                    sellAmount: 1,
+                                    sellToken: "",
+                                    bidPrice: 1,
+                                    bidToken: "",
+                                    minBidAmount: 1,
+                                    label: null,
+                                    description: "",
+                                    endTime: new Date(),
+                                    customSellTokenContractAddress: ""
+                                }, -->
+                                <div class="custom-token" v-if="auctionForm.sellToken.isCustom">
                                     <h3 class="custom-token__title">Enter Custom Token Details</h3>
                                     <div class="custom-token__label-search">
                                         <label for="custom-sell-token-label-search">Find Address by Label</label>
                                         <span class="error">{{ errors[0] }}</span>
-                                        <input name="custom-sell-token-label-search" type="text" v-model.trim="auctionForm.customSellTokenLabelSearch" />
+                                        <input name="custom-sell-token-label-search" type="text" v-model.trim="customSellTokenForm.labelSearch" />
                                     </div>
                                     <button type="button" class="custom-token__label-search-button" @click="getContractAddressFromLabel">Search</button>
                                     <validation-provider class="custom-token__contract_address" :rules="`required`" v-slot="{ errors }">
                                         <label for="custom-sell-token-contract-address">Contract Address</label>
                                         <span class="error">{{ errors[0] }}</span>
-                                        <input name="custom-sell-token-contract-address" type="text" v-model.trim="auctionForm.customSellTokenContractAddress" @change="getCustomSellToken"/>
+                                        <input name="custom-sell-token-contract-address" type="text" v-model.trim="customSellTokenForm.address" @change="getCustomSellToken"/>
                                     </validation-provider>
                                     <div class="custom-token__name">
                                         <label for="sell-amount">Name</label>
                                         <span class="error">{{ errors[0] }}</span>
-                                        <input name="sell-amount" type="text" readonly v-model.trim="auctionForm.customSellTokenName" />
+                                        <input name="sell-amount" type="text" readonly v-model.trim="customSellTokenForm.token.name" />
                                     </div>
                                     <div class="custom-token__symbol">
                                         <label for="sell-amount">Symbol</label>
                                         <span class="error">{{ errors[0] }}</span>
-                                        <input name="sell-amount" type="text" readonly v-model.trim="auctionForm.customSellTokenSymbol" />
+                                        <input name="sell-amount" type="text" readonly v-model.trim="customSellTokenForm.token.symbol" />
                                     </div>
                                     <div class="custom-token__decimals">
                                         <label for="sell-amount">Decimals</label>
                                         <span class="error">{{ errors[0] }}</span>
-                                        <input name="sell-amount" type="text" readonly v-model.trim="auctionForm.customSellTokenDecimals" />
+                                        <input name="sell-amount" type="text" readonly v-model.trim="customSellTokenForm.token.decimals" />
                                     </div>
+                                    <button type="button" class="custom-token__add-token-button" @click="addCustomTokenToTokenData">Add Token</button>
                                 </div>
 
                             <!-- END - Custom Sell Token Section -->
@@ -264,6 +288,14 @@ export default {
             auctionError: null,
             allowanceError: "",
 
+            customSellTokenForm: {
+                address: "",
+                token: {}
+            },
+            customBidTokenForm: {
+                address: "",
+                token: {}
+            },
             auctionForm: {
                 bidPriceControlSelected: true,
                 sellAmount: 1,
@@ -274,6 +306,7 @@ export default {
                 label: null,
                 description: "",
                 endTime: new Date(),
+                customSellTokenContractAddress: ""
             },
 
             newAuctionPath: "",
@@ -331,7 +364,22 @@ export default {
             return null;            
         },
         async getCustomSellToken() {
-            return null;
+            const contractInfo = await this.$scrtjs.getContract(this.customSellTokenForm.address);
+            const tokenInfo = await this.$scrtjs.queryContract(this.customSellTokenForm.address, {"token_info": {}});
+            this.customSellTokenForm.token = {
+                isCustom: true,
+                address: contractInfo.address,
+                codeId: contractInfo.codeId,
+                decimals: tokenInfo.token_info.decimals,
+                label: contractInfo.label,
+                name: tokenInfo.token_info.name,
+                symbol: tokenInfo.token_info.symbol,
+                iconImg: "secret-scrt-logo.svg"
+            }
+        },
+        async addCustomTokenToTokenData() {
+            this.$auctions.addToken(this.customSellTokenForm.token);
+            this.auctionForm.sellToken = this.customSellTokenForm.token;
         },
         async increaseAllowance() {
             this.stage = "allowance--creating";
