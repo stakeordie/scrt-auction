@@ -1,6 +1,7 @@
 <template>
-  <div class="custom-select" :tabindex="tabindex" >
-      <!-- @blur="open = false" -->
+  <div class="custom-select" :tabindex="tabindex">
+      <!-- Place below in the element above -->
+      <!-- @blur="open = false" --> 
     <div class="selected" :class="{ open: open }" @click="open = !open">
         <g-image :immediate="true" :src="require(`!!assets-loader?width=15&height=15!@/assets/token-icons/${selected.iconImg ? selected.iconImg : 'secret-scrt-logo.svg'}`)"></g-image>
         {{ selected.symbol }}
@@ -13,10 +14,10 @@
             </div>
         </div>
         <div class="list-area" v-show="showList">
-            <input type="search" placeholder="Search"/>
+            <input type="search" placeholder="Search" v-model="searchPhrase"/>
             <div class="items">
                 <div
-                    v-for="token in tokens"
+                    v-for="token in filteredTokens"
                     :key="token.address"
                     @click="
                         selected = token;
@@ -79,6 +80,7 @@ export default {
             address: "",
             token: {}
         },
+        searchPhrase: "",
         selected: this.default
         ? this.default
         : this.tokens.length > 0
@@ -89,6 +91,17 @@ export default {
   },
   mounted() {
     this.$emit("input", this.selected);
+  },
+  computed: {
+      filteredTokens() {
+          if(!this.searchPhrase) {
+              return this.tokens;
+          } else {
+            return this.tokens.filter(token => {
+                token.symbol.toLowerCase().includes(this.searchPhrase.toLowerCase());
+            });
+          }
+      } 
   },
   methods: {
         async getContractAddressFromLabel() {

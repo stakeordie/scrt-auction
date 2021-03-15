@@ -227,7 +227,7 @@ import moment from 'moment';
 import LoadingIcon from '../components/LoadingIcon';
 import VkeysAddress from '../components/VkeysAddress.vue'
 import DefaultLayout from '../layouts/DefaultLayout.vue';
-import TokenSelector from '../components/tokenSelector.vue';
+import TokenSelector from '../components/TokenSelector.vue';
 
 
 extend("required", {
