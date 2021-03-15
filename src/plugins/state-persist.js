@@ -37,6 +37,7 @@ const statePersist = {
       // messed up
       statePersist.store.state.$auctions.auctions = storedState.$auctions.auctions;
       statePersist.store.state.$auctions.auctionsFilter = storedState.$auctions.auctionsFilter;
+      statePersist.store.state.$auctions.tokenData = storedState.$auctions.tokenData;
       statePersist.store.state.$vkeys.vkeys = storedState.$vkeys.vkeys;
     }
     statePersist.hasStarted = true;

@@ -330,6 +330,12 @@ export default {
                     }
                 },
 
+                addToken: ({commit, state}, token) => {
+                    let tokenData = state.tokenData;
+                    tokenData.push(token)
+                    commit("updateAvailableTokens", tokenData);
+                },
+
                 retractBid: async({commit}, auctionAddress) => {
                     const response = await auctionsApi.retractBid(auctionAddress);
                     if(response.retract_bid?.status == 'Success') {
@@ -468,6 +474,10 @@ export default {
 
         Vue.prototype.$auctions.updateAuctionsViewer = async (auctionsViewer) => {
             Vue.prototype.$store.dispatch('$auctions/updateAuctionsViewer', auctionsViewer);
+        };
+
+        Vue.prototype.$auctions.addToken = async (token) => {
+            Vue.prototype.$store.dispatch('$auctions/addToken', token);
         };
 
         //txs

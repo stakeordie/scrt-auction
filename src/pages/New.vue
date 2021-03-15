@@ -25,15 +25,51 @@
                                 <input name="sell-amount" type="text" v-model.trim="auctionForm.sellAmount" />
                             </validation-provider>
 
-                            <validation-provider class="auction-form__sell-denom" rules="required" v-slot="{ errors }">
+                            <!-- <validation-provider class="auction-form__sell-denom" rules="required" v-slot="{ errors }">
                                 <span class="error">{{ errors[0] }}</span>
                                 <select name="sell-denom" v-model="auctionForm.sellToken">
                                     <option value="" disabled selected hidden>Sell Token</option>
                                     <option v-for="sellToken in availableTokens" :key="sellToken.address" v-bind:value="sellToken">
                                         {{ sellToken.symbol }}
                                     </option>
+                                    <option :value="{ customSellFormTrigger: true }">Add Custom Token</option>
                                 </select>
-                            </validation-provider>
+                            </validation-provider> -->
+
+                            <!-- START - Custom Sell Token Section -->
+                            <!-- customSellTokenForm: {
+                                    selected: false,
+                                    labelSearch: "",
+                                    address: "",
+                                    token: {}
+                                },
+                                customBidTokenForm: {
+                                    selected: false,
+                                    address: "",
+                                    token: {}
+                                },
+                                auctionForm: {
+                                    bidPriceControlSelected: true,
+                                    sellAmount: 1,
+                                    sellToken: "",
+                                    bidPrice: 1,
+                                    bidToken: "",
+                                    minBidAmount: 1,
+                                    label: null,
+                                    description: "",
+                                    endTime: new Date(),
+                                    customSellTokenContractAddress: ""
+                                }, -->
+                                <token-selector
+                                    :tokens="availableTokens"
+                                    :default="availableTokens[0]"
+                                    class="select auction-form__sell-denom"
+                                    @input="auctionForm.sellToken = $event"
+                                />
+                                <!-- @input="alert(displayToKey($event))" -->
+
+                            <!-- END - Custom Sell Token Section -->
+
 
                             <!-- Bid token -->
                             <div class="auction-form__label-only">
@@ -55,7 +91,14 @@
                                 </validation-provider>
                             </div>
 
-                            <validation-provider class="auction-form__bid-denom" rules="required" v-slot="{ errors }">
+                            <token-selector
+                                :tokens="availableTokens"
+                                :default="availableTokens[0]"
+                                class="select auction-form__bid-denom"
+                                @input="auctionForm.bidToken = $event"
+                            />
+
+                            <!-- <validation-provider class="auction-form__bid-denom" rules="required" v-slot="{ errors }">
                                 <span class="error">{{ errors[0] }}</span>
                                 <select name="bid-denom" v-model="auctionForm.bidToken" required>
                                     <option value="" disabled selected hidden>Bid Token</option>
@@ -63,7 +106,7 @@
                                         {{ bidToken.symbol }}
                                     </option>
                                 </select>
-                            </validation-provider>
+                            </validation-provider> -->
 
                             <!-- New auction date time -->
                             <validation-provider class="auction-form__end-time" rules="required" v-slot="{ errors }">
@@ -183,6 +226,7 @@ import moment from 'moment';
 import LoadingIcon from '../components/LoadingIcon';
 import VkeysAddress from '../components/VkeysAddress.vue'
 import DefaultLayout from '../layouts/DefaultLayout.vue';
+import TokenSelector from '../components/TokenSelector.vue';
 
 
 extend("required", {
@@ -208,7 +252,7 @@ extend("max_decimals", {
 });
 
 export default {
-    components: { ValidationObserver, ValidationProvider, KeplrAccount, LoadingIcon, VkeysAddress },
+    components: { ValidationObserver, ValidationProvider, KeplrAccount, LoadingIcon, VkeysAddress, TokenSelector },
     metaInfo: {
         title: 'New auction',
     },
@@ -238,6 +282,7 @@ export default {
                 label: null,
                 description: "",
                 endTime: new Date(),
+                customSellTokenContractAddress: ""
             },
 
             newAuctionPath: "",
@@ -343,6 +388,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+// START - CUSTOM TOKEN
+
+
+
+// END - CUSTOM TOKEN
 
 .auction-form {
     display: grid;

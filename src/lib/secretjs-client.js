@@ -124,7 +124,7 @@ export class SecretJsClient {
       //throw err;
     }
   }
-
+  
   async getContract(address) {
     const contract = await this.client.getContract(address);
     return contract;
