@@ -184,7 +184,6 @@ export default {
                 margin-bottom: 0;
                 border-bottom: var(--f-gutter-xxs) solid rgba(white, 0.2);
                 color: rgba(white, 0.2);
-                margin-bottom: 20px;
 
                 &.selected {
                     color: white;
@@ -202,7 +201,7 @@ export default {
     .selector-wrapper {
           margin-top: 15px;
         width: 300px;
-        height: 400px;
+        height: 415px;
         left: -150px;
         border: 2px solid white;
         border-radius: 20px;
@@ -215,7 +214,7 @@ export default {
             padding: 20px 20px 10px;
             .items {
                 overflow: scroll;
-                height: 275px;
+                height: 285px;
                 div {
                     display: flex;
                     justify-content: flex-start;
