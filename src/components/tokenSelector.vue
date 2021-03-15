@@ -98,7 +98,7 @@ export default {
               return this.tokens;
           } else {
             return this.tokens.filter(token => {
-                token.symbol.toLowerCase().includes(this.searchPhrase.toLowerCase());
+                return token.symbol.toLowerCase().includes(this.searchPhrase.toLowerCase());
             });
           }
       } 
