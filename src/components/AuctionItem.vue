@@ -1,8 +1,11 @@
 <template>
   <g-link :to="to" class="auction" v-if="auction" :class="['theme-' + auction.color, 'status-' + auction.status.toLowerCase()]">
-    <div class="auction__emoji">
-      <g-image :immediate="true" :src="require(`!!assets-loader?width=40&height=40!@/assets/token-icons/${auction.sell.iconImg ? auction.sell.iconImg : 'secret-scrt-logo.svg'}`)"></g-image>
-      <!-- {{ String.fromCodePoint(auction.emoji) }} -->
+    <div class="auction__token-icons">
+      <div class="token-icons-images">
+        <g-image :immediate="true" :src="require(`!!assets-loader?width=40&height=40!@/assets/token-icons/${auction.sell.iconImg ? auction.sell.iconImg : 'secret-scrt-logo.svg'}`)" class="top-icon"></g-image>
+        <g-image :immediate="true" :src="require(`!!assets-loader?width=40&height=40!@/assets/token-icons/${auction.bid.iconImg ? auction.bid.iconImg : 'secret-scrt-logo.svg'}`)" class="bottom-icon"></g-image>
+        <!-- {{ String.fromCodePoint(auction.emoji) }} -->
+      </div>
     </div>
 
     <h3 class="auction__pair">
@@ -120,11 +123,6 @@ export default {
     font-size: 0.9em;
     margin-bottom: 0;
   }
-  
-
-  &__emoji {
-    font-size: 40px;
-  }
 
   &__asking-price {
     font-size: 0.9em;
@@ -180,10 +178,26 @@ export default {
     display: grid;
     gap: var(--f-gutter);
 
-    .auction__emoji {
+    .auction__token-icons {
       position: absolute;
       top: var(--f-gutter-l);
       right: var(--f-gutter-l);
+      .token-icons-images {
+        position: relative;
+        width: 40px;
+        .top-icon {
+          position: absolute;
+          top: -10px;
+          right: 20px;
+          z-index: 12
+        }
+        .bottom-icon {
+          position: absolute;
+          top: 30px;
+          left: 10px;
+          z-index: 11
+        }
+      }
     }
   }
 
@@ -210,6 +224,22 @@ export default {
 
       &__status {
         text-align: right;
+      }
+    }
+    .token-icons-images {
+      position: relative;
+      width: 40px;
+      .top-icon {
+        position: absolute;
+        bottom: 0;
+        left: -5px;
+        z-index: 12
+      }
+      .bottom-icon {
+        position: absolute;
+        bottom: -30px;
+        left: 20px;
+        z-index: 11
       }
     }
   }
