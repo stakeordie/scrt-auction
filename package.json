@@ -7,8 +7,6 @@
     "explore": "gridsome explore"
   },
   "dependencies": {
-    "@chainapsis/cosmosjs": "^v0.0.3-alpha.3",
-    "@cosmostation/cosmosjs": "^0.9.5",
     "@fontsource/hind": "^4.1.0",
     "@fontsource/montserrat": "^4.1.0",
     "@gridsome/vue-remark": "^0.2.6",
@@ -22,6 +20,7 @@
     "moment": "^2.29.1",
     "secretjs": "^0.10.3",
     "vee-validate": "^3.4.5",
+    "vue-toasted": "^1.1.28",
     "vuex": "^3.6.0"
   }
 }
