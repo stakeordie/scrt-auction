@@ -23,6 +23,8 @@ import testnetChain from "./lib/chain/testnet";
 import tokensForTesting from "./lib/tokens/testnet"
 import tokensForProduction from "./lib/tokens/mainnet"
 
+import Toasted from 'vue-toasted';
+
 Number.prototype.countDecimals = function () {
   if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
   return this.toString().split(".")[1].length || 0; 
@@ -39,6 +41,8 @@ export default function(Vue, { router, head, isClient }) {
   });
 
   Vue.use(Flare);
+
+  Vue.use(Toasted)
 
   Vue.use(Vuex);
   Vue.prototype.$store = new Vuex.Store({

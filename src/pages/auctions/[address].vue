@@ -372,6 +372,11 @@ export default {
         this.placeBidSubmit.result = "error"
       } else {
         this.placeBidSubmit.result = "success"
+        this.$toasted.show("Toasted !!", { 
+          theme: "outline", 
+          position: "top-right", 
+          duration : 5000
+        });
       }
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key); // can I remove this? reactivity issue?
     },

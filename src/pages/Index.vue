@@ -46,14 +46,3 @@ export default {
   // }
 }
 </script>
-
-// <style lang="scss" scoped>
-//   .auctions-empty {
-//     .sell-token {
-//       color: var(--color-green-secondary);
-//     }
-//     .bid-token {
-//       color: var(--color-orange-secondary);
-//     }
-//   }
-// </style>
