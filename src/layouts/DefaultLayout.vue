@@ -7,6 +7,7 @@
           </g-link>
           <nav class="auctions-nav"></nav>
           <div class="actions">
+            <site-clock></site-clock>
             <a class="button" href="/new">Create auction</a>
             <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
             <keplr-user v-model="userAddress"></keplr-user>
@@ -54,9 +55,10 @@
 <script>
 import KeplrUser from '../components/KeplrUser.vue'
 import VkeysWallet from '../components/VkeysWallet.vue'
+import SiteClock from '../components/SiteClock.vue'
 
 export default {
-  components: { KeplrUser, VkeysWallet },
+  components: { KeplrUser, VkeysWallet, SiteClock },
   data() {
     return {
       userAddress: null,
@@ -285,36 +287,6 @@ query {
       color: #FFFFFF;
     }
   }
-
-  header-clock {
-    position: static;
-    height: 24px;
-    left: 0px;
-    right: 0px;
-    top: calc(50% - 24px/2);
-
-    font-family: Montserrat;
-    font-style: normal;
-    font-weight: bold;
-    font-size: 18px;
-    line-height: 24px;
-    /* identical to box height, or 133% */
-
-    display: flex;
-    align-items: center;
-    text-align: center;
-
-    /* secret/yellow */
-
-    color: #EDC92B;
-
-
-    /* Inside Auto Layout */
-
-    flex: none;
-    order: 0;
-    flex-grow: 0;
-    margin: 4px 0px;
-  }
+  
 }
 </style>
