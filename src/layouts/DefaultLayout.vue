@@ -253,4 +253,68 @@ query {
     color: var(--color-purple-secondary);
   }
 }
+
+.toasted-container {
+  .toasted.outline.override {
+    /* alert/success */
+
+
+    /* Auto Layout */
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 16px;
+
+    width: 330px;
+    height: 80px;
+
+    /* secret/green */
+
+    background: #5AA361;
+    border-radius: 4px;
+
+    color: #FFFFFF;
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+
+    .classAction {
+      color: #FFFFFF;
+    }
+  }
+
+  header-clock {
+    position: static;
+    height: 24px;
+    left: 0px;
+    right: 0px;
+    top: calc(50% - 24px/2);
+
+    font-family: Montserrat;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 24px;
+    /* identical to box height, or 133% */
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+
+    /* secret/yellow */
+
+    color: #EDC92B;
+
+
+    /* Inside Auto Layout */
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    margin: 4px 0px;
+  }
+}
 </style>

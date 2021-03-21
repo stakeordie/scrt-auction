@@ -6396,6 +6396,11 @@ marked@^1.2.9:
   resolved "https://registry.yarnpkg.com/marked/-/marked-1.2.9.tgz#53786f8b05d4c01a2a5a76b7d1ec9943d29d72dc"
   integrity sha512-H8lIX2SvyitGX+TRdtS06m1jHMijKN/XjfH6Ooii9fvxMlh8QdqBfBDkGUpMWH2kQNrtixjzYUa3SH8ROTgRRw==
 
+material-icons@^0.5.4:
+  version "0.5.4"
+  resolved "https://registry.yarnpkg.com/material-icons/-/material-icons-0.5.4.tgz#c9e8e89d93b1172ecb68090e368ee7b7bffecc9c"
+  integrity sha512-5ycazkNmIOtV78Ff3WgvxQESoJuujdRm0cNbf18fmyJN20jHyqp9rpwi4EfQyGimag0ZLElxtVg3H9enIKdOOw==
+
 md5-file@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/md5-file/-/md5-file-4.0.0.tgz#f3f7ba1e2dd1144d5bf1de698d0e5f44a4409584"

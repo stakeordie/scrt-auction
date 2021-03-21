@@ -4,7 +4,6 @@ import "@fontsource/montserrat/600.css"
 import "animate.css"
 import "./sass/style.scss"
 
-
 import Flare from "@lkmx/flare"
 
 import VKeys from "./plugins/vkeys"
@@ -23,7 +22,7 @@ import testnetChain from "./lib/chain/testnet";
 import tokensForTesting from "./lib/tokens/testnet"
 import tokensForProduction from "./lib/tokens/mainnet"
 
-import Toasted from 'vue-toasted';
+import toasted from 'vue-toasted';
 
 Number.prototype.countDecimals = function () {
   if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
@@ -35,6 +34,7 @@ export default function(Vue, { router, head, isClient }) {
   Vue.component("DefaultLayout", DefaultLayout);
 
 
+
   Vue.filter("abbrv", (str, abbrv) => {
     const half = (abbrv / 2) || 8;
     return str.substring(0, half) + "..." + str.substring(str.length - half, str.length);
@@ -42,7 +42,21 @@ export default function(Vue, { router, head, isClient }) {
 
   Vue.use(Flare);
 
-  Vue.use(Toasted)
+  Vue.use(toasted, {
+    iconPack : 'material',
+    position: "top-right",
+    keepOnHover: true,
+    closeOnSwipe: true,
+    theme: "outline",
+    className: "override",
+    action: {
+      icon: "close",
+      onClick : (e, toastObject) => {
+          toastObject.goAway(0);
+      },
+      class: "closeAction"
+    },
+  })
 
   Vue.use(Vuex);
   Vue.prototype.$store = new Vuex.Store({

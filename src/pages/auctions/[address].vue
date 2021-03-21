@@ -372,11 +372,7 @@ export default {
         this.placeBidSubmit.result = "error"
       } else {
         this.placeBidSubmit.result = "success"
-        this.$toasted.show("Toasted !!", { 
-          theme: "outline", 
-          position: "top-right", 
-          duration : 5000
-        });
+        this.$toasted.show("Bid placed successfully!", {});
       }
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key); // can I remove this? reactivity issue?
     },
@@ -390,6 +386,7 @@ export default {
         this.retractBidSubmit.result = "error"
       } else {
         this.retractBidSubmit.result = "success"
+        this.$toasted.show("Bid retracted.", {});
       }
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
     },
