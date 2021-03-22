@@ -22,6 +22,7 @@ import testnetChain from "./lib/chain/testnet";
 import tokensForTesting from "./lib/tokens/testnet"
 import tokensForProduction from "./lib/tokens/mainnet"
 
+
 import toasted from 'vue-toasted';
 
 Number.prototype.countDecimals = function () {
@@ -41,22 +42,23 @@ export default function(Vue, { router, head, isClient }) {
   });
 
   Vue.use(Flare);
-
-  Vue.use(toasted, {
-    iconPack : 'material',
-    position: "top-right",
-    keepOnHover: true,
-    closeOnSwipe: true,
-    theme: "outline",
-    className: "override",
-    action: {
-      icon: "close",
-      onClick : (e, toastObject) => {
-          toastObject.goAway(0);
+  if(process.isClient) {
+    Vue.use(toasted, {
+      iconPack : 'material',
+      position: "top-right",
+      keepOnHover: true,
+      closeOnSwipe: true,
+      theme: "outline",
+      className: "override",
+      action: {
+        icon: "close",
+        onClick : (e, toastObject) => {
+            toastObject.goAway(0);
+        },
+        class: "closeAction"
       },
-      class: "closeAction"
-    },
-  })
+    })
+  }
 
   Vue.use(Vuex);
   Vue.prototype.$store = new Vuex.Store({

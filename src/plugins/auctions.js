@@ -86,7 +86,7 @@ export default {
                     bidToken: "",
                     onlyMine: false,
                     showClosed: false,
-                    viewMode: null,
+                    viewMode: "grid",
                     sort: {
                         priority: "price",
                         fields: {
