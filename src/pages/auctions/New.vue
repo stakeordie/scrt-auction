@@ -218,15 +218,15 @@ import { mapGetters } from 'vuex'
 
 import { ValidationObserver, ValidationProvider, extend } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
-import KeplrAccount from '../components/KeplrAccount';
+import KeplrAccount from '../../components/KeplrAccount';
 
 import { Decimal } from 'decimal.js';
 import moment from 'moment';
 
-import LoadingIcon from '../components/LoadingIcon';
-import VkeysAddress from '../components/VkeysAddress.vue'
-import DefaultLayout from '../layouts/DefaultLayout.vue';
-import TokenSelector from '../components/TokenSelector.vue';
+import LoadingIcon from '../../components/LoadingIcon';
+import VkeysAddress from '../../components/VkeysAddress.vue'
+import DefaultLayout from '../../layouts/DefaultLayout.vue';
+import TokenSelector from '../../components/TokenSelector.vue';
 
 
 extend("required", {
