@@ -16,12 +16,12 @@
     "dotenv": "^8.2.0",
     "eslint": "^7.17.0",
     "gridsome": "^0.7.0",
+    "gridsome-plugin-vue-toasted": "^1.0.3",
     "marked": "^1.2.9",
     "material-icons": "^0.5.4",
     "moment": "^2.29.1",
     "secretjs": "^0.10.3",
     "vee-validate": "^3.4.5",
-    "vue-toasted": "^1.1.28",
     "vuex": "^3.6.0"
   }
 }

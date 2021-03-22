@@ -16,6 +16,24 @@ module.exports = {
         template: "./src/templates/Content.vue",
       },
     },
+    {
+      use: 'gridsome-plugin-vue-toasted',
+      options: {
+        iconPack : 'material',
+        position: "top-right",
+        keepOnHover: true,
+        closeOnSwipe: true,
+        theme: "outline",
+        className: "override",
+        action: {
+          icon: "close",
+          onClick :(e, toastObject) => {
+              toastObject.goAway(0);
+          },
+          class: "closeAction"
+        },
+      }
+    }
   ],
 
   configureWebpack: {

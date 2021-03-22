@@ -4812,6 +4812,13 @@ gray-matter@^4.0.2:
     section-matter "^1.0.0"
     strip-bom-string "^1.0.0"
 
+gridsome-plugin-vue-toasted@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/gridsome-plugin-vue-toasted/-/gridsome-plugin-vue-toasted-1.0.3.tgz#08f67e7927ea32c188a1a47af22714ab29489a8f"
+  integrity sha512-Ec0PJIphefug938oYHfZHBe1c8+5xi20fTjYOHQzOAyD+fw8QEIZ4LtAm0Ro80051dIfT+wPqDCZbohl9ON+2g==
+  dependencies:
+    vue-toasted "^1.1.28"
+
 gridsome@^0.7.0:
   version "0.7.23"
   resolved "https://registry.yarnpkg.com/gridsome/-/gridsome-0.7.23.tgz#d8b06bdf6b4ed06411be3ec3696324f29c83063e"

@@ -34,31 +34,12 @@ export default function(Vue, { router, head, isClient }) {
   // Set default layout as a global component
   Vue.component("DefaultLayout", DefaultLayout);
 
-
-
   Vue.filter("abbrv", (str, abbrv) => {
     const half = (abbrv / 2) || 8;
     return str.substring(0, half) + "..." + str.substring(str.length - half, str.length);
   });
 
   Vue.use(Flare);
-  if(process.isClient) {
-    Vue.use(toasted, {
-      iconPack : 'material',
-      position: "top-right",
-      keepOnHover: true,
-      closeOnSwipe: true,
-      theme: "outline",
-      className: "override",
-      action: {
-        icon: "close",
-        onClick : (e, toastObject) => {
-            toastObject.goAway(0);
-        },
-        class: "closeAction"
-      },
-    })
-  }
 
   Vue.use(Vuex);
   Vue.prototype.$store = new Vuex.Store({

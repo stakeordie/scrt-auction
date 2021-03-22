@@ -370,6 +370,9 @@ export default {
       this.placeBidSubmit.inProgress = false;
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
         this.placeBidSubmit.result = "error"
+        if(process.isClient) {
+          this.$toasted.show(this.placeBidSubmit.response.error, {});
+        }
       } else {
         this.placeBidSubmit.result = "success"
         this.$toasted.show("Bid placed successfully!", {});
