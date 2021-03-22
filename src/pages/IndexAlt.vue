@@ -1,6 +1,6 @@
 <template>
 <landing-layout>
-<columns class="intro" mode="normal" number="2" number-s="1">
+<columns class="intro" mode="normal" mode-m="full" number="2" number-s="1">
   <block>
     <h1 class="mega">Bid and sell at the best prices on the market</h1>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>

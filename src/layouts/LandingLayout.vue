@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div class="landing-layout">
     <div class="layout-header">
       <simple-header mode="full">
         <div class="mobile-menu">
@@ -22,7 +22,7 @@
     </div>
 
 
-    <div class="layout-content">
+    <div class="landing-layout-content">
 
       <!-- <div class="layout-sidemenu" :class="{'mobile-hidden': !menuMobileVisible }">
 
@@ -35,7 +35,7 @@
       </div> -->
 
       <slot></slot>
-      <div class="layout-footer ">
+      <div class="landing-layout-footer ">
         <simple-footer class="stats">
           <span class="scrt">SCRT = $3.095472</span>
           <span>Pairs = 22</span>
@@ -93,7 +93,7 @@
 <style lang="scss">
   @import "@lkmx/flare/src/functions/respond-to";
 
-  .layout {
+  .landing-layout {
     --sidemenu-width: 250px;
     height: 100vh;
     display: grid;
@@ -104,6 +104,10 @@
 
     @include respond-to(">=m") {
       grid-template-rows: min-content 1fr;
+    }
+
+    .intro {
+      height: calc(100vh - 68px - 80px);
     }
 
     &-sidemenu {
@@ -133,7 +137,7 @@
     &-content {
 
       display: grid;
-      height: 100vh;
+      height: calc(100vh - 80px);
       grid-template-columns: 1fr;
 
       @include respond-to("<=s") {
@@ -141,8 +145,11 @@
       }
 
       background-image: url(../assets/illustration-bg.jpg);
-      background-size: 100% auto;
-      background-position: center top;
+      background-size: cover;
+      background-position: center center;
+      @include respond-to("<=s") {
+        background-position: left top;
+      }
       background-repeat: no-repeat;
 
       .--flare-columns {
@@ -281,19 +288,30 @@
       bottom: 0;
       display: flex;
       width: 100%;
+      padding: var(--f-gutter);
 
       .--flare-frame {
         width: 100%;
 
-        .--flare-block {
-          .content {
             .box {
-              gap: 16px;
-              display: flex;
+              display: grid;
+              grid-template-columns: repeat(5, 1fr);
+              gap: var(--f-gutter-xxs);
+              @include respond-to("<=s") {
+                gap: var(--f-gutter);
+                grid-template-columns: 1fr 1fr;
+              }
               justify-content: center;
+              span {
+                text-align: center;
+                @include respond-to("<=s") {
+                  text-align: left;
+                }
+                &.scrt {
+                font-weight: 700;
+              }
+              }
             }
-          }
-        }
       }
     }
   }
