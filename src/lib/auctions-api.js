@@ -1,17 +1,5 @@
 import emojis from '../lib/emojis.js'
 import statePersist from '../plugins/state-persist.js';
-
-function aRandomStringForEntropy(length) {
-    var result           = '';
-    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for ( var i = 0; i < length; i++ ) {
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
- 
-
 export class AuctionsApi {
     factoryAddress;
     scrtClient;
@@ -334,22 +322,6 @@ export class AuctionsApi {
     async getAuctionHasBids(address, auctionAddress, viewingKey) {
         //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
         return await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": address,"viewing_key": viewingKey }});
-    }
-
-    async createViewingKey() {
-        const fees = this.getFees("createViewingKey");
-        const msg = {
-            "create_viewing_key":{
-                "entropy": aRandomStringForEntropy(27),
-                "padding": "*".repeat(13)
-            }
-        }
-        const response = await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
-        if(response.create_viewing_key) {
-            return response.create_viewing_key.key;
-        } else {
-            return response.viewing_key.key;
-        }
     }
 
     async closeAuction(auctionAddress) {

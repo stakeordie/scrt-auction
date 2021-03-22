@@ -111,8 +111,7 @@ export default {
         async createViewingKey() {
             try {
                 this.isInProgress = true;
-
-                this.viewingKey = { key: await this.$auctions.createViewingKey() };
+                this.viewingKey = { key: await this.$vkeys.create(this.account, this.contract) };
                 await this.saveViewingKey();
 
                 this.isViewingKeyVisible = true;
@@ -190,6 +189,7 @@ export default {
         }
     }
     small {
+        color: white;
         display: block;
         font-size: 13px;
         line-height: 1.5em;
