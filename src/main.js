@@ -45,8 +45,6 @@ export default function(Vue, { router, head, isClient }) {
       plugins: [statePersist.plugin],
   });
 
-  Vue.use(VKeys);
-
   Vue.use(Keplr, {
       chainId: process.env.GRIDSOME_SECRET_CHAIN_ID,
       chainName: process.env.GRIDSOME_SECRET_CHAIN_NAME,
@@ -58,6 +56,11 @@ export default function(Vue, { router, head, isClient }) {
               Vue.prototype.$keplr.suggestExperimental(testnetChain);
           }
       }
+  });
+
+  Vue.use(VKeys, {
+    restUrl: process.env.GRIDSOME_SECRET_REST_URL,
+    wallet: Vue.prototype.$keplr
   });
 
   Vue.use(ScrtJs, {
