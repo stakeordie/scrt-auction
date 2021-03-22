@@ -114,7 +114,9 @@ query {
     // }
 
     &.mobile-hidden {
-      display: none;
+      @include respond-to("<=s") {
+        display: none;
+      }
     }
 
     @include respond-to(">=m") {
