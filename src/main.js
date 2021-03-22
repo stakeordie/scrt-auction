@@ -10,6 +10,7 @@ import VKeys from "./plugins/vkeys"
 import Keplr from "./plugins/keplr"
 import ScrtJs from "./plugins/scrt"
 import Auctions from "./plugins/auctions"
+import LimitOrderbook from "./plugins/limit-orderbook"
 
 import DefaultLayout from "~/layouts/DefaultLayout.vue"
 
@@ -21,9 +22,6 @@ import testnetChain from "./lib/chain/testnet";
 
 import tokensForTesting from "./lib/tokens/testnet"
 import tokensForProduction from "./lib/tokens/mainnet"
-
-
-import toasted from 'vue-toasted';
 
 Number.prototype.countDecimals = function () {
   if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
@@ -77,6 +75,12 @@ export default function(Vue, { router, head, isClient }) {
   Vue.use(Auctions, { 
     chainClient: Vue.prototype.$scrtjs,
     factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
+    availableTokens
+  });
+
+  Vue.use(LimitOrderbook, { 
+    chainClient: Vue.prototype.$scrtjs,
+    factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY, // What contracts do we need
     availableTokens
   });
   
