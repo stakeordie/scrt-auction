@@ -39,12 +39,12 @@
       </dl>
     </div>
 
-    <dl v-if="auction.endsAt && !auction.closedAt">
+    <dl class="auction__target-close" v-if="auction.endsAt && !auction.closedAt">
       <dt>Target close</dt>
       <dd :class="isEnded ? 'ended': ''">{{ endsAt }}</dd>
     </dl>
 
-    <div v-if="auction.closedAt">
+    <div class="auction__closed-at" v-if="auction.closedAt">
       <dl>
         <dt>Closed at</dt>
         <dd>{{ closedAt }}</dd>
@@ -169,6 +169,32 @@ export default {
     }
   }
 
+
+  &__token-icons {
+    .token-icons-images {
+      position: relative;
+      width: 60px;
+      height: 60px;
+
+      .top-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 12;
+        height: 45px;
+      }
+      .bottom-icon {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 11;
+        height: 25px;
+      }
+    }
+  }
+
+
+
   &:not(.grid):not(.list) {
     display: none;
   }
@@ -180,24 +206,8 @@ export default {
 
     .auction__token-icons {
       position: absolute;
-      top: var(--f-gutter-l);
-      right: var(--f-gutter-l);
-      .token-icons-images {
-        position: relative;
-        width: 40px;
-        .top-icon {
-          position: absolute;
-          top: -10px;
-          right: 20px;
-          z-index: 12
-        }
-        .bottom-icon {
-          position: absolute;
-          top: 30px;
-          left: 10px;
-          z-index: 11
-        }
-      }
+      top: var(--f-gutter);
+      right: var(--f-gutter);
     }
   }
 
@@ -210,7 +220,7 @@ export default {
       grid-template-columns: repeat(2, 1fr);
     }
     @include respond-to(">=m") {
-      grid-template-columns: 40px repeat(5, 1fr);
+      grid-template-columns: 60px repeat(5, 1fr);
     }
 
     dd {
@@ -224,22 +234,6 @@ export default {
 
       &__status {
         text-align: right;
-      }
-    }
-    .token-icons-images {
-      position: relative;
-      width: 40px;
-      .top-icon {
-        position: absolute;
-        bottom: 0;
-        left: -5px;
-        z-index: 12
-      }
-      .bottom-icon {
-        position: absolute;
-        bottom: -30px;
-        left: 20px;
-        z-index: 11
       }
     }
   }
