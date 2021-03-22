@@ -76,14 +76,6 @@ export class AuctionsApi {
         `set_status`
     */
 
-    async getUserAddress() {
-        // get user address
-        const chainId = await this.scrtClient.getChainId()
-        const offlineSigner = await window.getOfflineSigner(chainId);
-        const address = (await offlineSigner.getAccounts())[0].address;
-        return address;
-    }
-
     tokens2Decimal(amount, decimals) {
         return Number(amount / Math.pow(10, decimals));
     }
