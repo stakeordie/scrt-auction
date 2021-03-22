@@ -11,6 +11,7 @@ import Keplr from "./plugins/keplr"
 import ScrtJs from "./plugins/scrt"
 import Auctions from "./plugins/auctions"
 
+
 import DefaultLayout from "~/layouts/DefaultLayout.vue"
 
 
@@ -22,8 +23,6 @@ import testnetChain from "./lib/chain/testnet";
 import tokensForTesting from "./lib/tokens/testnet"
 import tokensForProduction from "./lib/tokens/mainnet"
 
-
-import toasted from 'vue-toasted';
 
 Number.prototype.countDecimals = function () {
   if(Math.floor(this.valueOf()) === this.valueOf()) return 0;
