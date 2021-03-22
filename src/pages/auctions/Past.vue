@@ -9,8 +9,8 @@
 
 import { mapGetters } from 'vuex'
 
-import AuctionItem from '../components/AuctionItem.vue'
-import ListLayout from '../layouts/ListLayout.vue';
+import AuctionItem from '../../components/AuctionItem.vue'
+import ListLayout from '../../layouts/ListLayout.vue';
 
 export default {
   components: { AuctionItem, ListLayout }, 

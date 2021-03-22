@@ -129,10 +129,10 @@
     mapGetters
   } from 'vuex'
 
-  import AuctionItem from '../components/AuctionItem.vue';
-  import AuctionItemMyAuctions from '../components/AuctionItemMyAuctions.vue';
-  import ListLayout from '../layouts/ListLayout.vue';
-  import SimpleTable from '../components/SimpleTable.vue';
+  import AuctionItem from '../../components/AuctionItem.vue';
+  import AuctionItemMyAuctions from '../../components/AuctionItemMyAuctions.vue';
+  import ListLayout from '../../layouts/ListLayout.vue';
+  import SimpleTable from '../../components/SimpleTable.vue';
 
   export default {
     components: {
