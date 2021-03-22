@@ -25,9 +25,6 @@ export class AuctionsApi {
             case "changeAskingPrice":
                 gas = "190000";
                 break;
-            case "createViewingKey":
-                gas = "120000";
-                break;
             case "placeBid":
                 gas = "400000";
                 break;
