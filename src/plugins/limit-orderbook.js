@@ -1,8 +1,8 @@
 import { LimitOrderbookApi } from '../lib/limit-orderbook-api.js'
 import moment from 'moment'
-import decimal from 'Decimal'
+import {Decimal} from 'decimal.js';
 
-import Vuex from Vuex;
+import Vuex from 'vuex';
 
 //setup variables
 

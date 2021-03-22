@@ -80,6 +80,12 @@ export default function(Vue, { router, head, isClient }) {
     availableTokens
   });
   
+  Vue.use(LimitOrderbook, { 
+    chainClient: Vue.prototype.$scrtjs,
+    factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY, // What contracts do we need
+    availableTokens
+  });
+
   // The state is persisted after the plugins have been loaded
   statePersist.start();
 }
