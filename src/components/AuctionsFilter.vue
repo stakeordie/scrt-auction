@@ -84,9 +84,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@lkmx/flare/src/functions/respond-to";
   .auctions-tools {
     display: flex;
     column-gap: var(--f-gutter-xl);
+    @include respond-to("<=s") {
+      column-gap: var(--f-gutter);
+    }
     flex-flow: row nowrap;
     justify-content: space-between;
 
