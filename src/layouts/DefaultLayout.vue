@@ -2,15 +2,20 @@
   <div class="layout">    
     <div class="layout-header">
         <simple-header mode="full">
+          <div class="mobile-menu">
+          <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
+        </div>
           <g-link to="/" class="header__logo">
             <img src="@/assets/secret_auctions_logo.svg">
           </g-link>
           <nav class="auctions-nav"></nav>
           <div class="actions">
             <site-clock></site-clock>
-            <a class="button" href="/new">Create auction</a>
-            <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
-            <keplr-user v-model="userAddress"></keplr-user>
+            <a class="button create_auction" href="/new">Create auction</a>
+            <div class="keys-keplr">
+              <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
+              <keplr-user v-model="userAddress"></keplr-user>
+            </div>
           </div>
         </simple-header>
       </div>
@@ -18,18 +23,14 @@
 
     <div class="layout-content">
 
-      <div class="layout-sidemenu">
+      <div class="layout-sidemenu" :class="{'mobile-hidden': !menuMobileVisible }">
 
-        <ul class="app-menu" :class="{'mobile-hidden': !menuMobileVisible }">
+        <ul class="app-menu">
           <li><g-link to="/">Current Auctions</g-link>
           <li><g-link to="/past">Past Auctions</g-link></li>
           <li><g-link to="/user">My Auctions</g-link></li>
           <li><g-link to="/new">Create an Auction</g-link></li>
         </ul>
-
-        <!-- <div class="mobile-menu">
-          <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
-        </div> -->
       </div>
 
       <slot></slot>
@@ -108,6 +109,14 @@ query {
 
   &-sidemenu {
 
+    // @include respond-to("<=s") {
+    //   display: none;
+    // }
+
+    &.mobile-hidden {
+      display: none;
+    }
+
     @include respond-to(">=m") {
       grid-row: 1 / 3;
     }
@@ -125,7 +134,9 @@ query {
     display: grid;
     height: 100vh;
     grid-template-columns: var(--sidemenu-width) 1fr;
-
+    @include respond-to("<=s") {
+      grid-template-columns: 1fr;
+    }
     background-image: url(../assets/scrt-swirl.svg);
     background-size: 100% auto;
     background-position: center top;
@@ -142,16 +153,17 @@ query {
 
   &-footer {
       grid-column: 2;
-  
+      @include respond-to("<=s") {
+        grid-column: auto;
+        padding: var(--f-gutter);
+    }
   }
 }
 
 .app-menu {
   @include respond-to("<=s") {
     padding: var(--f-gutter) var(--f-gutter);
-    &.mobile-hidden {
-      display: none;
-    }
+    
   }
   @include respond-to(">=m") {
     padding: var(--f-gutter-xl) var(--f-gutter);
@@ -168,19 +180,19 @@ query {
 .mobile-menu {
   width: 32px;
   height: 32px;
-  display: flex;
   align-content: center;
   justify-content: center;
-
+  display: flex;
+  align-items: center;
   img {
     width: 24px;
     height: 24px;
   }
 
   @include respond-to("<=s") {
-    position: absolute;
-    top: var(--f-gutter);
-    right: var(--f-gutter);
+    // position: absolute;
+    // top: var(--f-gutter);
+    // right: var(--f-gutter);
   }
   @include respond-to(">=m") {
     display: none;
@@ -215,6 +227,9 @@ query {
 
 .header {
   &__logo {
+    @include respond-to("<=s") {  
+        padding-left: var(--f-gutter-xs);
+      }
     img {
       height: 48px;
     }
@@ -224,9 +239,21 @@ query {
 .actions {
   display: flex;
   flex-flow: row nowrap;
-  gap: var(--f-gutter);
+  gap: var(--f-gutter-s);
   position: relative;
-  top: 6px;
+  padding-left: var(--f-gutter);
+  align-items: center;
+  .create_auction {
+    margin-bottom: 0;
+  }
+  .keys-keplr {
+    display: flex;
+    gap: var(--f-gutter);
+    @include respond-to("<=s") {
+      flex-direction: column;
+      gap: 0;
+    }
+  }
 }
 
 .simple-footer {

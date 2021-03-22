@@ -1,6 +1,6 @@
 <template>
     <div class="site-clock">
-        <div>{{ theFormatedTime }}</div>
+        {{ theFormatedTime }}
     </div>
 </template>
 
@@ -37,11 +37,13 @@ export default {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        margin: 4px 12px 4px 0;
-        width: 75px;
+        /* margin: 4px 12px 4px 0; */
+        max-width: 100px;
+        width: 100px;
         height: 30px;
         color: #EDC92B;  
         font-weight: bold;
-        font-size: 20px;      
+        font-size: 18px;      
+        overflow: hidden;
     }
 </style>
