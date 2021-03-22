@@ -4,7 +4,7 @@
   <block>
     <h1 class="mega">Bid and sell at the best prices on the market</h1>
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-    <button @click="$router.push('/auctions')" class="white">Explore Secret Auctions</button>
+    <button @click="$router.push('/auctions')" class="white">Enter App</button>
   </block>
   <block>
     <img src="@/assets/illustration-landing.png" alt="">
