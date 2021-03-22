@@ -10,7 +10,6 @@ import VKeys from "./plugins/vkeys"
 import Keplr from "./plugins/keplr"
 import ScrtJs from "./plugins/scrt"
 import Auctions from "./plugins/auctions"
-//import LimitOrderbook from "./plugins/limit-orderbook"
 
 import DefaultLayout from "~/layouts/DefaultLayout.vue"
 import LandingLayout from "~/layouts/LandingLayout.vue"
@@ -79,12 +78,6 @@ export default function(Vue, { router, head, isClient }) {
     factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
     availableTokens
   });
-
-  // Vue.use(LimitOrderbook, { 
-  //   chainClient: Vue.prototype.$scrtjs,
-  //   factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY, // What contracts do we need
-  //   availableTokens
-  // });
   
   // The state is persisted after the plugins have been loaded
   statePersist.start();
