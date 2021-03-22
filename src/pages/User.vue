@@ -14,23 +14,23 @@
     <!-- Aggregate Area -->
     <!-- Table Area -->
     <column v-if="showBidderInfo">
-    <section class="stats">
+    <section class="bidder-stats">
         <div class="stat">
-          <p class="title">Total Auction Bids</p>
-          <h3 class="value">329</h3>
+          <p class="title">Current Open Bids</p>
+          <h3 class="value">{{ isBidderTotal }}</h3>
         </div>
-        <div class="stat">
+        <!-- <div class="stat">
           <p class="title">Total Amount Bid</p>
-          <h3 class="value">8,567.2837 SCRT<span>USD</span></h3>
-        </div>
+          <h3 class="value">0<span>USD</span></h3>
+        </div> -->
         <div class="stat">
-          <p class="title">Total Auctions Won</p>
-          <h3 class="value">64</h3>
+          <p class="title">Auctions Won</p>
+          <h3 class="value">{{ isWinnerTotal }}</h3>
         </div>
-        <div class="stat">
+        <!-- <div class="stat">
           <p class="title">Total Amount Won</p>
-          <h3 class="value">1,272.291124 SCRT<span>USD</span></h3>
-        </div>
+          <h3 class="value">0<span>USD</span></h3>
+        </div> -->
       </section>
       <div class="table-area">
         <!-- Bidder -->
@@ -64,22 +64,26 @@
       </div>
     </column>
     <column v-if="!showBidderInfo">
-    <section class="stats">
+    <section class="seller-stats">
         <div class="stat">
-          <p class="title">Auctions Created</p>
-          <h3 class="value">563</h3>
+          <p class="title">Current Open Auctions</p>
+          <h3 class="value">{{ isSellerTotal }}</h3>
         </div>
-        <div class="stat">
+        <!-- <div class="stat">
           <p class="title">Amount Sold</p>
-          <h3 class="value">99,827.837 SCRT<span>USD</span></h3>
+          <h3 class="value">0<span>USD</span></h3>
+        </div> -->
+        <div class="stat">
+          <p class="title">Closed Auctions</p>
+          <h3 class="value">{{ wasSellerTotal }}</h3>
         </div>
+        <!-- <div class="stat">
+          <p class="title">Value of Aquired Assets</p>
+          <h3 class="value">0<span>USD</span></h3>
+        </div> -->
         <div class="stat">
           <p class="title">Successful Auctions</p>
-          <h3 class="value">378</h3>
-        </div>
-        <div class="stat">
-          <p class="title">Value of Aquired Assets</p>
-          <h3 class="value">279,927.834673 SCRT<span>USD</span></h3>
+          <h3 class="value">{{ successfulSellerTotal }}</h3>
         </div>
       </section>
       <div class="table-area" v-if="!showBidderInfo">
@@ -168,7 +172,8 @@
         return this.$store.state.$auctions.auctionsFilter;
       },
       ...mapGetters("$auctions", [
-        "userAuctions"
+        "userAuctions",
+        "auctionStats"
       ]),
       openBidderUserAuctions() {
         return this.userAuctions.filter((auction) => {
@@ -206,11 +211,32 @@
           }
         })
       },
+      isBidderTotal() {
+        return this.auctionStats.isBidderTotal;
+      },
+      isWinnerTotal() {
+        return this.auctionStats.isWinnerTotal;
+      },
+      isSellerTotal() {
+        return this.auctionStats.isSellerTotal;
+      },
+      wasSellerTotal() {
+        return this.auctionStats.wasSellerTotal;
+      },
+      successfulSellerTotal() {
+        return this.auctionStats.successfulSellerTotal;
+      }
     },
     mounted() {
       this.$auctions.updateUserAuctions();
-      console.log(this.userAuctions);
     },
+    watch: {
+      async vkViewingKey(newValue, oldValue) {
+        if(newValue) {
+          this.$auctions.updateUserAuctions();
+        }
+      }
+    }
   }
 </script>
 
@@ -242,9 +268,30 @@
     }
   }
 
-  .stats {
+  .bidder-stats {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--f-gutter);
+    margin-bottom: var(--f-gutter-xl);
+    .stat {
+      background-color: #0D1017;
+      border: 1px solid #2E323C;
+      padding: var(--f-gutter);
+      text-align: center;
+      border-radius: 10px;
+      .value {
+        margin-bottom: 0;
+        span {
+          padding-left: var(--f-gutter-s);
+          font-size: 75%;
+        }
+      }
+    }
+  }
+
+  .seller-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--f-gutter);
     margin-bottom: var(--f-gutter-xl);
     .stat {

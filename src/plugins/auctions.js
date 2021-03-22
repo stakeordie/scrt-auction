@@ -72,7 +72,15 @@ export default {
               namespaced: true,
               state: {
                   auctions: [],
-                  auctionsViewer: {},
+                  auctionsViewer: {
+                      stats: {
+                        isSellerTotal: 0,
+                        isBidderTotal: 0,
+                        wasSellerTotal: 0,
+                        isWinnerTotal: 0,
+                        successfulSellerTotal: 0
+                      }
+                  },
                   auctionsFilter: {
                     sellToken: "",
                     bidToken: "",
@@ -108,6 +116,19 @@ export default {
                 closedAuctions: state => {
                     return filterAndSortAuctions(state.auctions, state.auctionsFilter).filter(a => (a.status == 'CLOSED' && a.bid.winner));
                 },
+                auctionStats: state => {
+                    if(state.auctionsViewer?.stats) {
+                        return state.auctionsViewer.stats;
+                    } else {
+                        return {
+                            isSellerTotal: 0,
+                            isBidderTotal: 0,
+                            wasSellerTotal: 0,
+                            isWinnerTotal: 0,
+                            successfulSellerTotal: 0
+                        }
+                    }
+                },
                 sellDenoms: state => {
                     return [...new Set(state.auctions.filter(auction => auction.sell).map(auction => {
                         return auction.sell.denom;
@@ -128,7 +149,7 @@ export default {
                     return (address) => {
                         return state.tokenData.filter(token => { return token.address == address})[0];
                     };
-                },
+                }
               },
               mutations: {
                 // Merge from auction with existing auctions
@@ -170,12 +191,39 @@ export default {
                 },
 
                 updateAuctionsViewer: (state, { auctionsViewer, sellerAuctions, bidderAuctions, wasSellerAuctions, wonAuctions }) => {
+                    let isSellerTotal = 0;
+                    let isBidderTotal = 0;
+                    let wasSellerTotal = 0;
+                    let isWinnerTotal = 0;
+                    let successfulSellerTotal = 0;
                     state.auctions.forEach(auction => {
-                        auction.viewerIsSeller  = sellerAuctions?.findIndex(a => a.address == auction.address) > -1;
-                        auction.viewerIsBidder  = bidderAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        auction.viewerIsSeller = sellerAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        if(auction.viewerIsSeller) {
+                            isSellerTotal++;
+                        }
+                        auction.viewerIsBidder = bidderAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        if(auction.viewerIsBidder) {
+                            isBidderTotal++;
+                        }
                         auction.viewerWasSeller = wasSellerAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        if(auction.viewerWasSeller) {
+                            if(auction.bid.winner) {
+                                successfulSellerTotal++;
+                            }
+                            wasSellerTotal++;
+                        }
                         auction.viewerIsWinner  = wonAuctions?.findIndex(a => a.address == auction.address) > -1;
+                        if(auction.viewerIsWinner) {
+                            isWinnerTotal++;
+                        }
                     });
+                    auctionsViewer.stats = {
+                        isSellerTotal: isSellerTotal,
+                        isBidderTotal: isBidderTotal,
+                        wasSellerTotal: wasSellerTotal,
+                        isWinnerTotal: isWinnerTotal,
+                        successfulSellerTotal: successfulSellerTotal
+                    }
                     state.auctionsViewer = auctionsViewer;
                 },
 
