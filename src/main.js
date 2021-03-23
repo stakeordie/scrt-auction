@@ -28,8 +28,6 @@ import tokensForTesting from "./lib/tokens/testnet"
 import limitPairsForProduction from "./lib/limit-pairs/mainnet"
 import limitPairsForTesting from "./lib/limit-pairs/testnet"
 
-import routeDefinition from "./lib/global/routes"
-
 
 Number.prototype.countDecimals = function() {
     if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
