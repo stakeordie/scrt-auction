@@ -10,7 +10,7 @@
         </g-link>
         <nav class="auctions-nav"></nav>
         <!-- Sandy Added -->
-        <div style="display: flex;">
+        <div class="actions">
           <site-clock></site-clock>
           <button @click="$router.push('/auctions')" class="white">Enter App</button>
         </div>
@@ -268,12 +268,12 @@
   .actions {
     display: flex;
     flex-flow: row nowrap;
-    gap: var(--f-gutter-s);
+    // gap: var(--f-gutter-s);
     position: relative;
     padding-left: var(--f-gutter);
     align-items: center;
 
-    .create_auction {
+    button {
       margin-bottom: 0;
     }
 
