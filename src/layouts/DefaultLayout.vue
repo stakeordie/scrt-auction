@@ -81,6 +81,7 @@ export default {
     }
   },
   computed: {
+    //TODO: #71 Refactor adding conf file so that route definitions are decoupled from template
     getFactoryAddress: function(){
       let factoryAddress;
       const app = this.$route.path.split("/")[1];
