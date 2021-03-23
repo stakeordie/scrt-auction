@@ -163,6 +163,7 @@ export class AuctionsApi {
     // sell_decimals: 18
     // timestamp: 1613100794
     // winning_bid: "10000"
+    //TODO: #74 Add winningPrice to bid @the-dusky
     transformWonAuction(rawction) {
         const auction = {
             address: rawction.address,

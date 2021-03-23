@@ -9,6 +9,13 @@
       </span>
     </p>
 
+    <dl class="auction__sell">
+      <dd>
+        <token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals"
+          :denom="auction.sell.denom"></token-amount>
+      </dd>
+    </dl>
+
     <div class="auction__bid-price">
       <dl class="auction__bid" v-if="auction.bid && auction.price">
         <dd class="auction__asking-price">
@@ -20,21 +27,12 @@
         </dd>
       </dl>
       <dl v-if="auction.bid && auction.bid.winner">
-        <dt>Winning bid</dt>
         <dd class="auction__winner">
           <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom">
           </token-amount>
         </dd>
       </dl>
     </div>
-
-    <dl class="auction__sell">
-      <dt>For Sale</dt>
-      <dd>
-        <token-amount :amount="auction.sell.decimalAmount" :decimals="auction.sell.decimals"
-          :denom="auction.sell.denom"></token-amount>
-      </dd>
-    </dl>
 
     <dl v-if="auction.endsAt && !auction.closedAt">
       <dt>Target close</dt>

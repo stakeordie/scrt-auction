@@ -32,6 +32,8 @@
       </div> -->
 
       <slot></slot>
+      <!-- TODO: #75 replace content with "built by stake or die" regular footer content @walter-lkmx
+        -->
       <div class="landing-layout-footer ">
         <simple-footer class="stats">
           <span class="scrt">SCRT = $3.095472</span>
