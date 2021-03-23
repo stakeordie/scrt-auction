@@ -35,6 +35,14 @@ export class LimitApi {
         return feesObj;
     }
 
-    
+    async getBooks() {
+        //secretcli q compute query $order_factory_contract_address '{"secret_order_books":{}}'
+        return await this.scrtClient.queryContract(this.factoryAddress, {"secret_order_books":{}});
+    }
 
+    async getBook(contractAddress) {
+        
+    }
+    
+    
 }

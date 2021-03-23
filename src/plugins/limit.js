@@ -76,5 +76,7 @@ export default {
 
       Vue.prototype.$limit = new LimitApi(options.chainClient, options.factoryAddress);
 
+      Vue.prototype.$limit = new LimitApi(options.chainClient, options.factoryAddress);
+
     }
 }
