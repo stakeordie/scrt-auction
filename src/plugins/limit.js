@@ -14,32 +14,32 @@ export default {
         Vue.prototype.$store.registerModule('$limit', {
             namespaced: true,
             state: {
-                auctions: [],
-                auctionsViewer: {
-                    stats: {
-                      isSellerTotal: 0,
-                      isBidderTotal: 0,
-                      wasSellerTotal: 0,
-                      isWinnerTotal: 0,
-                      successfulSellerTotal: 0
-                    }
-                },
-                auctionsFilter: {
-                  sellToken: "",
-                  bidToken: "",
-                  onlyMine: false,
-                  showClosed: false,
-                  viewMode: "grid",
-                  sort: {
-                      priority: "price",
-                      fields: {
-                          sell: "asc",
-                          sell: "asc",
-                          price:  "asc"
-                      }
-                  }
-                },
-                tokenData: [],
+                // auctions: [],
+                // auctionsViewer: {
+                //     stats: {
+                //       isSellerTotal: 0,
+                //       isBidderTotal: 0,
+                //       wasSellerTotal: 0,
+                //       isWinnerTotal: 0,
+                //       successfulSellerTotal: 0
+                //     }
+                // },
+                // auctionsFilter: {
+                //   sellToken: "",
+                //   bidToken: "",
+                //   onlyMine: false,
+                //   showClosed: false,
+                //   viewMode: "grid",
+                //   sort: {
+                //       priority: "price",
+                //       fields: {
+                //           sell: "asc",
+                //           sell: "asc",
+                //           price:  "asc"
+                //       }
+                //   }
+                // },
+                // tokenData: [],
             },
             getters: {
                 //EXAMPLE Mutation
@@ -76,7 +76,11 @@ export default {
 
       Vue.prototype.$limit = new LimitApi(options.chainClient, options.factoryAddress);
 
-      Vue.prototype.$limit = new LimitApi(options.chainClient, options.factoryAddress);
-
+        // updateClosedAuctions: async ({ commit, state }) => {
+        //     const closedAuctions = await auctionsApi.listClosedAuctions(state.tokenData);
+        //     if (closedAuctions) {
+        //         commit("updateAuctions", closedAuctions);
+        //     }
+        // }
     }
 }
