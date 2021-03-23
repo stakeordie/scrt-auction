@@ -369,13 +369,31 @@ export default {
       this.placeBidSubmit.response = await this.$auctions.placeBid(this.auction.bid.contract, this.auction.address, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placeBidSubmit.inProgress = false;
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
-        this.placeBidSubmit.result = "error"
+        //this.placeBidSubmit.result = "error"
         if(process.isClient) {
-          this.$toasted.show(this.placeBidSubmit.response.error, {});
+          this.$toasted.show("Error: " + this.placeBidSubmit.response.error, {
+            type: "error",
+            action: {
+              icon: "close",
+              onClick :(e, toastObject) => {
+                  toastObject.goAway(0);
+              },
+              class: "closeAction"
+            }
+          });
         }
       } else {
         this.placeBidSubmit.result = "success"
-        this.$toasted.show("Bid placed successfully!", {});
+        this.$toasted.show(`Success: Bid placed for ${new Decimal(this.bidAmount)} ${this.auction.bid.denom}.`, {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       }
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key); // can I remove this? reactivity issue?
     },
@@ -389,7 +407,15 @@ export default {
         this.retractBidSubmit.result = "error"
       } else {
         this.retractBidSubmit.result = "success"
-        this.$toasted.show("Bid retracted.", {});
+        this.$toasted.show("Bid retracted.", {
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       }
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
     },

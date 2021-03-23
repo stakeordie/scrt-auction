@@ -297,13 +297,18 @@ query {
     align-items: flex-start;
     padding: 16px;
 
-    width: 330px;
+    width: 450px;
     height: 80px;
 
     /* secret/green */
-
-    background: #5AA361;
+    &.success {
+      background: #5AA361;
+    }
+    &.error {
+      background: #d53a2c;
+    }
     border-radius: 4px;
+    
 
     color: #FFFFFF;
     font-family: Montserrat;
@@ -312,7 +317,7 @@ query {
     font-size: 16px;
     line-height: 24px;
 
-    .classAction {
+    .closeAction {
       color: #FFFFFF;
     }
   }

@@ -25,13 +25,6 @@ module.exports = {
         closeOnSwipe: true,
         theme: "outline",
         className: "override",
-        action: {
-          icon: "close",
-          onClick :(e, toastObject) => {
-              toastObject.goAway(0);
-          },
-          class: "closeAction"
-        },
       }
     }
   ],
