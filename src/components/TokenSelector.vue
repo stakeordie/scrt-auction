@@ -208,11 +208,11 @@
             left: 0;
             top: 40px;
 
-            border: 1px solid #FFFFFF;
+            border: 1px solid #2E323C;
+            background-color: #0D1017;
             box-sizing: border-box;
             border-radius: 10px;
             z-index: 9;
-            background: #000000;
 
             .list-custom-switch-wrapper {
                 width: 100%;
@@ -291,7 +291,8 @@
                         }
 
                         &:hover {
-                            background-color: #ad8225;
+                            background-color: #BCBCCC;
+                            color: #000;
                         }
                     }
                 }
