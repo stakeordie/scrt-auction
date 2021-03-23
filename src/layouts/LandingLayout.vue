@@ -9,6 +9,12 @@
           <img src="@/assets/secret_auctions_logo.svg">
         </g-link>
         <nav class="auctions-nav"></nav>
+        <!-- Sandy Added -->
+        <div style="display: flex;">
+          <site-clock></site-clock>
+          <button @click="$router.push('/auctions')" class="white">Enter App</button>
+        </div>
+        <!-- Sandy Added -->
       </simple-header>
     </div>
 
@@ -83,6 +89,16 @@
 
 <style lang="scss">
   @import "@lkmx/flare/src/functions/respond-to";
+
+  // TODO: #68 update header to includ enter app and clock
+  .white {
+    background-color:white;
+    color:black;
+    cursor: pointer;
+    &:hover {
+      background-color:lightgray;
+    }
+  }
 
   .landing-layout {
     --sidemenu-width: 250px;
@@ -248,6 +264,7 @@
     }
   }
 
+
   .actions {
     display: flex;
     flex-flow: row nowrap;
@@ -306,6 +323,7 @@
       }
     }
   }
+  
 
   .toasted-container {
     .toasted.outline.override {
