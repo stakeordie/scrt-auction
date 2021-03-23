@@ -91,14 +91,14 @@ export default function(Vue, { router, head, isClient }) {
   //Limit - Trading Pairs
   let limitPairs;
   if (process.env.GRIDSOME_SECRET_CHAIN_ID == "secret-2") {
-      availableTokens = limitPairsForProduction;
+    limitPairs = limitPairsForProduction;
   } else {
-      availableTokens = limitPairsForTesting;
+    limitPairs = limitPairsForTesting;
   }
   
   Vue.use(LimitOrderbook, { 
     chainClient: Vue.prototype.$scrtjs,
-    factoryAddress: process.env.GRIDSOME_LORDERBOOK_FACTORY, // What contracts do we need
+    factoryAddress: process.env.GRIDSOME_LIMIT_FACTORY, // What contracts do we need
     limitPairs
   });
 
