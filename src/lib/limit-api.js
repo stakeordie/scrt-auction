@@ -2,7 +2,7 @@ import statePersist from '../plugins/state-persist.js';
 
 //any function definitions
 
-export class LimitOrderbookApi {
+export class LimitApi {
 
     factoryAddress
     //other addresses
