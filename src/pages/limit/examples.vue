@@ -29,7 +29,7 @@ export default {
     },
     methods: {
         async getBooks() {
-            this.getBooksResponse = await this.$limit.getBooks();
+            this.getBooksResponse = await this.$limit.getBooks;
             this.getBooksResponseClosed = false;
         },
         async getAmmPairs() {

@@ -1,4 +1,4 @@
-import { LimitApi } from '../lib/limit-api.js'
+import {LimitApi} from '../lib/limit-api.js'
 import moment from 'moment'
 import {Decimal} from 'decimal.js';
 
@@ -42,39 +42,39 @@ export default {
                 // tokenData: [],
             },
             getters: {
-                //EXAMPLE Mutation
-                getAuction: state => {
-                    return (auctionAddress) => {
-                        return state.auctions.find(auction => auction.address == auctionAddress);
-                    }
+                getBooks: async () => {
+                    console.log("pluginTEST");
+                    return await limitApi.getBooker();
                 },              
             },
             mutations: {
                 //EXAMPLE Mutation
                 updateAuction: (state, auction) => {
-                    let currentAuction = state.auctions.find(a => a.address == auction.address );
-                    if(!currentAuction) {
-                        state.auctions.push(auction);
-                    } else {
-                        Vue.set(currentAuction,"description",auction.description);
-                        Vue.set(currentAuction,"endsAt",auction.endsAt);
-                    }
+                    // let currentAuction = state.auctions.find(a => a.address == auction.address );
+                    // if(!currentAuction) {
+                    //     state.auctions.push(auction);
+                    // } else {
+                    //     Vue.set(currentAuction,"description",auction.description);
+                    //     Vue.set(currentAuction,"endsAt",auction.endsAt);
+                    // }
                 },
             },
             actions: {
                 //EXAMPLE Action
                 updateAuction: async ({ commit }, address) => {
-                    //replacement
-                    const auction = await auctionsApi.getAuction(address);
-                    //replaced
-                    //const auctionInfo = await auctionsApi.getAuctionInfo(address);
+                    // //replacement
+                    // const auction = await auctionsApi.getAuction(address);
+                    // //replaced
+                    // //const auctionInfo = await auctionsApi.getAuctionInfo(address);
 
-                    commit("updateAuction", auction);
+                    // commit("updateAuction", auction);
                 },
             }
       });
 
       Vue.prototype.$limit = new LimitApi(options.chainClient, options.factoryAddress);
+
+      Vue.prototype.$limit.getBooks = Vue.prototype.$store.getters['$limit/getBooks'];
 
         // updateClosedAuctions: async ({ commit, state }) => {
         //     const closedAuctions = await auctionsApi.listClosedAuctions(state.tokenData);
