@@ -26,10 +26,10 @@
       <div class="layout-sidemenu" :class="{'mobile-hidden': !menuMobileVisible }">
 
         <ul class="app-menu">
-          <li><g-link to="/">Current Auctions</g-link>
-          <li><g-link to="/past">Past Auctions</g-link></li>
-          <li><g-link to="/user">My Auctions</g-link></li>
-          <li><g-link to="/new">Create an Auction</g-link></li>
+          <li><g-link to="/auctions/">Current Auctions</g-link>
+          <li><g-link to="/auctions/past">Past Auctions</g-link></li>
+          <li><g-link to="/auctions/user">My Auctions</g-link></li>
+          <li><g-link to="/auctions/new">Create an Auction</g-link></li>
         </ul>
       </div>
 

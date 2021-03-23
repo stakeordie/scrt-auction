@@ -1,17 +1,16 @@
 <template>
-<list-layout>
-    <!-- Auctions grid -->
-  <auction-item :to="'/auctions/' + auction.address" v-for="auction in activeAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
-    
-    <!-- Auctions empty -->
-    <!-- Use v-show because currently flare doesn't deal well with conditional (v-if) autorenderred elements in the blocks -->
-    <!-- <div class="auctions-empty" v-show="filteredAuctions.length == 0">
-      <h2 v-if="auctionsFilter.sellToken || auctionsFilter.bidToken">
-          No auctions were found <span v-if="auctionsFilter.sellToken"> selling <span class="sell-token">{{auctionsFilter.sellToken}}</span></span><span> looking for <span class="bid-token">{{auctionsFilter.bidToken}}</span> bidders</span>.
-      </h2>
-      <p><router-link :to="'/new'" class="button">Be the first one</router-link> or <a href="" @click="clearFilters()">clear your filters</a>.</p>
-    </div> -->
-</list-layout>
+<landing-layout>
+<columns class="intro" mode="normal" mode-m="full" number="2" number-s="1">
+  <block>
+    <h1 class="mega">Bid and sell at the best prices on the market</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+    <button @click="$router.push('/auctions')" class="white">Enter App</button>
+  </block>
+  <block>
+    <img src="@/assets/illustration-landing.png" alt="">
+  </block>
+</columns>
+</landing-layout>
 </template>
 
 <script>
@@ -46,3 +45,25 @@ export default {
   // }
 }
 </script>
+
+<style lang="scss">
+
+.intro {
+  align-items: center;
+  h1 {
+    &.mega {
+      font-size: 56px;
+    }
+  }
+  button {
+    &.white {
+      background-color:white;
+      color:black;
+      cursor: pointer;
+      &:hover {
+        background-color:lightgray;
+      }
+    }
+  }
+}
+</style>
