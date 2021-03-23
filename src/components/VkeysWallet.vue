@@ -12,9 +12,9 @@
         <h3>Viewing keys</h3>
         <dl>
           <dt>Factory address</dt>
-          <dd>{{$auctions.factoryAddress | abbrv }}</dd>
+          <dd>{{contract | abbrv }}</dd>
         </dl>
-        <vkeys-address :account="account" :contract="$auctions.factoryAddress">
+        <vkeys-address :account="account" :contract="contract">
           <template #description>
             <small>Creating a viewing key for the factory contract will allow you to see the auctions you have participated in as a buyer and seller.</small>
           </template>

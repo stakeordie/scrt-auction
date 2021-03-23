@@ -5,13 +5,11 @@ import statePersist from '../plugins/state-persist.js';
 export class LimitApi {
 
     factoryAddress
-    //other addresses
     scrtClient
 
     constructor(scrtClient, factoryAddress /*, otherAddress*/) {
         this.scrtClient = scrtClient;
         this.factoryAddress = factoryAddress;
-        //set other address
     }
 
     // TODO: #64 Find out what fees will be and set them

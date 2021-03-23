@@ -10,7 +10,7 @@ import VKeys from "./plugins/vkeys"
 import Keplr from "./plugins/keplr"
 import ScrtJs from "./plugins/scrt"
 import Auctions from "./plugins/auctions"
-import LimitOrderbook from "./plugins/limit"
+import Limit from "./plugins/limit"
 
 
 import DefaultLayout from "~/layouts/DefaultLayout.vue"
@@ -26,7 +26,9 @@ import tokensForProduction from "./lib/tokens/mainnet"
 import tokensForTesting from "./lib/tokens/testnet"
 
 import limitPairsForProduction from "./lib/limit-pairs/mainnet"
-import limitPairsTesting from "./lib/limit-pairs/testnet"
+import limitPairsForTesting from "./lib/limit-pairs/testnet"
+
+import routeDefinition from "./lib/global/routes"
 
 
 Number.prototype.countDecimals = function() {
@@ -96,11 +98,13 @@ export default function(Vue, { router, head, isClient }) {
     limitPairs = limitPairsForTesting;
   }
   
-  Vue.use(LimitOrderbook, { 
+  Vue.use(Limit, { 
     chainClient: Vue.prototype.$scrtjs,
     factoryAddress: process.env.GRIDSOME_LIMIT_FACTORY, // What contracts do we need
     limitPairs
   });
+
+  const routesDefinition = routesDefinition;
 
   // The state is persisted after the plugins have been loaded
   statePersist.start();

@@ -13,7 +13,8 @@
             <site-clock></site-clock>
             <a class="button create_auction" href="/new">Create auction</a>
             <div class="keys-keplr">
-              <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
+              <!-- TODO: #70 add url dependence for multiple viewing keys -->
+              <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="getFactoryAddress"></vkeys-wallet>
               <keplr-user v-model="userAddress"></keplr-user>
             </div>
           </div>
@@ -79,6 +80,20 @@ export default {
       });
     }
   },
+  computed: {
+    getFactoryAddress: function(){
+      let factoryAddress;
+      const app = this.$route.path.split("/")[1];
+      switch(app) {
+        case "limit":
+            factoryAddress = this.$limit.factoryAddress;
+          break;
+        default:
+          factoryAddress = this.$auctions.factoryAddress;
+      }
+      return factoryAddress;
+    }
+  }
 }
 </script>
 
