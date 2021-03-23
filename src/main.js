@@ -22,8 +22,11 @@ import statePersist from './plugins/state-persist';
 
 import testnetChain from "./lib/chain/testnet";
 
-import tokensForTesting from "./lib/tokens/testnet"
 import tokensForProduction from "./lib/tokens/mainnet"
+import tokensForTesting from "./lib/tokens/testnet"
+
+import limitPairsForProduction from "./lib/limit-pairs/mainnet"
+import limitPairsTesting from "./lib/limit-pairs/testnet"
 
 
 Number.prototype.countDecimals = function() {
@@ -84,11 +87,19 @@ export default function(Vue, { router, head, isClient }) {
     factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
     availableTokens
   });
+
+  //Limit - Trading Pairs
+  let limitPairs;
+  if (process.env.GRIDSOME_SECRET_CHAIN_ID == "secret-2") {
+      availableTokens = limitPairsForProduction;
+  } else {
+      availableTokens = limitPairsForTesting;
+  }
   
   Vue.use(LimitOrderbook, { 
     chainClient: Vue.prototype.$scrtjs,
-    factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY, // What contracts do we need
-    availableTokens
+    factoryAddress: process.env.GRIDSOME_LORDERBOOK_FACTORY, // What contracts do we need
+    limitPairs
   });
 
   // The state is persisted after the plugins have been loaded
