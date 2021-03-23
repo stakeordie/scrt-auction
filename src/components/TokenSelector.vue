@@ -328,9 +328,9 @@
                     "name name"
                     "symbol decimals"
                     "button button";
-                    label {
-                        // font-size: var(--f-gutter);
-                    }
+                    // label {
+                    //     // font-size: var(--f-gutter);
+                    // }
                     input {
                         &:not(.contract) {
                             margin-bottom: 0;
