@@ -404,10 +404,21 @@ export default {
       this.retractBidSubmit.response = await this.$auctions.retractBid(this.auction.address);
       this.retractBidSubmit.inProgress = false;
       if(this.retractBidSubmit.response.retractBid?.status == 'Failure' || this.retractBidSubmit.response.error) {
-        this.retractBidSubmit.result = "error"
+        //this.retractBidSubmit.result = "error"
+        this.$toasted.show("Error: " + this.retractBidSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.retractBidSubmit.result = "success"
         this.$toasted.show("Bid retracted.", {
+          type: "success",
           action: {
             icon: "close",
             onClick :(e, toastObject) => {
@@ -426,9 +437,29 @@ export default {
       this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auction.address, newMinimumBidAmount);
       this.changeAskingPriceSubmit.inProgress = false;
       if(this.changeAskingPriceSubmit.response.retractBid?.status == 'Failure' || this.changeAskingPriceSubmit.response.error) {
-        this.changeAskingPriceSubmit.result = "error"
+        //this.changeAskingPriceSubmit.result = "error"
+        this.$toasted.show("Error: " + this.changeAskingPriceSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.changeAskingPriceSubmit.result = "success"
+        this.$toasted.show("Success: The asking price has been updated.", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
         if(this.placeBidForm.bidPrice < this.updateAskingPriceForm.askingPrice) {
           this.placeBidForm.bidPrice = this.updateAskingPriceForm.askingPrice
         }
@@ -441,9 +472,29 @@ export default {
       this.closeAuctionSimpleNOSubmit.response = await this.$auctions.closeAuction(this.auction.address)
       this.closeAuctionSimpleNOSubmit.inProgress = false;
       if(this.closeAuctionSimpleNOSubmit.response.close_auction?.status == 'Failure' || this.closeAuctionSimpleNOSubmit.response.error) {
-        this.closeAuctionSimpleNOSubmit.result = "error"
+        //this.closeAuctionSimpleNOSubmit.result = "error"
+        this.$toasted.show("Error: " + this.closeAuctionSimpleNOSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.closeAuctionSimpleNOSubmit.result = "success"
+        this.$toasted.show("Success: This auction has been closed.", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
         this.manageAuctionFormState = null;
       }
     },
@@ -454,10 +505,30 @@ export default {
       this.closeAuctionSimpleSubmit.response = await this.$auctions.closeAuction(this.auction.address)
       this.closeAuctionSimpleSubmit.inProgress = false;
       if(this.closeAuctionSimpleSubmit.response.error) {
-        this.closeAuctionSimpleSubmit.result = "error"
+        //this.closeAuctionSimpleSubmit.result = "error"
+        this.$toasted.show("Error: " + this.closeAuctionSimpleSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.closeAuctionSimpleSubmit.result = "success"
         this.manageAuctionFormState = null;
+        this.$toasted.show("Success: This auction has been closed.", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       }
     },
     async closeAuctionWithOptions() {
