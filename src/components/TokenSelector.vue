@@ -129,7 +129,6 @@
                 }
             },
             async addCustomTokenToTokenData() {
-                //TODO: #72 This is too much
                 this.$auctions.addToken(this.customSellTokenForm.token);
                 this.selected = this.customSellTokenForm.token;
                 this.showList = true;
