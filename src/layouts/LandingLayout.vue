@@ -9,15 +9,6 @@
           <img src="@/assets/secret_auctions_logo.svg">
         </g-link>
         <nav class="auctions-nav"></nav>
-        <div class="actions">
-          <site-clock></site-clock>
-          <a class="button create_auction" href="/new">Create auction</a>
-          <div class="keys-keplr">
-            <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress">
-            </vkeys-wallet>
-            <keplr-user v-model="userAddress"></keplr-user>
-          </div>
-        </div>
       </simple-header>
     </div>
 
