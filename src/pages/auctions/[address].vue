@@ -115,7 +115,7 @@
                 <h5>Current Bid</h5>
                 <dl>
                   <dd>
-                    {{ currentBidPrice }} {{ auction.bid.denom }} <span style="font-size: 13px" v-if="auction.sell.decimalAmount != 1">({{ auction.currentBid.decimalAmount }} {{ auction.bid.denom }})</span>
+                    {{ currentBidPrice }} {{ auction.bid.denom }} <span style="font-size: 13px" v-if="auction.sell.decimalAmount != 1">({{ currentBidAmount }} {{ auction.bid.denom }})</span>
                   </dd>
                 </dl>
                 <loading-icon v-if="retractBidSubmit.inProgress">
@@ -348,7 +348,18 @@ export default {
       return new Decimal(this.auction.currentBid?.amount).dividedBy(Decimal.pow(10, this.auction.bid.decimals)).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"")
     },
     currentBidPrice: function () {
-      return this.auction.currentBid?.decimalAmount / this.auction.sell.decimalAmount; 
+      if(this.auction.currentBid) {
+        return this.auction.currentBid?.decimalAmount / this.auction.sell.decimalAmount; 
+      } else {
+        return 0;
+      }
+    },
+    currentBidAmount: function () {
+      if(this.auction.currentBid) {
+        return this.auction.currentBid?.decimalAmount;
+      } else {
+        return 0;
+      }
     },
     endTimeString: function () {
       return moment(new Date(this.auction.endsAt)).format("YYYY-MM-DD HH:mm:ss");
