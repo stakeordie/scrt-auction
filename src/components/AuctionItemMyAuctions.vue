@@ -26,7 +26,7 @@
               {{auction.bid.denom}})</span></span>
         </dd>
       </dl>
-      <dl v-if="auction.bid && auction.bid.winner">
+      <dl v-if="tab == 'seller'">
         <dd class="auction__winner">
           <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom">
           </token-amount>
@@ -72,7 +72,7 @@
     components: {
       TokenAmount
     },
-    props: ["auction", "to"],
+    props: ["auction", "to", "tab", "table"],
     computed: {
       endsAt() {
         return moment(this.auction.endsAt).format("YYYY-MM-DD HH:mm:ss");
