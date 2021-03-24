@@ -161,7 +161,7 @@
         grid-template-columns: 1fr;
       }
 
-      background-image: url(../assets/illustration-bg.jpg);
+      background-image: url(../assets/illustration-landing-bg.svg);
       background-size: cover;
       background-position: center center;
       @include respond-to("<=s") {
