@@ -75,7 +75,7 @@ export class AuctionsApi {
         return array[Math.abs(hash) % array.length];
     }
 
-    transformActiveAuction(rawction, tokenData) {
+    transformActiveAuction(rawction, tokenData, options) {
         const colors = ["purple", "orange", "cream", "blue", "yellow", "green"];
         const auction = {
             address: rawction.address,
@@ -118,7 +118,7 @@ export class AuctionsApi {
     //     "sell_decimals":18,
     //     "timestamp":1612626275
     // }
-    transformClosedAuction(rawction, tokenData) {
+    transformClosedAuction(rawction, tokenData, options) {
         const auction = {
             address: rawction.address,
             pair: rawction.pair,
@@ -163,7 +163,7 @@ export class AuctionsApi {
     // sell_decimals: 18
     // timestamp: 1613100794
     // winning_bid: "10000"
-    transformWonAuction(rawction) {
+    transformWonAuction(rawction, options) {
         const auction = {
             address: rawction.address,
             pair: rawction.pair,
@@ -257,15 +257,18 @@ export class AuctionsApi {
         });
     }
 
-    async listUserAuctions(address, viewingKey, tokenData) {
+    async listUserAuctions(address, viewingKey, tokenData, options) {
         // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
         if (viewingKey) {
             const auctions = await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
-            const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction, tokenData));
-            const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction, tokenData));
+            if(!options?.getHasBids) {
+                options.getHasBids = false;
+            }
+            const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction, tokenData, options));
+            const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction, tokenData, options));
 
-            const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction, tokenData));
-            const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformWonAuction(rawction));
+            const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction, tokenData, options));
+            const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformWonAuction(rawction, options));
 
             return {
                 sellerAuctions,
