@@ -36,11 +36,19 @@
         -->
       <div class="landing-layout-footer ">
         <simple-footer class="stats">
-          <span class="scrt">SCRT = $3.095472</span>
+          <!-- <span class="scrt">SCRT = $3.095472</span>
           <span>Pairs = 22</span>
           <span>Total Fees = 117,375,041</span>
           <span>Liquidity = 4.54b</span>
-          <span>Total Volume = 39.13b</span>
+          <span>Total Volume = 39.13b</span> -->
+          <p>Built with <span class="emoji" title="stakeordie.js">&#x1F6F9;.js</span>, 
+            <span class="emoji" title="Mr. Roboto's Secret Rust">&#x1F916;&#x1F980;</span>, and lots of <span class="emoji" title="TLC">♥️</span> by 
+            <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Roboto <span class="emoji">&#x1F916;</span>'s Secret</g-link>
+            and 
+            <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/18B444E801687196D48A075D3622BE1AEE070C11">
+              <span class="emoji">&#x1F6F9;</span> Stake or Die! <span class="emoji">&#x1F41D;</span><span class="emoji">&#x1F41D;</span><span class="emoji">&#x1F41D;</span>
+            </g-link>
+          </p>
         </simple-footer>
       </div>
     </div>
@@ -292,24 +300,24 @@
 
   .simple-footer {
     &.stats {
-      background-color: black;
+      background-color: rgba(black, 0.9);
       position: fixed;
       left: 0;
       bottom: 0;
       display: flex;
       width: 100%;
-      padding: var(--f-gutter);
+      padding: var(--f-gutter-xxs);
 
       .--flare-frame {
         width: 100%;
 
             .box {
               display: grid;
-              grid-template-columns: repeat(5, 1fr);
+              // grid-template-columns: repeat(5, 1fr);
               gap: var(--f-gutter-xxs);
               @include respond-to("<=s") {
                 gap: var(--f-gutter);
-                grid-template-columns: 1fr 1fr;
+                // grid-template-columns: 1fr 1fr;
               }
               justify-content: center;
               span {
