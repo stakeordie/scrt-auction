@@ -35,6 +35,7 @@
       <div class="table-area">
         <!-- Bidder -->
         <div class="bidderInfo" v-if="showBidderInfo">
+          
           <h4 class="tableTitle">Active Auctions</h4>
           <div class="auctions-header five">
             <h6>Token Pair</h6>
@@ -44,16 +45,16 @@
             <h6>Target Close</h6>
             <h6 class="actions">Actions</h6>
           </div>
-
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in openBidderUserAuctions"
               :key="auction.address" :auction="auction" class="list" tab="bidder" table="active"></auction-item-my-auctions>
           </div>
+
           <h4 class="tableTitle">Past Auctions</h4>
           <div class="auctions-header five">
             <h6>Trading Pair</h6>
             <h6>Amount</h6>
-            <h6>My Winning Bid</h6>
+            <h6>Winning Bid</h6>
             <h6>Closed At</h6>
             <h6 class="actions">Actions</h6>
           </div>
@@ -61,6 +62,7 @@
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in closedBidderUserAuctions"
               :key="auction.address" :auction="auction" class="list" tab="bidder" table="closed"></auction-item-my-auctions>
           </div>
+
         </div>
       </div>
     </column>
