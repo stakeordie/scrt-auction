@@ -36,11 +36,11 @@
         <!-- Bidder -->
         <div class="bidderInfo" v-if="showBidderInfo">
           <h4 class="tableTitle">Active Auctions</h4>
-          <div class="auctions-header six">
+          <div class="auctions-header five">
             <h6>Token Pair</h6>
             <h6>Amount</h6>
             <h6>Asking price</h6>
-            <h6>My bid</h6>
+            <!-- <h6>My bid</h6> -->
             <h6>Target Close</h6>
             <h6 class="actions">Actions</h6>
           </div>
@@ -92,11 +92,10 @@
         <div class="sellerInfoTable"></div>
         <div class="sellerInfo" v-if="!showBidderInfo">
           <h4 class="tableTitle">Active</h4>
-          <div class="auctions-header six">
+          <div class="auctions-header five">
             <h6>Auction Pair</h6>
             <h6>Amount</h6>
             <h6>Asking Price</h6>
-            <h6>Any Bids?</h6>
             <h6>Target Close</h6>
             <h6 class="actions">Actions</h6>
           </div>

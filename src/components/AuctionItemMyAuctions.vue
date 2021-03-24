@@ -17,20 +17,20 @@
     </dl>
 
     <div class="auction__bid-price">
-      <dl class="auction__bid" v-if="auction.bid && auction.price">
+      <dl class="auction__bid" v-if="table == 'active'">
         <dd class="auction__asking-price">
-          <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom">
+          <token-amount :amount="auction.bid.decimalAskingPrice" :decimals="auction.bid.decimals" :denom="auction.bid.denom">
           </token-amount>
-          <span v-if="auction.sell.decimalAmount != 1"> per</span><br><span
-            v-if="auction.sell.decimalAmount != 1"><span>({{ auction.bid.decimalMinimum}} Total)</span></span>
+          <span v-if="auction.sell.decimalAmount != 1"></span><br><span
+            v-if="auction.sell.decimalAmount != 1"><span>({{ auction.bid.decimalMinimumBid}} Total)</span></span>
         </dd>
       </dl>
       <dl v-if="table == 'closed'">
         <dd class="auction__winner">
           <token-amount :amount="auction.bid.decimalWinningBidPrice" :decimals="auction.bid.decimals" :denom="auction.bid.denom">
           </token-amount>
-          <span v-if="auction.sell.decimalAmount != 1"> per</span><br><span
-            v-if="auction.sell.decimalAmount != 1"><span>({{ auction.bid.decimalWinner}} total)</span></span>
+          <span v-if="auction.sell.decimalAmount != 1"></span><br><span
+            v-if="auction.sell.decimalAmount != 1"><span>({{ auction.bid.decimalWinner}} Total)</span></span>
         </dd>
       </dl>
     </div>
