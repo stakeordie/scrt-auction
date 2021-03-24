@@ -21,10 +21,10 @@ const arrayHash = (str, array) => {
 
 const filterAndSortAuctions = (auctions, filter) => {
     return auctions.filter(auction => {
-        if(filter.sellToken != "" && auction.sell.denom != filter.sellToken) {
+        if(filter.sellToken != "" && auction.sell?.denom != filter.sellToken) {
             return false;
         }
-        if(filter.bidToken != "" && auction.bid.denom != filter.bidToken) {
+        if(filter.bidToken != "" && auction.bid?.denom != filter.bidToken) {
             return false;
         }
         // if(filter.onlyMine && !(auction.viewerIsSeller || auction.viewerIsBidder || auction.viewerWasSeller || auction.viewerIsWinner)) {
