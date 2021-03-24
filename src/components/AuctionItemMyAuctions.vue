@@ -21,27 +21,26 @@
         <dd class="auction__asking-price">
           <token-amount :amount="auction.price" :decimals="auction.bid.decimals" :denom="auction.bid.denom">
           </token-amount>
-          <span v-if="auction.sell.decimalAmount != 1"> per token </span><br><span
-            v-if="auction.sell.decimalAmount != 1"><span>({{ auction.bid.decimalMinimum}}
-              {{auction.bid.denom}})</span></span>
+          <span v-if="auction.sell.decimalAmount != 1"> per</span><br><span
+            v-if="auction.sell.decimalAmount != 1"><span>({{ auction.bid.decimalMinimum}} Total)</span></span>
         </dd>
       </dl>
-      <dl v-if="tab == 'seller'">
+      <dl v-if="table == 'closed'">
         <dd class="auction__winner">
-          <token-amount :amount="auction.bid.decimalWinner" :decimals="auction.bid.decimals" :denom="auction.bid.denom">
+          <token-amount :amount="auction.bid.decimalWinningBidPrice" :decimals="auction.bid.decimals" :denom="auction.bid.denom">
           </token-amount>
+          <span v-if="auction.sell.decimalAmount != 1"> per</span><br><span
+            v-if="auction.sell.decimalAmount != 1"><span>({{ auction.bid.decimalWinner}} total)</span></span>
         </dd>
       </dl>
     </div>
 
-    <dl v-if="auction.endsAt && !auction.closedAt">
-      <dt>Target close</dt>
+    <dl v-if="table == 'active'">
       <dd :class="isEnded ? 'ended': ''">{{ endsAt }}</dd>
     </dl>
 
-    <div v-if="auction.closedAt">
+    <div v-if="table == 'closed'">
       <dl>
-        <dt>Closed at</dt>
         <dd>{{ closedAt }}</dd>
       </dl>
     </div>

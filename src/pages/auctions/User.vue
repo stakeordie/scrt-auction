@@ -41,25 +41,25 @@
             <h6>Amount</h6>
             <h6>Asking price</h6>
             <h6>My bid</h6>
-            <h6>Target Closing</h6>
+            <h6>Target Close</h6>
             <h6 class="actions">Actions</h6>
           </div>
 
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in openBidderUserAuctions"
-              :key="auction.address" :auction="auction" class="list" tab="bidder" table="top"></auction-item-my-auctions>
+              :key="auction.address" :auction="auction" class="list" tab="bidder" table="active"></auction-item-my-auctions>
           </div>
           <h4 class="tableTitle">Past Auctions</h4>
           <div class="auctions-header five">
-            <h6>Trading pair</h6>
-            <h6>Asking price</h6>
-            <h6>My bid</h6>
-            <h6>Target Close</h6>
+            <h6>Trading Pair</h6>
+            <h6>Amount</h6>
+            <h6>My Winning Bid</h6>
+            <h6>Closed At</h6>
             <h6 class="actions">Actions</h6>
           </div>
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in closedBidderUserAuctions"
-              :key="auction.address" :auction="auction" class="list" tab="bidder" table="bottom"></auction-item-my-auctions>
+              :key="auction.address" :auction="auction" class="list" tab="bidder" table="closed"></auction-item-my-auctions>
           </div>
         </div>
       </div>
@@ -102,20 +102,19 @@
           </div>
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in openSellerUserAuctions"
-              :key="auction.address" :auction="auction" class="list" tab="seller" table="top"></auction-item-my-auctions>
+              :key="auction.address" :auction="auction" class="list" tab="seller" table="active"></auction-item-my-auctions>
           </div>
           <h4 class="tableTitle">Complete</h4>
-          <div class="auctions-header six">
+          <div class="auctions-header five">
             <h6>Auction Pair</h6>
             <h6>Amount</h6>
-            <h6>Asking Price</h6>
             <h6>Winning Bid</h6>
             <h6>Closed At</h6>
             <h6 class="actions">Actions</h6>
           </div>
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in closedSellerUserAuctions"
-              :key="auction.address" :auction="auction" class="list" tab="seller" table="top"></auction-item-my-auctions>
+              :key="auction.address" :auction="auction" class="list" tab="seller" table="closed"></auction-item-my-auctions>
           </div>
         </div>
       </div>
