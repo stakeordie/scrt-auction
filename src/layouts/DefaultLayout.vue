@@ -240,8 +240,8 @@ query {
 
 .actions {
   display: flex;
-  flex-flow: row nowrap;
-  gap: var(--f-gutter-s);
+  // flex-flow: row nowrap;
+  gap: var(--f-gutter-l);
   position: relative;
   padding-left: var(--f-gutter);
   align-items: center;
@@ -251,6 +251,18 @@ query {
   .keys-keplr {
     display: flex;
     gap: var(--f-gutter);
+    .vkeys-wallet {
+      img {
+        height: 39px;
+        width: auto;
+      }
+    }
+    img {
+      display: flex;
+      flex: auto;
+      height: 32px;
+      width: auto;
+    }
     @include respond-to("<=s") {
       flex-direction: column;
       gap: 0;

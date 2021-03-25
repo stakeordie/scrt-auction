@@ -71,6 +71,8 @@ export default {
 <style lang="scss" scoped>
 .keplr {
   position: relative;
+  align-items: center;
+  display: flex;
 
   &__icon {
     width: 32px;
@@ -87,7 +89,7 @@ export default {
     height: 12px;
     border-radius: 6px;
     position: absolute;
-    top: -4px;
+    top: -2px;
     right: -4px;
     background-color: var(--default-error-color);
 
