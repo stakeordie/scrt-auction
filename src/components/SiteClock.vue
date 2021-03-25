@@ -35,7 +35,7 @@ export default {
 <style>
     .site-clock {
         display: flex;
-        justify-content: flex-start;
+        justify-content: flex-end;
         align-items: center;
         /* margin: 4px 12px 4px 0; */
         max-width: 100px;
