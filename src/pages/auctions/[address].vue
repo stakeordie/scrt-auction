@@ -550,10 +550,30 @@ export default {
       this.closeAuctionWithOptionsSubmit.response = await this.$auctions.closeAuctionWithOptions(this.auction.address, endTime, new Decimal(newMinimumBidAmount).toFixed(0))
       this.closeAuctionWithOptionsSubmit.inProgress = false;
       if(this.closeAuctionWithOptionsSubmit.response.error) {
-        this.closeAuctionWithOptionsSubmit.result = "error"
+        //this.closeAuctionWithOptionsSubmit.result = "error"
+        this.$toasted.show("Error: " + this.closeAuctionWithOptionsSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.closeAuctionWithOptionsSubmit.result = "success"
         this.manageAuctionFormState = null;
+        this.$toasted.show("Success", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       }
     },
     async getAuction() {
