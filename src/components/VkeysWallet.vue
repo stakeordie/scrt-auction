@@ -12,7 +12,7 @@
         <h3>Viewing keys</h3>
         <dl>
           <dt>Factory address</dt>
-          <dd>{{$auctions.factoryAddress | abbrv }}</dd>
+          <dd>{{contract | abbrv }}</dd>
         </dl>
         <vkeys-address :account="account" :contract="$auctions.factoryAddress">
           <template #description>
