@@ -3,6 +3,7 @@
         <!-- Place below in the element above -->
         <!-- @blur="open = false" -->
         <!-- TODO: #69 Token Selector background is too dark, should match complete auction steps -->
+        <!-- TODO: #77 The modal needs to close when you click outside of it @walter-lkmx -->
         <div class="selected" :class="{ open: open }" @click="open = !open">
             <g-image :immediate="true"
                 :src="require(`!!assets-loader?width=15&height=15!@/assets/token-icons/${selected.iconImg ? selected.iconImg : 'secret-scrt-logo.svg'}`)">

@@ -35,8 +35,8 @@
       <div class="table-area">
         <!-- Bidder -->
         <div class="bidderInfo" v-if="showBidderInfo">
-          
-          <h4 class="tableTitle">Active Auctions</h4>
+
+          <h4 class="tableTitle">Active Bid-on Auctions</h4>
           <div class="auctions-header five">
             <h6>Token Pair</h6>
             <h6>Amount</h6>
@@ -50,7 +50,7 @@
               :key="auction.address" :auction="auction" class="list" tab="bidder" table="active"></auction-item-my-auctions>
           </div>
 
-          <h4 class="tableTitle">Past Auctions</h4>
+          <h4 class="tableTitle">Closed Won Auctions</h4>
           <div class="auctions-header five">
             <h6>Trading Pair</h6>
             <h6>Amount</h6>
@@ -93,7 +93,7 @@
         <!-- Seller -->
         <div class="sellerInfoTable"></div>
         <div class="sellerInfo" v-if="!showBidderInfo">
-          <h4 class="tableTitle">Active</h4>
+          <h4 class="tableTitle">Active Owned Auctions</h4>
           <div class="auctions-header five">
             <h6>Auction Pair</h6>
             <h6>Amount</h6>
@@ -105,7 +105,7 @@
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in openSellerUserAuctions"
               :key="auction.address" :auction="auction" class="list" tab="seller" table="active"></auction-item-my-auctions>
           </div>
-          <h4 class="tableTitle">Complete</h4>
+          <h4 class="tableTitle">Closed Successful Auctions</h4>
           <div class="auctions-header five">
             <h6>Auction Pair</h6>
             <h6>Amount</h6>
