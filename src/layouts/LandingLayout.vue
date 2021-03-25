@@ -163,9 +163,9 @@
 
       background-image: url(../assets/illustration-landing-bg.svg);
       background-size: cover;
-      background-position: center center;
+      background-position: center left;
       @include respond-to("<=s") {
-        background-position: left top;
+        // background-position: left 10px;
       }
       background-repeat: no-repeat;
 
