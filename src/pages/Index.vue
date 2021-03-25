@@ -2,9 +2,9 @@
 <landing-layout>
 <columns class="intro" mode="normal" mode-m="full" number="2" number-m="1" number-s="1">
   <block>
-    <h1 class="mega">Bid and sell at the best prices on the market</h1>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-    <button @click="$router.push('/auctions')" class="white">Enter App</button>
+    <h1 class="mega">Secret Auctions: the sealed bid OTC marketplace</h1>
+    <p>Exchange assets peer-to-peer privately and with minimal fees. The only decentralized, sealed bid auction platform. Made possible by runnin on Secret Network</p>
+    <button @click="$router.push('/auctions')" class="white">Use Secret Auctions</button>
   </block>
   <block>
     <img src="@/assets/illustration-landing.svg" alt="">
