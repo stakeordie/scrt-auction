@@ -14,7 +14,7 @@
           <dt>Factory address</dt>
           <dd>{{contract | abbrv }}</dd>
         </dl>
-        <vkeys-address :account="account" :contract="$auctions.factoryAddress">
+        <vkeys-address :account="account" :contract="contract">
           <template #description>
             <small>Creating a viewing key for the factory contract will allow you to see the auctions you have participated in as a buyer and seller.</small>
           </template>
