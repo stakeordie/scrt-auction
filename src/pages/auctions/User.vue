@@ -254,7 +254,6 @@
     },
     watch: {
       async vkViewingKey(newValue, oldValue) {
-        console.log(newValue);
         if(newValue) {
           this.$auctions.updateUserAuctions();
         }

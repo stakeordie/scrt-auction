@@ -97,7 +97,7 @@
   }
 </static-query>
 
-<style lang="scss">
+<style lang="scss" scoped>
   @import "@lkmx/flare/src/functions/respond-to";
 
   // TODO: #68 update header to includ enter app and clock
@@ -348,7 +348,7 @@
       padding: 16px;
 
       width: 330px;
-      height: 80px;
+      height: auto;
 
       /* secret/green */
 

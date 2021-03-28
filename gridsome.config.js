@@ -25,6 +25,7 @@ module.exports = {
         closeOnSwipe: true,
         theme: "outline",
         className: "override",
+        duration : 7000
       }
     }
   ],

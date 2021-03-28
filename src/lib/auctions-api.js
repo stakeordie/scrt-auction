@@ -273,37 +273,33 @@ export class AuctionsApi {
         // secretcli q compute query *factory_contract_address* '{"list_my_auctions":{"address":"*address_whose_auctions_to_list*","viewing_key":"*viewing_key*","filter":"*optional choice of active, closed, or all"}}'
         if (viewingKey) {
             const auctions = await this.scrtClient.queryContract(this.factoryAddress, { "list_my_auctions": { "address": address, "viewing_key": viewingKey, "filter": "all"}});
-            
-            //const sellerAuctionsFilter = await auctions.list_my_auctions?.active?.as_seller?.forEach(async sellerAuction => console.log(await this.getCurrentBid(sellerAuction.address, address, viewingKey)))
+            if(!auctions.viewing_key_error) {
 
-            const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction, tokenData));
-            const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction, tokenData));
+                const sellerAuctions = auctions.list_my_auctions?.active?.as_seller?.map(rawction => this.transformActiveAuction(rawction, tokenData));
+                const bidderAuctions = auctions.list_my_auctions?.active?.as_bidder?.map(rawction => this.transformActiveAuction(rawction, tokenData));
 
-            const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction, tokenData));
-            const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformWonAuction(rawction));
+                const wasSellerAuctions = auctions.list_my_auctions?.closed?.as_seller?.map(rawction => this.transformClosedAuction(rawction, tokenData));
+                const wonAuctions = auctions.list_my_auctions?.closed?.won?.map(rawction => this.transformWonAuction(rawction));
 
-            return {
-                sellerAuctions,
-                bidderAuctions,
-                wasSellerAuctions,
-                wonAuctions,
+                return {
+                    sellerAuctions,
+                    bidderAuctions,
+                    wasSellerAuctions,
+                    wonAuctions,
+                }
+            } else {
+                return "vkError";
             }
+        } else {
+            return "vkMissing";
         }
     }
 
-    //replaces getAuctionInfo
     async getAuction(auctionAddress) {
         const auction = await this.scrtClient.queryContract(auctionAddress, {"auction_info":{}});
         return this.transformAuctionInfo(auction);
     }
 
-    //replaced by getAuction
-    async getAuctionInfo(auctionAddress) {
-        const auctionInfo = await this.scrtClient.queryContract(auctionAddress, {"auction_info":{}});
-        return auctionInfo;
-    }
-
-    //replaces getAuctionBidInfo
     async getCurrentBid(auctionAddress, userAddress, viewingKey) {
         let currentBid = false;
         const bidInfo = await this.scrtClient.queryContract(auctionAddress, {"view_bid": { "address": userAddress, "viewing_key": viewingKey}});
@@ -315,25 +311,11 @@ export class AuctionsApi {
         return currentBid;
     }
 
-    //If you have a viewing Key then:
-    async getAuctionBidInfo(address, auctionAddress, viewingKey) {
-        //secretcli q compute query *auction_contract_address* '{"view_bid": {"address":"*address_whose_bid_to_list*","viewing_key":"*viewing_key*"}}'
-        return await this.scrtClient.queryContract(auctionAddress, {"view_bid": { "address": address, "viewing_key": viewingKey}});
-
-    }
-
-    //replaces getAuctionHasBids
-    async getAuctionHasBidsInfo(auctionAddress, userAddress, viewingKey) {
+    async getAuctionHasBids(auctionAddress, userAddress, viewingKey) {
         //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
         const response = await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": userAddress, "viewing_key": viewingKey }});
         
         return response.has_bids.has_bids // TODO what if error e.g. not owner
-    }
-
-    //If you have a viewing Key and are the seller then:
-    async getAuctionHasBids(address, auctionAddress, viewingKey) {
-        //secretcli q compute query *auction_contract_address* '{"has_bids": {"address":"*sellers_address*","viewing_key":"*viewing_key*"}}'
-        return await this.scrtClient.queryContract(auctionAddress, { "has_bids": { "address": address,"viewing_key": viewingKey }});
     }
 
     async closeAuction(auctionAddress) {
@@ -382,8 +364,6 @@ export class AuctionsApi {
                 "padding": "*".repeat((40 - bidAmount.toString().length))
             }
         };
-        //console.log(msg);
-        //console.log(fees);
         return await this.scrtClient.executeContract(bidTokenAddress, msg, fees);
     }
 
@@ -444,6 +424,5 @@ export class AuctionsApi {
         };
         return await this.scrtClient.executeContract(this.factoryAddress, msg, fees);
     }
-
 
 }

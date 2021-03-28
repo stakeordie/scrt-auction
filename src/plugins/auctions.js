@@ -284,11 +284,7 @@ export default {
               },
               actions: {
                 updateAuction: async ({ commit }, address) => {
-                    //replacement
                     const auction = await auctionsApi.getAuction(address);
-                    //replaced
-                    //const auctionInfo = await auctionsApi.getAuctionInfo(address);
-
                     commit("updateAuction", auction);
                 },
 
@@ -299,16 +295,21 @@ export default {
                         currentBid: false
                     }
                     const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey, state.tokenData); //get userAuctions
-                    
+                    console.log("auctions.js/actions/updateAuctionBidDetails/userAuctions",userAuctions);
+                    if(userAuctions == "vkError") {
+                        return "viewing key error";
+                    }
                     
                     if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am bidder
                         auction.currentBid = await auctionsApi.getCurrentBid(address, userAddress, viewingKey);
                         auction.hasBids = true;
-                    } else if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am seller
-                        auction.hasBids = await auctionsApi.getAuctionHasBidsInfo(address, userAddress, viewingKey);
+                    } else if(userAuctions.sellerAuctions?.findIndex(a => a.address == address) > -1) { //if am seller
+                        auction.hasBids = await auctionsApi.getAuctionHasBids(address, userAddress, viewingKey);
                     }
                     
                     commit("updateAuctionBidDetails", auction);
+
+                    return false;
                 },
 
                 updateActiveAuctions: async ({ commit, state }) => {
@@ -513,7 +514,7 @@ export default {
         };
 
         Vue.prototype.$auctions.updateAuctionBidDetails = async (address, userAddress, viewingKey) => {
-            Vue.prototype.$store.dispatch('$auctions/updateAuctionBidDetails', {address, userAddress, viewingKey});
+            return Vue.prototype.$store.dispatch('$auctions/updateAuctionBidDetails', {address, userAddress, viewingKey});
         };
 
         Vue.prototype.$auctions.updateAuctionsFilter = async (auctionsFilter) => {

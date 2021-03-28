@@ -304,7 +304,20 @@ export default {
   watch: {
     async vkViewingKey(newValue, oldValue) {
       if(newValue) {
-        this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
+        const result = await this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
+        console.log("address/watch/vkViewingKey/result",result)
+        if(result == "viewing key error") {
+          this.$toasted.show("VIEWING KEY PROBLEM: <br> The saved viewing key is failing. Either it was entered incorrectly, or it was reset elsewhere. Fix by entering or generate a new one.", {
+            type: "error",
+            action: {
+              icon: "close",
+              onClick :(e, toastObject) => {
+                  toastObject.goAway(0);
+              },
+              class: "closeAction"
+            }
+          });
+        }
       }
     }
   },

@@ -11,7 +11,7 @@
           <nav class="auctions-nav"></nav>
           <div class="actions">
             <site-clock></site-clock>
-            <a class="button create_auction" href="/new">Create auction</a>
+            <a class="button create_auction" href="/auctions/new">Create auction</a>
             <div class="keys-keplr">
               <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="$auctions.factoryAddress"></vkeys-wallet>
               <keplr-user v-model="userAddress"></keplr-user>
@@ -310,7 +310,7 @@ query {
     padding: 16px;
 
     width: 450px;
-    height: 80px;
+    height: auto;
 
     /* secret/green */
     &.success {
