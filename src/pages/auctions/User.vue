@@ -149,8 +149,6 @@
   import AuctionItemMyAuctions from '../../components/AuctionItemMyAuctions.vue';
   import ListLayout from '../../layouts/ListLayout.vue';
   import SimpleTable from '../../components/SimpleTable.vue';
-  // import KeplrAccount from '../../components/KeplrAccount.vue';
-  // import VkeysAddress from '../../components/VkeysAddress.vue';
 
   export default {
     components: {
@@ -158,8 +156,6 @@
       AuctionItemMyAuctions,
       ListLayout,
       SimpleTable,
-      // VkeysAddress,
-      // KeplrAccount
     },
     metaInfo: {
       title: 'Secret Auctions',
@@ -167,8 +163,6 @@
     data() {
       return {
         showBidderInfo: true,
-        // keplrAccount: null,
-        // vkViewingKey: null,
         tableConf: {
           pagination: {
             enabled: true,
@@ -254,7 +248,6 @@
     },
     watch: {
       async vkViewingKey(newValue, oldValue) {
-        console.log(newValue);
         if(newValue) {
           this.$auctions.updateUserAuctions();
         }
