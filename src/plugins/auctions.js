@@ -297,10 +297,6 @@ export default {
                         currentBid: false
                     }
                     const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey, state.tokenData); //get userAuctions
-                    //console.log("auctions.js/actions/updateAuctionBidDetails/userAuctions",userAuctions);
-                    if(userAuctions == "vkError") {
-                        return "viewing key error";
-                    }
                     
                     if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am bidder
                         auction.currentBid = await auctionsApi.getCurrentBid(address, userAddress, viewingKey);
@@ -310,8 +306,6 @@ export default {
                     }
                     
                     commit("updateAuctionBidDetails", auction);
-
-                    return false;
                 },
 
                 updateActiveAuctions: async ({ commit, state }) => {
