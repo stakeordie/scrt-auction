@@ -124,19 +124,6 @@
       <!-- <simple-table :data="closedUserAuctions" :config="tableConf"></simple-table> -->
       <!-- <auction-item :to="'/auctions/' + auction.address" v-for="auction in allUserAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item> -->
     </column>
-    <!-- <column>
-      <block>
-        <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
-        <div v-show="!vkViewingKey" class="stage-panel full-width">
-          <h3>Viewing Key Missing</h3>
-          <vkeys-address v-model="vkViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress">
-            <template v-slot:description>
-              <small>You will need a viewing key in order to view non-public auction details.</small>
-            </template>
-          </vkeys-address>
-        </div>
-      </block>
-    </column> -->
   </list-layout>
 </template>
 
