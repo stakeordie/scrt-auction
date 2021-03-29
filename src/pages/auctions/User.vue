@@ -14,7 +14,7 @@
     <!-- Aggregate Area -->
     <!-- Table Area -->
     <column v-if="showBidderInfo">
-    <section class="bidder-stats">
+      <section class="bidder-stats">
         <div class="stat">
           <p class="title">Current Open Bids</p>
           <h3 class="value">{{ isBidderTotal }}</h3>
@@ -67,7 +67,7 @@
       </div>
     </column>
     <column v-if="!showBidderInfo">
-    <section class="seller-stats">
+      <section class="seller-stats">
         <div class="stat">
           <p class="title">Current Open Auctions</p>
           <h3 class="value">{{ isSellerTotal }}</h3>
