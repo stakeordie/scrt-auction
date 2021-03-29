@@ -273,8 +273,10 @@ export default {
                     const auction = state.auctions.find(auction => auction.address === auctionAddress);
                     auction.status = "CLOSED";
                     auction.viewerWasSeller = auction.viewerIsSeller;
-                    auction.closedAt = params.closedAt;
+                    auction.viewerIsSeller = false;
                     auction.viewerIsWinner = params.isWinner;
+                    auction.viewerIsBidder = false;
+                    auction.closedAt = params.closedAt;
                     if(params.isWinner) {
                         auction.bid.winner = params.winningBid;
                         auction.bid.decimalWinner = params.decimalWinningBid;
@@ -419,7 +421,7 @@ export default {
                     return response; 
                 },
 
-                closeAuction: async({commit}, {auctionAddress, response}) => {
+                closeAuction: async({commit, state}, {auctionAddress, response}) => {
                     if(!response) {
                         response = await auctionsApi.closeAuction(auctionAddress);
                     }
@@ -428,12 +430,14 @@ export default {
                             isWinner: false,
                             closedAt: new Date()
                         };
-                        if(response.close_auction.winning_bid) {
+                        // console.log("closeAuction/response", response);
+                        // console.log("closeAuction/State", state);
+                        if(response.close_auction.sell_tokens_received) {
                             params.isWinner = true;
                             params.winningBid = response.close_auction.winning_bid;
                             params.decimalWinningBid = auctionsApi.tokens2Decimal(response.close_auction.winning_bid, response.close_auction.bid_decimals);
                         }
-                        commit("closeAuction", { auctionAddress, params});
+                        commit("closeAuction", {auctionAddress, params});
                     }
                     return response;
                 },
