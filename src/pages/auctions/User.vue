@@ -14,7 +14,7 @@
     <!-- Aggregate Area -->
     <!-- Table Area -->
     <column v-if="showBidderInfo">
-      <section class="bidder-stats">
+    <section class="bidder-stats">
         <div class="stat">
           <p class="title">Current Open Bids</p>
           <h3 class="value">{{ isBidderTotal }}</h3>
@@ -67,28 +67,28 @@
       </div>
     </column>
     <column v-if="!showBidderInfo">
-        <section class="seller-stats">
-          <div class="stat">
-            <p class="title">Current Open Auctions</p>
-            <h3 class="value">{{ isSellerTotal }}</h3>
-          </div>
-          <!-- <div class="stat">
-            <p class="title">Amount Sold</p>
-            <h3 class="value">0<span>USD</span></h3>
-          </div> -->
-          <div class="stat">
-            <p class="title">Closed Auctions</p>
-            <h3 class="value">{{ wasSellerTotal }}</h3>
-          </div>
-          <!-- <div class="stat">
-            <p class="title">Value of Aquired Assets</p>
-            <h3 class="value">0<span>USD</span></h3>
-          </div> -->
-          <div class="stat">
-            <p class="title">Successful Auctions</p>
+    <section class="seller-stats">
+        <div class="stat">
+          <p class="title">Current Open Auctions</p>
+          <h3 class="value">{{ isSellerTotal }}</h3>
+        </div>
+        <!-- <div class="stat">
+          <p class="title">Amount Sold</p>
+          <h3 class="value">0<span>USD</span></h3>
+        </div> -->
+        <div class="stat">
+          <p class="title">Closed Auctions</p>
+          <h3 class="value">{{ wasSellerTotal }}</h3>
+        </div>
+        <!-- <div class="stat">
+          <p class="title">Value of Aquired Assets</p>
+          <h3 class="value">0<span>USD</span></h3>
+        </div> -->
+        <div class="stat">
+          <p class="title">Successful Auctions</p>
           <h3 class="value">{{ successfulSellerTotal }}</h3>
         </div>
-      </section>        
+      </section>
       <div class="table-area" v-if="!showBidderInfo">
         <!-- Seller -->
         <div class="sellerInfoTable"></div>
@@ -249,11 +249,12 @@
         return this.auctionStats.successfulSellerTotal;
       }
     },
-    async mounted() {
+    mounted() {
       this.$auctions.updateUserAuctions();
     },
     watch: {
       async vkViewingKey(newValue, oldValue) {
+        console.log(newValue);
         if(newValue) {
           this.$auctions.updateUserAuctions();
         }
