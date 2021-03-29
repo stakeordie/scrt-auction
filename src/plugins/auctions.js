@@ -295,7 +295,7 @@ export default {
                         currentBid: false
                     }
                     const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey, state.tokenData); //get userAuctions
-                    console.log("auctions.js/actions/updateAuctionBidDetails/userAuctions",userAuctions);
+                    //console.log("auctions.js/actions/updateAuctionBidDetails/userAuctions",userAuctions);
                     if(userAuctions == "vkError") {
                         return "viewing key error";
                     }
@@ -337,6 +337,7 @@ export default {
                     
                     if(viewer?.viewingKey) {
                         const userAuctions = await auctionsApi.listUserAuctions(viewer.userAddress, viewer.viewingKey, state.tokenData);
+                        
                         // First we load the new auction information
                         if (userAuctions.sellerAuctions) {
                             commit("updateAuctions", userAuctions.sellerAuctions);

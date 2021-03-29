@@ -249,13 +249,15 @@
         return this.auctionStats.successfulSellerTotal;
       }
     },
-    mounted() {
-      this.$auctions.updateUserAuctions();
+    async mounted() {
+      const result = await this.$auctions.updateUserAuctions();
+      console.log("address/mounted/result", result)
     },
     watch: {
       async vkViewingKey(newValue, oldValue) {
         if(newValue) {
-          this.$auctions.updateUserAuctions();
+          const result = await this.$auctions.updateUserAuctions();
+          console.log("address/watch/vkViewingKey/result", result)
         }
       }
     }
