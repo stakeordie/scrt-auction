@@ -124,7 +124,7 @@
       <!-- <simple-table :data="closedUserAuctions" :config="tableConf"></simple-table> -->
       <!-- <auction-item :to="'/auctions/' + auction.address" v-for="auction in allUserAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item> -->
     </column>
-    <column>
+    <!-- <column>
       <block>
         <keplr-account v-model="keplrAccount" :abbreviation="16" :hidden="true"></keplr-account>
         <div v-show="!vkViewingKey" class="stage-panel full-width">
@@ -136,7 +136,7 @@
           </vkeys-address>
         </div>
       </block>
-    </column>
+    </column> -->
   </list-layout>
 </template>
 
@@ -149,8 +149,8 @@
   import AuctionItemMyAuctions from '../../components/AuctionItemMyAuctions.vue';
   import ListLayout from '../../layouts/ListLayout.vue';
   import SimpleTable from '../../components/SimpleTable.vue';
-  import KeplrAccount from '../../components/KeplrAccount.vue';
-  import VkeysAddress from '../../components/VkeysAddress.vue';
+  // import KeplrAccount from '../../components/KeplrAccount.vue';
+  // import VkeysAddress from '../../components/VkeysAddress.vue';
 
   export default {
     components: {
@@ -158,8 +158,8 @@
       AuctionItemMyAuctions,
       ListLayout,
       SimpleTable,
-      VkeysAddress,
-      KeplrAccount
+      // VkeysAddress,
+      // KeplrAccount
     },
     metaInfo: {
       title: 'Secret Auctions',
@@ -167,8 +167,8 @@
     data() {
       return {
         showBidderInfo: true,
-        keplrAccount: null,
-        vkViewingKey: null,
+        // keplrAccount: null,
+        // vkViewingKey: null,
         tableConf: {
           pagination: {
             enabled: true,
