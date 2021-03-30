@@ -11,7 +11,7 @@
         <nav class="auctions-nav"></nav>
         <!-- Sandy Added -->
         <div class="actions">
-          <site-clock></site-clock>
+          <!-- <site-clock></site-clock> -->
           <button @click="$router.push('/auctions')" class="white">Enter App</button>
         </div>
         <!-- Sandy Added -->
@@ -21,26 +21,10 @@
 
     <div class="landing-layout-content">
 
-      <!-- <div class="layout-sidemenu" :class="{'mobile-hidden': !menuMobileVisible }">
-
-        <ul class="app-menu">
-          <li><g-link to="/">Current Auctions</g-link>
-          <li><g-link to="/past">Past Auctions</g-link></li>
-          <li><g-link to="/user">My Auctions</g-link></li>
-          <li><g-link to="/new">Create an Auction</g-link></li>
-        </ul>
-      </div> -->
-
       <slot></slot>
-      <!-- TODO: #75 replace content with "built by stake or die" regular footer content @walter-lkmx
-        -->
+
       <div class="landing-layout-footer ">
         <simple-footer class="stats">
-          <!-- <span class="scrt">SCRT = $3.095472</span>
-          <span>Pairs = 22</span>
-          <span>Total Fees = 117,375,041</span>
-          <span>Liquidity = 4.54b</span>
-          <span>Total Volume = 39.13b</span> -->
           <p>Built with <span class="emoji" title="stakeordie.js">&#x1F6F9;.js</span>, 
             <span class="emoji" title="Mr. Roboto's Secret Rust">&#x1F916;&#x1F980;</span>, and lots of <span class="emoji" title="TLC">♥️</span> by 
             <g-link to="https://secretnodes.com/secret/chains/secret-2/validators/73D9DDC9EBB5BDB44ADA9FF2051610B75CB31A8D">Mr. Roboto <span class="emoji">&#x1F916;</span>'s Secret</g-link>
@@ -57,43 +41,24 @@
 </template>
 
 <script>
-  import KeplrUser from '../components/KeplrUser.vue'
-  import VkeysWallet from '../components/VkeysWallet.vue'
-  import SiteClock from '../components/SiteClock.vue'
+  //import SiteClock from '../components/SiteClock.vue'
 
   export default {
     components: {
-      KeplrUser,
-      VkeysWallet,
-      SiteClock
+      //SiteClock
     },
     data() {
       return {
-        userAddress: null,
-        viewingKey: null,
-        chainId: process.env.GRIDSOME_SECRET_CHAIN_ID,
-
-        menuMobileVisible: false,
       }
-    },
-    watch: {
-      // Only the viewing key is watched because if 
-      // the account changes the vk will change too
-      viewingKey(newValue, oldValue) {
-        this.$auctions.updateAuctionsViewer({
-          userAddress: this.userAddress,
-          viewingKey: this.viewingKey,
-        });
-      }
-    },
+    }
   }
 </script>
 
 <static-query>
   query {
-  metadata {
-  siteName
-  }
+    metadata {
+      siteName
+    }
   }
 </static-query>
 
