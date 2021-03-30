@@ -7,18 +7,7 @@
 module.exports = {
   siteName: "Secret Auctions",
   plugins: [
-    {
-      use: 'gridsome-plugin-vue-toasted',
-      options: {
-        iconPack : 'material',
-        position: "top-right",
-        keepOnHover: true,
-        closeOnSwipe: true,
-        theme: "outline",
-        className: "override",
-        duration : 7000
-      }
-    }
+    
   ],
 
   configureWebpack: {
