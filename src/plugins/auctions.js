@@ -513,7 +513,7 @@ export default {
         };
 
         Vue.prototype.$auctions.updateAuctionBidDetails = async (address, userAddress, viewingKey) => {
-            return Vue.prototype.$store.dispatch('$auctions/updateAuctionBidDetails', {address, userAddress, viewingKey});
+            Vue.prototype.$store.dispatch('$auctions/updateAuctionBidDetails', {address, userAddress, viewingKey});
         };
 
         Vue.prototype.$auctions.updateAuctionsFilter = async (auctionsFilter) => {
