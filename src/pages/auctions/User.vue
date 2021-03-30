@@ -1,5 +1,6 @@
 <template>
   <list-layout only="list">
+    <ClientOnly>
     <column>
       <block>
         <!-- Control Area -->
@@ -124,6 +125,7 @@
       <!-- <simple-table :data="closedUserAuctions" :config="tableConf"></simple-table> -->
       <!-- <auction-item :to="'/auctions/' + auction.address" v-for="auction in allUserAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item> -->
     </column>
+    </ClientOnly>
   </list-layout>
 </template>
 
