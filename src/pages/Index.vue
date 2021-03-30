@@ -15,34 +15,10 @@
 
 <script>
 
-import { mapGetters } from 'vuex'
-
-import AuctionItem from '../components/AuctionItem.vue';
-
-import ListLayout from '../layouts/ListLayout.vue';
-
 export default {
-  components: { AuctionItem, ListLayout }, 
   metaInfo: {
     title: 'Secret Auctions',
-  },
-  computed: {
-    auctionsFilter() {
-      return this.$store.state.$auctions.auctionsFilter;
-    },
-    ...mapGetters("$auctions", [
-      "activeAuctions",
-    ])
-  },
-  mounted() {
-    this.$auctions.updateActiveAuctions();
-  },
-  // methods: {
-  //   clearFilters() {
-  //     this.auctionsFilter.sellToken = "";
-  //     this.auctionsFilter.bidToken = "";
-  //   },
-  // }
+  }
 }
 </script>
 
