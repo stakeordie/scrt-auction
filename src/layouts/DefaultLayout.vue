@@ -23,7 +23,7 @@
 
     <div class="layout-content">
 
-      <!-- <div class="layout-sidemenu" :class="{'mobile-hidden': !menuMobileVisible }">
+      <div class="layout-sidemenu" :class="{'mobile-hidden': !menuMobileVisible }">
 
         <ul class="app-menu">
           <li><g-link to="/auctions/">Current Auctions</g-link>
@@ -31,7 +31,7 @@
           <li><g-link to="/auctions/user">My Auctions</g-link></li>
           <li><g-link to="/auctions/new">Create an Auction</g-link></li>
         </ul>
-      </div> -->
+      </div>
 
       <slot></slot>
 

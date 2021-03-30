@@ -1,6 +1,5 @@
 <template>
   <list-layout>
-    <ClientOnly>
       <!-- Auctions grid -->
     <auction-item :to="'/auctions/' + auction.address" v-for="auction in closedAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item>
 
@@ -12,7 +11,6 @@
         </h2>
         <p><router-link :to="'/new'" class="button">Be the first one</router-link> or <a href="" @click="clearFilters()">clear your filters</a>.</p>
       </div> -->
-    </ClientOnly>
   </list-layout>
 </template>
 

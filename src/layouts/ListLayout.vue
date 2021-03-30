@@ -1,6 +1,6 @@
 <template>
   <default-layout>
-    <page>
+    <!-- <page>
         <column class="auctions-filter">
             <block>
                 <auctions-filter></auctions-filter>
@@ -14,7 +14,7 @@
                 </div>
             </block>
         </column>
-    </page>
+    </page> -->
   </default-layout>
 </template>
 
