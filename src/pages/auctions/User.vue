@@ -231,7 +231,7 @@
       }
     },
     mounted() {
-      this.$auctions.updateUserAuctions();
+      //this.$auctions.updateUserAuctions();
     },
     watch: {
       async vkViewingKey(newValue, oldValue) {
