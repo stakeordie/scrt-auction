@@ -1,10 +1,10 @@
 <template>
   <div class="layout">    
     <div class="layout-header">
-        <simple-header mode="full">
+        <!-- <simple-header mode="full">
           <div class="mobile-menu">
-          <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
-        </div>
+            <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
+          </div>
           <g-link to="/" class="header__logo">
             <img src="@/assets/secret_auctions_logo.svg">
           </g-link>
@@ -17,13 +17,13 @@
               <keplr-user v-model="userAddress"></keplr-user>
             </div>
           </div>
-        </simple-header>
+        </simple-header> -->
       </div>
     
 
     <div class="layout-content">
 
-      <div class="layout-sidemenu" :class="{'mobile-hidden': !menuMobileVisible }">
+      <!-- <div class="layout-sidemenu" :class="{'mobile-hidden': !menuMobileVisible }">
 
         <ul class="app-menu">
           <li><g-link to="/auctions/">Current Auctions</g-link>
@@ -31,11 +31,11 @@
           <li><g-link to="/auctions/user">My Auctions</g-link></li>
           <li><g-link to="/auctions/new">Create an Auction</g-link></li>
         </ul>
-      </div>
+      </div> -->
 
       <slot></slot>
 
-      <div class="layout-footer">
+      <!-- <div class="layout-footer">
         <simple-footer>
           <p>Built with <span class="emoji" title="stakeordie.js">&#x1F6F9;.js</span>, 
             <span class="emoji" title="Mr. Roboto's Secret Rust">&#x1F916;&#x1F980;</span>, and lots of <span class="emoji" title="TLC">♥️</span> by 
@@ -46,7 +46,7 @@
             </g-link>
           </p>
         </simple-footer>
-      </div>
+      </div> -->
 
     </div>
 
