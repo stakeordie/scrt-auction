@@ -1,7 +1,7 @@
 <template>
   <div class="layout">    
     <div class="layout-header">
-        <!-- <simple-header mode="full">
+        <simple-header mode="full">
           <div class="mobile-menu">
             <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
           </div>
@@ -17,7 +17,7 @@
               <keplr-user v-model="userAddress"></keplr-user>
             </div>
           </div>
-        </simple-header> -->
+        </simple-header>
       </div>
     
 
@@ -35,7 +35,7 @@
 
       <slot></slot>
 
-      <!-- <div class="layout-footer">
+      <div class="layout-footer">
         <simple-footer>
           <p>Built with <span class="emoji" title="stakeordie.js">&#x1F6F9;.js</span>, 
             <span class="emoji" title="Mr. Roboto's Secret Rust">&#x1F916;&#x1F980;</span>, and lots of <span class="emoji" title="TLC">♥️</span> by 
@@ -46,7 +46,7 @@
             </g-link>
           </p>
         </simple-footer>
-      </div> -->
+      </div>
 
     </div>
 

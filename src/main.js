@@ -50,11 +50,10 @@ export default function(Vue, { router, head, isClient }) {
       chainName: process.env.GRIDSOME_SECRET_CHAIN_NAME,
       restUrl: process.env.GRIDSOME_SECRET_REST_URL,
       rpcUrl: process.env.GRIDSOME_SECRET_RPC_URL,
-
       onLoad: () => {
-          if (process.env.GRIDSOME_SECRET_EXPERIMENTAL_CHAIN) {
-              Vue.prototype.$keplr.suggestExperimental(testnetChain);
-          }
+        if (process.env.GRIDSOME_SECRET_EXPERIMENTAL_CHAIN) {
+            Vue.prototype.$keplr.suggestExperimental(testnetChain);
+        }
       }
   });
 
