@@ -8,6 +8,15 @@ module.exports = {
   siteName: "Secret Auctions",
   plugins: [
     {
+      use: "@gridsome/vue-remark",
+      options: {
+        typeName: "Content",
+        baseDir: "./content",
+        path: "/",
+        template: "./src/templates/Content.vue",
+      },
+    },
+    {
       use: 'gridsome-plugin-vue-toasted',
       options: {
         iconPack : 'material',
