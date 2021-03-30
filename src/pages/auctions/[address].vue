@@ -173,11 +173,6 @@
               </div>
             </div>
           </div>
-          </ClientOnly>
-        </block>
-      </column>
-      <column>
-        <block>
           <div v-show="!vkViewingKey" class="stage-panel full-width">
             <h3>Viewing Key Missing</h3>
             <vkeys-address v-model="vkViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress">
@@ -186,6 +181,7 @@
               </template>
             </vkeys-address>
           </div>
+          </ClientOnly>
         </block>
       </column>
     </page>
