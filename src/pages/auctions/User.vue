@@ -13,7 +13,7 @@
     </column>
     <!-- Aggregate Area -->
     <!-- Table Area -->
-    <column v-if="showBidderInfo">
+    <column v-show="showBidderInfo">
       <section class="bidder-stats">
         <div class="stat">
           <p class="title">Current Open Bids</p>
@@ -34,7 +34,7 @@
       </section>
       <div class="table-area">
         <!-- Bidder -->
-        <div class="bidderInfo" v-if="showBidderInfo">
+        <div class="bidderInfo" v-show="showBidderInfo">
 
           <h4 class="tableTitle">Active Bid-on Auctions</h4>
           <div class="auctions-header five">
@@ -66,7 +66,7 @@
         </div>
       </div>
     </column>
-    <column v-if="!showBidderInfo">
+    <column v-show="!showBidderInfo">
       <section class="seller-stats">
         <div class="stat">
           <p class="title">Current Open Auctions</p>
@@ -89,10 +89,10 @@
           <h3 class="value">{{ successfulSellerTotal }}</h3>
         </div>
       </section>
-      <div class="table-area" v-if="!showBidderInfo">
+      <div class="table-area" v-show="!showBidderInfo">
         <!-- Seller -->
         <div class="sellerInfoTable"></div>
-        <div class="sellerInfo" v-if="!showBidderInfo">
+        <div class="sellerInfo">
           <h4 class="tableTitle">Active Owned Auctions</h4>
           <div class="auctions-header five">
             <h6>Auction Pair</h6>
