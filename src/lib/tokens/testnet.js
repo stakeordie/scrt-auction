@@ -10,6 +10,15 @@ export default [
     iconImg: "ethereum-eth-logo.svg"
   },
   {
+    codeId: 35,
+    symbol: "SEFI",
+    address: "secret15l9cqgz5uezgydrglaak5ahfac69kmx2qpd6xt",
+    name: "Secret Finance",
+    label: "SEFI",
+    decimals: 6,
+    iconImg: "secret-finance-sefi-logo.svg"
+  },
+  {
     codeId: 1,
     symbol: "TSUNI",
     address: "secret16v7a5lhuglkp5szdkfdxwhgkg3g2t2hmmy92h4",
