@@ -1,5 +1,5 @@
 $material-icons-font-path: '~material-icons/iconfont/';
-@import "~@lkmx/flare/src/flare";
+@import "@lkmx/flare/src/flare";
 @import 'material-icons/iconfont/material-icons.scss';
 @import "color";
 @import "table";
@@ -48,8 +48,6 @@ $material-icons-font-path: '~material-icons/iconfont/';
 html {
     background-color: var(--default-background-color);
 }
-
-body {}
 
 strong {
     font-weight: 600;
