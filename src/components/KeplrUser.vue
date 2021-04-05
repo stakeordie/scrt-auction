@@ -48,6 +48,7 @@ export default {
   computed: {
     address() {
       this.$emit("input", this.$store.state.$keplr.selectedAccount?.address);
+      //console.log("KeplrUser",this.$store.state.$keplr.selectedAccount?.address);
       return this.$store.state.$keplr.selectedAccount?.address;
     },
   },

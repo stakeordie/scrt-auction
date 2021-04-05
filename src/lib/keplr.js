@@ -33,15 +33,18 @@ export default class Keplr {
     this.rpcUrl = rpcUrl;
 
     this.address = null;
+
     if(process.isClient) {
       window.onload = (async () => {
         if(typeof loadListener === 'function') {
           await loadListener();
         }
-        this.checkInterval = setInterval(() => {
-          this.checkAddressUpdates();
-        }, KEPLR_ADDRESS_REFRESH_RATE);
-        this.checkAddressUpdates();
+        await this.checkAddressUpdates();
+        if(this.address) {
+          this.checkInterval = setInterval(() => {
+            this.checkAddressUpdates();
+          }, KEPLR_ADDRESS_REFRESH_RATE);
+        }
       });
     }
   }
@@ -56,6 +59,11 @@ export default class Keplr {
         throw "Keplr rejected the connection";
       }
     });
+    if(!this.checkInterval) {
+      this.checkInterval = setInterval(() => {
+        this.checkAddressUpdates();
+      }, KEPLR_ADDRESS_REFRESH_RATE);
+    }
   }
 
   async checkAddressUpdates() {
