@@ -11,10 +11,10 @@ export default [
   },
   {
     codeId: 1,
-    symbol: "SEFI",
+    symbol: "TSEFI",
     address: "secret18jfvtydalu7kp9wq7aatheysvthu779hcqlaqs",
     name: "Secret Finance",
-    label: "SEFI",
+    label: "TSEFI",
     decimals: 6,
     iconImg: "secret-finance-sefi-logo.svg"
   },
