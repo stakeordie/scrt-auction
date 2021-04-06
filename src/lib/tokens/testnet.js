@@ -10,9 +10,9 @@ export default [
     iconImg: "ethereum-eth-logo.svg"
   },
   {
-    codeId: 35,
+    codeId: 1,
     symbol: "SEFI",
-    address: "secret15l9cqgz5uezgydrglaak5ahfac69kmx2qpd6xt",
+    address: "secret18jfvtydalu7kp9wq7aatheysvthu779hcqlaqs",
     name: "Secret Finance",
     label: "SEFI",
     decimals: 6,
