@@ -62,6 +62,7 @@ export default function (Vue, { router, head, isClient }) {
         wallet: Vue.prototype.$keplr
     });
 
+    // Trivial change to force commit
     Vue.use(ScrtJs, {
         restUrl: process.env.GRIDSOME_SECRET_REST_URL,
         wallet: Vue.prototype.$keplr
