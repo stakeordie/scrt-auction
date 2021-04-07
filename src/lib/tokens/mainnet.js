@@ -9,6 +9,15 @@ export default [
       iconImg: "secret-scrt-logo.svg"
     },
     {
+      codeId: 35,
+      symbol: "SEFI",
+      address: "secret15l9cqgz5uezgydrglaak5ahfac69kmx2qpd6xt",
+      name: "Secret Finance",
+      label: "SEFI",
+      decimals: 6,
+      iconImg: "secret-finance-sefi-logo.svg"
+    },
+    {
       codeId: 10,
       symbol: "SETH",
       address: "secret1wuzzjsdhthpvuyeeyhfq2ftsn3mvwf9rxy6ykw",

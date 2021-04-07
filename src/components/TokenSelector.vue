@@ -2,6 +2,11 @@
     <div class="custom-select" :tabindex="tabindex">
         <!-- Place below in the element above -->
         <!-- @blur="open = false" -->
+<<<<<<< HEAD
+=======
+        <!-- TODO: #69 Token Selector background is too dark, should match complete auction steps -->
+        <!-- TODO: #77 The modal needs to close when you click outside of it @walter-lkmx -->
+>>>>>>> main
         <div class="selected" :class="{ open: open }" @click="open = !open">
             <g-image :immediate="true"
                 :src="require(`!!assets-loader?width=15&height=15!@/assets/token-icons/${selected.iconImg ? selected.iconImg : 'secret-scrt-logo.svg'}`)">
@@ -206,11 +211,11 @@
             left: 0;
             top: 40px;
 
-            border: 1px solid #FFFFFF;
+            border: 1px solid #2E323C;
+            background-color: #0D1017;
             box-sizing: border-box;
             border-radius: 10px;
             z-index: 9;
-            background: #000000;
 
             .list-custom-switch-wrapper {
                 width: 100%;
@@ -289,7 +294,8 @@
                         }
 
                         &:hover {
-                            background-color: #ad8225;
+                            background-color: #BCBCCC;
+                            color: #000;
                         }
                     }
                 }

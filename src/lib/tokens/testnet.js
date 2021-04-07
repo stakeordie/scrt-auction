@@ -11,6 +11,15 @@ export default [
   },
   {
     codeId: 1,
+    symbol: "TSEFI",
+    address: "secret18jfvtydalu7kp9wq7aatheysvthu779hcqlaqs",
+    name: "Secret Finance",
+    label: "TSEFI",
+    decimals: 6,
+    iconImg: "secret-finance-sefi-logo.svg"
+  },
+  {
+    codeId: 1,
     symbol: "TSUNI",
     address: "secret16v7a5lhuglkp5szdkfdxwhgkg3g2t2hmmy92h4",
     name: "Test Secret Uniswap",

@@ -115,7 +115,7 @@
                 <h5>Current Bid</h5>
                 <dl>
                   <dd>
-                    {{ currentBidPrice }} {{ auction.bid.denom }} <span style="font-size: 13px" v-if="auction.sell.decimalAmount != 1">({{ auction.currentBid.decimalAmount }} {{ auction.bid.denom }})</span>
+                    {{ currentBidPrice }} {{ auction.bid.denom }} <span style="font-size: 13px" v-if="auction.sell.decimalAmount != 1">({{ currentBidAmount }} {{ auction.bid.denom }})</span>
                   </dd>
                 </dl>
                 <loading-icon v-if="retractBidSubmit.inProgress">
@@ -173,11 +173,6 @@
               </div>
             </div>
           </div>
-          </ClientOnly>
-        </block>
-      </column>
-      <column>
-        <block>
           <div v-show="!vkViewingKey" class="stage-panel full-width">
             <h3>Viewing Key Missing</h3>
             <vkeys-address v-model="vkViewingKey" :account="keplrAccount" :contract="$auctions.factoryAddress">
@@ -186,6 +181,7 @@
               </template>
             </vkeys-address>
           </div>
+          </ClientOnly>
         </block>
       </column>
     </page>
@@ -304,7 +300,19 @@ export default {
   watch: {
     async vkViewingKey(newValue, oldValue) {
       if(newValue) {
-        this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
+        const result = await this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
+        // if(result == "viewing key error") {
+        //   this.$toasted.show("VIEWING KEY PROBLEM: <br> The saved viewing key is failing. Either it was entered incorrectly, or it was reset elsewhere. Fix by entering or generate a new one.", {
+        //     type: "error",
+        //     action: {
+        //       icon: "close",
+        //       onClick :(e, toastObject) => {
+        //           toastObject.goAway(0);
+        //       },
+        //       class: "closeAction"
+        //     }
+        //   });
+        // }
       }
     }
   },
@@ -348,7 +356,18 @@ export default {
       return new Decimal(this.auction.currentBid?.amount).dividedBy(Decimal.pow(10, this.auction.bid.decimals)).toFixed(this.auction.bid.decimals).replace(/\.?0+$/,"")
     },
     currentBidPrice: function () {
-      return this.auction.currentBid?.decimalAmount / this.auction.sell.decimalAmount; 
+      if(this.auction.currentBid) {
+        return this.auction.currentBid?.decimalAmount / this.auction.sell.decimalAmount; 
+      } else {
+        return 0;
+      }
+    },
+    currentBidAmount: function () {
+      if(this.auction.currentBid) {
+        return this.auction.currentBid?.decimalAmount;
+      } else {
+        return 0;
+      }
     },
     endTimeString: function () {
       return moment(new Date(this.auction.endsAt)).format("YYYY-MM-DD HH:mm:ss");
@@ -369,13 +388,31 @@ export default {
       this.placeBidSubmit.response = await this.$auctions.placeBid(this.auction.bid.contract, this.auction.address, (new Decimal(bidAmountToFractional).toFixed(0)));
       this.placeBidSubmit.inProgress = false;
       if(this.placeBidSubmit.response.bid?.status == 'Failure' || this.placeBidSubmit.response.error) {
-        this.placeBidSubmit.result = "error"
+        //this.placeBidSubmit.result = "error"
         if(process.isClient) {
-          this.$toasted.show(this.placeBidSubmit.response.error, {});
+          this.$toasted.show("Error: " + this.placeBidSubmit.response.error, {
+            type: "error",
+            action: {
+              icon: "close",
+              onClick :(e, toastObject) => {
+                  toastObject.goAway(0);
+              },
+              class: "closeAction"
+            }
+          });
         }
       } else {
         this.placeBidSubmit.result = "success"
-        this.$toasted.show("Bid placed successfully!", {});
+        this.$toasted.show(`Success: Bid placed for ${new Decimal(this.bidAmount)} ${this.auction.bid.denom}.`, {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       }
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key); // can I remove this? reactivity issue?
     },
@@ -386,10 +423,29 @@ export default {
       this.retractBidSubmit.response = await this.$auctions.retractBid(this.auction.address);
       this.retractBidSubmit.inProgress = false;
       if(this.retractBidSubmit.response.retractBid?.status == 'Failure' || this.retractBidSubmit.response.error) {
-        this.retractBidSubmit.result = "error"
+        //this.retractBidSubmit.result = "error"
+        this.$toasted.show("Error: " + this.retractBidSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.retractBidSubmit.result = "success"
-        this.$toasted.show("Bid retracted.", {});
+        this.$toasted.show("Bid retracted.", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       }
       //this.$auctions.updateAuctionBidDetails(this.$route.params.address,this.keplrAccount,this.vkViewingKey.key);
     },
@@ -400,9 +456,29 @@ export default {
       this.changeAskingPriceSubmit.response = await this.$auctions.changeMinimumBid(this.auction.address, newMinimumBidAmount);
       this.changeAskingPriceSubmit.inProgress = false;
       if(this.changeAskingPriceSubmit.response.retractBid?.status == 'Failure' || this.changeAskingPriceSubmit.response.error) {
-        this.changeAskingPriceSubmit.result = "error"
+        //this.changeAskingPriceSubmit.result = "error"
+        this.$toasted.show("Error: " + this.changeAskingPriceSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.changeAskingPriceSubmit.result = "success"
+        this.$toasted.show("Success: The asking price has been updated.", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
         if(this.placeBidForm.bidPrice < this.updateAskingPriceForm.askingPrice) {
           this.placeBidForm.bidPrice = this.updateAskingPriceForm.askingPrice
         }
@@ -415,9 +491,29 @@ export default {
       this.closeAuctionSimpleNOSubmit.response = await this.$auctions.closeAuction(this.auction.address)
       this.closeAuctionSimpleNOSubmit.inProgress = false;
       if(this.closeAuctionSimpleNOSubmit.response.close_auction?.status == 'Failure' || this.closeAuctionSimpleNOSubmit.response.error) {
-        this.closeAuctionSimpleNOSubmit.result = "error"
+        //this.closeAuctionSimpleNOSubmit.result = "error"
+        this.$toasted.show("Error: " + this.closeAuctionSimpleNOSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.closeAuctionSimpleNOSubmit.result = "success"
+        this.$toasted.show("Success: This auction has been closed.", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
         this.manageAuctionFormState = null;
       }
     },
@@ -428,10 +524,30 @@ export default {
       this.closeAuctionSimpleSubmit.response = await this.$auctions.closeAuction(this.auction.address)
       this.closeAuctionSimpleSubmit.inProgress = false;
       if(this.closeAuctionSimpleSubmit.response.error) {
-        this.closeAuctionSimpleSubmit.result = "error"
+        //this.closeAuctionSimpleSubmit.result = "error"
+        this.$toasted.show("Error: " + this.closeAuctionSimpleSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.closeAuctionSimpleSubmit.result = "success"
         this.manageAuctionFormState = null;
+        this.$toasted.show("Success: This auction has been closed.", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       }
     },
     async closeAuctionWithOptions() {
@@ -442,10 +558,30 @@ export default {
       this.closeAuctionWithOptionsSubmit.response = await this.$auctions.closeAuctionWithOptions(this.auction.address, endTime, new Decimal(newMinimumBidAmount).toFixed(0))
       this.closeAuctionWithOptionsSubmit.inProgress = false;
       if(this.closeAuctionWithOptionsSubmit.response.error) {
-        this.closeAuctionWithOptionsSubmit.result = "error"
+        //this.closeAuctionWithOptionsSubmit.result = "error"
+        this.$toasted.show("Error: " + this.closeAuctionWithOptionsSubmit.response.error, {
+          type: "error",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       } else {
         this.closeAuctionWithOptionsSubmit.result = "success"
         this.manageAuctionFormState = null;
+        this.$toasted.show("Success", {
+          type: "success",
+          action: {
+            icon: "close",
+            onClick :(e, toastObject) => {
+                toastObject.goAway(0);
+            },
+            class: "closeAction"
+          }
+        });
       }
     },
     async getAuction() {

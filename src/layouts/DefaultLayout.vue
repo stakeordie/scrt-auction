@@ -3,15 +3,15 @@
     <div class="layout-header">
         <simple-header mode="full">
           <div class="mobile-menu">
-          <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
-        </div>
+            <a href="" @click="menuMobileVisible = !menuMobileVisible"><img src="@/assets/mobile-nav.svg" alt=""></a>
+          </div>
           <g-link to="/" class="header__logo">
             <img src="@/assets/secret_auctions_logo.svg">
           </g-link>
           <nav class="auctions-nav"></nav>
           <div class="actions">
             <site-clock></site-clock>
-            <a class="button create_auction" href="/new">Create auction</a>
+            <a class="button create_auction" href="/auctions/new">Create auction</a>
             <div class="keys-keplr">
               <!-- TODO: #70 add url dependence for multiple viewing keys -->
               <vkeys-wallet v-model="viewingKey" :account="userAddress" :contract="getFactoryAddress"></vkeys-wallet>
@@ -256,8 +256,8 @@ query {
 
 .actions {
   display: flex;
-  flex-flow: row nowrap;
-  gap: var(--f-gutter-s);
+  // flex-flow: row nowrap;
+  gap: var(--f-gutter-l);
   position: relative;
   padding-left: var(--f-gutter);
   align-items: center;
@@ -267,6 +267,18 @@ query {
   .keys-keplr {
     display: flex;
     gap: var(--f-gutter);
+    .vkeys-wallet {
+      img {
+        height: 39px;
+        width: auto;
+      }
+    }
+    img {
+      display: flex;
+      flex: auto;
+      height: 32px;
+      width: auto;
+    }
     @include respond-to("<=s") {
       flex-direction: column;
       gap: 0;
@@ -313,13 +325,18 @@ query {
     align-items: flex-start;
     padding: 16px;
 
-    width: 330px;
-    height: 80px;
+    width: 450px;
+    height: auto;
 
     /* secret/green */
-
-    background: #5AA361;
+    &.success {
+      background: #5AA361;
+    }
+    &.error {
+      background: #d53a2c;
+    }
     border-radius: 4px;
+    
 
     color: #FFFFFF;
     font-family: Montserrat;
@@ -328,7 +345,7 @@ query {
     font-size: 16px;
     line-height: 24px;
 
-    .classAction {
+    .closeAction {
       color: #FFFFFF;
     }
   }

@@ -29,19 +29,19 @@ import limitPairsForProduction from "./lib/limit-pairs/mainnet"
 import limitPairsForTesting from "./lib/limit-pairs/testnet"
 
 
-Number.prototype.countDecimals = function() {
+Number.prototype.countDecimals = function () {
     if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
     return this.toString().split(".")[1].length || 0;
 }
 
-export default function(Vue, { router, head, isClient }) {
+export default function (Vue, { router, head, isClient }) {
     // Set default layout as a global component
   Vue.component("DefaultLayout", DefaultLayout);
   Vue.component("LandingLayout", LandingLayout);
 
   Vue.filter("abbrv", (str, abbrv) => {
       const half = (abbrv / 2) || 8;
-      return str.substring(0, half) + "..." + str.substring(str.length - half, str.length);
+      return str?.substring(0, half) + "..." + str?.substring(str.length - half, str.length);
   });
 
   Vue.use(Flare);
@@ -81,7 +81,7 @@ export default function(Vue, { router, head, isClient }) {
   } else {
       availableTokens = tokensForTesting;
   }
-  
+
   Vue.use(Auctions, { 
     chainClient: Vue.prototype.$scrtjs,
     factoryAddress: process.env.GRIDSOME_AUCTIONS_FACTORY,
@@ -95,8 +95,8 @@ export default function(Vue, { router, head, isClient }) {
   } else {
     limitPairs = limitPairsForTesting;
   }
-  
-  Vue.use(Limit, { 
+
+  Vue.use(Limit, {
     chainClient: Vue.prototype.$scrtjs,
     factoryAddress: process.env.GRIDSOME_LIMIT_FACTORY, // What contracts do we need
     limitPairs

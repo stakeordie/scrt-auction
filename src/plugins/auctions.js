@@ -21,10 +21,10 @@ const arrayHash = (str, array) => {
 
 const filterAndSortAuctions = (auctions, filter) => {
     return auctions.filter(auction => {
-        if(filter.sellToken != "" && auction.sell.denom != filter.sellToken) {
+        if(filter.sellToken != "" && auction.sell?.denom != filter.sellToken) {
             return false;
         }
-        if(filter.bidToken != "" && auction.bid.denom != filter.bidToken) {
+        if(filter.bidToken != "" && auction.bid?.denom != filter.bidToken) {
             return false;
         }
         // if(filter.onlyMine && !(auction.viewerIsSeller || auction.viewerIsBidder || auction.viewerWasSeller || auction.viewerIsWinner)) {
@@ -273,8 +273,10 @@ export default {
                     const auction = state.auctions.find(auction => auction.address === auctionAddress);
                     auction.status = "CLOSED";
                     auction.viewerWasSeller = auction.viewerIsSeller;
-                    auction.closedAt = params.closedAt;
+                    auction.viewerIsSeller = false;
                     auction.viewerIsWinner = params.isWinner;
+                    auction.viewerIsBidder = false;
+                    auction.closedAt = params.closedAt;
                     if(params.isWinner) {
                         auction.bid.winner = params.winningBid;
                         auction.bid.decimalWinner = params.decimalWinningBid;
@@ -284,11 +286,7 @@ export default {
               },
               actions: {
                 updateAuction: async ({ commit }, address) => {
-                    //replacement
                     const auction = await auctionsApi.getAuction(address);
-                    //replaced
-                    //const auctionInfo = await auctionsApi.getAuctionInfo(address);
-
                     commit("updateAuction", auction);
                 },
 
@@ -300,12 +298,11 @@ export default {
                     }
                     const userAuctions = await auctionsApi.listUserAuctions(userAddress, viewingKey, state.tokenData); //get userAuctions
                     
-                    
                     if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am bidder
                         auction.currentBid = await auctionsApi.getCurrentBid(address, userAddress, viewingKey);
                         auction.hasBids = true;
-                    } else if(userAuctions.bidderAuctions?.findIndex(a => a.address == address) > -1) { //if am seller
-                        auction.hasBids = await auctionsApi.getAuctionHasBidsInfo(address, userAddress, viewingKey);
+                    } else if(userAuctions.sellerAuctions?.findIndex(a => a.address == address) > -1) { //if am seller
+                        auction.hasBids = await auctionsApi.getAuctionHasBids(address, userAddress, viewingKey);
                     }
                     
                     commit("updateAuctionBidDetails", auction);
@@ -336,6 +333,7 @@ export default {
                     
                     if(viewer?.viewingKey) {
                         const userAuctions = await auctionsApi.listUserAuctions(viewer.userAddress, viewer.viewingKey, state.tokenData);
+                        
                         // First we load the new auction information
                         if (userAuctions.sellerAuctions) {
                             commit("updateAuctions", userAuctions.sellerAuctions);
@@ -417,7 +415,7 @@ export default {
                     return response; 
                 },
 
-                closeAuction: async({commit}, {auctionAddress, response}) => {
+                closeAuction: async({commit, state}, {auctionAddress, response}) => {
                     if(!response) {
                         response = await auctionsApi.closeAuction(auctionAddress);
                     }
@@ -426,12 +424,14 @@ export default {
                             isWinner: false,
                             closedAt: new Date()
                         };
-                        if(response.close_auction.winning_bid) {
+                        // console.log("closeAuction/response", response);
+                        // console.log("closeAuction/State", state);
+                        if(response.close_auction.sell_tokens_received) {
                             params.isWinner = true;
                             params.winningBid = response.close_auction.winning_bid;
                             params.decimalWinningBid = auctionsApi.tokens2Decimal(response.close_auction.winning_bid, response.close_auction.bid_decimals);
                         }
-                        commit("closeAuction", { auctionAddress, params});
+                        commit("closeAuction", {auctionAddress, params});
                     }
                     return response;
                 },

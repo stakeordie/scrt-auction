@@ -1,4 +1,5 @@
 <template>
+<!-- TODO: #81 Notify user if viewing key exists, but it isn't working (another one has been created elsewhere) @the-dusky -->
   <div class="vkeys-wallet">
     <a href="" @click="modalVisible = !modalVisible"><g-image class="wallet-icon" :class="{ enabled: savedViewingKey != null }" :immediate="true" src="@/assets/key-icon.png"></g-image></a>
 

@@ -1,5 +1,6 @@
 <template>
   <list-layout only="list">
+    <ClientOnly>
     <column>
       <block>
         <!-- Control Area -->
@@ -13,8 +14,8 @@
     </column>
     <!-- Aggregate Area -->
     <!-- Table Area -->
-    <column v-if="showBidderInfo">
-    <section class="bidder-stats">
+    <column v-show="showBidderInfo">
+      <section class="bidder-stats">
         <div class="stat">
           <p class="title">Current Open Bids</p>
           <h3 class="value">{{ isBidderTotal }}</h3>
@@ -34,37 +35,40 @@
       </section>
       <div class="table-area">
         <!-- Bidder -->
-        <div class="bidderInfo" v-if="showBidderInfo">
-          <h4 class="tableTitle">Active Auctions</h4>
-          <div class="auctions-header">
-            <h6>Trading pair</h6>
+        <div class="bidderInfo" v-show="showBidderInfo">
+
+          <h4 class="tableTitle">Active Bid-on Auctions</h4>
+          <div class="auctions-header five">
+            <h6>Token Pair</h6>
+            <h6>Amount</h6>
             <h6>Asking price</h6>
-            <h6>My bid</h6>
+            <!-- <h6>My bid</h6> -->
             <h6>Target Close</h6>
             <h6 class="actions">Actions</h6>
           </div>
-
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in openBidderUserAuctions"
-              :key="auction.address" :auction="auction" class="list"></auction-item-my-auctions>
+              :key="auction.address" :auction="auction" class="list" tab="bidder" table="active"></auction-item-my-auctions>
           </div>
-          <h4 class="tableTitle">Past Auctions</h4>
-          <div class="auctions-header">
-            <h6>Trading pair</h6>
-            <h6>Asking price</h6>
-            <h6>My bid</h6>
-            <h6>Target Close</h6>
+
+          <h4 class="tableTitle">Closed Won Auctions</h4>
+          <div class="auctions-header five">
+            <h6>Trading Pair</h6>
+            <h6>Amount</h6>
+            <h6>Winning Bid</h6>
+            <h6>Closed At</h6>
             <h6 class="actions">Actions</h6>
           </div>
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in closedBidderUserAuctions"
-              :key="auction.address" :auction="auction" class="list"></auction-item-my-auctions>
+              :key="auction.address" :auction="auction" class="list" tab="bidder" table="closed"></auction-item-my-auctions>
           </div>
+
         </div>
       </div>
     </column>
-    <column v-if="!showBidderInfo">
-    <section class="seller-stats">
+    <column v-show="!showBidderInfo">
+      <section class="seller-stats">
         <div class="stat">
           <p class="title">Current Open Auctions</p>
           <h3 class="value">{{ isSellerTotal }}</h3>
@@ -86,33 +90,33 @@
           <h3 class="value">{{ successfulSellerTotal }}</h3>
         </div>
       </section>
-      <div class="table-area" v-if="!showBidderInfo">
+      <div class="table-area" v-show="!showBidderInfo">
         <!-- Seller -->
         <div class="sellerInfoTable"></div>
-        <div class="sellerInfo" v-if="!showBidderInfo">
-          <h4 class="tableTitle">Active</h4>
-          <div class="auctions-header">
-            <h6>Trading pair</h6>
-            <h6>Asking price</h6>
-            <h6>My bid</h6>
+        <div class="sellerInfo">
+          <h4 class="tableTitle">Active Owned Auctions</h4>
+          <div class="auctions-header five">
+            <h6>Auction Pair</h6>
+            <h6>Amount</h6>
+            <h6>Asking Price</h6>
             <h6>Target Close</h6>
             <h6 class="actions">Actions</h6>
           </div>
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in openSellerUserAuctions"
-              :key="auction.address" :auction="auction" class="list"></auction-item-my-auctions>
+              :key="auction.address" :auction="auction" class="list" tab="seller" table="active"></auction-item-my-auctions>
           </div>
-          <h4 class="tableTitle">Complete</h4>
-          <div class="auctions-header">
-            <h6>Trading pair</h6>
-            <h6>Asking price</h6>
-            <h6>My bid</h6>
-            <h6>Target Close</h6>
+          <h4 class="tableTitle">Closed Successful Auctions</h4>
+          <div class="auctions-header five">
+            <h6>Auction Pair</h6>
+            <h6>Amount</h6>
+            <h6>Winning Bid</h6>
+            <h6>Closed At</h6>
             <h6 class="actions">Actions</h6>
           </div>
           <div class="infoTable">
             <auction-item-my-auctions :to="'/auctions/' + auction.address" v-for="auction in closedSellerUserAuctions"
-              :key="auction.address" :auction="auction" class="list"></auction-item-my-auctions>
+              :key="auction.address" :auction="auction" class="list" tab="seller" table="closed"></auction-item-my-auctions>
           </div>
         </div>
       </div>
@@ -121,6 +125,7 @@
       <!-- <simple-table :data="closedUserAuctions" :config="tableConf"></simple-table> -->
       <!-- <auction-item :to="'/auctions/' + auction.address" v-for="auction in allUserAuctions" :key="auction.address" :auction="auction" :class="auctionsFilter.viewMode"></auction-item> -->
     </column>
+    </ClientOnly>
   </list-layout>
 </template>
 
@@ -139,7 +144,7 @@
       AuctionItem,
       AuctionItemMyAuctions,
       ListLayout,
-      SimpleTable
+      SimpleTable,
     },
     metaInfo: {
       title: 'Secret Auctions',
@@ -228,7 +233,7 @@
       }
     },
     mounted() {
-      this.$auctions.updateUserAuctions();
+      //this.$auctions.updateUserAuctions();
     },
     watch: {
       async vkViewingKey(newValue, oldValue) {
@@ -317,7 +322,12 @@
       display: grid;
       gap: var(--f-gutter);
       align-items: center;
-      grid-template-columns: repeat(5, 1fr);
+      &.five {
+        grid-template-columns: repeat(5, 1fr);
+      }
+      &.six {
+        grid-template-columns: repeat(6, 1fr);
+      }
       border-radius: 10px 10px 0 0;
       padding: var(--f-gutter);
 

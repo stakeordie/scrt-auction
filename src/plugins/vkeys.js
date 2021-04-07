@@ -84,7 +84,6 @@ export default {
                         }
                     }
                     const response = await secretJsClient.executeContract(contractAddress, msg, fees);
-                    console.log(response);
                     if(response.create_viewing_key) {
                         return response.create_viewing_key.key;
                     } else {
