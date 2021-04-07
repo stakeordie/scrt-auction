@@ -41,7 +41,7 @@ export class LimitApi {
         return await this.scrtClient.queryContract(this.ammContractAddress, {"pairs":{}});
     }
 
-    async getBooker() {
+    async getOrderBooks() {
         console.log("apiTEST");
         //secretcli q compute query $order_factory_contract_address '{"secret_order_books":{}}'
         return await this.scrtClient.queryContract(this.factoryAddress, {"secret_order_books":{}});

@@ -42,9 +42,9 @@ export default {
                 // tokenData: [],
             },
             getters: {
-                getBooks: async () => {
+                getOrderBooks: async () => {
                     console.log("pluginTEST");
-                    return await limitApi.getBooker();
+                    return await limitApi.getOrderBooks();
                 },              
             },
             mutations: {
