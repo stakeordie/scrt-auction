@@ -29,13 +29,19 @@ export default {
     },
     methods: {
         async getBooks() {
-            this.getBooksResponse = await this.$limit.getBooks;
+            this.$limit.updateOrderBooks()
+            this.getBooksResponse = await this.$limit.getOrderBooks;
             this.getBooksResponseClosed = false;
         },
         async getAmmPairs() {
-            this.getAmmPairsResponse = await this.$limit.getAmmPairs();
+            this.$limit.updateAmmPairs()
+            this.getAmmPairsResponse = await this.$limit.getAmmPairs;
             this.getAmmPairsResponseClosed = false;
         } 
+    },
+    mounted() {
+        // this.$limit.updateOrderBooks();
+        // this.$limit.updateAmmPairs();
     }
 }
 </script>

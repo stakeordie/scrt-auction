@@ -1,12 +1,29 @@
 export default [
-
   {
-    codeId: 1084,
-    symbol: "ETH",
-    address: "secret1j50u6hvume8pkq2c7lcmktrzd7lrymxhujrnax",
-    name: "ETH",
-    label: "20:09:20",
+    codeId: 94,
+    symbol: "SSCRT",
+    address: "secret1s7c6xp9wltthk5r6mmavql4xld5me3g37guhsx",
+    name: "secretSCRT",
+    label: "sscrt",
     decimals: 6,
+    iconImg: "secret-logo--black.svg"
+  },
+  {
+    codeId: 164,
+    symbol: "SETH",
+    address: "secret1ttg5cn3mv5n9qv8r53stt6cjx8qft8ut9d66ed",
+    name: "Secret Ethereum",
+    label: "secret-eth5",
+    decimals: 18,
+    iconImg: "ethereum-eth-logo.svg"
+  },
+  {
+    codeId: 164,
+    symbol: "SOCEAN",
+    address: "secret10zr3azpmr42vatq3pey2aaxurug0c668km6rzl",
+    name: "Secret Ocean Token",
+    label: "secret-ocean5",
+    decimals: 18,
     iconImg: "ethereum-eth-logo.svg"
   },
   {

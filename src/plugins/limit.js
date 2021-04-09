@@ -4,83 +4,113 @@ import {Decimal} from 'decimal.js';
 
 import Vuex from 'vuex';
 
+const tokens2Decimal = (amount, decimals) => {
+    return Number(amount / Math.pow(10, decimals));
+};
+
+const arrayHash = (str, array) => {
+    var hash = 0, i, chr;
+    for (i = 0; i < str.length; i++) {
+      chr   = str.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return array[Math.abs(hash) % array.length];
+}
+
 //setup variables
 
 export default {
     install(Vue, options) {
         const limitApi = new LimitApi(options.chainClient, options.factoryAddress);
-        
+
         Vue.use(Vuex);
         Vue.prototype.$store.registerModule('$limit', {
             namespaced: true,
             state: {
-                // auctions: [],
-                // auctionsViewer: {
-                //     stats: {
-                //       isSellerTotal: 0,
-                //       isBidderTotal: 0,
-                //       wasSellerTotal: 0,
-                //       isWinnerTotal: 0,
-                //       successfulSellerTotal: 0
-                //     }
-                // },
-                // auctionsFilter: {
-                //   sellToken: "",
-                //   bidToken: "",
-                //   onlyMine: false,
-                //   showClosed: false,
-                //   viewMode: "grid",
-                //   sort: {
-                //       priority: "price",
-                //       fields: {
-                //           sell: "asc",
-                //           sell: "asc",
-                //           price:  "asc"
-                //       }
-                //   }
-                // },
-                // tokenData: [],
+                orderBooks: [],
+                ammPairs: [],
+                tokenData: [],
+                refresh: {}
             },
             getters: {
-                getOrderBooks: async () => {
-                    console.log("pluginTEST");
-                    return await limitApi.getOrderBooks();
-                },              
+                orderBooks: state => {
+                    return state.orderBooks;
+                },
+                ammPairs: state => {
+                    return state.ammPairs;
+                },
+                tokenData: state => {
+                    return state.tokenData;
+                }       
             },
             mutations: {
-                //EXAMPLE Mutation
-                updateAuction: (state, auction) => {
-                    // let currentAuction = state.auctions.find(a => a.address == auction.address );
-                    // if(!currentAuction) {
-                    //     state.auctions.push(auction);
-                    // } else {
-                    //     Vue.set(currentAuction,"description",auction.description);
-                    //     Vue.set(currentAuction,"endsAt",auction.endsAt);
-                    // }
+                updateTokenData(state, tokenData) {
+                    state.tokenData = tokenData;
+                    state.refresh = { ...state.refresh, tokenData: moment().add(15,'minutes').format()}
                 },
+                updateOrderBooks: (state, orderBooks) => {
+                    let currentOrderBook;
+                    orderBooks.forEach(orderBook => {
+                        currentOrderBook = state.orderBooks.find(ob => ob.address == orderBook.address);
+                        if(!currentOrderBook) {
+                            state.orderBooks.push(orderBook);
+                        } else {
+                            Object.assign(currentOrderBook, orderBook);
+                        }
+                    });
+                    state.refresh = { ...state.refresh, orderBooks: moment().add(15,'minutes').format()}
+                },
+                updateAmmPairs: (state, ammPairs) => {
+                    let currentAmmPair;
+                    ammPairs.forEach(ammPair => {
+                        currentAmmPair = state.ammPairs.find(amm => amm.address == ammPair.address);
+                        if(!currentAmmPair) {
+                            state.ammPairs.push(ammPair);
+                        } else {
+                            Object.assign(currentAmmPair, ammPair);
+                        }
+                    });
+                    state.refresh = { ...state.refresh, ammPairs: moment().add(15,'minutes').format()}
+                }
             },
             actions: {
-                //EXAMPLE Action
-                updateAuction: async ({ commit }, address) => {
-                    // //replacement
-                    // const auction = await auctionsApi.getAuction(address);
-                    // //replaced
-                    // //const auctionInfo = await auctionsApi.getAuctionInfo(address);
-
-                    // commit("updateAuction", auction);
+                updateOrderBooks: async ({commit, state}) => {
+                    //check refresh time
+                    const orderBooks = await limitApi.getOrderBooks(state.tokenData);
+                    if (orderBooks) {
+                        commit("updateOrderBooks", orderBooks);
+                    }
                 },
+                updateAmmPairs: async ({commit, state}) => {
+                    //check refresh time
+                    const ammPairs = await limitApi.getAmmPairs(state.tokenData);
+                    console.log(ammPairs);
+                    if (ammPairs) {
+                        commit("updateAmmPairs", ammPairs);
+                    }
+                }
             }
       });
 
+      //Mutate up front
+      Vue.prototype.$store.commit('$limit/updateTokenData', options.tokenData);
+
+      //Passthrough
       Vue.prototype.$limit = new LimitApi(options.chainClient, options.factoryAddress);
 
-      Vue.prototype.$limit.getBooks = Vue.prototype.$store.getters['$limit/getBooks'];
+      //GETTERS
+      Vue.prototype.$limit.getOrderBooks = Vue.prototype.$store.getters['$limit/orderBooks'];
+      Vue.prototype.$limit.getAmmPairs = Vue.prototype.$store.getters['$limit/ammPairs'];
+      Vue.prototype.$limit.getTokenData = Vue.prototype.$store.getters['$limit/tokenData'];
 
-        // updateClosedAuctions: async ({ commit, state }) => {
-        //     const closedAuctions = await auctionsApi.listClosedAuctions(state.tokenData);
-        //     if (closedAuctions) {
-        //         commit("updateAuctions", closedAuctions);
-        //     }
-        // }
+      //Actions
+      Vue.prototype.$limit.updateOrderBooks = async () => {
+        Vue.prototype.$store.dispatch('$limit/updateOrderBooks');
+      }
+
+      Vue.prototype.$limit.updateAmmPairs = async () => {
+        Vue.prototype.$store.dispatch('$limit/updateAmmPairs');
+      }
     }
 }

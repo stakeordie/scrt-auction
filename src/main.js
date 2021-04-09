@@ -24,10 +24,7 @@ import testnetChain from "./lib/chain/testnet";
 
 import tokensForProduction from "./lib/tokens/mainnet"
 import tokensForTesting from "./lib/tokens/testnet"
-
-import limitPairsForProduction from "./lib/limit-pairs/mainnet"
-import limitPairsForTesting from "./lib/limit-pairs/testnet"
-
+""
 
 Number.prototype.countDecimals = function () {
     if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
@@ -88,18 +85,10 @@ export default function (Vue, { router, head, isClient }) {
     availableTokens
   });
 
-  //Limit - Trading Pairs
-  let limitPairs;
-  if (process.env.GRIDSOME_SECRET_CHAIN_ID == "secret-2") {
-    limitPairs = limitPairsForProduction;
-  } else {
-    limitPairs = limitPairsForTesting;
-  }
-
   Vue.use(Limit, {
     chainClient: Vue.prototype.$scrtjs,
     factoryAddress: process.env.GRIDSOME_LIMIT_FACTORY, // What contracts do we need
-    limitPairs
+    tokenData: availableTokens
   });
 
   const routesDefinition = routesDefinition;
