@@ -22,7 +22,7 @@
 
 import AuctionItem from '../components/AuctionItem.vue'
 import AuctionsFilter from '../components/AuctionsFilter.vue';
-import KeplrAccount from '../components/KeplrAccount.vue';
+import {KeplrAccount} from '@stakeordie/griptape-vue.js';
 
 export default {
   props: {

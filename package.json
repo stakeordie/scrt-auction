@@ -11,6 +11,7 @@
     "@fontsource/montserrat": "^4.1.0",
     "@gridsome/vue-remark": "^0.2.6",
     "@lkmx/flare": "^0.3.25",
+    "@stakeordie/griptape-vue.js": "^0.1.1",
     "animate.css": "^4.1.1",
     "decimal.js": "^10.2.1",
     "dotenv": "^8.2.0",
@@ -22,6 +23,7 @@
     "moment": "^2.29.1",
     "secretjs": "^0.10.3",
     "vee-validate": "^3.4.5",
+    "vue": "^2.6.12",
     "vuex": "^3.6.0"
   }
 }

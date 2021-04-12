@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import KeplrUser from '../components/KeplrUser.vue'
+import {KeplrUser} from '@stakeordie/griptape-vue.js';
 import VkeysWallet from '../components/VkeysWallet.vue'
 import SiteClock from '../components/SiteClock.vue'
 
