@@ -8,6 +8,7 @@ import {
 } from "secretjs";
 
 import { Bip39, Random } from "@iov/crypto";
+import Decimal from "decimal.js";
 
 // Default fees to be used when no fees are specified for the transaction
 const defaultFees = {
@@ -161,6 +162,16 @@ export class SecretJsClient {
 
 
   // Utilities section
+
+  uBaseToUFractional(amountUBase, decimalPlaces) {
+    const value = new Decimal(10).toPower(decimalPlaces).times(amountUBase).toFixed(0);
+    return value;
+  }
+
+  uFractionalToUBase(amountUFractional, decimalPlaces) {
+    const value = new Decimal(amountUFractional).dividedBy(Decimal(10).toPower(decimalPlaces)).toFixed(decimalPlaces).replace(/\.?0+$/,"");
+    return value;
+  }
 
   getRandomMnemonic() {
     return Bip39.encode(Random.getBytes(16)).toString();

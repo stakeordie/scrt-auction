@@ -89,6 +89,11 @@ export default {
                     if (ammPairs) {
                         commit("updateAmmPairs", ammPairs);
                     }
+                },
+                createBid: async({commit, state}, {orderBook, priceUBase, amountUBase}) => {
+                    const response = await limitApi.createBid(orderBook, priceUBase, amountUBase);
+                    console.log(response);
+                    return response;
                 }
             }
       });
@@ -112,5 +117,9 @@ export default {
       Vue.prototype.$limit.updateAmmPairs = async () => {
         Vue.prototype.$store.dispatch('$limit/updateAmmPairs');
       }
+
+      Vue.prototype.$limit.createBid = async (bidForm) => {
+        return Vue.prototype.$store.dispatch('$limit/createBid', {orderBook: bidForm.orderBook, priceUBase: bidForm.bidPrice, amountUBase: bidForm.askAmount});
+     };
     }
 }

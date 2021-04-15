@@ -21,7 +21,9 @@ export class LimitApi {
         let amount = "0";
         let denom = "uscrt";
         switch(txName) {
-
+            case "createBid": 
+                gas = "150000";
+                break;
             default:
         }
         if(amount == "0") {
@@ -36,6 +38,43 @@ export class LimitApi {
         return feesObj;
     }
 
+    async createBid(orderBook, priceUBase, amountUBase) {
+        // msg=$(base64 -w 0 <<<'{"create_limit_order": {"is_bid": true, "price": "5000000000000000000", "expected_amount": "200000"}}')
+        // secretcli tx compute execute $token2_address '{"send":{"recipient": "'$orderbook_address'", "amount": "1000000000000000000", "msg": "'"$msg"'"}}' --from a -y --gas 1500000 -b block
+        const fees = this.getFees("createBid");
+        const bidValues = await this.getBidValues(orderBook, priceUBase, amountUBase);
+        const bidMsg = {
+            "create_limit_order": {
+                "is_bid": false, 
+                "price": bidValues.priceUFractional.toString(), 
+                "expected_amount": bidValues.amountUFractional.toString()
+            }
+        };
+        const b64BidMsg = btoa(JSON.stringify(bidMsg));
+        const msg =  {
+            "send": {
+                "recipient": orderBook.address,
+                "amount": bidValues.costUFractional.toString(),
+                "msg": b64BidMsg,
+                "padding": "*".repeat((40 - bidValues.costUFractional.toString().length))
+            }
+        }
+        const response = await this.scrtClient.executeContract(bidValues.baseToken.address, msg, fees);
+        console.log("api/createBidresponse",response);
+        return response;
+    }
+
+    async getBidValues(orderBook, priceUBase, amountUBase) {
+        const costUBase = priceUBase * amountUBase;
+        return {
+            baseToken: orderBook.tokens[0],
+            quoteToken: orderBook.tokens[1],
+            priceUFractional: this.scrtClient.uBaseToUFractional(priceUBase,orderBook.tokens[0].decimals),
+            amountUFractional: this.scrtClient.uBaseToUFractional(amountUBase,orderBook.tokens[1].decimals),
+            costUFractional: this.scrtClient.uBaseToUFractional(costUBase,orderBook.tokens[0].decimals),
+        }
+    }
+
     async getOrderBooks(tokenData) {
         //secretcli q compute query $order_factory_contract_address '{"secret_order_books":{}}'
         const orderBooks = await this.scrtClient.queryContract(this.factoryAddress, {"secret_order_books":{}});
@@ -45,17 +84,51 @@ export class LimitApi {
     }
 
     transformOrderBook(rawOrderBook, tokenData) {
+        let tokens = [];
+        if(rawOrderBook.asset_infos[0]?.token?.contract_addr) {
+            tokens[0] = tokenData.find(token => token.address == rawOrderBook.asset_infos[0].token.contract_addr);
+            if(tokens[0]) {
+                tokens[0].type = "snip20";
+                //tokens[0].volume = rawOrderBook.asset0_volume
+            } else {
+                tokens[0] = {
+                    type: "snip20",
+                    address: rawOrderBook.asset_infos[0].token.contract_addr,
+                    //volume: rawAmmPair.asset0_volume,
+                }
+            }
+            
+        } else {
+            tokens[0] = {
+                type: "native",
+            } 
+        }
+        if(rawOrderBook.asset_infos[1]?.token?.contract_addr) {
+            tokens[1] = tokenData.find(token => token.address == rawOrderBook.asset_infos[1].token.contract_addr);
+            if(tokens[1]) {
+                tokens[1].type = "snip20";
+                //tokens[1].volume = rawOrderBook.asset1_volume
+            } else {
+                tokens[1] = {
+                    type: "snip20",
+                    address: rawOrderBook.asset_infos[1].token.contract_addr,
+                    //volume: rawAmmPair.asset1_volume,
+                }
+            }
+        } else {
+            tokens[1] = {
+                type: "native",
+            } 
+        }  
         const token1 = tokenData.find(token => token.address == rawOrderBook.asset_infos[0].token.contract_addr)
         const token2 = tokenData.find(token => token.address == rawOrderBook.asset_infos[1].token.contract_addr)
         const orderBook = {
-            name: token1.symbol + "/" + token2.symbol,
+            name: tokens[0].symbol + "/" + tokens[1].symbol,
             address: rawOrderBook.contract_addr,
             ammPairAddress: rawOrderBook.amm_pair_contract_addr,
-            asset_infos: [
-                rawOrderBook.asset_infos[0],
-                rawOrderBook.asset_infos[1]
-            ]
+            tokens
         }
+
         return orderBook;
     }
 
@@ -133,7 +206,7 @@ export class LimitApi {
                 } 
             }  
             const ammPair = {
-                name: "",
+                name: tokens[0].symbol + "/" + tokens[1].symbol,
                 address: rawAmmPair.contract_addr,
                 liquidityTokenAddress: rawAmmPair.liquidityTokenAddress,
                 factoryAddress: rawAmmPair.factory.address,

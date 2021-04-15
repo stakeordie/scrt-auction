@@ -390,7 +390,7 @@ export default {
                     return response; 
                 },
 
-                placeBid: async({commit},{bidTokenAddress, auctionAddress, bidAmount}) => {
+                placeBid: async({ commit },{ bidTokenAddress, auctionAddress, bidAmount }) => {
                     const response = await auctionsApi.placeBid(bidTokenAddress, auctionAddress, bidAmount);
                     if(response.bid?.status == 'Success') {
                         const currentBid = {

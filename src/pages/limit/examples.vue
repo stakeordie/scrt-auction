@@ -3,43 +3,94 @@
       <column>
           <block>
                 <div class="rrrow">
-                    <button @click="getBooks">Get Order Books</button>
-                    <pre v-show="!getBooksResponseClosed" class="rrrow-content">{{ getBooksResponse }}</pre>
+                    <button @click="getOrderBooks">Get Order Books</button>
+                    <pre v-show="!getBooksResponseClosed" class="rrrow-content">{{ orderBooks }}</pre>
                     <div v-show="!getBooksResponseClosed" class="rrrow-close" @click="getBooksResponseClosed = !getBooksResponseClosed">X</div>
                 </div>
                 <div class="rrrow">
                     <button @click="getAmmPairs">Get AMM Pairs</button>
-                    <pre v-show="!getAmmPairsResponseClosed" class="rrrow-content">{{  getAmmPairsResponse }}</pre>
+                    <pre v-show="!getAmmPairsResponseClosed" class="rrrow-content">{{  ammPairs }}</pre>
                     <div v-show="!getAmmPairsResponseClosed" class="rrrow-close" @click="getAmmPairsResponseClosed = !getAmmPairsResponseClosed">X</div>
                 </div>
+        </block>
+      </column>
+      <column>
+        <block>
+            <h1>New Auction</h1>
+            <validation-observer v-slot="{ handleSubmit, invalid }">
+                <form class="auction-form" @submit.prevent="handleSubmit(createBid)">
+
+                    <select name="sell-denom" v-model="bidForm.orderBook">
+                        <option v-for="orderBook in orderBooks" :key="orderBook.address" v-bind:value="orderBook">
+                            {{ orderBook.name }}
+                        </option>
+                        <option :value="{ customSellFormTrigger: true }">Create New Orderbook</option>
+                    </select>
+                    <label for="minimum-bid-price">Bid Price</label>
+                    <input name="minimum-bid-price" type="text" v-model.trim="bidForm.bidPrice" />
+
+                    <label for="minimum-bid-amount">Ask Amount</label>
+                    <input name="minimum-bid-amount" type="text" v-model.trim="bidForm.askAmount" />
+
+                    <button :disabled="invalid">Continue</button>
+                </form>
+            </validation-observer>
         </block>
       </column>
   </default-layout>
 </template>
 
 <script>
+import { ValidationObserver, ValidationProvider } from "vee-validate";
+import { required } from "vee-validate/dist/rules";
+import VkeysAddress from '../../components/VkeysAddress.vue';
+import statePersist from '../../plugins/state-persist';
+
 export default {
+  components: { VkeysAddress, ValidationObserver, ValidationProvider},
+    
+
     data() {
         return {
+            bidForm: {
+                orderBook: {},
+                bidPrice: 0,
+                askAmount: 0
+            },
+
+            orderBooks: [],
+            ammPairs: [],
+
             getBooksResponse: "",
-            getBooksResponseClosed: true,
+            getBooksResponseClosed: false,
             getAmmPairsResponse: "",
-            getAmmPairsResponseClosed: true
+            getAmmPairsResponseClosed: false
         }
     },
     methods: {
-        async getBooks() {
-            this.$limit.updateOrderBooks()
-            this.getBooksResponse = await this.$limit.getOrderBooks;
+        async getOrderBooks() {
+            if(!this.orderBooks[0]) {
+                this.$limit.updateOrderBooks()
+                this.orderBooks = await this.$limit.getOrderBooks;
+            }
             this.getBooksResponseClosed = false;
         },
         async getAmmPairs() {
-            this.$limit.updateAmmPairs()
-            this.getAmmPairsResponse = await this.$limit.getAmmPairs;
+            if(!this.ammPairs[0]) {
+                this.$limit.updateAmmPairs()
+                this.orderBooks = await this.$limit.getAmmPairs;
+            }
             this.getAmmPairsResponseClosed = false;
-        } 
+        },
+        async createBid() {
+            const response = await this.$limit.createBid(this.bidForm);
+            console.log("component/createBid Response", response);
+        }
+        
     },
     mounted() {
+        this.orderBooks = this.$store.state.$limit.orderBooks;
+        this.ammPairs = this.$store.state.$limit.ammPairs;
         // this.$limit.updateOrderBooks();
         // this.$limit.updateAmmPairs();
     }

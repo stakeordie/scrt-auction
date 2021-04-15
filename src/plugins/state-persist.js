@@ -36,7 +36,8 @@ const statePersist = {
       // Individual entities have to be restored so reactivity is not
       // messed up
       // statePersist.store.state.$limit.tokenData = storedState.$limit.tokenData;
-      // statePersist.store.state.$limit.orderBooks = storedState.$limit.orderBooks;
+      statePersist.store.state.$limit.orderBooks = storedState.$limit.orderBooks;
+      statePersist.store.state.$limit.ammPairs = storedState.$limit.ammPairs;
       // statePersist.store.state.$limit.refresh = storedState.$limit.refresh;
       statePersist.store.state.$auctions.auctions = storedState.$auctions.auctions;
       statePersist.store.state.$auctions.auctionsFilter = storedState.$auctions.auctionsFilter;
