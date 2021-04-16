@@ -19,7 +19,7 @@
             <h1>New Auction</h1>
             <validation-observer v-slot="{ handleSubmit, invalid }">
                 <form class="auction-form" @submit.prevent="handleSubmit(createBid)">
-                    <select name="sell-denom" v-model="bidForm.orderBook">
+                    <select name="sell-denom" v-model="bidForm.orderBook" @change="getSimulatedPrice">
                         <option v-for="orderBook in orderBooks" :key="orderBook.address" :value="orderBook">
                             {{ orderBook.name }}
                         </option>
@@ -33,11 +33,14 @@
                     <input name="minimum-bid-price" type="text" v-model.trim="bidForm.bidPrice" />
 
                     <label for="minimum-bid-amount">Ask Amount</label>
-                    <input name="minimum-bid-amount" type="text" v-model.trim="bidForm.askAmount" />
+                    <input name="minimum-bid-amount" type="text" v-model.trim="bidForm.askAmount" @change="getSimulatedPrice" />
 
                     <button :disabled="invalid">Continue</button>
                 </form>
             </validation-observer>
+        </block>
+        <block>
+            {{limitOrders}}
         </block>
       </column>
   </default-layout>
@@ -46,11 +49,9 @@
 <script>
 import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
-import VkeysAddress from '../../components/VkeysAddress.vue';
-import statePersist from '../../plugins/state-persist';
 
 export default {
-  components: { VkeysAddress, ValidationObserver, ValidationProvider},
+  components: { ValidationObserver, ValidationProvider},
     
 
     data() {
@@ -60,15 +61,22 @@ export default {
                 bidPrice: 0,
                 askAmount: 0
             },
-
+            simulatedPrice: 0,
+            limitOrders: [],
             orderBooks: [],
             ammPairs: [],
-
-            getBooksResponse: "",
-            getBooksResponseClosed: false,
-            getAmmPairsResponse: "",
-            getAmmPairsResponseClosed: false
+            getBooksResponseClosed: true,
+            getAmmPairsResponseClosed: true
         }
+    },
+    mounted() {
+        this.orderBooks = this.$store.state.$limit.orderBooks;
+        this.ammPairs = this.$store.state.$limit.ammPairs;
+        // this.$limit.updateOrderBooks();
+        // this.$limit.updateAmmPairs();
+    },
+    computed: {
+        
     },
     methods: {
         async getOrderBooks() {
@@ -87,27 +95,22 @@ export default {
         },
         async createBid() {
             const response = await this.$limit.createBid(this.bidForm);
-        }
-        
-    },
-    computed: {
-        async simulatedPrice() {
+        },
+        async getSimulatedPrice() {
             if(this.bidForm.orderBook.ammPairAddress) {
                 const ammPair = this.ammPairs.find(ammPair => ammPair.address == this.bidForm.orderBook.ammPairAddress);
                 const amount = this.bidForm.askAmount == 0 ? 1 : this.bidForm.askAmount;
-                const response = await this.$limit.simulateSwap(ammPair, amount);
-                return parseFloat(response) / amount
-            } else {
-                return 0;
+                const response = await this.$limit.simulateSwapReverse(ammPair, amount);
+                const orders = await this.$limit.getLimitOrders(this.bidForm.orderBook);
+                if(orders) {
+                    this.limitOrders = orders
+                } else {
+                    this.limitOrders = "No Active Orders Currently"
+                }
+                this.simulatedPrice = parseFloat(response) / amount
             }
             
         }
-    },
-    mounted() {
-        this.orderBooks = this.$store.state.$limit.orderBooks;
-        this.ammPairs = this.$store.state.$limit.ammPairs;
-        // this.$limit.updateOrderBooks();
-        // this.$limit.updateAmmPairs();
     }
 }
 </script>

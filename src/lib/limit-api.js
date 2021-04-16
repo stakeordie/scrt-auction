@@ -38,6 +38,23 @@ export class LimitApi {
         return feesObj;
     }
 
+    async getLimitOrders(orderBookAddress, userAddress, viewingKey) {
+
+        if(viewingKey) {        
+        //Get User OrderBooks
+        //secretcli q compute query $order_factory_contract_address '{"user_secret_order_books": {"address":"'$my_address'", "viewing_key":"'$order_vk'"}}'
+            const msg = {
+                "get_active_limit_order": {
+                    "user_address": userAddress, 
+                    "user_viewkey": viewingKey
+                }
+            }
+            const response = await this.scrtClient.queryContract(orderBookAddress, msg);
+            console.log(response);
+        }
+        // return response;
+    }
+
     async simulateSwap(ammPair, baseTokenAmountUBase) {
         //console.log(ammPair, baseTokenAmountUBase)
         // secretcli q compute query secret148jpzfh6lvencwtxa6czsk8mxm7kuecncz0g0y '{"simulation": {"offer_asset": { "info": { "token": { "contract_addr": "secret1s7c6xp9wltthk5r6mmavql4xld5me3g37guhsx", "token_code_hash": "CD400FB73F5C99EDBC6AAB22C2593332B8C9F2EA806BF9B42E3A523F3AD06F62", "viewing_key": ""}}, "amount": "50000000000"}}}'
@@ -65,7 +82,6 @@ export class LimitApi {
     }
 
     getOfferAsset(ammPair, baseTokenAmountUBase, isReverse = false) {
-        console.log(ammPair);
         if(isReverse) {
             return {
                 "info": {

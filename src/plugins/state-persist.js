@@ -38,11 +38,13 @@ const statePersist = {
       // statePersist.store.state.$limit.tokenData = storedState.$limit.tokenData;
       statePersist.store.state.$limit.orderBooks = storedState.$limit.orderBooks;
       statePersist.store.state.$limit.ammPairs = storedState.$limit.ammPairs;
+      statePersist.store.state.$limit.viewer = storedState.$limit.ammPairs;
       // statePersist.store.state.$limit.refresh = storedState.$limit.refresh;
       statePersist.store.state.$auctions.auctions = storedState.$auctions.auctions;
       statePersist.store.state.$auctions.auctionsFilter = storedState.$auctions.auctionsFilter;
       statePersist.store.state.$auctions.tokenData = storedState.$auctions.tokenData;
       statePersist.store.state.$vkeys.vkeys = storedState.$vkeys.vkeys;
+      statePersist.store.state.$keplr.selectedAccount = storedState.$keplr.selectedAccount;
     }
     statePersist.hasStarted = true;
   },

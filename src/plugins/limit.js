@@ -28,12 +28,16 @@ export default {
         Vue.prototype.$store.registerModule('$limit', {
             namespaced: true,
             state: {
+                viewer: {},
                 orderBooks: [],
                 ammPairs: [],
                 tokenData: [],
                 refresh: {}
             },
             getters: {
+                viewer: state => {
+                    return state.viewer;
+                },
                 orderBooks: state => {
                     return state.orderBooks;
                 },
@@ -45,6 +49,9 @@ export default {
                 }       
             },
             mutations: {
+                updateViewer(state, viewer) {
+                    state.viewer = viewer;
+                },
                 updateTokenData(state, tokenData) {
                     state.tokenData = tokenData;
                     state.refresh = { ...state.refresh, tokenData: moment().add(15,'minutes').format()}
@@ -75,6 +82,9 @@ export default {
                 }
             },
             actions: {
+                updateViewer: async ({commit, dispatch}, viewer) => {
+                    commit("updateViewer", viewer);
+                },
                 updateOrderBooks: async ({commit, state}) => {
                     //check refresh time
                     const orderBooks = await limitApi.getOrderBooks(state.tokenData);
@@ -94,6 +104,10 @@ export default {
                     const response = await limitApi.createBid(orderBook, priceUBase, amountUBase);
                     console.log("vuex/createBidAction", response);
                     return response;
+                },
+                getLimitOrders: async({state}, orderBook) => {
+                    const response = await limitApi.getLimitOrders(orderBook.address, state.viewer.userAddress, state.viewer.viewingKey);
+                    return response;
                 }
             }
       });
@@ -105,11 +119,17 @@ export default {
       Vue.prototype.$limit = new LimitApi(options.chainClient, options.factoryAddress);
 
       //GETTERS
+      Vue.prototype.$limit.viewer = Vue.prototype.$store.getters['$limit/viewer'];
       Vue.prototype.$limit.getOrderBooks = Vue.prototype.$store.getters['$limit/orderBooks'];
       Vue.prototype.$limit.getAmmPairs = Vue.prototype.$store.getters['$limit/ammPairs'];
       Vue.prototype.$limit.getTokenData = Vue.prototype.$store.getters['$limit/tokenData'];
 
       //Actions
+
+      Vue.prototype.$limit.updateViewer = async (viewer) => {
+        Vue.prototype.$store.dispatch('$limit/updateViewer', viewer);
+      };  
+
       Vue.prototype.$limit.updateOrderBooks = async () => {
         Vue.prototype.$store.dispatch('$limit/updateOrderBooks');
       }
@@ -120,6 +140,13 @@ export default {
 
       Vue.prototype.$limit.createBid = async (bidForm) => {
         return Vue.prototype.$store.dispatch('$limit/createBid', {orderBook: bidForm.orderBook, priceUBase: bidForm.bidPrice, amountUBase: bidForm.askAmount});
-     };
+      };
+
+      //get Actions
+
+      Vue.prototype.$limit.getLimitOrders = async (orderBook) => {
+        return Vue.prototype.$store.dispatch('$limit/getLimitOrders', orderBook);
+      };
+
     }
 }

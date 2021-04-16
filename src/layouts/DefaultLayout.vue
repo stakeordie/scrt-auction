@@ -76,7 +76,12 @@ export default {
     viewingKey(newValue, oldValue) {
       this.$auctions.updateAuctionsViewer({
         userAddress: this.userAddress, 
-        viewingKey:  this.viewingKey,
+        viewingKey: this.viewingKey,
+      });
+
+      this.$limit.updateViewer({
+        userAddress: this.userAddress, 
+        viewingKey: this.viewingKey,
       });
     }
   },
