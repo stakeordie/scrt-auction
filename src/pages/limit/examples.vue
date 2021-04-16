@@ -19,13 +19,16 @@
             <h1>New Auction</h1>
             <validation-observer v-slot="{ handleSubmit, invalid }">
                 <form class="auction-form" @submit.prevent="handleSubmit(createBid)">
-
                     <select name="sell-denom" v-model="bidForm.orderBook">
-                        <option v-for="orderBook in orderBooks" :key="orderBook.address" v-bind:value="orderBook">
+                        <option v-for="orderBook in orderBooks" :key="orderBook.address" :value="orderBook">
                             {{ orderBook.name }}
                         </option>
                         <option :value="{ customSellFormTrigger: true }">Create New Orderbook</option>
                     </select>
+
+                    <label for="minimum-bid-price">Simulated Price</label>
+                    <input name="minimum-bid-price" type="text" v-model.trim="simulatedPrice" readonly/>
+
                     <label for="minimum-bid-price">Bid Price</label>
                     <input name="minimum-bid-price" type="text" v-model.trim="bidForm.bidPrice" />
 
@@ -84,9 +87,21 @@ export default {
         },
         async createBid() {
             const response = await this.$limit.createBid(this.bidForm);
-            console.log("component/createBid Response", response);
         }
         
+    },
+    computed: {
+        async simulatedPrice() {
+            if(this.bidForm.orderBook.ammPairAddress) {
+                const ammPair = this.ammPairs.find(ammPair => ammPair.address == this.bidForm.orderBook.ammPairAddress);
+                const amount = this.bidForm.askAmount == 0 ? 1 : this.bidForm.askAmount;
+                const response = await this.$limit.simulateSwap(ammPair, amount);
+                return parseFloat(response) / amount
+            } else {
+                return 0;
+            }
+            
+        }
     },
     mounted() {
         this.orderBooks = this.$store.state.$limit.orderBooks;

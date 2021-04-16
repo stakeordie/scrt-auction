@@ -39,6 +39,7 @@ export class LimitApi {
     }
 
     async simulateSwap(ammPair, baseTokenAmountUBase) {
+        //console.log(ammPair, baseTokenAmountUBase)
         // secretcli q compute query secret148jpzfh6lvencwtxa6czsk8mxm7kuecncz0g0y '{"simulation": {"offer_asset": { "info": { "token": { "contract_addr": "secret1s7c6xp9wltthk5r6mmavql4xld5me3g37guhsx", "token_code_hash": "CD400FB73F5C99EDBC6AAB22C2593332B8C9F2EA806BF9B42E3A523F3AD06F62", "viewing_key": ""}}, "amount": "50000000000"}}}'
         const offerAsset = this.getOfferAsset(ammPair, baseTokenAmountUBase);
         const msg = {
@@ -47,20 +48,46 @@ export class LimitApi {
             }
         };
         const response = await this.scrtClient.queryContract(ammPair.address, msg);
-        return response;
+        return this.scrtClient.uFractionalToUBase(response.return_amount,ammPair.tokens[1].decimals);
     }
 
-    getOfferAsset(ammPair, baseTokenAmountUBase) {
+    async simulateSwapReverse(ammPair, quoteTokenAmountUBase) {
+        //console.log(ammPair, baseTokenAmountUBase)
+        // secretcli q compute query secret148jpzfh6lvencwtxa6czsk8mxm7kuecncz0g0y '{"simulation": {"offer_asset": { "info": { "token": { "contract_addr": "secret1s7c6xp9wltthk5r6mmavql4xld5me3g37guhsx", "token_code_hash": "CD400FB73F5C99EDBC6AAB22C2593332B8C9F2EA806BF9B42E3A523F3AD06F62", "viewing_key": ""}}, "amount": "50000000000"}}}'
+        const offerAsset = this.getOfferAsset(ammPair, quoteTokenAmountUBase, true);
+        const msg = {
+            "simulation": {
+                "offer_asset": offerAsset
+            }
+        };
+        const response = await this.scrtClient.queryContract(ammPair.address, msg);
+        return this.scrtClient.uFractionalToUBase(response.return_amount,ammPair.tokens[0].decimals);
+    }
 
-        return {
-            "info": {
-                "token": {
-                    "contract_addr": ammPair.tokens[0].address,
-                    "token_code_hash": ammPair.tokens[0].tokenCodeHash,
-                    "viewing_key": ""
-                }
-            },
-            "amount": this.scrtClient.uBaseToUFractional(baseTokenAmountUBase, tokens[0].decimals).toString()
+    getOfferAsset(ammPair, baseTokenAmountUBase, isReverse = false) {
+        console.log(ammPair);
+        if(isReverse) {
+            return {
+                "info": {
+                    "token": {
+                        "contract_addr": ammPair.tokens[1].address,
+                        "token_code_hash": ammPair.tokens[1].tokenCodeHash,
+                        "viewing_key": ""
+                    }
+                },
+                "amount": this.scrtClient.uBaseToUFractional(baseTokenAmountUBase, ammPair.tokens[1].decimals).toString()
+            }
+        } else {
+            return {
+                "info": {
+                    "token": {
+                        "contract_addr": ammPair.tokens[0].address,
+                        "token_code_hash": ammPair.tokens[0].tokenCodeHash,
+                        "viewing_key": ""
+                    }
+                },
+                "amount": this.scrtClient.uBaseToUFractional(baseTokenAmountUBase, ammPair.tokens[0].decimals).toString()
+            }
         }
     }
 

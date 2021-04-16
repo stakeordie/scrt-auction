@@ -92,7 +92,7 @@ export default {
                 },
                 createBid: async({commit, state}, {orderBook, priceUBase, amountUBase}) => {
                     const response = await limitApi.createBid(orderBook, priceUBase, amountUBase);
-                    console.log(response);
+                    console.log("vuex/createBidAction", response);
                     return response;
                 }
             }
