@@ -38,6 +38,11 @@ export class LimitApi {
         return feesObj;
     }
 
+    async simulateSwap(ammPair) {
+        // secretcli q compute query secret148jpzfh6lvencwtxa6czsk8mxm7kuecncz0g0y '{"simulation": {"offer_asset": { "info": { "token": { "contract_addr": "secret1s7c6xp9wltthk5r6mmavql4xld5me3g37guhsx", "token_code_hash": "CD400FB73F5C99EDBC6AAB22C2593332B8C9F2EA806BF9B42E3A523F3AD06F62", "viewing_key": ""}}, "amount": "50000000000"}}}'
+
+    }
+
     async createBid(orderBook, priceUBase, amountUBase) {
         // msg=$(base64 -w 0 <<<'{"create_limit_order": {"is_bid": true, "price": "5000000000000000000", "expected_amount": "200000"}}')
         // secretcli tx compute execute $token2_address '{"send":{"recipient": "'$orderbook_address'", "amount": "1000000000000000000", "msg": "'"$msg"'"}}' --from a -y --gas 1500000 -b block
@@ -85,50 +90,34 @@ export class LimitApi {
 
     transformOrderBook(rawOrderBook, tokenData) {
         let tokens = [];
-        if(rawOrderBook.asset_infos[0]?.token?.contract_addr) {
-            tokens[0] = tokenData.find(token => token.address == rawOrderBook.asset_infos[0].token.contract_addr);
-            if(tokens[0]) {
-                tokens[0].type = "snip20";
-                //tokens[0].volume = rawOrderBook.asset0_volume
-            } else {
-                tokens[0] = {
-                    type: "snip20",
-                    address: rawOrderBook.asset_infos[0].token.contract_addr,
-                    //volume: rawAmmPair.asset0_volume,
+        for(let i=0; i < rawOrderBook.asset_infos.length; i++) {
+            if(rawOrderBook.asset_infos[i]?.token?.contract_addr) {
+                tokens[i] = tokenData.find(token => token.address == rawOrderBook.asset_infos[i].token.contract_addr);
+                if(tokens[i]) {
+                    tokens[i].type = "snip20";
+                    tokens[i].tokenCodeHash = rawOrderBook.asset_infos[i].token.token_code_hash;
+                    //tokens[0].volume = rawOrderBook.asset0_volume
+                } else {
+                    tokens[i] = {
+                        type: "snip20",
+                        address: rawOrderBook.asset_infos[i].token.contract_addr,
+                        tokenCodeHash: rawOrderBook.asset_infos[i].token.token_code_hash
+                        //volume: rawAmmPair.asset0_volume,
+                    }
                 }
+                
+            } else {
+                tokens[i] = {
+                    type: "native",
+                } 
             }
-            
-        } else {
-            tokens[0] = {
-                type: "native",
-            } 
         }
-        if(rawOrderBook.asset_infos[1]?.token?.contract_addr) {
-            tokens[1] = tokenData.find(token => token.address == rawOrderBook.asset_infos[1].token.contract_addr);
-            if(tokens[1]) {
-                tokens[1].type = "snip20";
-                //tokens[1].volume = rawOrderBook.asset1_volume
-            } else {
-                tokens[1] = {
-                    type: "snip20",
-                    address: rawOrderBook.asset_infos[1].token.contract_addr,
-                    //volume: rawAmmPair.asset1_volume,
-                }
-            }
-        } else {
-            tokens[1] = {
-                type: "native",
-            } 
-        }  
-        const token1 = tokenData.find(token => token.address == rawOrderBook.asset_infos[0].token.contract_addr)
-        const token2 = tokenData.find(token => token.address == rawOrderBook.asset_infos[1].token.contract_addr)
         const orderBook = {
             name: tokens[0].symbol + "/" + tokens[1].symbol,
             address: rawOrderBook.contract_addr,
             ammPairAddress: rawOrderBook.amm_pair_contract_addr,
             tokens
         }
-
         return orderBook;
     }
 
@@ -141,70 +130,29 @@ export class LimitApi {
     }
 
     transformAmmPair(rawAmmPair, tokenData) {
-        //console.log(JSON.stringify(rawAmmPair));
-        // {
-        //     "asset_infos":[
-        //        {
-        //           "token":{
-        //              "contract_addr":"secret1ttg5cn3mv5n9qv8r53stt6cjx8qft8ut9d66ed",
-        //              "token_code_hash":"2da545ebc441be05c9fa6338f3353f35ac02ec4b02454bc49b1a66f4b9866aed",
-        //              "viewing_key":""
-        //           }
-        //        },
-        //        {
-        //           "token":{
-        //              "contract_addr":"secret1ttg5cn3mv5n9qv8r53stt6cjx8qft8ut9d66ed",
-        //              "token_code_hash":"2da545ebc441be05c9fa6338f3353f35ac02ec4b02454bc49b1a66f4b9866aed",
-        //              "viewing_key":""
-        //           }
-        //        }
-        //     ],
-        //     "contract_addr":"secret14ur0789ffka2j0afv893ca3rnrwnqnglhh0tg3",
-        //     "liquidity_token":"secret1atnf5543a5s2wuhjztd2ryp3m97phecfa5238a",
-        //     "token_code_hash":"F86B5C3CA0381CE7EDFFFA534789501AE17CF6B21515213693BAF980765729C2",
-        //     "asset0_volume":"0",
-        //     "asset1_volume":"0",
-        //     "factory":{
-        //        "address":"secret1ypfxpp4ev2sd9vj9ygmsmfxul25xt9cfadrxxy",
-        //        "code_hash":"b66c6aca95004916baa13f8913ff1222c3e1775aaaf60f011cfaba7296d59d2c"
-        //     }
-        //  }
             let tokens = [];
-            if(rawAmmPair.asset_infos[0]?.token?.contract_addr) {
-                tokens[0] = tokenData.find(token => token.address == rawAmmPair.asset_infos[0].token.contract_addr);
-                if(tokens[0]) {
-                    tokens[0].type = "snip20";
-                    tokens[0].volume = rawAmmPair.asset0_volume
-                } else {
-                    tokens[0] = {
-                        type: "snip20",
-                        address: rawAmmPair.asset_infos[0].token.contract_addr,
-                        volume: rawAmmPair.asset0_volume,
+            for(let i=0; i < rawAmmPair.asset_infos.length; i++) {
+                if(rawAmmPair.asset_infos[i]?.token?.contract_addr) {
+                    tokens[i] = tokenData.find(token => token.address == rawAmmPair.asset_infos[i].token.contract_addr);
+                    if(tokens[i]) {
+                        tokens[i].type = "snip20";
+                        tokens[i].tokenCodeHash = rawAmmPair.asset_infos[i].token.token_code_hash;
+                        tokens[i].volume = rawAmmPair.asset0_volume
+                    } else {
+                        tokens[i] = {
+                            type: "snip20",
+                            address: rawAmmPair.asset_infos[i].token.contract_addr,
+                            tokenCodeHash: rawAmmPair.asset_infos[i].token.token_code_hash,
+                            volume: rawAmmPair.asset0_volume,
+                        }
                     }
-                }
-                
-            } else {
-                tokens[0] = {
-                    type: "native",
-                } 
-            }  
-            if(rawAmmPair.asset_infos[1]?.token?.contract_addr) {
-                tokens[1] = tokenData.find(token => token.address == rawAmmPair.asset_infos[1].token.contract_addr);
-                if(tokens[1]) {
-                    tokens[1].type = "snip20";
-                    tokens[1].volume = rawAmmPair.asset1_volume
+                    
                 } else {
-                    tokens[1] = {
-                        type: "snip20",
-                        address: rawAmmPair.asset_infos[1].token.contract_addr,
-                        volume: rawAmmPair.asset1_volume,
-                    }
-                }
-            } else {
-                tokens[1] = {
-                    type: "native",
-                } 
-            }  
+                    tokens[i] = {
+                        type: "native",
+                    } 
+                }  
+            }
             const ammPair = {
                 name: tokens[0].symbol + "/" + tokens[1].symbol,
                 address: rawAmmPair.contract_addr,
