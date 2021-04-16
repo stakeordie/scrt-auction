@@ -11,7 +11,7 @@
     "@fontsource/montserrat": "^4.1.0",
     "@gridsome/vue-remark": "^0.2.6",
     "@lkmx/flare": "^0.3.25",
-    "@stakeordie/griptape-vue.js": "^0.1.1",
+    "@stakeordie/griptape-vue.js": "^0.1.2",
     "animate.css": "^4.1.1",
     "decimal.js": "^10.2.1",
     "dotenv": "^8.2.0",

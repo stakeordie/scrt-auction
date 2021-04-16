@@ -29,7 +29,7 @@
 
 <script>
 import SecretOverlay from './SecretOverlay.vue';
-import VkeysAddress from './VkeysAddress.vue';
+import {VkeysAddress} from '@stakeordie/griptape-vue.js';
 
 export default {
   components: { VkeysAddress, SecretOverlay },

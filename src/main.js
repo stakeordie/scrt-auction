@@ -6,8 +6,9 @@ import "./sass/style.scss"
 
 import Flare from "@lkmx/flare"
 
-import VKeys from "./plugins/vkeys"
+import { VKeys } from "@stakeordie/griptape-vue.js";
 import { Keplr } from "@stakeordie/griptape-vue.js";
+
 import ScrtJs from "./plugins/scrt"
 import Auctions from "./plugins/auctions"
 
