@@ -38,16 +38,37 @@ export class LimitApi {
         return feesObj;
     }
 
-    async simulateSwap(ammPair) {
+    async simulateSwap(ammPair, baseTokenAmountUBase) {
         // secretcli q compute query secret148jpzfh6lvencwtxa6czsk8mxm7kuecncz0g0y '{"simulation": {"offer_asset": { "info": { "token": { "contract_addr": "secret1s7c6xp9wltthk5r6mmavql4xld5me3g37guhsx", "token_code_hash": "CD400FB73F5C99EDBC6AAB22C2593332B8C9F2EA806BF9B42E3A523F3AD06F62", "viewing_key": ""}}, "amount": "50000000000"}}}'
+        const offerAsset = this.getOfferAsset(ammPair, baseTokenAmountUBase);
+        const msg = {
+            "simulation": {
+                "offer_asset": offerAsset
+            }
+        };
+        const response = await this.scrtClient.queryContract(ammPair.address, msg);
+        return response;
+    }
 
+    getOfferAsset(ammPair, baseTokenAmountUBase) {
+
+        return {
+            "info": {
+                "token": {
+                    "contract_addr": ammPair.tokens[0].address,
+                    "token_code_hash": ammPair.tokens[0].tokenCodeHash,
+                    "viewing_key": ""
+                }
+            },
+            "amount": this.scrtClient.uBaseToUFractional(baseTokenAmountUBase, tokens[0].decimals).toString()
+        }
     }
 
     async createBid(orderBook, priceUBase, amountUBase) {
         // msg=$(base64 -w 0 <<<'{"create_limit_order": {"is_bid": true, "price": "5000000000000000000", "expected_amount": "200000"}}')
         // secretcli tx compute execute $token2_address '{"send":{"recipient": "'$orderbook_address'", "amount": "1000000000000000000", "msg": "'"$msg"'"}}' --from a -y --gas 1500000 -b block
         const fees = this.getFees("createBid");
-        const bidValues = await this.getBidValues(orderBook, priceUBase, amountUBase);
+        const bidValues = this.getBidValues(orderBook, priceUBase, amountUBase);
         const bidMsg = {
             "create_limit_order": {
                 "is_bid": false, 
@@ -69,7 +90,7 @@ export class LimitApi {
         return response;
     }
 
-    async getBidValues(orderBook, priceUBase, amountUBase) {
+    getBidValues(orderBook, priceUBase, amountUBase) {
         const costUBase = priceUBase * amountUBase;
         return {
             baseToken: orderBook.tokens[0],
