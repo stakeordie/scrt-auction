@@ -7,13 +7,12 @@ export class LimitApi {
     factoryAddress
     ammContractAddress
 
-    constructor(scrtClient, factoryAddress /*, otherAddress*/) {
+    constructor(scrtClient, factoryAddress) {
         this.scrtClient = scrtClient;
         this.factoryAddress = factoryAddress;
         this.ammContractAddress = "secret1ypfxpp4ev2sd9vj9ygmsmfxul25xt9cfadrxxy"
     }
 
-    // TODO: #64 Find out what fees will be and set them
     getFees(txName) {
         let feesObj = {};
         let gas = "1000000";
@@ -22,7 +21,7 @@ export class LimitApi {
         let denom = "uscrt";
         switch(txName) {
             case "createBid": 
-                gas = "150000";
+                gas = "400000";
                 break;
             default:
         }
@@ -40,7 +39,7 @@ export class LimitApi {
 
     async getLimitOrders(orderBookAddress, userAddress, viewingKey) {
 
-        if(viewingKey) {        
+        if(viewingKey) {    
         //Get User OrderBooks
         //secretcli q compute query $order_factory_contract_address '{"user_secret_order_books": {"address":"'$my_address'", "viewing_key":"'$order_vk'"}}'
             const msg = {
@@ -51,6 +50,9 @@ export class LimitApi {
             }
             const response = await this.scrtClient.queryContract(orderBookAddress, msg);
             console.log(response);
+            return response;
+        } else {
+            return "No Viewing Key";
         }
         // return response;
     }

@@ -51,7 +51,7 @@ import { ValidationObserver, ValidationProvider } from "vee-validate";
 import { required } from "vee-validate/dist/rules";
 
 export default {
-  components: { ValidationObserver, ValidationProvider},
+  components: { ValidationObserver, ValidationProvider },
     
 
     data() {
@@ -65,8 +65,8 @@ export default {
             limitOrders: [],
             orderBooks: [],
             ammPairs: [],
-            getBooksResponseClosed: true,
-            getAmmPairsResponseClosed: true
+            getBooksResponseClosed: false,
+            getAmmPairsResponseClosed: false
         }
     },
     mounted() {
@@ -109,7 +109,6 @@ export default {
                 }
                 this.simulatedPrice = parseFloat(response) / amount
             }
-            
         }
     }
 }
