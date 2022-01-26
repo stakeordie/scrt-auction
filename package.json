@@ -20,7 +20,7 @@
     "marked": "^1.2.9",
     "material-icons": "^0.5.4",
     "moment": "^2.29.1",
-    "secretjs": "^0.10.3",
+    "secretjs": "0.17.5",
     "vee-validate": "^3.4.5",
     "vuex": "^3.6.0"
   }
